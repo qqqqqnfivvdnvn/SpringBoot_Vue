@@ -8,4 +8,10 @@
         VALUES (#{id}, #{name}, #{password})
     </insert>
 
+    <insert id="insertJoinUser" parameterType="com.example.demo.vo.UserMessage">
+        INSERT INTO user_join (id, name, age, gender, phone)
+        VALUES (#{id}, #{name}, #{age}, #{gender}, #{phone})
+    </insert>
+
+
 </mapper>

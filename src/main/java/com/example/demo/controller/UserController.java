@@ -85,11 +85,18 @@ public class UserController {
         return userService.joinByPage(name, offset, limit);
     }
 
+//    实现将用户数据插入到 PostgreSQL 数据库的方法：
     @GetMapping("/insertpg")
     public Void insertPg() throws JsonProcessingException {
-
         userPgService.insertUserPg();
         return null;
+    }
+
+    //    实现将左查询数据插入到 PostgreSQL 数据库的方法：
+    @GetMapping("/insertjoinpg")
+    public String insertJoinPg(String name, int offset, int limit) throws JsonProcessingException {
+        userPgService.insertJoinUser(name, offset, limit);
+        return "插入成功";
     }
 
 }

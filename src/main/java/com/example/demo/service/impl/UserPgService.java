@@ -8,4 +8,6 @@ public interface UserPgService {
 
     void insertUserPg();
 
+    void insertJoinUser(String name, int offset, int limit);
+
 }
