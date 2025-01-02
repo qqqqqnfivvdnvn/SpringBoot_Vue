@@ -20,4 +20,6 @@ public interface UserService {
 
     public List<UserMessage> joinByPage(String name, int offset, int limit);
 
+
+
 }

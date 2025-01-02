@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.entity.User;
 import com.example.demo.mapper.UserMapper;
+import com.example.demo.mapper.UserPgMapper;
 import com.example.demo.service.impl.UserService;
 import com.example.demo.vo.UserMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private  UserMapper userMapper;
+
 
     @Override
     public List<User> findAll() {
@@ -47,6 +49,8 @@ public class UserServiceImpl implements UserService {
         int offset = (page - 1) * limit;
         return userMapper.joinByPage(name, offset, limit);
     }
+
+
 
 
 }

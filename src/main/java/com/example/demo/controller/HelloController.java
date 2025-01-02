@@ -21,6 +21,7 @@ public class HelloController {
         return "Hello, World!"+id;
     }
 
+
     @PostMapping("/fileupload")
 //    localhost:8080/fileupload?name=test
     public String uploadFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {

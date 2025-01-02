@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.demo.entity.User;
 
@@ -9,6 +10,8 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
+
+@DS("master_sqlserver")
 public interface UserMapper  extends BaseMapper<User>{
 
     @Select("SELECT * FROM test..user_demo")
@@ -27,9 +30,7 @@ public interface UserMapper  extends BaseMapper<User>{
     List<User> findByPage(String name, int offset, int limit);
 
 
-
     List<UserMessage> joinByPage(String name, int offset, int limit);
-
 
 
 }
