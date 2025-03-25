@@ -1,5 +1,8 @@
-import { createApp } from 'vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router'; // 引入路由配置
 
-import App from './App.vue'
+const app = createApp(App); // 创建应用实例
 
-createApp(App).mount('#app')
+app.use(router); // 注册路由
+app.mount('#app'); // 挂载到 #app

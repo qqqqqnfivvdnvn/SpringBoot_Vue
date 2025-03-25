@@ -11,5 +11,4 @@ public class UserMessage {
     private String gender;
     private String phone;
 
-
 }

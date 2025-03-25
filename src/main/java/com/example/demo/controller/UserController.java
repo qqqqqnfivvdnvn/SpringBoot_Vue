@@ -1,16 +1,25 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.dto.Message;
 import com.example.demo.entity.User;
-import com.example.demo.service.impl.UserPgService;
 import com.example.demo.service.impl.UserService;
-import com.example.demo.vo.UserMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -23,8 +32,56 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private UserPgService userPgService;
+
+
+    @PostMapping("/login")
+    public ResponseEntity<Message> login(@RequestBody User user) throws JsonProcessingException {
+        System.out.println(user);
+        Message result = userService.login(user);
+        return ResponseEntity.ok(result);
+
+    }
+
+
+
+    @PostMapping("/register")
+    public ResponseEntity<Message> insertUser(@RequestBody User user) throws JsonProcessingException {
+        Message result = userService.findByName(user);
+
+        return ResponseEntity.ok(result);
+
+
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser(HttpServletRequest request, HttpServletResponse response) {
+        // 清除安全上下文
+        SecurityContextHolder.clearContext();
+
+        // 使当前会话失效
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        // 清除客户端Cookie（如果有）
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                cookie.setMaxAge(0);
+                response.addCookie(cookie);
+            }
+        }
+
+        // 返回成功响应
+        return ResponseEntity.ok()
+                .body(Map.of(
+                        "code", 200,
+                        "message", "登出成功"
+                ));
+    }
+
+
 
     @GetMapping("/alluser")
     public String getUser() throws JsonProcessingException {
@@ -34,17 +91,6 @@ public class UserController {
         return objectMapper.writeValueAsString(userList);
     }
 
-    @PostMapping("/insertuser")
-    public String insertUser(User user) throws JsonProcessingException {
-        UUID uuid = UUID.randomUUID();
-        user.setId(uuid.toString().replace("-", ""));
-        int i = userService.insert(user);
-        if (i == 0) {
-            return "插入条数" + i;
-        } else {
-            return "插入条数" + i;
-        }
-    }
 
     @GetMapping("/deleteuser")
     public String insertUser(String id) throws JsonProcessingException {
@@ -76,27 +122,6 @@ public class UserController {
     }
 
 
-    @GetMapping("/joinusers")
-    public List<UserMessage> joinUsers(
-            @RequestParam String name,
-            @RequestParam int offset,
-            @RequestParam int limit
-    ) {
-        return userService.joinByPage(name, offset, limit);
-    }
 
-//    实现将用户数据插入到 PostgreSQL 数据库的方法：
-    @GetMapping("/insertpg")
-    public Void insertPg() throws JsonProcessingException {
-        userPgService.insertUserPg();
-        return null;
-    }
-
-    //    实现将左查询数据插入到 PostgreSQL 数据库的方法：
-    @GetMapping("/insertjoinpg")
-    public String insertJoinPg(String name, int offset, int limit) throws JsonProcessingException {
-        userPgService.insertJoinUser(name, offset, limit);
-        return "插入成功";
-    }
 
 }

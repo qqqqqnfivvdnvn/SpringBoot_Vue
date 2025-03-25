@@ -5,20 +5,14 @@
 <mapper namespace="com.example.demo.mapper.UserMapper">
 
     <select id="findByPage" resultType= "com.example.demo.entity.User">
-        SELECT id, name, password
-        FROM test..user_demo
-        WHERE name LIKE CONCAT('%', #{name}, '%')
+        SELECT id, username, password,email,addtime
+        FROM test..Users
+        WHERE username LIKE CONCAT('%', #{username}, '%')
         ORDER BY id
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
 
-    <select id="joinByPage" resultType= "com.example.demo.vo.UserMessage">
-        SELECT  a.id,a.name,a.password,b.age,b.gender ,b.phone  FROM user_demo  a
-        LEFT JOIN user_info b
-        on
-        a.id=b.id  WHERE name LIKE CONCAT('%', #{name}, '%') ORDER BY a.id OFFSET  #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
-    </select>
 
 
 

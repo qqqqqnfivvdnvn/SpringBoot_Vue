@@ -4,7 +4,6 @@ import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.demo.entity.User;
 
-import com.example.demo.vo.UserMessage;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -14,23 +13,27 @@ import java.util.List;
 @DS("master_sqlserver")
 public interface UserMapper  extends BaseMapper<User>{
 
-    @Select("SELECT * FROM test..user_demo")
+    @Select("SELECT * FROM test..Users")
     public List<User> findAll();
 
-    @Insert("INSERT INTO test..user_demo (id,name, password) VALUES (#{id},#{name},#{password})")
+    @Select("SELECT top 1 id,username,password,email FROM test..Users WHERE username = #{username}")
+    public User findByName(String username);
+
+    @Insert("INSERT INTO test..Users (id,username, password,email,addtime) VALUES (#{id},#{username},#{password},#{email},#{addtime})")
     public int insert(User user);
 
-    @Delete("DELETE FROM test..user_demo WHERE id = #{id}")
+    @Delete("DELETE FROM test..Users WHERE id = #{id}")
     public int delete(String id);
 
-    @Update("UPDATE test..user_demo SET name = #{name}, password = #{password} WHERE id = #{id}")
+    @Update("UPDATE test..Users SET username = #{username}, password = #{password}, email = #{email} WHERE id = #{id}")
     public int update(User user);
+
+
 
 
     List<User> findByPage(String name, int offset, int limit);
 
 
-    List<UserMessage> joinByPage(String name, int offset, int limit);
 
 
 }
