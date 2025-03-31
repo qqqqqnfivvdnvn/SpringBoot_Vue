@@ -80,7 +80,6 @@ export default {
           localStorage.setItem('token', response.data.data.token);
           localStorage.setItem('user', JSON.stringify(response.data.data.user));
 
-
           this.showToastMessage(response.data.message || '登录成功！');
 
           // 获取重定向路径或默认跳转到首页

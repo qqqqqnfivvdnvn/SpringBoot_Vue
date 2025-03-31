@@ -134,10 +134,18 @@
 
           <!-- 替换为五个大小一致的盒子 -->
           <div class="grid-item-container">
+            <div class="grid-item-small">
+
+                <i class="fas fa-hospital fa-2x"></i> &nbsp;&nbsp;
+
+              {{ hospitalCount }}</div>
+
             <div class="grid-item-small">{{ hospitalCount }}</div>
+
             <div class="grid-item-small">{{ hospitalCount }}</div>
+
             <div class="grid-item-small">{{ hospitalCount }}</div>
-            <div class="grid-item-small">{{ hospitalCount }}</div>
+
             <div class="grid-item-small">{{ hospitalCount }}</div>
           </div>
 
@@ -147,11 +155,14 @@
           <div class="grid-item grid-item-4-6">
             <div class="sub-grid-item">
 
-              <!-- 引入并使用 BarChart 柱状图组件组件 -->
+              <!-- 引入并使用 BarChart 柱状图组件 -->
               <BarChart />
 
             </div>
-            <div class="sub-grid-item">6</div>
+            <div class="sub-grid-item">
+              <!-- 引入并使用 BarChart 饼图组件 -->
+              <PieChart />
+            </div>
           </div>
           <!-- 第三行：合并 7、8、9 格，并分为两个格子 -->
           <div class="grid-item grid-item-7-9">
@@ -171,10 +182,13 @@
 
 <script>
 import BarChart from '@/components/homechart/BarChart.vue';
+import PieChart from '@/components/homechart/PieChart.vue';
 import axios from 'axios'; // 引入axios用于可能的后端退出请求
 
 export default {
-  components: { BarChart },
+  // 显示柱状图组件: BarChart,
+  // 显示饼图组件: PieChart,
+  components: { BarChart,PieChart },
 
   data() {
     return {
