@@ -5,9 +5,9 @@
 <mapper namespace="com.example.demo.mapper.UserMapper">
 
     <select id="findByPage" resultType= "com.example.demo.entity.User">
-        SELECT id, username, password,email,addtime
-        FROM test..Users
-        WHERE username LIKE CONCAT('%', #{username}, '%')
+        SELECT id, username, password,email, addtime
+        FROM test..users
+        WHERE username LIKE CONCAT('%', #{name}, '%')
         ORDER BY id
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>

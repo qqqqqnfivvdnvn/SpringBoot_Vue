@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
             String token = UUID.randomUUID().toString().replace("-", "");
             responseData.setToken(token);
             responseData.setUsername(search_user.getUsername());
-            responseData.setUserId(search_user.getId());
+            responseData.setUserid(search_user.getId());
             message.setData(responseData);
 
         }

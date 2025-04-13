@@ -106,7 +106,7 @@ onMounted(async () => {
           type: 'bar',
           data: data.hospital, // 从后端获取的医院数据
           itemStyle: {
-            color: '#6DA9E4', // 浅蓝色
+            color: '#6da1e4', // 浅蓝色
             barBorderRadius: [5, 5, 0, 0], // 顶部圆角
           },
         },
@@ -115,7 +115,7 @@ onMounted(async () => {
           type: 'bar',
           data: data.pharmacy, // 从后端获取的药店数据
           itemStyle: {
-            color: '#7DCEA0', // 浅绿色
+            color: '#40b786', // 浅绿色
             barBorderRadius: [5, 5, 0, 0], // 顶部圆角
           },
         },
@@ -124,7 +124,7 @@ onMounted(async () => {
           type: 'bar',
           data: data.business, // 从后端获取的商业数据
           itemStyle: {
-            color: '#f8c181', // 浅橙色
+            color: '#f9a200', // 浅橙色
             barBorderRadius: [5, 5, 0, 0], // 顶部圆角
           },
         },

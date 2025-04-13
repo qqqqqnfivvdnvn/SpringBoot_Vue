@@ -15,17 +15,17 @@ onMounted(() => {
   });
 
   const baseData = [
-    { value: 335, name: '医院' },
-    { value: 310, name: '药店' },
-    { value: 234, name: '商业' }
+    { value: 335, name: '已清洗完成' },
+    { value: 310, name: '申诉中' },
+    { value: 234, name: '申诉完成' }
   ];
-
+  
   const colorMap = {
-    '医院': '#6da1e4',
-    '药店': '#40b786',
-    '商业': '#ffa305'
+    '已清洗完成': '#6da1e4',
+    '申诉中': '#40b786',
+    '申诉完成': '#f9a200'
   };
-
+  
   const processedData = baseData.map(item => ({
     ...item,
     itemStyle: { color: colorMap[item.name] }
@@ -33,7 +33,7 @@ onMounted(() => {
 
   const option = {
     title: {
-      text: '主数据数据占比',
+      text: '数据清洗状态分布',
       left: 'center',
       textStyle: {
         color: '#333333',
@@ -76,11 +76,11 @@ onMounted(() => {
     },
     series: [{
       type: 'pie',
-      radius: ['45%', '75%'],
+      radius: [30, 150],
       center: ['50%', '55%'],
-      avoidLabelOverlap: false,
+      roseType: 'radius',  // 设置为南丁格尔玫瑰图
       itemStyle: {
-        borderRadius: 10,
+        borderRadius: 5,
         borderColor: '#fff',
         borderWidth: 2,
       },

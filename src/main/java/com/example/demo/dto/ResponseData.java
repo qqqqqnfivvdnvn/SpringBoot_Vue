@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ResponseData {
-    private String userId;
+    private String userid;
     private String username;
     private String token;
 

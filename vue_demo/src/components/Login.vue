@@ -87,7 +87,7 @@ export default {
 
           setTimeout(() => {
             this.$router.push(redirectPath);
-          }, 1000);
+          }, 400);
 
         } else if (response.data.code === '300') {
           this.showToastMessage(response.data.message || '用户名不存在！');

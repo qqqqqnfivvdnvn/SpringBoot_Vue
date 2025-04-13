@@ -1,8 +1,8 @@
 <template xmlns="">
-  <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-  />
+<!--  <link-->
+<!--      rel="stylesheet"-->
+<!--      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"-->
+<!--  />-->
   <div class="home-page" :style="homePageStyle">
     <!-- 导航栏 -->
     <nav class="navbar">
@@ -15,10 +15,12 @@
           <img src="@/assets/avatar-modified.png" alt="用户头像" />
         </div>
         <!-- 退出登录按钮 -->
+
         <button class="logout-button" @click="handleLogout">
+          <font-awesome-icon :icon="['fas', 'sign-out-alt']" size="1x" />
           退出登录
-          <i class="fas fa-sign-in-alt"></i> <!-- 关闭图标 -->
         </button>
+
       </div>
     </nav>
 
@@ -29,7 +31,8 @@
         <div class="sidebar-header">
           <span v-if="!isSidebarCollapsed">功能菜单</span>
           <button class="collapse-button" @click="toggleSidebar">
-            <i :class="isSidebarCollapsed ? 'fas fa-angle-double-right' : 'fas fa-angle-double-left'"></i>
+<!--            <i :class="isSidebarCollapsed ? 'fas fa-angle-double-right' : 'fas fa-angle-double-left'"></i>-->
+            <font-awesome-icon :icon="isSidebarCollapsed ? ['fas', 'angle-double-right'] : ['fas', 'angle-double-left']"/>
           </button>
         </div>
         <ul class="sidebar-menu">
@@ -37,7 +40,9 @@
           <li>
             <div class="menu-item" @click="toggleMenu('user')">
               <span>
-                <i class="fas fa-users"></i>
+<!--                <i class="fas fa-users"></i>-->
+                <font-awesome-icon :icon="['fas', 'user'] " size="1x"></font-awesome-icon>
+
                 <span v-if="!isSidebarCollapsed">用户管理</span>
               </span>
               <span v-if="!isSidebarCollapsed" class="arrow">
@@ -124,6 +129,9 @@
               </li>
             </ul>
           </li>
+
+
+
         </ul>
       </div>
 
@@ -136,17 +144,50 @@
           <div class="grid-item-container">
             <div class="grid-item-small">
 
-                <i class="fas fa-hospital fa-2x"></i> &nbsp;&nbsp;
+<!--                <i class="fas fa-hospital fa-2x"></i> &nbsp;&nbsp;-->
+              <font-awesome-icon :icon="['fas', 'hospital'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
+              <div style="display: flex; flex-direction: column; align-items: center;  ">
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">医院总数</span>
+                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ celanCount.hospital }} </span>
+              </div>
 
-              {{ hospitalCount }}</div>
+            </div>
 
-            <div class="grid-item-small">{{ hospitalCount }}</div>
+            <div class="grid-item-small" >
+              <font-awesome-icon :icon="['fas', 'store'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
 
-            <div class="grid-item-small">{{ hospitalCount }}</div>
+              <div style="display: flex; flex-direction: column; align-items: center;  ">
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">药店总数</span>
+                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ celanCount.pharmacy }} </span>
+              </div>
 
-            <div class="grid-item-small">{{ hospitalCount }}</div>
+            </div>
 
-            <div class="grid-item-small">{{ hospitalCount }}</div>
+            <div class="grid-item-small">
+              <font-awesome-icon :icon="['fas', 'university'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
+              <div style="display: flex; flex-direction: column; align-items: center;  ">
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">商业总数</span>
+                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ celanCount.business }} </span>
+              </div>
+            </div>
+
+            <div class="grid-item-small">
+              <font-awesome-icon :icon="['fas', 'trash'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
+              <div style="display: flex; flex-direction: column; align-items: center;  ">
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">周清洗总数</span>
+                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ celanCount.week_clean_count }} </span>
+              </div>
+            </div>
+
+            <div class="grid-item-small">
+              <font-awesome-icon :icon="['fas', 'clock'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
+              <div style="display: flex; flex-direction: column; align-items: center;  ">
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">待清洗总数</span>
+                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ celanCount.uncleaned_count }} </span>
+              </div>
+
+
+            </div>
           </div>
 
 
@@ -154,10 +195,8 @@
           <!-- 第二行：合并 4、5、6 格，并分为两个格子 -->
           <div class="grid-item grid-item-4-6">
             <div class="sub-grid-item">
-
               <!-- 引入并使用 BarChart 柱状图组件 -->
               <BarChart />
-
             </div>
             <div class="sub-grid-item">
               <!-- 引入并使用 BarChart 饼图组件 -->
@@ -166,8 +205,15 @@
           </div>
           <!-- 第三行：合并 7、8、9 格，并分为两个格子 -->
           <div class="grid-item grid-item-7-9">
-            <div class="sub-grid-item">7-8</div>
-            <div class="sub-grid-item">9</div>
+            <div class="sub-grid-item">
+              <!-- 引入并使用 LineChart 折线图组件 -->
+              <RosePieChart />
+            </div>
+
+            <div class="sub-grid-item">
+              <LineChart />
+            </div>
+
           </div>
         </div>
       </div>
@@ -183,12 +229,14 @@
 <script>
 import BarChart from '@/components/homechart/BarChart.vue';
 import PieChart from '@/components/homechart/PieChart.vue';
+import LineChart from '@/components/homechart/LineChart.vue';
+import RosePieChart from '@/components/homechart/RosePieChart.vue';
 import axios from 'axios'; // 引入axios用于可能的后端退出请求
 
 export default {
   // 显示柱状图组件: BarChart,
   // 显示饼图组件: PieChart,
-  components: { BarChart,PieChart },
+  components: { BarChart,PieChart,LineChart,RosePieChart },
 
   data() {
     return {
@@ -204,7 +252,7 @@ export default {
       homePageStyle: {
         background: 'linear-gradient(135deg, #e3d2ff, #e3d2ff)',
       },
-      hospitalCount: '总数1000'
+      celanCount: data
     };
   },
 
@@ -220,7 +268,7 @@ export default {
     async handleLogout() {
       try {
         // 可选：调用后端退出接口
-        await axios.post('/api/auth/logout', null, {
+        await axios.post('/api/user/logout', null, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -244,7 +292,7 @@ export default {
               timestamp: new Date().getTime() // 防止缓存
             }
           }).catch(() => {});
-        }, 1000);
+        }, 400);
       }
     },
 
@@ -278,6 +326,16 @@ export default {
     },
   }
 };
+
+// 模拟请求数据
+ const data ={
+  "hospital": 1200,
+  "pharmacy": 2000,
+  "business": 1000,
+   "week_clean_count":2000,
+   "uncleaned_count":100
+}
+
 </script>
 
 <style scoped>

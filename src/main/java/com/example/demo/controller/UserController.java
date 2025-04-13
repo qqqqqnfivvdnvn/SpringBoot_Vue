@@ -16,11 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+
 
 
 @RestController
@@ -109,10 +108,11 @@ public class UserController {
             return "更新条数" + i;
         } else {
             return "更新条数" + i;
+
         }
     }
 
-    @GetMapping("/users")
+    @GetMapping("/pageuser")
     public List<User> getUsers(
             @RequestParam String name,
             @RequestParam int offset,
