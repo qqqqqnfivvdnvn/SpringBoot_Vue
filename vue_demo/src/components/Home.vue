@@ -147,8 +147,8 @@
 <!--                <i class="fas fa-hospital fa-2x"></i> &nbsp;&nbsp;-->
               <font-awesome-icon :icon="['fas', 'hospital'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
               <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">医院总数</span>
-                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ celanCount.hospital }} </span>
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">医院</span>
+                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ cleanCount.hospitalCount }} </span>
               </div>
 
             </div>
@@ -157,8 +157,8 @@
               <font-awesome-icon :icon="['fas', 'store'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
 
               <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">药店总数</span>
-                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ celanCount.pharmacy }} </span>
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">药店</span>
+                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ cleanCount.drugstoreCount }} </span>
               </div>
 
             </div>
@@ -166,24 +166,24 @@
             <div class="grid-item-small">
               <font-awesome-icon :icon="['fas', 'university'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
               <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">商业总数</span>
-                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ celanCount.business }} </span>
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">商业</span>
+                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{  cleanCount.companyCount }} </span>
               </div>
             </div>
 
             <div class="grid-item-small">
               <font-awesome-icon :icon="['fas', 'trash'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
               <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">周清洗总数</span>
-                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ celanCount.week_clean_count }} </span>
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">申诉待处理</span>
+                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{  cleanCount.unappealingCount }} </span>
               </div>
             </div>
 
             <div class="grid-item-small">
               <font-awesome-icon :icon="['fas', 'clock'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
               <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">待清洗总数</span>
-                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ celanCount.uncleaned_count }} </span>
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">待清洗</span>
+                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{  cleanCount.uncleanedCount }} </span>
               </div>
 
 
@@ -252,9 +252,32 @@ export default {
       homePageStyle: {
         background: 'linear-gradient(135deg, #e3d2ff, #e3d2ff)',
       },
-      celanCount: data
+      cleanCount:{
+        uncleanedCount: 0,
+        unappealingCount: 0,
+        companyCount: 0,
+        hospitalCount: 0,
+        drugstoreCount: 0
+      }
+
     };
   },
+
+  async created() {
+    try {
+      const response = await axios.post('/api/homeData/getHomeData');
+
+      if (response.data.code === 200) {
+        this.cleanCount = response.data;
+      } else {
+        console.error('获取数据失败:', response.data.msg);
+      }
+
+    } catch (error) {
+      console.error('获取数据失败:', error);
+    }
+  },
+
 
   methods: {
     toggleMenu(menu) {
@@ -266,7 +289,10 @@ export default {
     },
 
     async handleLogout() {
+
+
       try {
+
         // 可选：调用后端退出接口
         await axios.post('/api/user/logout', null, {
           headers: {
@@ -324,17 +350,14 @@ export default {
           ? ''
           : 'linear-gradient(135deg, #e3d2ff, #e3d2ff)';
     },
-  }
+
+  },
+
 };
 
-// 模拟请求数据
- const data ={
-  "hospital": 1200,
-  "pharmacy": 2000,
-  "business": 1000,
-   "week_clean_count":2000,
-   "uncleaned_count":100
-}
+
+
+
 
 </script>
 
