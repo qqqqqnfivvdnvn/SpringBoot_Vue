@@ -19,16 +19,34 @@ onMounted(async () => {
     devicePixelRatio: window.devicePixelRatio > 1 ? 2 : 1
   });
 
-  try {
+
     // 从后端获取数据
-    // const response = await axios.get('/api/data'); // 替换为你的后端 API 地址
-    // const data = response.data;
-    const data ={
-      "dates": ["一号", "二号", "三号", "四号", "五号", "六号", "七号"],
-      "hospital": [30, 40, 50, 23, 30, 40, 88],
-      "pharmacy": [20, 30, 40, 50, 40, 66, 77],
-      "business": [10, 20, 30, 45, 69, 90, 100]
-    }
+  const response = await axios.post('/api/homeData/getBarData'); // 替换为你的后端 API 地址
+
+  let formattedData;
+
+  try {
+      if (response.data.code === 200) {
+        // 提取数据
+      const backendData = response.data.data; // 获取嵌套的data
+        // 构建前端需要的数据格式
+       formattedData = {
+          dates: backendData.dates,
+          hospital: backendData.hospital,
+          drugstore: backendData.drugstore, // 使用后端返回的drugstore字段
+          company: backendData.company
+        };
+
+      } else {
+        console.error('Failed to fetch data:', response.data.msg);
+      }
+
+    // const data ={
+    //   "dates": ["一号", "二号", "三号", "四号", "五号", "六号", "七号"],
+    //   "hospital": [30, 40, 50, 23, 30, 40, 88],
+    //   "drugstore": [20, 30, 40, 50, 40, 66, 77],
+    //   "company": [10, 20, 30, 45, 69, 90, 100]
+    // }
 
     // ECharts 配置项
     const option = {
@@ -71,7 +89,7 @@ onMounted(async () => {
       xAxis: {
         type: 'category',
 
-        data: data.dates, // 从后端获取的日期数据
+        data: formattedData.dates, // 从后端获取的日期数据
         axisLine: {
           lineStyle: {
             color: '#E0E0E0', // x 轴线颜色
@@ -104,7 +122,7 @@ onMounted(async () => {
         {
           name: '医院',
           type: 'bar',
-          data: data.hospital, // 从后端获取的医院数据
+          data:  formattedData.hospital, // 从后端获取的医院数据
           itemStyle: {
             color: '#6da1e4', // 浅蓝色
             barBorderRadius: [5, 5, 0, 0], // 顶部圆角
@@ -113,7 +131,7 @@ onMounted(async () => {
         {
           name: '药店',
           type: 'bar',
-          data: data.pharmacy, // 从后端获取的药店数据
+          data: formattedData.drugstore, // 从后端获取的药店数据
           itemStyle: {
             color: '#40b786', // 浅绿色
             barBorderRadius: [5, 5, 0, 0], // 顶部圆角
@@ -122,7 +140,7 @@ onMounted(async () => {
         {
           name: '商业',
           type: 'bar',
-          data: data.business, // 从后端获取的商业数据
+          data: formattedData.company, // 从后端获取的商业数据
           itemStyle: {
             color: '#f9a200', // 浅橙色
             barBorderRadius: [5, 5, 0, 0], // 顶部圆角

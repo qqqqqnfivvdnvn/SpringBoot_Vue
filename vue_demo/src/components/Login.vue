@@ -75,7 +75,7 @@ export default {
           password: this.password
         });
 
-        if (response.data.code === '200') {
+        if (response.data.code === 200) {
           // 存储token和用户信息
           localStorage.setItem('token', response.data.data.token);
           localStorage.setItem('user', JSON.stringify(response.data.data.user));
@@ -89,10 +89,8 @@ export default {
             this.$router.push(redirectPath);
           }, 400);
 
-        } else if (response.data.code === '300') {
-          this.showToastMessage(response.data.message || '用户名不存在！');
-        } else if (response.data.code === '301') {
-          this.showToastMessage(response.data.message || '密码错误！');
+        } else if (response.data.code === 500) {
+          this.showToastMessage(response.data.message );
         }
       } catch (error) {
         console.log(error);

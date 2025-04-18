@@ -1,14 +1,17 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.Message;
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.service.impl.HomeDataService;
-import com.example.demo.vo.DataDetails;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.demo.vo.BarData;
+import com.example.demo.vo.DetailsData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
+import java.util.Map;
 
 @Controller
 
@@ -21,9 +24,13 @@ public class HomeDataController {
 
 
     @PostMapping("/getHomeData")
-    public ResponseEntity<DataDetails> getDataCount() throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<DetailsData>> getDataCount() {
         return ResponseEntity.ok(homeDataService.getDataDetails());
     }
 
+    @PostMapping("/getBarData")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getBarData() {
+        return ResponseEntity.ok(homeDataService.getBarData());
+    }
 
 }

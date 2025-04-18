@@ -266,9 +266,8 @@ export default {
   async created() {
     try {
       const response = await axios.post('/api/homeData/getHomeData');
-
       if (response.data.code === 200) {
-        this.cleanCount = response.data;
+        this.cleanCount = response.data.data;
       } else {
         console.error('获取数据失败:', response.data.msg);
       }

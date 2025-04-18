@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.Message;
-import com.example.demo.dto.ResponseData;
+import com.example.demo.dto.ApiResponse;
+import com.example.demo.vo.UserLoginData;
 import com.example.demo.entity.User;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.service.impl.UserService;
@@ -27,66 +27,57 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Message login(User user) {
-        User search_user = userMapper.findByName(user.getUsername());
-        Message message = new Message();
-        ResponseData responseData = new ResponseData();
-        // 判断用户名是否存在
-        if (search_user == null) {
-            message.setCode("300");
-            message.setMessage("用户名不存在，请先注册！");
-        } else if (!search_user.getPassword().equals(user.getPassword())) {
-            message.setCode("301");
-            message.setMessage("密码错误！");
-        } else {
-            message.setCode("200");
-            message.setMessage("登录成功！");
-            // 生成token
-            String token = UUID.randomUUID().toString().replace("-", "");
-            responseData.setToken(token);
-            responseData.setUsername(search_user.getUsername());
-            responseData.setUserid(search_user.getId());
-            message.setData(responseData);
+    public ApiResponse<UserLoginData> login(User user) {
+        User searchUser = userMapper.findByName(user.getUsername());
 
+        UserLoginData responseData = new UserLoginData();
+
+        // 判断用户名是否存在
+        if (searchUser == null) {
+            return ApiResponse.error("用户名不存在！");
         }
-        return message;
+
+        if (!searchUser.getPassword().equals(user.getPassword())) {
+            return ApiResponse.error("密码错误！");
+        }
+
+        // 生成token
+        String token = UUID.randomUUID().toString().replace("-", "");
+        responseData.setToken(token);
+        responseData.setUsername(searchUser.getUsername());
+        responseData.setUserid(searchUser.getId());
+        ApiResponse.success(responseData);
+
+
+        return ApiResponse.success(responseData);
 
     }
 
     @Override
-    public Message findByName(User user) {
-        User ku_user = userMapper.findByName(user.getUsername());
-        Message message = new Message();
+    public ApiResponse<User> findByName(User user) {
+        User kuUser = userMapper.findByName(user.getUsername());
 
         // 判断用户名是否已被注册
-        if (ku_user!=null) {
-            message.setCode("300");
-            message.setMessage("该用户名已被注册！");
-            return message;
-        }else {
-            UUID uuid = UUID.randomUUID();
-            user.setId(uuid.toString().replace("-", ""));
-            LocalDateTime now = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-            // 格式化当前时间
-            String formattedTime = now.format(formatter);
-            user.setAddtime(formattedTime);
-            int i = userMapper.insert(user);
-            if (i == 0) {
-                message.setCode("500");
-                message.setMessage("注册失败！");
-                return message;
-            } else {
-                message.setCode("200");
-                message.setMessage("注册成功！");
-                return message;
-            }
+        if (kuUser != null) {
+            return ApiResponse.error("该用户名已被注册!");
+        }
+        // 注册成功
+        UUID uuid = UUID.randomUUID();
+        user.setId(uuid.toString().replace("-", ""));
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        // 格式化当前时间
+        String formattedTime = now.format(formatter);
+        user.setAddtime(formattedTime);
+
+        int i = userMapper.insert(user);
+        if (i == 0) {
+            return ApiResponse.error("注册失败！");
+        } else {
+            return ApiResponse.success(user);
         }
 
-
     }
-
-
 
     @Override
     public int delete(String id) {

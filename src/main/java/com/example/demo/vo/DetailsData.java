@@ -3,9 +3,7 @@ package com.example.demo.vo;
 import lombok.Data;
 
 @Data
-public class DataDetails {
-    private int code;
-    private String msg;
+public class DetailsData {
     private int uncleanedCount;
     private int unappealingCount;
     private int companyCount;

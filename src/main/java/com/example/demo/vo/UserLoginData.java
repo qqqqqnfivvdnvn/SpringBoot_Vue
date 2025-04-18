@@ -1,9 +1,9 @@
-package com.example.demo.dto;
+package com.example.demo.vo;
 
 import lombok.Data;
 
 @Data
-public class ResponseData {
+public class UserLoginData  {
     private String userid;
     private String username;
     private String token;

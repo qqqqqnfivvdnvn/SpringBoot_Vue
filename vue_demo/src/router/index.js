@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Register from '@/components/Register.vue';
 import Login from '@/components/Login.vue';
 import Home from '@/components/Home.vue';
+import BarData from '@/components/homechart/BarChart.vue';
 
 const routes = [
     {
@@ -23,6 +24,12 @@ const routes = [
         path: '/home',
         name: 'Home',
         component: Home,
+        meta: { requiresAuth: true } // 需要登录才能访问
+    },
+    {
+        path: '/getHomeData',
+        name: 'getHomeData',
+        component: BarData,
         meta: { requiresAuth: true } // 需要登录才能访问
     }
 ];

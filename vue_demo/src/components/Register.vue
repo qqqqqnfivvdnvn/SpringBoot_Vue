@@ -84,18 +84,15 @@ export default {
           password: this.password
         });
         // 根据后端返回的 code 判断是否成功
-        if (response.data.code === '200') {
+        if (response.data.code === 200) {
           this.showToastMessage(response.data.message || '注册成功!'); // 显示成功提示
           // 延迟 1 秒后跳转到登录页面
           setTimeout(() => {
             this.$router.push('/login');
-          }, 2000); // 1000 毫秒 = 1 秒
-        } else if (response.data.code === '300') {
-          // 注册失败，显示后端返回的错误信息
-          this.showToastMessage(response.data.message || '该用户名已被注册！');
+          }, 500); // 1000 毫秒 = 1 秒
         }
         else {
-          this.showToastMessage(response.data.message || '注册失败！' );
+          this.showToastMessage(response.data.message  );
         }
       } catch (error) {
         if (error.response) {
