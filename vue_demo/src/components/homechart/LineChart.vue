@@ -8,7 +8,7 @@ import * as echarts from 'echarts';
 
 const chart = ref(null);
 
-onMounted(() => {
+onMounted(async() => {
   const myChart = echarts.init(chart.value, null, {
     renderer: 'svg',
     devicePixelRatio: window.devicePixelRatio > 1 ? 2 : 1

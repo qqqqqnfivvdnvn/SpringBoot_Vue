@@ -3,26 +3,23 @@ package com.example.demo.mapper;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.example.demo.vo.BarData;
 import com.example.demo.vo.DetailsData;
+import com.example.demo.vo.PieData;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
 @Mapper
 @DS("slave_pg")
 public interface HomeDataMapper {
-    @Select("SELECT " +
-            "(SELECT count(*) from origin_data WHERE batch_code in " +
-            "(SELECT batch_code from data_batch WHERE status=1)) as uncleanedcount, " +
-            "(SELECT count(*) from data_result WHERE feedback_type='1' and (status is null or status='1')) as unappealingcount, " +
-            "(SELECT count(*) from base_org_company WHERE status in (1,3,4)) as companyCount, " +
-            "(SELECT count(*) from base_org_hos_clean WHERE status in (1,3,4)) as hospitalCount, " +
-            "(SELECT count(*) from base_org_drug_store WHERE status in (1,3,4)) as drugstorecount")
 
     public DetailsData getHomeData();
 
 //    获取折现图数据
     public List<BarData> getBarData();
 
+    //实现饼图的数据方法
+    public   List<PieData> getPieData();
 
+    //实现玫瑰饼图的数据方法
+    public   List<PieData> getRosePieData();
 }

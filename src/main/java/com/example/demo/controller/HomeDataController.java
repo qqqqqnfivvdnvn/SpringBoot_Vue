@@ -4,6 +4,7 @@ import com.example.demo.dto.ApiResponse;
 import com.example.demo.service.impl.HomeDataService;
 import com.example.demo.vo.BarData;
 import com.example.demo.vo.DetailsData;
+import com.example.demo.vo.PieData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,18 @@ public class HomeDataController {
     @PostMapping("/getBarData")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getBarData() {
         return ResponseEntity.ok(homeDataService.getBarData());
+    }
+
+    @PostMapping("/getPieData")
+    public ResponseEntity<ApiResponse<List<PieData>>> getPieData() {
+        return ResponseEntity.ok(homeDataService.getPieData());
+
+    }
+
+    @PostMapping("/getRosePieData")
+    public ResponseEntity<ApiResponse<List<PieData>>> getRosePieData() {
+        return ResponseEntity.ok(homeDataService.getRosePieData());
+
     }
 
 }

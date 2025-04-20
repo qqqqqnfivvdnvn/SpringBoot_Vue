@@ -5,20 +5,37 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import * as echarts from 'echarts';
+import axios from "axios";
 
 const chart = ref(null);
 
-onMounted(() => {
+onMounted(async() => {
   const myChart = echarts.init(chart.value, null, {
     renderer: 'svg',
     devicePixelRatio: window.devicePixelRatio > 1 ? 2 : 1
   });
 
-  const baseData = [
-    { value: 335, name: '医院' },
-    { value: 310, name: '药店' },
-    { value: 234, name: '商业' }
-  ];
+  const response = await axios.post('/api/homeData/getPieData'); // 替换为你的后端 API 地址
+  let baseData;
+  try {
+    if (response.data.code === 200){
+      // 2. 强制转换数值类型
+       baseData = response.data.data.map(item => ({
+        name: item.name,
+        value: Number(item.value) || 0 // 确保为数字
+      }));
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  // const baseData0 = [
+  //   { value: 335, name: '医院' },
+  //   { value: 310, name: '药店' },
+  //   { value: 234, name: '商业' }
+  // ];
+
+
 
   const colorMap = {
     '医院': '#6da1e4',

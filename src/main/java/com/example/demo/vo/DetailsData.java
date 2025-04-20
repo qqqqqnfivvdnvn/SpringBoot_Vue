@@ -9,5 +9,4 @@ public class DetailsData {
     private int companyCount;
     private int hospitalCount;
     private int drugstoreCount;
-
 }

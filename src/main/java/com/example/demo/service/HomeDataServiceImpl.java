@@ -5,6 +5,7 @@ import com.example.demo.mapper.HomeDataMapper;
 import com.example.demo.service.impl.HomeDataService;
 import com.example.demo.vo.BarData;
 import com.example.demo.vo.DetailsData;
+import com.example.demo.vo.PieData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,4 +59,20 @@ public class HomeDataServiceImpl implements HomeDataService {
 
         return ApiResponse.success(result);
     }
+
+    @Override
+    public ApiResponse<List<PieData>> getPieData() {
+
+        return ApiResponse.success(homeDataMapper.getPieData());
+
+    }
+
+    @Override
+    public ApiResponse<List<PieData>> getRosePieData() {
+
+        return ApiResponse.success(homeDataMapper.getRosePieData());
+
+    }
+
+
 }
