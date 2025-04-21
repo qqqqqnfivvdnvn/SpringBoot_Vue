@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dto.ApiResponse;
 import com.example.demo.mapper.HomeDataMapper;
 import com.example.demo.service.impl.HomeDataService;
+import com.example.demo.vo.AppealUpdateData;
 import com.example.demo.vo.BarData;
 import com.example.demo.vo.DetailsData;
 import com.example.demo.vo.PieData;
@@ -32,46 +33,27 @@ public class HomeDataServiceImpl implements HomeDataService {
     }
 
     @Override
-    public ApiResponse<Map<String, Object>> getBarData() {
-        List<BarData> barDataList = homeDataMapper.getBarData();
-        Map<String, Object> result = new HashMap<>();
-
-        List<String> dates = barDataList.stream()
-                .map(BarData::getDay)
-                .toList();
-
-        List<Integer> hospital = barDataList.stream()
-                .map(BarData::getHosCount)
-                .toList();
-
-        List<Integer> drugstore = barDataList.stream()
-                .map(BarData::getDrugstoreCount)
-                .toList();
-
-        List<Integer> company = barDataList.stream()
-                .map(BarData::getCompanyCount)
-                .toList();
-
-        result.put("dates", dates);
-        result.put("hospital", hospital);
-        result.put("drugstore", drugstore);
-        result.put("company", company);
-
-        return ApiResponse.success(result);
+    public ApiResponse<List<BarData>> getCleanBarData() {
+        return ApiResponse.success(homeDataMapper.getCleanBarData());
     }
 
     @Override
-    public ApiResponse<List<PieData>> getPieData() {
+    public ApiResponse<List<PieData>> getMainPieData() {
 
-        return ApiResponse.success(homeDataMapper.getPieData());
+        return ApiResponse.success(homeDataMapper.getMainPieData());
 
     }
 
     @Override
-    public ApiResponse<List<PieData>> getRosePieData() {
+    public ApiResponse<List<PieData>> getBranchBarData() {
 
-        return ApiResponse.success(homeDataMapper.getRosePieData());
+        return ApiResponse.success(homeDataMapper.getBranchBarData());
 
+    }
+
+    @Override
+    public ApiResponse<List<AppealUpdateData>> getAppealUpdateData() {
+        return ApiResponse.success(homeDataMapper.getAppealUpdateData());
     }
 
 

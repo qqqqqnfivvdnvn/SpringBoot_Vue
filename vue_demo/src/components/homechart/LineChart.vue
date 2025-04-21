@@ -5,6 +5,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import * as echarts from 'echarts';
+import axios from "axios";
 
 const chart = ref(null);
 
@@ -14,11 +15,22 @@ onMounted(async() => {
     devicePixelRatio: window.devicePixelRatio > 1 ? 2 : 1
   });
 
-  // 模拟数据
-  const data = {
-    "dates": ["一号", "二号", "三号", "四号", "五号", "六号", "七号"],
-    "update": [45, 52, 38, 65, 49, 72, 60],  // 更新数据
-    "appeal": [15, 22, 28, 35, 29, 42, 30]   // 申诉数据
+  const response = await axios.post('/api/homeData/getAppealUpdateData'); // 替换为你的后端 API 地址
+  let data;
+  try {
+    if (response.data.code === 200){
+      const dates = response.data.data.map(item => item.day);
+      const appeal = response.data.data.map(item => item.appealCount);
+      const update = response.data.data.map(item => item.updateCount);
+
+      data = {
+        dates: dates,
+        appeal: appeal,
+        update: update
+      };
+    }
+  } catch (error) {
+    console.error(error);
   }
 
   // ECharts 配置项
@@ -78,7 +90,7 @@ onMounted(async() => {
     },
     yAxis: {
       type: 'value',
-      name: '条数',
+      // name: '条数',
       axisLine: {
         lineStyle: {
           color: '#000000',

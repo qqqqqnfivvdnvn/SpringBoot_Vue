@@ -2,7 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Register from '@/components/Register.vue';
 import Login from '@/components/Login.vue';
 import Home from '@/components/Home.vue';
-import BarData from '@/components/homechart/BarChart.vue';
+import BarData from '@/components/homechart/CleanBarChart.vue';
+import MainData from '@/components/homechart/MainDataPieChart.vue';
+import BranchBar from '@/components/homechart/BranchBarChart.vue';
 
 const routes = [
     {
@@ -27,9 +29,22 @@ const routes = [
         meta: { requiresAuth: true } // 需要登录才能访问
     },
     {
-        path: '/getHomeData',
-        name: 'getHomeData',
+        path: '/getCleanBarData',
+        name: 'getCleanBarData',
         component: BarData,
+        meta: { requiresAuth: true } // 需要登录才能访问
+    }
+    ,
+    {
+        path: '/getMainPieData',
+        name: 'getMainPieData',
+        component: MainData,
+        meta: {requiresAuth: true} // 需要登录才能访问
+    },
+    {
+        path: '/getBranchBarData',
+        name: 'getBranchBarData',
+        component: BranchBar,
         meta: { requiresAuth: true } // 需要登录才能访问
     }
 ];

@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ApiResponse;
 import com.example.demo.service.impl.HomeDataService;
+import com.example.demo.vo.AppealUpdateData;
 import com.example.demo.vo.BarData;
 import com.example.demo.vo.DetailsData;
 import com.example.demo.vo.PieData;
@@ -29,20 +30,26 @@ public class HomeDataController {
         return ResponseEntity.ok(homeDataService.getDataDetails());
     }
 
-    @PostMapping("/getBarData")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> getBarData() {
-        return ResponseEntity.ok(homeDataService.getBarData());
+    @PostMapping("/getCleanBarData")
+    public ResponseEntity<ApiResponse<List<BarData>>> getCleanBarData() {
+        return ResponseEntity.ok(homeDataService.getCleanBarData());
     }
 
-    @PostMapping("/getPieData")
-    public ResponseEntity<ApiResponse<List<PieData>>> getPieData() {
-        return ResponseEntity.ok(homeDataService.getPieData());
+    @PostMapping("/getMainPieData")
+    public ResponseEntity<ApiResponse<List<PieData>>> getMainPieData() {
+        return ResponseEntity.ok(homeDataService.getMainPieData());
 
     }
 
-    @PostMapping("/getRosePieData")
-    public ResponseEntity<ApiResponse<List<PieData>>> getRosePieData() {
-        return ResponseEntity.ok(homeDataService.getRosePieData());
+    @PostMapping("/getBranchBarData")
+    public ResponseEntity<ApiResponse<List<PieData>>> getBranchBarData() {
+        return ResponseEntity.ok(homeDataService.getBranchBarData());
+
+    }
+
+    @PostMapping("/getAppealUpdateData")
+    public ResponseEntity<ApiResponse<List<AppealUpdateData>>> getAppealUpdateData() {
+        return ResponseEntity.ok(homeDataService.getAppealUpdateData());
 
     }
 

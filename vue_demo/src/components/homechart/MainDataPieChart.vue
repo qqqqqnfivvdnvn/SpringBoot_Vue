@@ -15,7 +15,7 @@ onMounted(async() => {
     devicePixelRatio: window.devicePixelRatio > 1 ? 2 : 1
   });
 
-  const response = await axios.post('/api/homeData/getPieData'); // 替换为你的后端 API 地址
+  const response = await axios.post('/api/homeData/getMainPieData'); // 替换为你的后端 API 地址
   let baseData;
   try {
     if (response.data.code === 200){
@@ -28,12 +28,6 @@ onMounted(async() => {
   } catch (error) {
     console.error(error);
   }
-
-  // const baseData0 = [
-  //   { value: 335, name: '医院' },
-  //   { value: 310, name: '药店' },
-  //   { value: 234, name: '商业' }
-  // ];
 
 
 

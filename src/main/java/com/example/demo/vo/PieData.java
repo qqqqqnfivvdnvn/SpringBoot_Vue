@@ -6,5 +6,4 @@ import lombok.Data;
 public class PieData {
     private String name;
     private int value;
-
 }

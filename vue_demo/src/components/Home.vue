@@ -147,7 +147,7 @@
 <!--                <i class="fas fa-hospital fa-2x"></i> &nbsp;&nbsp;-->
               <font-awesome-icon :icon="['fas', 'hospital'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
               <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">医院</span>
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">医院周清洗</span>
                 <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ cleanCount.hospitalCount }} </span>
               </div>
 
@@ -157,7 +157,7 @@
               <font-awesome-icon :icon="['fas', 'store'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
 
               <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">药店</span>
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">药店周清洗</span>
                 <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ cleanCount.drugstoreCount }} </span>
               </div>
 
@@ -166,7 +166,7 @@
             <div class="grid-item-small">
               <font-awesome-icon :icon="['fas', 'university'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
               <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">商业</span>
+                <span style="font-weight: bold;font-size: 24px;color:#000000 ">商业周清洗</span>
                 <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{  cleanCount.companyCount }} </span>
               </div>
             </div>
@@ -189,7 +189,6 @@
 
             </div>
           </div>
-
 
 
           <!-- 第二行：合并 4、5、6 格，并分为两个格子 -->
@@ -227,10 +226,10 @@
 </template>
 
 <script>
-import BarChart from '@/components/homechart/BarChart.vue';
-import PieChart from '@/components/homechart/PieChart.vue';
+import BarChart from '@/components/homechart/CleanBarChart.vue';
+import PieChart from '@/components/homechart/MainDataPieChart.vue';
 import LineChart from '@/components/homechart/LineChart.vue';
-import RosePieChart from '@/components/homechart/RosePieChart.vue';
+import RosePieChart from '@/components/homechart/BranchBarChart.vue';
 import axios from 'axios'; // 引入axios用于可能的后端退出请求
 
 export default {

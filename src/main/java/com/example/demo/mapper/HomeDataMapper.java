@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.example.demo.vo.AppealUpdateData;
 import com.example.demo.vo.BarData;
 import com.example.demo.vo.DetailsData;
 import com.example.demo.vo.PieData;
@@ -14,12 +15,16 @@ public interface HomeDataMapper {
 
     public DetailsData getHomeData();
 
-//    获取折现图数据
-    public List<BarData> getBarData();
+//    获取柱状图数据
+    public List<BarData> getCleanBarData();
 
     //实现饼图的数据方法
-    public   List<PieData> getPieData();
+    public   List<PieData> getMainPieData();
 
     //实现玫瑰饼图的数据方法
-    public   List<PieData> getRosePieData();
+    public   List<PieData> getBranchBarData();
+
+    //实现折线图的数据方法
+    public   List<AppealUpdateData> getAppealUpdateData();
+
 }

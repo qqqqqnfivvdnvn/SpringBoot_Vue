@@ -21,7 +21,7 @@ onMounted(async () => {
 
 
     // 从后端获取数据
-  const response = await axios.post('/api/homeData/getBarData'); // 替换为你的后端 API 地址
+  const response = await axios.post('/api/homeData/getCleanBarData'); // 替换为你的后端 API 地址
 
   let formattedData;
 
@@ -29,12 +29,17 @@ onMounted(async () => {
       if (response.data.code === 200) {
         // 提取数据
       const backendData = response.data.data; // 获取嵌套的data
+        const dates = response.data.data.map(item => item.day);
+        const companyCount = response.data.data.map(item => item.companyCount);
+        const drugstoreCount = response.data.data.map(item => item.drugstoreCount);
+        const hosCount = response.data.data.map(item => item.hosCount);
+
         // 构建前端需要的数据格式
        formattedData = {
-          dates: backendData.dates,
-          hospital: backendData.hospital,
-          drugstore: backendData.drugstore, // 使用后端返回的drugstore字段
-          company: backendData.company
+          dates: dates,
+          hospital: companyCount,
+          drugstore: drugstoreCount,
+          company: hosCount
         };
 
       } else {
@@ -102,7 +107,7 @@ onMounted(async () => {
       },
       yAxis: {
         type: 'value',
-        name: '条数',
+        // name: '条数',
         axisLine: {
           lineStyle: {
             color: '#000000', // y 轴线颜色
@@ -125,7 +130,7 @@ onMounted(async () => {
           data:  formattedData.hospital, // 从后端获取的医院数据
           itemStyle: {
             color: '#6da1e4', // 浅蓝色
-            barBorderRadius: [5, 5, 0, 0], // 顶部圆角
+            borderRadius: [5, 5, 0, 0], // 顶部圆角
           },
         },
         {
@@ -134,7 +139,7 @@ onMounted(async () => {
           data: formattedData.drugstore, // 从后端获取的药店数据
           itemStyle: {
             color: '#40b786', // 浅绿色
-            barBorderRadius: [5, 5, 0, 0], // 顶部圆角
+            borderRadius: [5, 5, 0, 0], // 顶部圆角
           },
         },
         {
@@ -143,7 +148,7 @@ onMounted(async () => {
           data: formattedData.company, // 从后端获取的商业数据
           itemStyle: {
             color: '#f9a200', // 浅橙色
-            barBorderRadius: [5, 5, 0, 0], // 顶部圆角
+            borderRadius: [5, 5, 0, 0], // 顶部圆角
           },
         },
       ],
