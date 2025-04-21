@@ -78,8 +78,6 @@
         SELECT '总分店编码待补充' name,count(*) as value from drug_store_haosen_demo_hscode WHERE  main_branch_kid is not null and main_branch is null
         UNION all
         SELECT '总分院编码待补充' name,count(*) as value from hos_clean_haosen_demo_hscode  WHERE   general_branch_kid is not null and general_branch is null
-        UNION all
-        SELECT '申诉数据待处理' name,count(*) as value from data_result WHERE  feedback_type='1'  and  ( status is   null or status='1')
         ]]>
     </select>
 

@@ -30,8 +30,7 @@ onMounted(async() => {
 
   const colorMap = {
     '总分店编码待补充': '#6da1e4',
-    '总分院编码待补充': '#f9a200',
-    '申诉数据待处理': '#40b786',
+    '总分院编码待补充': '#f9a200'
   };
 
   const option = {
@@ -115,7 +114,7 @@ onMounted(async() => {
           color: colorMap[item.name] || '#6da1e4'
         }
       })),
-      barWidth: '30%',
+      barWidth: '20%',
       itemStyle: {
         borderRadius: [5, 5, 0, 0],
         borderColor: '#fff',
