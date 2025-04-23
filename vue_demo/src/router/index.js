@@ -5,6 +5,7 @@ import Home from '@/components/Home.vue';
 import BarData from '@/components/homechart/CleanBarChart.vue';
 import MainData from '@/components/homechart/MainDataPieChart.vue';
 import BranchBar from '@/components/homechart/BranchBarChart.vue';
+import HospitalData from '@/components/homeview/HospitalDataView.vue';
 
 const routes = [
     {
@@ -45,6 +46,12 @@ const routes = [
         path: '/getBranchBarData',
         name: 'getBranchBarData',
         component: BranchBar,
+        meta: { requiresAuth: true } // 需要登录才能访问
+    },
+    {
+        path: '/getHospitalData',
+        name: 'getHospitalData',
+        component: HospitalData,
         meta: { requiresAuth: true } // 需要登录才能访问
     }
 ];

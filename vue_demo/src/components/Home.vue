@@ -41,9 +41,9 @@
             <div class="menu-item" @click="toggleMenu('user')">
               <span>
 <!--                <i class="fas fa-users"></i>-->
-                <font-awesome-icon :icon="['fas', 'user'] " size="1x"></font-awesome-icon>
+                <font-awesome-icon :icon="['fas', 'fa-th-list'] " size="1x"></font-awesome-icon>
 
-                <span v-if="!isSidebarCollapsed">用户管理</span>
+                <span v-if="!isSidebarCollapsed">主数据查看</span>
               </span>
               <span v-if="!isSidebarCollapsed" class="arrow">
                 {{ openMenus.user ? '▼' : '▶' }}
@@ -51,82 +51,22 @@
             </div>
             <ul v-if="openMenus.user && !isSidebarCollapsed" class="sub-menu">
               <li @click="navigateTo('/users/list')">
-                <i class="fas fa-list"></i>
-                <span>用户列表</span>
+                <font-awesome-icon :icon="['fas', 'hospital-alt'] " size="1x"></font-awesome-icon> &nbsp;
+                <span>医院主数据</span>
               </li>
+
               <li @click="navigateTo('/users/roles')">
                 <i class="fas fa-user-shield"></i>
-                <span>角色管理</span>
+                <font-awesome-icon :icon="['fas', 'store-alt'] " size="1x"></font-awesome-icon> &nbsp;
+                <span>药店主数据</span>
               </li>
-            </ul>
-          </li>
 
-          <!-- 数据统计 -->
-          <li>
-            <div class="menu-item" @click="toggleMenu('data')">
-              <span>
-                <i class="fas fa-chart-bar"></i>
-                <span v-if="!isSidebarCollapsed">数据统计</span>
-              </span>
-              <span v-if="!isSidebarCollapsed" class="arrow">
-                {{ openMenus.data ? '▼' : '▶' }}
-              </span>
-            </div>
-            <ul v-if="openMenus.data && !isSidebarCollapsed" class="sub-menu">
-              <li @click="navigateTo('/data/report')">
-                <i class="fas fa-file-alt"></i>
-                <span>数据报表</span>
+              <li @click="navigateTo('/users/role')">
+                <font-awesome-icon :icon="['fas', 'synagogue'] " size="1x"></font-awesome-icon> &nbsp;
+                <i class="fas fa-user-shield"></i>
+                <span>商业主数据</span>
               </li>
-              <li @click="navigateTo('/data/analysis')">
-                <i class="fas fa-chart-line"></i>
-                <span>数据分析</span>
-              </li>
-            </ul>
-          </li>
 
-          <!-- 数据管理 -->
-          <li>
-            <div class="menu-item" @click="toggleMenu('dataManagement')">
-              <span>
-                <i class="fas fa-database"></i>
-                <span v-if="!isSidebarCollapsed">数据管理</span>
-              </span>
-              <span v-if="!isSidebarCollapsed" class="arrow">
-                {{ openMenus.dataManagement ? '▼' : '▶' }}
-              </span>
-            </div>
-            <ul v-if="openMenus.dataManagement && !isSidebarCollapsed" class="sub-menu">
-              <li @click="navigateTo('/data-management/import')">
-                <i class="fas fa-file-import"></i>
-                <span>数据导入</span>
-              </li>
-              <li @click="navigateTo('/data-management/export')">
-                <i class="fas fa-file-export"></i>
-                <span>数据导出</span>
-              </li>
-            </ul>
-          </li>
-
-          <!-- 系统设置 -->
-          <li>
-            <div class="menu-item" @click="toggleMenu('settings')">
-              <span>
-                <i class="fas fa-cog"></i>
-                <span v-if="!isSidebarCollapsed">系统设置</span>
-              </span>
-              <span v-if="!isSidebarCollapsed" class="arrow">
-                {{ openMenus.settings ? '▼' : '▶' }}
-              </span>
-            </div>
-            <ul v-if="openMenus.settings && !isSidebarCollapsed" class="sub-menu">
-              <li @click="navigateTo('/settings/general')">
-                <i class="fas fa-sliders-h"></i>
-                <span>通用设置</span>
-              </li>
-              <li @click="navigateTo('/settings/security')">
-                <i class="fas fa-shield-alt"></i>
-                <span>安全设置</span>
-              </li>
             </ul>
           </li>
 
@@ -228,7 +168,7 @@
 <script>
 import BarChart from '@/components/homechart/CleanBarChart.vue';
 import PieChart from '@/components/homechart/MainDataPieChart.vue';
-import LineChart from '@/components/homechart/LineChart.vue';
+import LineChart from '@/components/homechart/AppealUpdateChart.vue';
 import RosePieChart from '@/components/homechart/BranchBarChart.vue';
 import axios from 'axios'; // 引入axios用于可能的后端退出请求
 

@@ -37,9 +37,9 @@ onMounted(async () => {
         // 构建前端需要的数据格式
        formattedData = {
           dates: dates,
-          hospital: companyCount,
+          hospital: hosCount,
           drugstore: drugstoreCount,
-          company: hosCount
+          company: companyCount
         };
 
       } else {
