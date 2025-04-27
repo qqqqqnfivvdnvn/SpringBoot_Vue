@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.MainDataQueryMapper">
+    <!-- 条件查询SQL -->
+    <sql id="conditionWhere">
+        <where>
+            <if test="condition.dataCode != null and condition.dataCode != ''">
+                AND data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
+            </if>
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE CONCAT('%', #{condition.name}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="HospitalQueryByCondition" resultType="com.example.demo.entity.Hospital">
+        SELECT batch_code,data_code,original_name,elian_id,name,name_history,province,province_id,city,city_id,area,area_id,usci,level,grade,publicflag,hos_class,hos_big_class,class1,class2,class3,class4,class5,general_branch,military_hos,internet_hos,med_union_community,ybcode,regcode,validity,menzhen,bed_count,medical_count,subjects,legalperson,address,remarks,data_id,is_city,is_insert,repeat_id,updatetime,status,data_type,keyid,ku_address,general_branch_kid,general_branch_name,hs_code,addtime,appeal_dataid
+        FROM base_org_hos_clean
+        <include refid="conditionWhere"/>
+        ORDER BY addtime desc
+        LIMIT #{page.pageSize} OFFSET #{page.offset}
+    </select>
+
+
+    <!-- 统计总数 -->
+    <select id="countHospitalCondition" resultType="long">
+        SELECT COUNT(*)
+        FROM base_org_hos_clean
+        <include refid="conditionWhere"/>
+    </select>
+
+
+
+
+
+
+
+</mapper>

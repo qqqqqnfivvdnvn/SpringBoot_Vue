@@ -1,26 +1,19 @@
-<template xmlns="">
-<!--  <link-->
-<!--      rel="stylesheet"-->
-<!--      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"-->
-<!--  />-->
+<template>
   <div class="home-page" :style="homePageStyle">
     <!-- 导航栏 -->
     <nav class="navbar">
       <div class="navbar-brand">ADOS 后台管理</div>
       <div class="navbar-links">
-        <router-link to="/home">首页</router-link>
+        <router-link to="/home" @click="resetToDashboard">首页</router-link>
+
         <router-link to="/settings">设置</router-link>
-        <!-- 头像 -->
         <div class="avatar">
           <img src="@/assets/avatar-modified.png" alt="用户头像" />
         </div>
-        <!-- 退出登录按钮 -->
-
         <button class="logout-button" @click="handleLogout">
           <font-awesome-icon :icon="['fas', 'sign-out-alt']" size="1x" />
           退出登录
         </button>
-
       </div>
     </nav>
 
@@ -31,18 +24,15 @@
         <div class="sidebar-header">
           <span v-if="!isSidebarCollapsed">功能菜单</span>
           <button class="collapse-button" @click="toggleSidebar">
-<!--            <i :class="isSidebarCollapsed ? 'fas fa-angle-double-right' : 'fas fa-angle-double-left'"></i>-->
             <font-awesome-icon :icon="isSidebarCollapsed ? ['fas', 'angle-double-right'] : ['fas', 'angle-double-left']"/>
           </button>
         </div>
         <ul class="sidebar-menu">
-          <!-- 用户管理 -->
+          <!-- 主数据查看菜单 -->
           <li>
             <div class="menu-item" @click="toggleMenu('user')">
               <span>
-<!--                <i class="fas fa-users"></i>-->
-                <font-awesome-icon :icon="['fas', 'fa-th-list'] " size="1x"></font-awesome-icon>
-
+                <font-awesome-icon :icon="['fas', 'th-list']" size="1x"/>
                 <span v-if="!isSidebarCollapsed">主数据查看</span>
               </span>
               <span v-if="!isSidebarCollapsed" class="arrow">
@@ -50,113 +40,56 @@
               </span>
             </div>
             <ul v-if="openMenus.user && !isSidebarCollapsed" class="sub-menu">
-              <li @click="navigateTo('/users/list')">
-                <font-awesome-icon :icon="['fas', 'hospital-alt'] " size="1x"></font-awesome-icon> &nbsp;
+              <li @click="showHospitalData">
+                <font-awesome-icon :icon="['fas', 'hospital-alt']" size="1x"/> &nbsp;
                 <span>医院主数据</span>
               </li>
-
-              <li @click="navigateTo('/users/roles')">
-                <i class="fas fa-user-shield"></i>
-                <font-awesome-icon :icon="['fas', 'store-alt'] " size="1x"></font-awesome-icon> &nbsp;
+              <li @click="showDrugStoreData">
+                <font-awesome-icon :icon="['fas', 'store-alt']" size="1x"/> &nbsp;
                 <span>药店主数据</span>
               </li>
-
               <li @click="navigateTo('/users/role')">
-                <font-awesome-icon :icon="['fas', 'synagogue'] " size="1x"></font-awesome-icon> &nbsp;
-                <i class="fas fa-user-shield"></i>
+                <font-awesome-icon :icon="['fas', 'synagogue']" size="1x"/> &nbsp;
                 <span>商业主数据</span>
               </li>
-
             </ul>
           </li>
-
-
-
         </ul>
       </div>
 
       <!-- 右侧内容区域 -->
       <div class="content" :class="{ 'expanded': isSidebarCollapsed }">
-        <!-- 网格布局 -->
-        <div class="grid-container">
-
-          <!-- 替换为五个大小一致的盒子 -->
-          <div class="grid-item-container">
-            <div class="grid-item-small">
-
-<!--                <i class="fas fa-hospital fa-2x"></i> &nbsp;&nbsp;-->
-              <font-awesome-icon :icon="['fas', 'hospital'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
-              <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">医院周清洗</span>
-                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ cleanCount.hospitalCount }} </span>
-              </div>
-
-            </div>
-
-            <div class="grid-item-small" >
-              <font-awesome-icon :icon="['fas', 'store'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
-
-              <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">药店周清洗</span>
-                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ cleanCount.drugstoreCount }} </span>
-              </div>
-
-            </div>
-
-            <div class="grid-item-small">
-              <font-awesome-icon :icon="['fas', 'university'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
-              <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">商业周清洗</span>
-                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{  cleanCount.companyCount }} </span>
+        <!-- 简化后的标签页头部 -->
+        <div class="content-header">
+          <div class="tabs-container">
+            <div class="tabs">
+              <div
+                  v-for="tab in tabs"
+                  :key="tab.id"
+                  :class="{ 'active': tab.active }"
+                  class="tab"
+                  @click="switchTab(tab.id)"
+              >
+                {{ tab.title }}
+                <span
+                    v-if="tabs.length > 1"
+                    class="close-tab"
+                    @click.stop="closeTab(tab.id)"
+                >
+              ×
+            </span>
               </div>
             </div>
-
-            <div class="grid-item-small">
-              <font-awesome-icon :icon="['fas', 'trash'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
-              <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">申诉待处理</span>
-                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{  cleanCount.unappealingCount }} </span>
-              </div>
-            </div>
-
-            <div class="grid-item-small">
-              <font-awesome-icon :icon="['fas', 'clock'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
-              <div style="display: flex; flex-direction: column; align-items: center;  ">
-                <span style="font-weight: bold;font-size: 24px;color:#000000 ">待清洗</span>
-                <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{  cleanCount.uncleanedCount }} </span>
-              </div>
-
-
-            </div>
-          </div>
-
-
-          <!-- 第二行：合并 4、5、6 格，并分为两个格子 -->
-          <div class="grid-item grid-item-4-6">
-            <div class="sub-grid-item">
-              <!-- 引入并使用 BarChart 柱状图组件 -->
-              <BarChart />
-            </div>
-            <div class="sub-grid-item">
-              <!-- 引入并使用 BarChart 饼图组件 -->
-              <PieChart />
-            </div>
-          </div>
-          <!-- 第三行：合并 7、8、9 格，并分为两个格子 -->
-          <div class="grid-item grid-item-7-9">
-            <div class="sub-grid-item">
-              <!-- 引入并使用 LineChart 折线图组件 -->
-              <RosePieChart />
-            </div>
-
-            <div class="sub-grid-item">
-              <LineChart />
-            </div>
-
           </div>
         </div>
+
+        <transition name="fade" mode="out-in">
+          <component :is="currentViewComponent"></component>
+        </transition>
+
       </div>
     </div>
+
 
     <!-- 悬浮提示框 -->
     <div v-if="showToast" class="toast">
@@ -166,24 +99,22 @@
 </template>
 
 <script>
-import BarChart from '@/components/homechart/CleanBarChart.vue';
-import PieChart from '@/components/homechart/MainDataPieChart.vue';
-import LineChart from '@/components/homechart/AppealUpdateChart.vue';
-import RosePieChart from '@/components/homechart/BranchBarChart.vue';
-import axios from 'axios'; // 引入axios用于可能的后端退出请求
+import HospitalDataView from '@/components/homeview/HospitalDataView.vue';
+import HomeDashboardView from '@/components/homeview/HomeDashboardView.vue';
+import DrugStoreDataView from '@/components/homeview/DrugStoreDataView.vue';
+import axios from 'axios';
 
 export default {
-  // 显示柱状图组件: BarChart,
-  // 显示饼图组件: PieChart,
-  components: { BarChart,PieChart,LineChart,RosePieChart },
+  components: {
+    HospitalDataView,
+    HomeDashboardView,
+    DrugStoreDataView
+  },
 
   data() {
     return {
       openMenus: {
         user: false,
-        data: false,
-        dataManagement: false,
-        settings: false,
       },
       showToast: false,
       toastMessage: '',
@@ -191,86 +122,117 @@ export default {
       homePageStyle: {
         background: 'linear-gradient(135deg, #e3d2ff, #e3d2ff)',
       },
-      cleanCount:{
-        uncleanedCount: 0,
-        unappealingCount: 0,
-        companyCount: 0,
-        hospitalCount: 0,
-        drugstoreCount: 0
-      }
-
+      currentView: 'HomeDashboardView' // 默认显示HomeDashboard
+      ,
+      tabs: [
+        // { id: 'dashboard', title: '仪表盘', component: 'HomeDashboardView', active: true }
+      ],
+      activeTab: 'dashboard'
     };
   },
 
-  async created() {
-    try {
-      const response = await axios.post('/api/homeData/getHomeData');
-      if (response.data.code === 200) {
-        this.cleanCount = response.data.data;
-      } else {
-        console.error('获取数据失败:', response.data.msg);
-      }
-
-    } catch (error) {
-      console.error('获取数据失败:', error);
+  computed: {
+    currentViewComponent() {
+      return this.currentView; // 直接返回组件名
     }
   },
 
-
   methods: {
+
     toggleMenu(menu) {
       this.openMenus[menu] = !this.openMenus[menu];
     },
+
+
+    // -----------------------------加载医院主数据视图组件
+
+    addTab(title, component) {
+      // 检查是否已存在相同标签
+      const existingTab = this.tabs.find(tab => tab.component === component);
+      if (existingTab) {
+        this.switchTab(existingTab.id);
+        return;
+      }
+
+      const tabId = 'tab-' + Date.now();
+      this.tabs.forEach(tab => tab.active = false);
+      this.tabs.push({
+        id: tabId,
+        title,
+        component,
+        active: true
+      });
+      this.activeTab = tabId;
+      this.currentView = component;
+    },
+    switchTab(tabId) {
+      this.tabs.forEach(tab => {
+        tab.active = tab.id === tabId;
+        if (tab.active) {
+          this.currentView = tab.component;
+          this.activeTab = tabId;
+        }
+      });
+    },
+
+    closeTab(tabId) {
+      if (this.tabs.length <= 1) return;
+
+      const index = this.tabs.findIndex(tab => tab.id === tabId);
+      if (this.tabs[index].active) {
+        const newActiveTab = index > 0 ? this.tabs[index - 1] : this.tabs[index + 1];
+        newActiveTab.active = true;
+        this.currentView = newActiveTab.component;
+        this.activeTab = newActiveTab.id;
+      }
+      this.tabs.splice(index, 1);
+    },
+
+    showHospitalData() {
+      this.addTab('医院主数据', 'HospitalDataView');
+      window.location.hash = '/database/hospital';
+    },
+
+    showDrugStoreData() {
+      this.addTab('药店主数据', 'DrugStoreDataView');
+      window.location.hash = '/database/drugstore';
+    },
+
+    resetToDashboard() {
+      const dashboardTab = this.tabs.find(tab => tab.component === 'HomeDashboardView');
+      if (dashboardTab) {
+        this.switchTab(dashboardTab.id);
+      } else {
+        this.addTab('仪表盘', 'HomeDashboardView');
+      }
+      window.location.hash = '';
+    },
+
+
+
+    // -----------用户退出登录
 
     navigateTo(path) {
       this.$router.push(path);
     },
 
+
     async handleLogout() {
-
-
       try {
-
-        // 可选：调用后端退出接口
-        await axios.post('/api/user/logout', null, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-      } catch (error) {
-        console.error('退出请求失败:', error);
-        // 即使API调用失败也继续前端清理
-      } finally {
-        // 清理前端认证数据
+        await axios.post('/api/user/logout');
         this.clearAuthData();
-
-        // 显示退出成功提示
         this.showToastMessage('退出登录成功');
-
-        // 安全跳转到登录页
         setTimeout(() => {
-          this.$router.replace({
-            path: '/login',
-            query: {
-              logout: 'true',
-              timestamp: new Date().getTime() // 防止缓存
-            }
-          }).catch(() => {});
+          this.$router.replace('/login');
         }, 400);
+      } catch (error) {
+        console.error('退出失败:', error);
       }
     },
 
     clearAuthData() {
-      // 清除所有存储的认证信息
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-
-      // 如果有Vuex状态也需要重置
-      if (this.$store && this.$store.commit) {
-        this.$store.commit('resetAuthState');
-      }
-
-      // 清除axios默认授权头
       delete axios.defaults.headers.common['Authorization'];
     },
 
@@ -284,19 +246,9 @@ export default {
 
     toggleSidebar() {
       this.isSidebarCollapsed = !this.isSidebarCollapsed;
-      this.homePageStyle.background = this.isSidebarCollapsed
-          ? ''
-          : 'linear-gradient(135deg, #e3d2ff, #e3d2ff)';
-    },
-
-  },
-
+    }
+  }
 };
-
-
-
-
-
 </script>
 
 <style scoped>
@@ -475,68 +427,6 @@ export default {
   margin-left: 90px; /* 折叠状态下的左侧边距（60px + 10px） */
 }
 
-/* 网格布局 */
-.grid-container {
-  display: grid;
-  grid-template-rows: 150px 1fr 1fr; /* 第一行高度缩小，第二行和第三行平分剩余空间 */
-  gap: 10px; /* 网格之间的间距 */
-  height: 100%;
-}
-
-/* 新增样式：五个盒子的容器 */
-.grid-item-container {
-  grid-column: 1 / -1; /* 占据整行 */
-  display: flex; /* 使用 Flexbox 布局 */
-  gap: 10px; /* 盒子之间的间距 */
-  height: 150px; /* 高度与原来的 grid-item-1-3 一致 */
-}
-
-/* 新增样式：每个小盒子的样式 */
-.grid-item-small {
-  flex: 1; /* 每个盒子平分宽度 */
-  background-color: #fff; /* 背景色为白色 */
-  border: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: #333;
-  border-radius: 5px;
-  transition: box-shadow 0.2s;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 悬浮效果 */
-}
-
-.grid-item-small:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* 悬浮时阴影加深 */
-}
-
-/* 第二行和第三行：合并 4、5、6 格和 7、8、9 格，并分为两个格子 */
-.grid-item-4-6,
-.grid-item-7-9 {
-  grid-column: 1 / -1; /* 占据整行 */
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* 分为两个格子 */
-  gap: 10px; /* 子网格之间的间距 */
-}
-
-/* 子网格项样式 */
-.sub-grid-item {
-  background-color: #fff; /* 背景色为白色 */
-  border: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: #333;
-  border-radius: 5px;
-  transition: box-shadow 0.2s;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 悬浮效果 */
-}
-
-.sub-grid-item:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* 悬浮时阴影加深 */
-}
-
 /* 悬浮提示框样式 */
 .toast {
   position: fixed;
@@ -578,5 +468,58 @@ export default {
 
 .collapse-button:hover {
   color: #af96e6;
+}
+
+/* 内容标题栏样式 */
+.content-header {
+  background-color: white;
+  padding: 0;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+}
+
+.tabs-container {
+  overflow-x: auto;
+  padding: 0 10px;
+}
+
+.tabs {
+  display: flex;
+  min-width: fit-content;
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+  margin-right: 5px;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  position: relative;
+  white-space: nowrap;
+}
+
+.tab.active {
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+  margin-bottom: -1px;
+  color: #9478cc;
+  font-weight: bold;
+}
+
+.close-tab {
+  margin-left: 8px;
+  font-size: 1.2rem;
+  color: #999;
+  line-height: 1;
+}
+
+.close-tab:hover {
+  color: #666;
 }
 </style>

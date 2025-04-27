@@ -6,6 +6,8 @@ import BarData from '@/components/homechart/CleanBarChart.vue';
 import MainData from '@/components/homechart/MainDataPieChart.vue';
 import BranchBar from '@/components/homechart/BranchBarChart.vue';
 import HospitalData from '@/components/homeview/HospitalDataView.vue';
+import HomeDashboard from '@/components/homeview/HomeDashboardView.vue';
+import DrugStoreData from '@/components/homeview/DrugStoreDataView.vue';
 
 const routes = [
     {
@@ -48,12 +50,32 @@ const routes = [
         component: BranchBar,
         meta: { requiresAuth: true } // 需要登录才能访问
     },
+
     {
-        path: '/getHospitalData',
-        name: 'getHospitalData',
-        component: HospitalData,
+        path: '/homeDashboard',
+        name: 'homeDashboard',
+        component: HomeDashboard,
         meta: { requiresAuth: true } // 需要登录才能访问
-    }
+    },
+
+    {
+        path: '/database',
+        children: [
+            {
+                path: 'hospital',
+                name: 'hospitalData',
+                component: HospitalData,
+                meta: { requiresAuth: true } // 需要登录才能访问
+            },
+            {
+                path: 'drugstore',
+                name: 'drugStoreData',
+                component: DrugStoreData,
+                meta: { requiresAuth: true } // 需要登录才能访问
+            }
+        ]
+    },
+
 ];
 
 const router = createRouter({
@@ -89,5 +111,6 @@ router.beforeEach((to, from, next) => {
         next();
     }
 });
+
 
 export default router;
