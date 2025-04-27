@@ -53,15 +53,15 @@
               <template v-else-if="index === 5">{{ hospital.address }}</template>
               <template v-else-if="index === 6">{{ hospital.bedCount }}</template>
               <template v-else-if="index === 7">
-                 <span :class="{
-                'status-active': currentHospital.status === 1,
-                'status-uninactive': currentHospital.status === 3,
-                'status-inactive': currentHospital.status === 4
-              }">
-              {{  currentHospital.status === 1 ? '清洗成功' :
-                     currentHospital.status === 3 ? '无法清洗' :
-                         currentHospital.status === 4 ? '禁用客户' : '其他状态' }}
-            </span>
+                        <span :class="{
+                          'status-active': hospital.status === '1',
+                          'status-uninactive': hospital.status === '3',
+                          'status-inactive': hospital.status === '4'
+                        }">
+                          {{ hospital.status === '1' ? '清洗成功' :
+                            hospital.status === '3' ? '无法清洗' :
+                                hospital.status === '4' ? '禁用客户' : '错误' }}
+                        </span>
               </template>
               <template v-else-if="index === 8">
                 <button class="detail-btn" @click="showDetail(hospital)">详情</button>
