@@ -49,16 +49,19 @@
               <template v-else-if="index === 1">{{ hospital.name }}</template>
               <template v-else-if="index === 2">{{ hospital.province }}</template>
               <template v-else-if="index === 3">{{ hospital.city }}</template>
-              <template v-else-if="index === 4">{{ getHospitalLevel(hospital.level) }}</template>
+              <template v-else-if="index === 4">{{ hospital.level }}</template>
               <template v-else-if="index === 5">{{ hospital.address }}</template>
               <template v-else-if="index === 6">{{ hospital.bedCount }}</template>
               <template v-else-if="index === 7">
-                <span :class="{
-                  'status-active': hospital.status === '1',
-                  'status-inactive': hospital.status !== '1'
-                }">
-                  {{ hospital.status === '1' ? '运营中' : '其他状态' }}
-                </span>
+                 <span :class="{
+                'status-active': currentHospital.status === 1,
+                'status-uninactive': currentHospital.status === 3,
+                'status-inactive': currentHospital.status === 4
+              }">
+              {{  currentHospital.status === 1 ? '清洗成功' :
+                     currentHospital.status === 3 ? '无法清洗' :
+                         currentHospital.status === 4 ? '禁用客户' : '其他状态' }}
+            </span>
               </template>
               <template v-else-if="index === 8">
                 <button class="detail-btn" @click="showDetail(hospital)">详情</button>
@@ -123,7 +126,7 @@
           </div>
           <div class="detail-row">
             <label>医院等级：</label>
-            <span>{{ getHospitalLevel(currentHospital.level) }}</span>
+            <span>{{ currentHospital.level }}</span>
           </div>
           <div class="detail-row">
             <label>医院地址：</label>
@@ -137,9 +140,12 @@
             <label>状态：</label>
             <span :class="{
                 'status-active': currentHospital.status === '1',
-                'status-inactive': currentHospital.status !== '1'
+                'status-uninactive': currentHospital.status === '3',
+                'status-inactive': currentHospital.status === '4'
               }">
-              {{ currentHospital.status === '1' ? '运营中' : '其他状态' }}
+              {{  currentHospital.status === '1' ? '清洗成功' :
+                  currentHospital.status === '3' ? '无法清洗' :
+                    currentHospital.status === '4' ? '禁用客户' : '其他状态' }}
             </span>
           </div>
           <div class="detail-row" v-if="currentHospital.description">
@@ -186,6 +192,7 @@ export default {
       pageNumber: 0,
       showDetailModal: false,
       currentHospital: {},
+
       // 列定义
       columns: [
         { label: '医院编码', width: 120 },
@@ -208,15 +215,7 @@ export default {
     this.fetchHospitalData();
   },
   methods: {
-    getHospitalLevel(level) {
-      const levelMap = {
-        '1': '一级',
-        '2': '二级',
-        '3': '三级',
-        '4': '四级'
-      };
-      return levelMap[level] || level;
-    },
+
     formatDate(dateString) {
       if (!dateString) return '';
       const date = new Date(dateString);
@@ -280,6 +279,7 @@ export default {
     },
     showDetail(hospital) {
       this.currentHospital = hospital;
+      console.log(hospital);
       this.showDetailModal = true;
     },
     closeDetailModal() {
@@ -452,7 +452,12 @@ button {
 }
 
 .status-active {
-  color: #67c23a;
+  color: #6da1e4;
+  font-weight: bold;
+}
+
+.status-uninactive {
+  color: #9478cc;
   font-weight: bold;
 }
 
@@ -460,6 +465,8 @@ button {
   color: #f56c6c;
   font-weight: bold;
 }
+
+
 
 .no-data {
   display: flex;
