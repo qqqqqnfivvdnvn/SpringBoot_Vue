@@ -4,7 +4,7 @@
 
 <mapper namespace="com.example.demo.mapper.HomeDataMapper">
 
-    <select id="getHomeData" resultType="com.example.demo.vo.DetailsData">
+    <select id="getHomeData" resultType="com.example.demo.vo.DetailsDataVO">
 
     <![CDATA[
         SELECT
@@ -17,7 +17,7 @@
 
     </select>
 
-    <select id="getCleanBarData" resultType="com.example.demo.vo.BarData">
+    <select id="getCleanBarData" resultType="com.example.demo.vo.BarDataVO">
 
         WITH date_series AS (
             SELECT generate_series(
@@ -64,7 +64,7 @@
     </select>
 
 
-    <select id="getMainPieData" resultType="com.example.demo.vo.PieData">
+    <select id="getMainPieData" resultType="com.example.demo.vo.PieDataVO">
         SELECT '商业' as name ,count(*) as value  from base_org_company WHERE   status in (1,3,4)
         UNION ALL
         SELECT '医院' as name,count(*) as value  from base_org_hos_clean WHERE    status in (1,3,4)
@@ -73,7 +73,7 @@
 
     </select>
 
-    <select id="getBranchBarData" resultType="com.example.demo.vo.PieData">
+    <select id="getBranchBarData" resultType="com.example.demo.vo.PieDataVO">
         <![CDATA[
         SELECT '总分店编码待补充' name,count(*) as value from drug_store_haosen_demo_hscode WHERE  main_branch_kid is not null and main_branch is null
         UNION all
@@ -81,7 +81,7 @@
         ]]>
     </select>
 
-    <select id="getAppealUpdateData" resultType="com.example.demo.vo.AppealUpdateData">
+    <select id="getAppealUpdateData" resultType="com.example.demo.vo.AppealUpdateDataVO">
         <![CDATA[
         WITH date_series AS (
             SELECT generate_series(

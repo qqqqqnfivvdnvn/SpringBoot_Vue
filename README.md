@@ -1,75 +1,22 @@
 # SpringBoot_Vue
+如果对象主要用于数据传输，使用DTO。
+如果对象主要用于封装业务逻辑，使用VO
 
-pgsql 医疗机构
-SELECT
-a.batch_code,a.data_code,a.original_name,a.elian_id,a.name,a.name_history,province,a.province_id,a.city,a.city_id,a.area,a.area_id,a.usci,
-CASE
-WHEN a.level = '1' THEN '一级'
-WHEN a.level = '2' THEN '二级'
-WHEN a.level = '3' THEN '三级'
-WHEN a.level = '4' THEN '未定级'
-ELSE NULL
-END level,
-CASE
-WHEN a.grade = '1' THEN '甲等'
-WHEN a.grade = '2' THEN '乙等'
-WHEN a.grade = '3' THEN '丙等'
-WHEN a.grade = '4' THEN '未定等'
-ELSE NULL
-END  grade
-,
-CASE
-WHEN a.publicflag = '1' THEN '公立'
-WHEN a.publicflag = '2' THEN '民营'
-ELSE NULL
-END publicflag
-,b.医院类别 hos_class,CASE
-WHEN a.hos_big_class = '2' THEN '市级医院'
-WHEN a.hos_big_class = '3' THEN '县区医院'
-WHEN a.hos_big_class = '4' THEN '卫生院/卫生服务中心'
-WHEN a.hos_big_class = '7' THEN '诊所/医务室'
-WHEN a.hos_big_class = '9' THEN '其他'
-ELSE NULL
-END hos_big_class,b.类别名称1 class1,b.类别名称2 class2,b.类别名称3 class3,b.类别名称4 class4,b.类别名称5 class5,a.general_branch,
-CASE
-WHEN a.military_hos = '0' THEN '否'
-WHEN a.military_hos = '1' THEN '是'
-ELSE NULL
-END  military_hos,
-CASE
-WHEN a.internet_hos = '0' THEN '否'
-WHEN a.internet_hos = '1' THEN '是'
-ELSE NULL
-END internet_hos
-,CASE
-WHEN a.med_union_community = '1' THEN '医共体'
-WHEN a.med_union_community = '2' THEN '医联体'
-WHEN a.med_union_community = '3' THEN NULL
-ELSE NULL
-END med_union_community
-,a.ybcode,a.regcode,a.validity,a.menzhen,a.bed_count,a.medical_count,a.subjects,a.legalperson,a.address,a.remarks,a.data_id,
-CASE
-WHEN a.is_city = '1' THEN '是'
-WHEN a.is_city = '0' THEN '否'
-ELSE NULL
-END  is_city,a.is_insert,a.repeat_id,a.updatetime,a.status,a.data_type,a.keyid,a.ku_address,a.general_branch_kid,a.general_branch_name,a.hs_code,a.addtime,a.appeal_dataid
-from base_org_hos_clean a
-LEFT JOIN
-豪森五级属性对应表0819 b
-on
-a.class5=b.类别名称5_枚举值
-WHERE keyid is not null
-ORDER BY a.addtime desc
-LIMIT 10 OFFSET 9 ;
-
-
-
-CREATE INDEX idx_hos_clean_class5 ON base_org_hos_clean (class5);
-
-CREATE INDEX idx_class5 ON 豪森五级属性对应表0819 (类别名称5_枚举值);
-
-
-
+-----------分页解释
+1. 分页信息
+   pageNumber：当前页码，从 0 开始计数。
+   pageSize：每页显示的记录数。
+   totalPages：总页数。
+   totalElements：总记录数。
+   numberOfElements：当前页的实际记录数。
+   first：是否是第一页。
+   last：是否是最后一页。
+   empty：当前页是否为空。
+2. 排序信息
+   sort：
+   empty：是否为空排序。
+   sorted：是否已排序。
+   unsorted：是否未排序。
 
 
 

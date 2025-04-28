@@ -3,21 +3,95 @@
     <div class="search-container">
       <div class="search-form">
         <div class="form-item">
-          <label>医院编码：</label>
+          <label>原始编码：</label>
           <input
               v-model="searchForm.dataCode"
-              placeholder="请输入医院编码"
+              placeholder="请输入原始编码"
+              @keyup.enter="handleSearch"
+          >
+        </div>
+
+
+        <div class="form-item">
+          <label>原始名称：</label>
+          <input
+              v-model="searchForm.originalName"
+              placeholder="请输入原始名称"
+              @keyup.enter="handleSearch"
+          >
+        </div>
+
+        <div class="form-item">
+          <label>DataId：</label>
+          <input
+              v-model="searchForm.dataId"
+              placeholder="请输入DataId"
+              @keyup.enter="handleSearch"
+          >
+        </div>
+
+        <div class="form-item">
+          <label>KeyId：</label>
+          <input
+              v-model="searchForm.keyid"
+              placeholder="请输入KeyId"
+              @keyup.enter="handleSearch"
+          >
+        </div>
+
+        <div class="form-item">
+          <label>清洗后的编码：</label>
+          <input
+              v-model="searchForm.hsCode"
+              placeholder="请输入清洗后的编码"
+              @keyup.enter="handleSearch"
+          >
+        </div>
+
+        <div class="form-item">
+          <label>省份：</label>
+          <input
+              v-model="searchForm.province"
+              placeholder="请输入省份"
               @keyup.enter="handleSearch"
           >
         </div>
         <div class="form-item">
-          <label>医院名称：</label>
+          <label>市：</label>
+          <input
+              v-model="searchForm.city"
+              placeholder="请输入市"
+              @keyup.enter="handleSearch"
+          >
+        </div>
+
+        <div class="form-item">
+          <label>区县：</label>
+          <input
+              v-model="searchForm.area"
+              placeholder="请输入区县"
+              @keyup.enter="handleSearch"
+          >
+        </div>
+
+        <div class="form-item">
+          <label>输入医院名称：</label>
           <input
               v-model="searchForm.name"
               placeholder="请输入医院名称"
               @keyup.enter="handleSearch"
           >
         </div>
+
+        <div class="form-item">
+          <label>输入医院地址：</label>
+          <input
+              v-model="searchForm.address"
+              placeholder="请输入医院地址"
+              @keyup.enter="handleSearch"
+          >
+        </div>
+
         <div class="form-actions">
           <button class="search-btn" @click="handleSearch">查询</button>
           <button class="reset-btn" @click="resetSearch">重置</button>
@@ -45,14 +119,17 @@
           <tr v-for="hospital in hospitalData.content" :key="hospital.dataId">
             <td v-for="(column, index) in columns" :key="index"
                 :style="{ width: column.width + 'px' }">
-              <template v-if="index === 0">{{ hospital.dataCode }}</template>
-              <template v-else-if="index === 1">{{ hospital.name }}</template>
-              <template v-else-if="index === 2">{{ hospital.province }}</template>
-              <template v-else-if="index === 3">{{ hospital.city }}</template>
-              <template v-else-if="index === 4">{{ hospital.level }}</template>
-              <template v-else-if="index === 5">{{ hospital.address }}</template>
-              <template v-else-if="index === 6">{{ hospital.bedCount }}</template>
-              <template v-else-if="index === 7">
+              <template v-if="index === 0">{{ hospital.dataId }}</template>
+              <template v-else-if="index === 1">{{ hospital.dataCode }}</template>
+              <template v-else-if="index === 2">{{ hospital.originalName }}</template>
+              <template v-else-if="index === 3">{{ hospital.keyid }}</template>
+              <template v-else-if="index === 4">{{ hospital.name }}</template>
+              <template v-else-if="index === 5">{{ hospital.nameHistory }}</template>
+              <template v-else-if="index === 6">{{ hospital.province }}</template>
+              <template v-else-if="index === 7">{{ hospital.city }}</template>
+              <template v-else-if="index === 8">{{ hospital.area }}</template>
+              <template v-else-if="index === 9">{{ hospital.address }}</template>
+              <template v-else-if="index === 10">
                         <span :class="{
                           'status-active': hospital.status === '1',
                           'status-uninactive': hospital.status === '3',
@@ -63,7 +140,7 @@
                                 hospital.status === '4' ? '禁用客户' : '错误' }}
                         </span>
               </template>
-              <template v-else-if="index === 8">
+              <template v-else-if="index === 11">
                 <button class="detail-btn" @click="showDetail(hospital)">详情</button>
               </template>
             </td>
@@ -107,35 +184,224 @@
           <h3>医院详情</h3>
           <span class="close-btn" @click="closeDetailModal">&times;</span>
         </div>
+
         <div class="modal-body">
           <div class="detail-row">
-            <label>医院编码：</label>
-            <span>{{ currentHospital.dataCode }}</span>
+            <label>dataId：</label>
+            <span>{{ currentHospital.dataId }}</span>
           </div>
           <div class="detail-row">
-            <label>医院名称：</label>
+            <label>原始编码：</label>
+            <span>{{ currentHospital.dataCode }}</span>
+          </div>
+
+
+          <div class="detail-row">
+            <label>keyId：</label>
+            <span>{{ currentHospital.keyid }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>数据类型：</label>
+            <span>{{ currentHospital.dataType }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>豪森清洗后编码：</label>
+            <span>{{ currentHospital.hsCode }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>标准名称：</label>
             <span>{{ currentHospital.name }}</span>
           </div>
+          <div class="detail-row">
+            <label>历史名称：</label>
+            <span>{{ currentHospital.nameHistory }}</span>
+          </div>
+
           <div class="detail-row">
             <label>省份：</label>
             <span>{{ currentHospital.province }}</span>
           </div>
+
           <div class="detail-row">
-            <label>城市：</label>
+            <label>省份ID：</label>
+            <span>{{ currentHospital.provinceId }}</span>
+          </div>
+          <div class="detail-row">
+            <label>市：</label>
             <span>{{ currentHospital.city }}</span>
           </div>
           <div class="detail-row">
-            <label>医院等级：</label>
-            <span>{{ currentHospital.level }}</span>
+            <label>市ID：</label>
+            <span>{{ currentHospital.cityId }}</span>
           </div>
+
           <div class="detail-row">
-            <label>医院地址：</label>
+            <label>区县：</label>
+            <span>{{ currentHospital.area }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>区县ID：</label>
+            <span>{{ currentHospital.areaId }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>是否市区：</label>
+            <span>{{ currentHospital.isCity }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>地址：</label>
             <span>{{ currentHospital.address }}</span>
           </div>
+
           <div class="detail-row">
-            <label>床位数量：</label>
+            <label>统一社会信用代码：</label>
+            <span>{{ currentHospital.usci }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>等级：</label>
+            <span>{{ currentHospital.level }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>等次：</label>
+            <span>{{ currentHospital.grade }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>所有制：</label>
+            <span>{{ currentHospital.publicflag }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>豪森医院类型：</label>
+            <span>{{ currentHospital.hosClass }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>豪森医院大类：</label>
+            <span>{{ currentHospital.hosBigClass }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>一级属性：</label>
+            <span>{{ currentHospital.class1 }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>二级属性：</label>
+            <span>{{ currentHospital.class2 }}</span>
+          </div>
+          <div class="detail-row">
+            <label>三级属性：</label>
+            <span>{{ currentHospital.class3 }}</span>
+          </div>
+          <div class="detail-row">
+            <label>四级属性：</label>
+            <span>{{ currentHospital.class4 }}</span>
+          </div>
+          <div class="detail-row">
+            <label>五级属性：</label>
+            <span>{{ currentHospital.class5 }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>是否军队医院：</label>
+            <span>{{ currentHospital.militaryHos }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>是否互联网医院：</label>
+            <span>{{ currentHospital.internetHos }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>医联体/医共体：</label>
+            <span>{{ currentHospital.medUnionCommunity }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>医保编码：</label>
+            <span>{{ currentHospital.ybcode }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>登记号：</label>
+            <span>{{ currentHospital.regcode }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>许可证有效期：</label>
+            <span>{{ currentHospital.validity }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>是否门诊统筹：</label>
+            <span>{{ currentHospital.menzhen }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>床位数目：</label>
             <span>{{ currentHospital.bedCount }}</span>
           </div>
+
+          <div class="detail-row">
+            <label>医护人数：</label>
+            <span>{{ currentHospital.medicalCount }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>诊疗科目：</label>
+            <span>{{ currentHospital.subjects }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>法人：</label>
+            <span>{{ currentHospital.legalperson }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>是否新增：</label>
+            <span>{{ currentHospital.isInsert }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>豪森重复数据ID：</label>
+            <span>{{ currentHospital.repeatId }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>上级单位豪森编码：</label>
+            <span>{{ currentHospital.generalBranch }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>上级单位KeyId：</label>
+            <span>{{ currentHospital.generalBranchKid }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>上级单位名称：</label>
+            <span>{{ currentHospital.generalBranchName }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>添加日期：</label>
+            <span>{{ currentHospital.addtime }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>更新日期：</label>
+            <span>{{ currentHospital.updatetime }}</span>
+          </div>
+
+
+
           <div class="detail-row">
             <label>状态：</label>
             <span :class="{
@@ -143,22 +409,12 @@
                 'status-uninactive': currentHospital.status === '3',
                 'status-inactive': currentHospital.status === '4'
               }">
-              {{  currentHospital.status === '1' ? '清洗成功' :
-                  currentHospital.status === '3' ? '无法清洗' :
-                    currentHospital.status === '4' ? '禁用客户' : '其他状态' }}
+              {{
+                currentHospital.status === '1' ? '清洗成功' :
+                    currentHospital.status === '3' ? '无法清洗' :
+                        currentHospital.status === '4' ? '禁用客户' : '其他状态'
+              }}
             </span>
-          </div>
-          <div class="detail-row" v-if="currentHospital.description">
-            <label>医院描述：</label>
-            <span>{{ currentHospital.description }}</span>
-          </div>
-          <div class="detail-row" v-if="currentHospital.contactPhone">
-            <label>联系电话：</label>
-            <span>{{ currentHospital.contactPhone }}</span>
-          </div>
-          <div class="detail-row" v-if="currentHospital.establishDate">
-            <label>成立日期：</label>
-            <span>{{ formatDate(currentHospital.establishDate) }}</span>
           </div>
         </div>
         <div class="modal-footer">
@@ -185,8 +441,19 @@ export default {
       },
       loading: false,
       searchForm: {
+        // dataCode   dataId keyid hsCode province city area name address
+
         dataCode: '',
-        name: ''
+        name: '',
+        dataId: '',
+        keyid: '',
+        hsCode: '',
+        province: '',
+        city: '',
+        area: '',
+        address: '',
+        originalName: ''
+
       },
       pageSize: 10,
       pageNumber: 0,
@@ -195,15 +462,18 @@ export default {
 
       // 列定义
       columns: [
-        { label: '医院编码', width: 120 },
-        { label: '医院名称', width: 150 },
-        { label: '省份', width: 100 },
-        { label: '城市', width: 100 },
-        { label: '医院等级', width: 100 },
-        { label: '医院地址', width: 200 },
-        { label: '床位数量', width: 100 },
-        { label: '状态', width: 100 },
-        { label: '操作', width: 100 }
+        {label: 'dataId', width: 100},
+        {label: '原始编码', width: 100},
+        {label: '原始名称', width: 100},
+        {label: 'keyId', width: 100},
+        {label: '标准名称', width: 100},
+        {label: '历史名称', width: 100},
+        {label: '省份', width: 100},
+        {label: '城市', width: 100},
+        {label: '区县', width: 100},
+        {label: '地址', width: 100},
+        {label: '状态', width: 100},
+        {label: '操作', width: 100}
       ],
       resizing: false,
       resizeColumnIndex: null,
@@ -216,11 +486,6 @@ export default {
   },
   methods: {
 
-    formatDate(dateString) {
-      if (!dateString) return '';
-      const date = new Date(dateString);
-      return date.toLocaleDateString();
-    },
     async fetchHospitalData() {
       this.loading = true;
       try {
@@ -236,12 +501,37 @@ export default {
         if (this.searchForm.name) {
           params.name = this.searchForm.name;
         }
+        if (this.searchForm.dataId) {
+          params.dataId = this.searchForm.dataId;
+        }
+        if (this.searchForm.keyid) {
+          params.keyid = this.searchForm.keyid;
+        }
+        if (this.searchForm.hsCode) {
+          params.hsCode = this.searchForm.hsCode;
+        }
+        if (this.searchForm.province) {
+          params.province = this.searchForm.province;
+        }
+        if (this.searchForm.city) {
+          params.city = this.searchForm.city;
+        }
+        if (this.searchForm.area) {
+          params.area = this.searchForm.area;
+        }
+        if (this.searchForm.address) {
+          params.address = this.searchForm.address;
+        }
+        if (this.searchForm.originalName) {
+          params.originalName = this.searchForm.originalName;
+        }
 
         const response = await axios.get('/api/mainData/getHospitalData', {
           params: params
         });
 
         this.hospitalData = response.data.data;
+
       } catch (error) {
         console.error('获取医院数据失败:', error);
         this.$message.error('获取医院数据失败');
@@ -256,7 +546,15 @@ export default {
     resetSearch() {
       this.searchForm = {
         dataCode: '',
-        name: ''
+        name: '',
+        dataId: '',
+        keyid: '',
+        hsCode: '',
+        province: '',
+        city: '',
+        area: '',
+        address: '',
+        originalName: ''
       };
       this.pageNumber = 0;
       this.fetchHospitalData();
@@ -326,6 +624,16 @@ export default {
   box-sizing: border-box;
   background: white;
 }
+
+/*.hospital-data-view {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  width: 1950px; !* 固定宽度 *!*/
+/*  height: 1000px; !* 固定高度 *!*/
+/*  padding: 20px;*/
+/*  box-sizing: border-box;*/
+/*  background: white;*/
+/*}*/
 
 .search-container {
   flex-shrink: 0;
@@ -465,7 +773,6 @@ button {
   color: #f56c6c;
   font-weight: bold;
 }
-
 
 
 .no-data {
@@ -624,4 +931,20 @@ button {
 .resize-handle:hover {
   background-color: #409eff;
 }
+
+/* 基础字体大小使用vw单位 */
+/* 基础字体大小使用vw单位 */
+body {
+  font-size: calc(14px + 0.2vw); /* 14px为基础大小，0.2vw为视口宽度比例 */
+}
+
+h1 {
+  font-size: calc(24px + 0.5vw);
+}
+
+/* 表格字体 */
+.hospital-table {
+  font-size: calc(15px + 0.1vw);
+}
+
 </style>

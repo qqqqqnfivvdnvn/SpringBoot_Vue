@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.dto.ApiResponse;
-import com.example.demo.vo.UserLoginData;
+import com.example.demo.dto.ApiResponseDTO;
+import com.example.demo.vo.UserLoginDataVO;
 import com.example.demo.entity.User;
 import com.example.demo.service.impl.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,9 +35,9 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UserLoginData>> login(@RequestBody User user) {
+    public ResponseEntity<ApiResponseDTO<UserLoginDataVO>> login(@RequestBody User user) {
         System.out.println(user);
-        ApiResponse<UserLoginData> result = userService.login(user);
+        ApiResponseDTO<UserLoginDataVO> result = userService.login(user);
         return ResponseEntity.ok(result);
 
     }
@@ -45,8 +45,8 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<User>> insertUser(@RequestBody User user) {
-        ApiResponse<User> result = userService.findByName(user);
+    public ResponseEntity<ApiResponseDTO<User>> insertUser(@RequestBody User user) {
+        ApiResponseDTO<User> result = userService.findByName(user);
 
         return ResponseEntity.ok(result);
 

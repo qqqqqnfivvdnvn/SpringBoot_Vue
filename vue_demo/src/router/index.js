@@ -5,9 +5,10 @@ import Home from '@/components/Home.vue';
 import BarData from '@/components/homechart/CleanBarChart.vue';
 import MainData from '@/components/homechart/MainDataPieChart.vue';
 import BranchBar from '@/components/homechart/BranchBarChart.vue';
-import HospitalData from '@/components/homeview/HospitalDataView.vue';
-import HomeDashboard from '@/components/homeview/HomeDashboardView.vue';
-import DrugStoreData from '@/components/homeview/DrugStoreDataView.vue';
+import HospitalData from '@/components/homemaindataview/HospitalDataView.vue';
+import HomeDashboard from '@/components/homechart/HomeDashboardView.vue';
+import DrugStoreData from '@/components/homemaindataview/DrugStoreDataView.vue';
+import CompanyData from '@/components/homemaindataview/CompanyDataView.vue';
 
 const routes = [
     {
@@ -71,6 +72,12 @@ const routes = [
                 path: 'drugstore',
                 name: 'drugStoreData',
                 component: DrugStoreData,
+                meta: { requiresAuth: true } // 需要登录才能访问
+            },
+            {
+                path: 'company',
+                name: 'CompanyData',
+                component: CompanyData,
                 meta: { requiresAuth: true } // 需要登录才能访问
             }
         ]

@@ -1,12 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.ApiResponse;
+import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.mapper.HomeDataMapper;
 import com.example.demo.service.impl.HomeDataService;
-import com.example.demo.vo.AppealUpdateData;
-import com.example.demo.vo.BarData;
-import com.example.demo.vo.DetailsData;
-import com.example.demo.vo.PieData;
+import com.example.demo.vo.AppealUpdateDataVO;
+import com.example.demo.vo.BarDataVO;
+import com.example.demo.vo.DetailsDataVO;
+import com.example.demo.vo.PieDataVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -19,37 +19,37 @@ public class HomeDataServiceImpl implements HomeDataService {
 
 
     @Override
-    public ApiResponse<DetailsData> getDataDetails() {
+    public ApiResponseDTO<DetailsDataVO> getDataDetails() {
         try {
-            DetailsData dataDetails = homeDataMapper.getHomeData();
-            return ApiResponse.success(dataDetails);
+            DetailsDataVO dataDetails = homeDataMapper.getHomeData();
+            return ApiResponseDTO.success(dataDetails);
         } catch (Exception e) {
-            return ApiResponse.error("数据获取失败");
+            return ApiResponseDTO.error("数据获取失败");
         }
     }
 
     @Override
-    public ApiResponse<List<BarData>> getCleanBarData() {
-        return ApiResponse.success(homeDataMapper.getCleanBarData());
+    public ApiResponseDTO<List<BarDataVO>> getCleanBarData() {
+        return ApiResponseDTO.success(homeDataMapper.getCleanBarData());
     }
 
     @Override
-    public ApiResponse<List<PieData>> getMainPieData() {
+    public ApiResponseDTO<List<PieDataVO>> getMainPieData() {
 
-        return ApiResponse.success(homeDataMapper.getMainPieData());
-
-    }
-
-    @Override
-    public ApiResponse<List<PieData>> getBranchBarData() {
-
-        return ApiResponse.success(homeDataMapper.getBranchBarData());
+        return ApiResponseDTO.success(homeDataMapper.getMainPieData());
 
     }
 
     @Override
-    public ApiResponse<List<AppealUpdateData>> getAppealUpdateData() {
-        return ApiResponse.success(homeDataMapper.getAppealUpdateData());
+    public ApiResponseDTO<List<PieDataVO>> getBranchBarData() {
+
+        return ApiResponseDTO.success(homeDataMapper.getBranchBarData());
+
+    }
+
+    @Override
+    public ApiResponseDTO<List<AppealUpdateDataVO>> getAppealUpdateData() {
+        return ApiResponseDTO.success(homeDataMapper.getAppealUpdateData());
     }
 
 

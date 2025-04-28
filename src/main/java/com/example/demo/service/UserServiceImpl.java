@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.ApiResponse;
-import com.example.demo.vo.UserLoginData;
+import com.example.demo.dto.ApiResponseDTO;
+import com.example.demo.vo.UserLoginDataVO;
 import com.example.demo.entity.User;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.service.impl.UserService;
@@ -27,18 +27,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponse<UserLoginData> login(User user) {
+    public ApiResponseDTO<UserLoginDataVO> login(User user) {
         User searchUser = userMapper.findByName(user.getUsername());
 
-        UserLoginData responseData = new UserLoginData();
+        UserLoginDataVO responseData = new UserLoginDataVO();
 
         // 判断用户名是否存在
         if (searchUser == null) {
-            return ApiResponse.error("用户名不存在！");
+            return ApiResponseDTO.error("用户名不存在！");
         }
 
         if (!searchUser.getPassword().equals(user.getPassword())) {
-            return ApiResponse.error("密码错误！");
+            return ApiResponseDTO.error("密码错误！");
         }
 
         // 生成token
@@ -46,20 +46,20 @@ public class UserServiceImpl implements UserService {
         responseData.setToken(token);
         responseData.setUsername(searchUser.getUsername());
         responseData.setUserid(searchUser.getId());
-        ApiResponse.success(responseData);
+        ApiResponseDTO.success(responseData);
 
 
-        return ApiResponse.success(responseData);
+        return ApiResponseDTO.success(responseData);
 
     }
 
     @Override
-    public ApiResponse<User> findByName(User user) {
+    public ApiResponseDTO<User> findByName(User user) {
         User kuUser = userMapper.findByName(user.getUsername());
 
         // 判断用户名是否已被注册
         if (kuUser != null) {
-            return ApiResponse.error("该用户名已被注册!");
+            return ApiResponseDTO.error("该用户名已被注册!");
         }
         // 注册成功
         UUID uuid = UUID.randomUUID();
@@ -72,9 +72,9 @@ public class UserServiceImpl implements UserService {
 
         int i = userMapper.insert(user);
         if (i == 0) {
-            return ApiResponse.error("注册失败！");
+            return ApiResponseDTO.error("注册失败！");
         } else {
-            return ApiResponse.success(user);
+            return ApiResponseDTO.success(user);
         }
 
     }

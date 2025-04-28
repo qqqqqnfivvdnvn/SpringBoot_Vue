@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ApiResponse;
+import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.service.impl.HomeDataService;
-import com.example.demo.vo.AppealUpdateData;
-import com.example.demo.vo.BarData;
-import com.example.demo.vo.DetailsData;
-import com.example.demo.vo.PieData;
+import com.example.demo.vo.AppealUpdateDataVO;
+import com.example.demo.vo.BarDataVO;
+import com.example.demo.vo.DetailsDataVO;
+import com.example.demo.vo.PieDataVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,29 +25,29 @@ public class HomeDataController {
 
 
     @PostMapping("/getHomeData")
-    public ResponseEntity<ApiResponse<DetailsData>> getDataCount() {
+    public ResponseEntity<ApiResponseDTO<DetailsDataVO>> getDataCount() {
         return ResponseEntity.ok(homeDataService.getDataDetails());
     }
 
     @PostMapping("/getCleanBarData")
-    public ResponseEntity<ApiResponse<List<BarData>>> getCleanBarData() {
+    public ResponseEntity<ApiResponseDTO<List<BarDataVO>>> getCleanBarData() {
         return ResponseEntity.ok(homeDataService.getCleanBarData());
     }
 
     @PostMapping("/getMainPieData")
-    public ResponseEntity<ApiResponse<List<PieData>>> getMainPieData() {
+    public ResponseEntity<ApiResponseDTO<List<PieDataVO>>> getMainPieData() {
         return ResponseEntity.ok(homeDataService.getMainPieData());
 
     }
 
     @PostMapping("/getBranchBarData")
-    public ResponseEntity<ApiResponse<List<PieData>>> getBranchBarData() {
+    public ResponseEntity<ApiResponseDTO<List<PieDataVO>>> getBranchBarData() {
         return ResponseEntity.ok(homeDataService.getBranchBarData());
 
     }
 
     @PostMapping("/getAppealUpdateData")
-    public ResponseEntity<ApiResponse<List<AppealUpdateData>>> getAppealUpdateData() {
+    public ResponseEntity<ApiResponseDTO<List<AppealUpdateDataVO>>> getAppealUpdateData() {
         return ResponseEntity.ok(homeDataService.getAppealUpdateData());
 
     }

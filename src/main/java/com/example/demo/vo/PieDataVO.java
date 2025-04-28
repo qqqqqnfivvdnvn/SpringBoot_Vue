@@ -3,7 +3,7 @@ package com.example.demo.vo;
 import lombok.Data;
 
 @Data
-public class HospitalCondition {
+public class PieDataVO {
     private String name;
-    private String dataCode;
+    private int value;
 }

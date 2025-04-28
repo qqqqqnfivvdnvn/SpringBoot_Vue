@@ -1,10 +1,10 @@
 package com.example.demo.mapper;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
-import com.example.demo.vo.AppealUpdateData;
-import com.example.demo.vo.BarData;
-import com.example.demo.vo.DetailsData;
-import com.example.demo.vo.PieData;
+import com.example.demo.vo.AppealUpdateDataVO;
+import com.example.demo.vo.BarDataVO;
+import com.example.demo.vo.DetailsDataVO;
+import com.example.demo.vo.PieDataVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -13,18 +13,18 @@ import java.util.List;
 @DS("slave_pg")
 public interface HomeDataMapper {
 
-    public DetailsData getHomeData();
+    public DetailsDataVO getHomeData();
 
 //    获取柱状图数据
-    public List<BarData> getCleanBarData();
+    public List<BarDataVO> getCleanBarData();
 
     //实现饼图的数据方法
-    public   List<PieData> getMainPieData();
+    public   List<PieDataVO> getMainPieData();
 
     //实现玫瑰饼图的数据方法
-    public   List<PieData> getBranchBarData();
+    public   List<PieDataVO> getBranchBarData();
 
     //实现折线图的数据方法
-    public   List<AppealUpdateData> getAppealUpdateData();
+    public   List<AppealUpdateDataVO> getAppealUpdateData();
 
 }

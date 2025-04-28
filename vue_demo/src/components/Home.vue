@@ -48,7 +48,7 @@
                 <font-awesome-icon :icon="['fas', 'store-alt']" size="1x"/> &nbsp;
                 <span>药店主数据</span>
               </li>
-              <li @click="navigateTo('/users/role')">
+              <li @click="CompanyDataView">
                 <font-awesome-icon :icon="['fas', 'synagogue']" size="1x"/> &nbsp;
                 <span>商业主数据</span>
               </li>
@@ -99,16 +99,18 @@
 </template>
 
 <script>
-import HospitalDataView from '@/components/homeview/HospitalDataView.vue';
-import HomeDashboardView from '@/components/homeview/HomeDashboardView.vue';
-import DrugStoreDataView from '@/components/homeview/DrugStoreDataView.vue';
+import HospitalDataView from '@/components/homemaindataview/HospitalDataView.vue';
+import HomeDashboardView from '@/components/homechart/HomeDashboardView.vue';
+import DrugStoreDataView from '@/components/homemaindataview/DrugStoreDataView.vue';
+import CompanyDataView from '@/components/homemaindataview/CompanyDataView.vue';
 import axios from 'axios';
 
 export default {
   components: {
     HospitalDataView,
     HomeDashboardView,
-    DrugStoreDataView
+    DrugStoreDataView,
+    CompanyDataView
   },
 
   data() {
@@ -196,6 +198,10 @@ export default {
     showDrugStoreData() {
       this.addTab('药店主数据', 'DrugStoreDataView');
       window.location.hash = '/database/drugstore';
+    },
+    CompanyDataView() {
+      this.addTab('商业主数据', 'CompanyDataView');
+      window.location.hash = '/database/company';
     },
 
     resetToDashboard() {
