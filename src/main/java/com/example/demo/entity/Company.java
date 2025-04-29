@@ -31,11 +31,11 @@ public class Company {
     private String isInsert;
     private String repeatId;
     private String remarks;
-    private String updateDate;
+    private String updatetime;
     private String status;
     private String dataType;
     private String keyid;
     private String hsCode;
-    private String addTime;
+    private String addtime;
     private String appealDataId;
 }

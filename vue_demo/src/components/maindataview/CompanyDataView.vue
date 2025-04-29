@@ -1,5 +1,5 @@
 <template>
-  <div class="DrugStore-data-view">
+  <div class="Company-data-view">
     <div class="search-container">
       <div class="search-form">
         <div class="form-item">
@@ -75,19 +75,19 @@
         </div>
 
         <div class="form-item">
-          <label>输入药店名称：</label>
+          <label>输入商业名称：</label>
           <input
               v-model="searchForm.name"
-              placeholder="输入药店名称"
+              placeholder="输入商业名称"
               @keyup.enter="handleSearch"
           >
         </div>
 
         <div class="form-item">
-          <label>输入药店地址：</label>
+          <label>输入商业地址：</label>
           <input
               v-model="searchForm.address"
-              placeholder="输入药店地址"
+              placeholder="输入商业地址"
               @keyup.enter="handleSearch"
           >
         </div>
@@ -101,7 +101,7 @@
 
     <div class="data-container">
       <div class="table-wrapper">
-        <table class="DrugStore-table" v-if="DrugStoreData.content && DrugStoreData.content.length > 0">
+        <table class="Company-table" v-if="CompanyData.content && CompanyData.content.length > 0">
           <thead>
           <tr>
             <th v-for="(column, index) in columns" :key="index"
@@ -116,32 +116,32 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="DrugStore in DrugStoreData.content" :key="DrugStore.dataId">
+          <tr v-for="Company in CompanyData.content" :key="Company.dataId">
             <td v-for="(column, index) in columns" :key="index"
                 :style="{ width: column.width + 'px' }">
-              <template v-if="index === 0">{{ DrugStore.dataId }}</template>
-              <template v-else-if="index === 1">{{ DrugStore.dataCode }}</template>
-              <template v-else-if="index === 2">{{ DrugStore.originalName }}</template>
-              <template v-else-if="index === 3">{{ DrugStore.keyid }}</template>
-              <template v-else-if="index === 4">{{ DrugStore.name }}</template>
-              <template v-else-if="index === 5">{{ DrugStore.historyName }}</template>
-              <template v-else-if="index === 6">{{ DrugStore.province }}</template>
-              <template v-else-if="index === 7">{{ DrugStore.city }}</template>
-              <template v-else-if="index === 8">{{ DrugStore.area }}</template>
-              <template v-else-if="index === 9">{{ DrugStore.address }}</template>
+              <template v-if="index === 0">{{ Company.dataId }}</template>
+              <template v-else-if="index === 1">{{ Company.dataCode }}</template>
+              <template v-else-if="index === 2">{{ Company.originalName }}</template>
+              <template v-else-if="index === 3">{{ Company.keyid }}</template>
+              <template v-else-if="index === 4">{{ Company.name }}</template>
+              <template v-else-if="index === 5">{{ Company.nameHistory }}</template>
+              <template v-else-if="index === 6">{{ Company.province }}</template>
+              <template v-else-if="index === 7">{{ Company.city }}</template>
+              <template v-else-if="index === 8">{{ Company.area }}</template>
+              <template v-else-if="index === 9">{{ Company.address }}</template>
               <template v-else-if="index === 10">
                         <span :class="{
-                          'status-active': DrugStore.status === '1',
-                          'status-uninactive': DrugStore.status === '3',
-                          'status-inactive': DrugStore.status === '4'
+                          'status-active': Company.status === '1',
+                          'status-uninactive': Company.status === '3',
+                          'status-inactive': Company.status === '4'
                         }">
-                          {{ DrugStore.status === '1' ? '清洗成功' :
-                            DrugStore.status === '3' ? '无法清洗' :
-                                DrugStore.status === '4' ? '禁用客户' : '错误' }}
+                          {{ Company.status === '1' ? '清洗成功' :
+                            Company.status === '3' ? '无法清洗' :
+                                Company.status === '4' ? '禁用客户' : '错误' }}
                         </span>
               </template>
               <template v-else-if="index === 11">
-                <button class="detail-btn" @click="showDetail(DrugStore)">详情</button>
+                <button class="detail-btn" @click="showDetail(Company)">详情</button>
               </template>
             </td>
           </tr>
@@ -150,19 +150,19 @@
         <div v-else class="no-data">
           {{ loading ? '数据加载中...' : '没有找到匹配的医院数据' }}
         </div>
-        <div class="pagination" v-if="DrugStoreData.content && DrugStoreData.content.length > 0">
+        <div class="pagination" v-if="CompanyData.content && CompanyData.content.length > 0">
           <button
-              :disabled="DrugStoreData.first"
+              :disabled="CompanyData.first"
               @click="prevPage"
               class="page-btn"
           >
             上一页
           </button>
           <span class="page-info">
-            第 {{ DrugStoreData.number + 1 }} 页 / 共 {{ DrugStoreData.totalPages }} 页 (共 {{ DrugStoreData.totalElements }} 条)
+            第 {{ CompanyData.number + 1 }} 页 / 共 {{ CompanyData.totalPages }} 页 (共 {{ CompanyData.totalElements }} 条)
           </span>
           <button
-              :disabled="DrugStoreData.last"
+              :disabled="CompanyData.last"
               @click="nextPage"
               class="page-btn"
           >
@@ -188,210 +188,162 @@
         <div class="modal-body">
           <div class="detail-row">
             <label>dataId：</label>
-            <span>{{ currentDrugStore.dataId }}</span>
+            <span>{{ currentCompany.dataId }}</span>
           </div>
           <div class="detail-row">
             <label>原始编码：</label>
-            <span>{{ currentDrugStore.dataCode }}</span>
+            <span>{{ currentCompany.dataCode }}</span>
           </div>
 
 
           <div class="detail-row">
             <label>keyId：</label>
-            <span>{{ currentDrugStore.keyid }}</span>
+            <span>{{ currentCompany.keyid }}</span>
           </div>
 
           <div class="detail-row">
             <label>数据类型：</label>
-            <span>{{ currentDrugStore.dataType }}</span>
+            <span>{{ currentCompany.dataType }}</span>
           </div>
 
           <div class="detail-row">
             <label>豪森清洗后编码：</label>
-            <span>{{ currentDrugStore.hsCode }}</span>
+            <span>{{ currentCompany.hsCode }}</span>
           </div>
 
           <div class="detail-row">
             <label>标准名称：</label>
-            <span>{{ currentDrugStore.name }}</span>
+            <span>{{ currentCompany.name }}</span>
           </div>
           <div class="detail-row">
             <label>历史名称：</label>
-            <span>{{ currentDrugStore.historyName }}</span>
+            <span>{{ currentCompany.nameHistory }}</span>
           </div>
 
           <div class="detail-row">
             <label>省份：</label>
-            <span>{{ currentDrugStore.province }}</span>
+            <span>{{ currentCompany.province }}</span>
           </div>
 
           <div class="detail-row">
             <label>省份ID：</label>
-            <span>{{ currentDrugStore.provinceId }}</span>
+            <span>{{ currentCompany.provinceId }}</span>
           </div>
           <div class="detail-row">
             <label>市：</label>
-            <span>{{ currentDrugStore.city }}</span>
+            <span>{{ currentCompany.city }}</span>
           </div>
           <div class="detail-row">
             <label>市ID：</label>
-            <span>{{ currentDrugStore.cityId }}</span>
+            <span>{{ currentCompany.cityId }}</span>
           </div>
 
           <div class="detail-row">
             <label>区县：</label>
-            <span>{{ currentDrugStore.area }}</span>
+            <span>{{ currentCompany.area }}</span>
           </div>
 
           <div class="detail-row">
             <label>区县ID：</label>
-            <span>{{ currentDrugStore.areaId }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否市区：</label>
-            <span>{{ currentDrugStore.isCity }}</span>
+            <span>{{ currentCompany.areaId }}</span>
           </div>
 
           <div class="detail-row">
             <label>地址：</label>
-            <span>{{ currentDrugStore.address }}</span>
+            <span>{{ currentCompany.address }}</span>
           </div>
 
           <div class="detail-row">
             <label>统一社会信用代码：</label>
-            <span>{{ currentDrugStore.usci }}</span>
+            <span>{{ currentCompany.creditCode }}</span>
           </div>
 
           <div class="detail-row">
-            <label>药店类型：</label>
-            <span>{{ currentDrugStore.pharmacyAture }}</span>
+            <label>类别：</label>
+            <span>{{ currentCompany.classify }}</span>
           </div>
 
           <div class="detail-row">
-            <label>经营方式：</label>
-            <span>{{ currentDrugStore.operation }}</span>
+            <label>企业类型：</label>
+            <span>{{ currentCompany.econKind }}</span>
           </div>
 
           <div class="detail-row">
-            <label>药店位置：</label>
-            <span>{{ currentDrugStore.location }}</span>
+            <label>登记状态：</label>
+            <span>{{ currentCompany.signStatus }}</span>
           </div>
 
           <div class="detail-row">
-            <label>是否双通道：</label>
-            <span>{{ currentDrugStore.twoChannels }}</span>
+            <label>所属行业：</label>
+            <span>{{ currentCompany.industry }}</span>
           </div>
 
-          <div class="detail-row">
-            <label>是否双互联网：</label>
-            <span>{{ currentDrugStore.isInternet }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否DTP药房：</label>
-            <span>{{ currentDrugStore.dtp }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>药品经营许可证：</label>
-            <span>{{ currentDrugStore.licenseNumber }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>药品经营许可证有效期：</label>
-            <span>{{ currentDrugStore.validity }}</span>
-          </div>
-          <div class="detail-row">
-            <label>是否门诊统筹：</label>
-            <span>{{ currentDrugStore.mztc }}</span>
-          </div>
           <div class="detail-row">
             <label>成立日期：</label>
-            <span>{{ currentDrugStore.createDate }}</span>
+            <span>{{ currentCompany.createDate }}</span>
           </div>
           <div class="detail-row">
             <label>注册资金：</label>
-            <span>{{ currentDrugStore.registCapi }}</span>
+            <span>{{ currentCompany.registCapi }}</span>
           </div>
 
           <div class="detail-row">
             <label>法人：</label>
-            <span>{{ currentDrugStore.operName }}</span>
+            <span>{{ currentCompany.operName }}</span>
           </div>
-
-          <div class="detail-row">
-            <label>医保编码：</label>
-            <span>{{ currentDrugStore.ybcode }}</span>
-          </div>
-
-
-          <div class="detail-row">
-            <label>是否医保药店：</label>
-            <span>{{ currentDrugStore.isYb }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>豪森重复数据ID：</label>
-            <span>{{ currentDrugStore.repeatId }}</span>
-          </div>
-
-
 
           <div class="detail-row">
             <label>经营范围：</label>
-            <span>{{ currentDrugStore.scope }}</span>
+            <span>{{ currentCompany.scope }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>登记机关：</label>
+            <span>{{ currentCompany.belong }}</span>
+          </div>
+
+
+
+
+          <div class="detail-row">
+            <label>豪森重复数据ID：</label>
+            <span>{{ currentCompany.repeatId }}</span>
           </div>
 
 
           <div class="detail-row">
             <label>是否新增：</label>
-            <span>{{ currentDrugStore.isInsert }}</span>
+            <span>{{ currentCompany.isInsert }}</span>
           </div>
 
           <div class="detail-row">
             <label>重复编码：</label>
-            <span>{{ currentDrugStore.repeatId }}</span>
+            <span>{{ currentCompany.repeatId }}</span>
           </div>
 
-          <div class="detail-row">
-            <label>上级单位豪森编码：</label>
-            <span>{{ currentDrugStore.mainBranch }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>上级单位编码：</label>
-            <span>{{ currentDrugStore.mainBranchKid }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>上级单位名称：</label>
-            <span>{{ currentDrugStore.mainBranchName }}</span>
-          </div>
 
           <div class="detail-row">
             <label>添加日期：</label>
-            <span>{{ currentDrugStore.addTime }}</span>
+            <span>{{ currentCompany.addtime }}</span>
           </div>
 
           <div class="detail-row">
             <label>更新日期：</label>
-            <span>{{ currentDrugStore.updateDate }}</span>
+            <span>{{ currentCompany.updatetime }}</span>
           </div>
-
 
 
           <div class="detail-row">
             <label>状态：</label>
             <span :class="{
-                'status-active': currentDrugStore.status === '1',
-                'status-uninactive': currentDrugStore.status === '3',
-                'status-inactive': currentDrugStore.status === '4'
+                'status-active': currentCompany.status === '1',
+                'status-uninactive': currentCompany.status === '3',
+                'status-inactive': currentCompany.status === '4'
               }">
               {{
-                currentDrugStore.status === '1' ? '清洗成功' :
-                    currentDrugStore.status === '3' ? '无法清洗' :
-                        currentDrugStore.status === '4' ? '禁用客户' : '其他状态'
+                currentCompany.status === '1' ? '清洗成功' :
+                    currentCompany.status === '3' ? '无法清洗' :
+                        currentCompany.status === '4' ? '禁用客户' : '其他状态'
               }}
             </span>
           </div>
@@ -410,7 +362,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      DrugStoreData: {
+      CompanyData: {
         content: [],
         totalElements: 0,
         totalPages: 0,
@@ -436,7 +388,7 @@ export default {
       pageSize: 10,
       pageNumber: 0,
       showDetailModal: false,
-      currentDrugStore: {},
+      currentCompany: {},
 
       // 列定义
       columns: [
@@ -460,11 +412,11 @@ export default {
     }
   },
   mounted() {
-    this.fetchDrugStoreData();
+    this.fetchCompanyData();
   },
   methods: {
 
-    async fetchDrugStoreData() {
+    async fetchCompanyData() {
       this.loading = true;
       try {
         const params = {
@@ -504,22 +456,22 @@ export default {
           params.originalName = this.searchForm.originalName;
         }
 
-        const response = await axios.get('/api/mainData/getDrugStoreData', {
+        const response = await axios.get('/api/mainData/getCompanyData', {
           params: params
         });
 
-        this.DrugStoreData = response.data.data;
+        this.CompanyData = response.data.data;
 
       } catch (error) {
-        console.error('获取医院数据失败:', error);
-        this.$message.error('获取医院数据失败');
+        console.error('获取商业数据失败:', error);
+        this.$message.error('获取商业数据失败');
       } finally {
         this.loading = false;
       }
     },
     handleSearch() {
       this.pageNumber = 0;
-      this.fetchDrugStoreData();
+      this.fetchCompanyData();
     },
     resetSearch() {
       this.searchForm = {
@@ -535,32 +487,32 @@ export default {
         originalName: ''
       };
       this.pageNumber = 0;
-      this.fetchDrugStoreData();
+      this.fetchCompanyData();
     },
     prevPage() {
       if (this.pageNumber > 0) {
         this.pageNumber--;
-        this.fetchDrugStoreData();
+        this.fetchCompanyData();
       }
     },
     nextPage() {
-      if (this.pageNumber < this.DrugStoreData.totalPages - 1) {
+      if (this.pageNumber < this.CompanyData.totalPages - 1) {
         this.pageNumber++;
-        this.fetchDrugStoreData();
+        this.fetchCompanyData();
       }
     },
     handlePageSizeChange() {
       this.pageNumber = 0;
-      this.fetchDrugStoreData();
+      this.fetchCompanyData();
     },
-    showDetail(DrugStore) {
-      this.currentDrugStore = DrugStore;
-      console.log(DrugStore);
+    showDetail(Company) {
+      this.currentCompany = Company;
+      console.log(Company);
       this.showDetailModal = true;
     },
     closeDetailModal() {
       this.showDetailModal = false;
-      this.currentDrugStore = {};
+      this.currentCompany = {};
     },
     // 列宽调整方法
     startResize(e, index) {
@@ -594,7 +546,7 @@ export default {
 </script>
 
 <style scoped>
-.DrugStore-data-view {
+.Company-data-view {
   display: flex;
   flex-direction: column;
   height: 85vh;
@@ -603,7 +555,7 @@ export default {
   background: white;
 }
 
-/*.DrugStore-data-view {*/
+/*.Company-data-view {*/
 /*  display: flex;*/
 /*  flex-direction: column;*/
 /*  width: 1950px; !* 固定宽度 *!*/
@@ -703,15 +655,15 @@ button {
   border-radius: 4px;
 }
 
-.DrugStore-table {
+.Company-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
   table-layout: fixed;
 }
 
-.DrugStore-table th,
-.DrugStore-table td {
+.Company-table th,
+.Company-table td {
   border: 1px solid #ebeef5;
   padding: 12px;
   text-align: left;
@@ -720,7 +672,7 @@ button {
   white-space: nowrap;
 }
 
-.DrugStore-table th {
+.Company-table th {
   background-color: #f5f7fa;
   font-weight: bold;
   position: sticky;
@@ -729,11 +681,11 @@ button {
   -webkit-user-select: none;
 }
 
-.DrugStore-table tr:nth-child(even) {
+.Company-table tr:nth-child(even) {
   background-color: #fafafa;
 }
 
-.DrugStore-table tr:hover {
+.Company-table tr:hover {
   background-color: #f5f7fa;
 }
 
@@ -922,7 +874,7 @@ h1 {
 }
 
 /* 表格字体 */
-.DrugStore-table {
+.Company-table {
   font-size: calc(15px + 0.1vw);
 }
 

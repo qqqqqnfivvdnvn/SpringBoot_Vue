@@ -33,13 +33,14 @@
             <div class="menu-item" @click="toggleMenu('user')">
               <span>
                 <font-awesome-icon :icon="['fas', 'th-list']" size="1x"/>
-                <span v-if="!isSidebarCollapsed">主数据查看</span>
+                <span v-if="!isSidebarCollapsed">主数据</span>
               </span>
               <span v-if="!isSidebarCollapsed" class="arrow">
                 {{ openMenus.user ? '▼' : '▶' }}
               </span>
             </div>
             <ul v-if="openMenus.user && !isSidebarCollapsed" class="sub-menu">
+
               <li @click="showHospitalData">
                 <font-awesome-icon :icon="['fas', 'hospital-alt']" size="1x"/> &nbsp;
                 <span>医院主数据</span>
@@ -54,6 +55,32 @@
               </li>
             </ul>
           </li>
+
+          <!-- 数据申诉 -->
+          <li>
+            <div class="menu-item" @click="toggleMenu('dataManagement')">
+              <span>
+                <font-awesome-icon :icon="['fas', 'file-alt']" size="1x"/>
+                <span v-if="!isSidebarCollapsed">数据申诉</span>
+              </span>
+              <span v-if="!isSidebarCollapsed" class="arrow">
+                {{ openMenus.dataManagement ? '▼' : '▶' }}
+              </span>
+            </div>
+            <ul v-if="openMenus.dataManagement && !isSidebarCollapsed" class="sub-menu">
+
+              <li @click="showAppealData">
+                <font-awesome-icon :icon="['fas', 'book-reader']" size="1x"/> &nbsp;
+                <span>数据查看</span>
+              </li>
+
+              <li @click="navigateTo('/data-management/export')">
+                <font-awesome-icon :icon="['fas', 'cat']" size="1x"/> &nbsp;
+                <span>数据导入</span>
+              </li>
+            </ul>
+          </li>
+
         </ul>
       </div>
 
@@ -99,10 +126,11 @@
 </template>
 
 <script>
-import HospitalDataView from '@/components/homemaindataview/HospitalDataView.vue';
+import HospitalDataView from '@/components/maindataview/HospitalDataView.vue';
 import HomeDashboardView from '@/components/homechart/HomeDashboardView.vue';
-import DrugStoreDataView from '@/components/homemaindataview/DrugStoreDataView.vue';
-import CompanyDataView from '@/components/homemaindataview/CompanyDataView.vue';
+import DrugStoreDataView from '@/components/maindataview/DrugStoreDataView.vue';
+import CompanyDataView from '@/components/maindataview/CompanyDataView.vue';
+import AppealDataView from '@/components/appealdataview/AppealDataView.vue';
 import axios from 'axios';
 
 export default {
@@ -110,13 +138,15 @@ export default {
     HospitalDataView,
     HomeDashboardView,
     DrugStoreDataView,
-    CompanyDataView
+    CompanyDataView,
+    AppealDataView
   },
 
   data() {
     return {
       openMenus: {
         user: false,
+        dataManagement: false,
       },
       showToast: false,
       toastMessage: '',
@@ -192,17 +222,23 @@ export default {
 
     showHospitalData() {
       this.addTab('医院主数据', 'HospitalDataView');
-      window.location.hash = '/database/hospital';
+      window.location.hash = '/dataBase/hospital';
     },
 
     showDrugStoreData() {
       this.addTab('药店主数据', 'DrugStoreDataView');
-      window.location.hash = '/database/drugstore';
+      window.location.hash = '/dataBase/drugstore';
     },
     CompanyDataView() {
       this.addTab('商业主数据', 'CompanyDataView');
-      window.location.hash = '/database/company';
+      window.location.hash = '/dataBase/company';
     },
+
+    showAppealData() {
+      this.addTab('申诉数据', 'AppealDataView');
+      window.location.hash = '/appealData/showAppealData';
+    },
+
 
     resetToDashboard() {
       const dashboardTab = this.tabs.find(tab => tab.component === 'HomeDashboardView');

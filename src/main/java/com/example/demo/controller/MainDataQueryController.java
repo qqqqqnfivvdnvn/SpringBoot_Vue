@@ -4,9 +4,9 @@ import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.entity.DrugStore;
 import com.example.demo.entity.Hospital;
 import com.example.demo.service.impl.MainDataQueryService;
-import com.example.demo.vo.DrugStoreConditionVO;
-import com.example.demo.vo.HospitalConditionVO;
-import com.example.demo.vo.CompanyConditionVO;
+import com.example.demo.dto.DrugStoreConditionDTO;
+import com.example.demo.dto.HospitalConditionDTO;
+import com.example.demo.dto.CompanyConditionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +32,7 @@ public class MainDataQueryController {
     @GetMapping("/getHospitalData")
     public ResponseEntity<ApiResponseDTO<Page<Hospital>>> getHospital(@RequestParam(defaultValue = "0") int page,
                                                                       @RequestParam(defaultValue = "10") int size,
-                                                                      @ModelAttribute HospitalConditionVO hospitalCondition) {
+                                                                      @ModelAttribute HospitalConditionDTO hospitalCondition) {
         Pageable pageable = PageRequest.of(page, size);
         ApiResponseDTO<Page<Hospital>> hospitalList = mainDataQueryService.getHospitalList(hospitalCondition, pageable);
         return  ResponseEntity.ok(hospitalList);
@@ -41,7 +41,7 @@ public class MainDataQueryController {
     @GetMapping("/getDrugStoreData")
     public ResponseEntity<ApiResponseDTO<Page<DrugStore>>> getDrugStore(@RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "10") int size,
-                                                                        @ModelAttribute DrugStoreConditionVO drugStoreCondition) {
+                                                                        @ModelAttribute DrugStoreConditionDTO drugStoreCondition) {
         Pageable pageable = PageRequest.of(page, size);
         ApiResponseDTO<Page<DrugStore>> drugStoreList = mainDataQueryService.getDrugStoreList(drugStoreCondition, pageable);
         return ResponseEntity.ok(drugStoreList);
@@ -50,7 +50,7 @@ public class MainDataQueryController {
     @GetMapping("/getCompanyData")
     public ResponseEntity<ApiResponseDTO<Page<Company>>> getCompany(@RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "10") int size,
-                                                                    @ModelAttribute CompanyConditionVO companyCondition) {
+                                                                    @ModelAttribute CompanyConditionDTO companyCondition) {
         Pageable pageable = PageRequest.of(page, size);
         ApiResponseDTO<Page<Company>> companyList = mainDataQueryService.getCompanyList(companyCondition, pageable);
         return ResponseEntity.ok(companyList);

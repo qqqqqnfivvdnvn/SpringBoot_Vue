@@ -5,11 +5,11 @@ import Home from '@/components/Home.vue';
 import BarData from '@/components/homechart/CleanBarChart.vue';
 import MainData from '@/components/homechart/MainDataPieChart.vue';
 import BranchBar from '@/components/homechart/BranchBarChart.vue';
-import HospitalData from '@/components/homemaindataview/HospitalDataView.vue';
+import HospitalData from '@/components/maindataview/HospitalDataView.vue';
 import HomeDashboard from '@/components/homechart/HomeDashboardView.vue';
-import DrugStoreData from '@/components/homemaindataview/DrugStoreDataView.vue';
-import CompanyData from '@/components/homemaindataview/CompanyDataView.vue';
-
+import DrugStoreData from '@/components/maindataview/DrugStoreDataView.vue';
+import CompanyData from '@/components/maindataview/CompanyDataView.vue';
+import AppealDataView from '@/components/appealdataview/AppealDataView.vue';
 const routes = [
     {
         path: '/',
@@ -81,6 +81,19 @@ const routes = [
                 meta: { requiresAuth: true } // 需要登录才能访问
             }
         ]
+    },
+
+    {
+        path: '/appealData',
+
+        children: [
+            {
+            path: 'showAppealData',
+            name: 'showAppealData',
+            component: AppealDataView,
+            meta: { requiresAuth: true } // 需要登录才能访问
+        },
+        ] // 需要登录才能访问
     },
 
 ];

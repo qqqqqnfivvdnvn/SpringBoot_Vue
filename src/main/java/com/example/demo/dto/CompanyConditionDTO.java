@@ -1,10 +1,9 @@
-package com.example.demo.vo;
+package com.example.demo.dto;
 
 import lombok.Data;
 
 @Data
-public class HospitalConditionVO {
-    //       dataId keyid hsCode province city area  address originalName
+public class CompanyConditionDTO {
     private String dataCode;
     private String originalName;
     private String dataId;
@@ -15,6 +14,5 @@ public class HospitalConditionVO {
     private String area;
     private String name;
     private String address;
-
 
 }

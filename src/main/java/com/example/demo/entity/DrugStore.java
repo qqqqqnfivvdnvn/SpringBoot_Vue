@@ -39,14 +39,14 @@ public class DrugStore {
     private String isInsert;
     private String repeatId;
     private String originalName;
-    private String updateDate;
+    private String updatetime;
     private String status;
     private String dataType;
     private String keyid;
     private String mainBranchKid;
     private String mainBranchName;
     private String hsCode;
-    private String addTime;
+    private String addtime;
     private String appealDataId;
 
 }
