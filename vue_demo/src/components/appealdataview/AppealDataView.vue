@@ -491,7 +491,37 @@ export default {
       }
     },
 
-    async toExcel() {},
+    async toExcel() {
+      try {
+        // 创建一个包含所有搜索条件的参数对象
+        const params = {
+          // 移除分页参数，获取所有数据
+          ...this.searchForm
+        };
+
+        // 发送请求获取所有数据
+        const response = await axios.get('/api/appealData/exportAppealData', {
+          params: params,
+          responseType: 'blob' // 重要：指定响应类型为 blob
+        });
+
+        // 创建下载链接
+        console.log(response.data);
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `申诉数据_${new Date().toLocaleDateString()}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+
+        // 清理
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('导出失败:', error);
+        this.$message.error('导出失败');
+      }
+    },
 
     handleSearch() {
       this.pageNumber = 0;
