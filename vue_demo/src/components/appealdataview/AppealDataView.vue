@@ -95,7 +95,15 @@
         <div class="form-actions">
           <button class="search-btn" @click="handleSearch">查询</button>
           <button class="reset-btn" @click="resetSearch">重置</button>
-          <button class="reset-btn" @click="toExcel">导出</button>
+          <button
+              class="export-btn"
+              @click="toExcel"
+              :disabled="exporting"
+              :style="{ opacity: exporting ? 0.7 : 1 }"
+          >
+            {{ exporting ? '导出中...' : '导出' }}
+          </button>
+
         </div>
       </div>
     </div>
@@ -392,6 +400,7 @@ export default {
         number: 0
       },
       loading: false,
+      exporting: false,
       searchForm: {
         // dataCode   dataId keyid hsCode province city area name address
         dataCode: '',
@@ -492,6 +501,9 @@ export default {
     },
 
     async toExcel() {
+      if (this.exporting) return;
+
+      this.exporting = true;
       try {
         // 创建一个包含所有搜索条件的参数对象
         const params = {
@@ -506,7 +518,6 @@ export default {
         });
 
         // 创建下载链接
-        console.log(response.data);
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
@@ -520,6 +531,8 @@ export default {
       } catch (error) {
         console.error('导出失败:', error);
         this.$message.error('导出失败');
+      } finally {
+        this.exporting = false;
       }
     },
 
@@ -916,6 +929,20 @@ button {
   background-color: #409eff;
 }
 
+.export-btn {
+  background: #67c23a;
+  color: white;
+}
+
+.export-btn:hover {
+  background: #85ce61;
+}
+
+.export-btn:disabled {
+  background: #b3e19d;
+  cursor: not-allowed;
+}
+
 
 /* 基础字体大小使用vw单位 */
 
@@ -931,5 +958,7 @@ h1 {
 .Appeal-table {
   font-size: calc(15px + 0.1vw);
 }
+
+
 
 </style>
