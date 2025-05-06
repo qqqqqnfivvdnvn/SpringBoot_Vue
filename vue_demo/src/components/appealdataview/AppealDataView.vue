@@ -1,5 +1,5 @@
 <template>
-  <div class="Company-data-view">
+  <div class="Appeal-data-view">
     <div class="search-container">
       <div class="search-form">
         <div class="form-item">
@@ -75,19 +75,19 @@
         </div>
 
         <div class="form-item">
-          <label>输入商业名称：</label>
+          <label>输入名称：</label>
           <input
               v-model="searchForm.name"
-              placeholder="输入商业名称"
+              placeholder="输入名称"
               @keyup.enter="handleSearch"
           >
         </div>
 
         <div class="form-item">
-          <label>输入商业地址：</label>
+          <label>输入地址：</label>
           <input
               v-model="searchForm.address"
-              placeholder="输入商业地址"
+              placeholder="输入地址"
               @keyup.enter="handleSearch"
           >
         </div>
@@ -95,13 +95,14 @@
         <div class="form-actions">
           <button class="search-btn" @click="handleSearch">查询</button>
           <button class="reset-btn" @click="resetSearch">重置</button>
+          <button class="reset-btn" @click="toExcel">导出</button>
         </div>
       </div>
     </div>
 
     <div class="data-container">
       <div class="table-wrapper">
-        <table class="Company-table" v-if="CompanyData.content && CompanyData.content.length > 0">
+        <table class="Appeal-table" v-if="AppealData.content && AppealData.content.length > 0">
           <thead>
           <tr>
             <th v-for="(column, index) in columns" :key="index"
@@ -116,32 +117,22 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="Company in CompanyData.content" :key="Company.dataId">
+          <tr v-for="Appeal in AppealData.content" :key="Appeal.dataId">
             <td v-for="(column, index) in columns" :key="index"
                 :style="{ width: column.width + 'px' }">
-              <template v-if="index === 0">{{ Company.dataId }}</template>
-              <template v-else-if="index === 1">{{ Company.dataCode }}</template>
-              <template v-else-if="index === 2">{{ Company.originalName }}</template>
-              <template v-else-if="index === 3">{{ Company.keyid }}</template>
-              <template v-else-if="index === 4">{{ Company.name }}</template>
-              <template v-else-if="index === 5">{{ Company.nameHistory }}</template>
-              <template v-else-if="index === 6">{{ Company.province }}</template>
-              <template v-else-if="index === 7">{{ Company.city }}</template>
-              <template v-else-if="index === 8">{{ Company.area }}</template>
-              <template v-else-if="index === 9">{{ Company.address }}</template>
+              <template v-if="index === 0">{{ Appeal.dataId }}</template>
+              <template v-else-if="index === 1">{{ Appeal.dataCode }}</template>
+              <template v-else-if="index === 2">{{ Appeal.originalName }}</template>
+              <template v-else-if="index === 3">{{ Appeal.keyid }}</template>
+              <template v-else-if="index === 4">{{ Appeal.name }}</template>
+<!--              <template v-else-if="index === 5">{{ Appeal.nameHistory }}</template>-->
+              <template v-else-if="index === 5">{{ Appeal.provicne }}</template>
+              <template v-else-if="index === 6">{{ Appeal.city }}</template>
+              <template v-else-if="index === 7">{{ Appeal.area }}</template>
+              <template v-else-if="index === 8">{{ Appeal.kuAddress }}</template>
+              <template v-else-if="index === 9">{{ Appeal.appealRemark }}</template>
               <template v-else-if="index === 10">
-                        <span :class="{
-                          'status-active': Company.status === '1',
-                          'status-uninactive': Company.status === '3',
-                          'status-inactive': Company.status === '4'
-                        }">
-                          {{ Company.status === '1' ? '清洗成功' :
-                            Company.status === '3' ? '无法清洗' :
-                                Company.status === '4' ? '禁用客户' : '错误' }}
-                        </span>
-              </template>
-              <template v-else-if="index === 11">
-                <button class="detail-btn" @click="showDetail(Company)">详情</button>
+                <button class="detail-btn" @click="showDetail(Appeal)">详情</button>
               </template>
             </td>
           </tr>
@@ -150,19 +141,19 @@
         <div v-else class="no-data">
           {{ loading ? '数据加载中...' : '没有找到匹配的医院数据' }}
         </div>
-        <div class="pagination" v-if="CompanyData.content && CompanyData.content.length > 0">
+        <div class="pagination" v-if="AppealData.content && AppealData.content.length > 0">
           <button
-              :disabled="CompanyData.first"
+              :disabled="AppealData.first"
               @click="prevPage"
               class="page-btn"
           >
             上一页
           </button>
           <span class="page-info">
-            第 {{ CompanyData.number + 1 }} 页 / 共 {{ CompanyData.totalPages }} 页 (共 {{ CompanyData.totalElements }} 条)
+            第 {{ AppealData.number + 1 }} 页 / 共 {{ AppealData.totalPages }} 页 (共 {{ AppealData.totalElements }} 条)
           </span>
           <button
-              :disabled="CompanyData.last"
+              :disabled="AppealData.last"
               @click="nextPage"
               class="page-btn"
           >
@@ -187,170 +178,200 @@
 
         <div class="modal-body">
           <div class="detail-row">
-            <label>dataId：</label>
-            <span>{{ currentCompany.dataId }}</span>
-          </div>
-          <div class="detail-row">
-            <label>原始编码：</label>
-            <span>{{ currentCompany.dataCode }}</span>
+            <label>批次编号：</label>
+            <span>{{ currentAppeal.batchCode }}</span>
           </div>
 
-
           <div class="detail-row">
-            <label>keyId：</label>
-            <span>{{ currentCompany.keyid }}</span>
+            <label>data_id：</label>
+            <span>{{ currentAppeal.dataId }}</span>
           </div>
 
           <div class="detail-row">
             <label>数据类型：</label>
-            <span>{{ currentCompany.dataType }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>豪森清洗后编码：</label>
-            <span>{{ currentCompany.hsCode }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>标准名称：</label>
-            <span>{{ currentCompany.name }}</span>
+            <span>{{ currentAppeal.dataType }}</span>
           </div>
           <div class="detail-row">
-            <label>历史名称：</label>
-            <span>{{ currentCompany.nameHistory }}</span>
+            <label>原始数据编码：</label>
+            <span>{{ currentAppeal.dataCode }}</span>
+          </div>
+          <div class="detail-row">
+            <label>原始数据名称：</label>
+            <span>{{ currentAppeal.originalName }}</span>
           </div>
 
           <div class="detail-row">
             <label>省份：</label>
-            <span>{{ currentCompany.province }}</span>
+            <span>{{ currentAppeal.originalProvince }}</span>
           </div>
 
           <div class="detail-row">
+            <label>原始地址：</label>
+            <span>{{ currentAppeal.originalAddress }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>经销商：</label>
+            <span>{{ currentAppeal.companyName }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>申诉原因：</label>
+            <span>{{ currentAppeal.appealRemark }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>申诉解决：</label>
+            <span>{{ currentAppeal.solveRemark }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>机构类型：</label>
+            <span>{{ currentAppeal.institutionType }}</span>
+          </div>
+          <div class="detail-row">
+            <label>keyid：</label>
+            <span>{{ currentAppeal.keyid }}</span>
+          </div>
+          <div class="detail-row">
+            <label>医院名称：</label>
+            <span>{{ currentAppeal.name }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>历史名称：</label>
+            <span>{{ currentAppeal.nameHistory }}</span>
+          </div>
+          <div class="detail-row">
+            <label>省：</label>
+            <span>{{ currentAppeal.provicne }}</span>
+          </div>
+          <div class="detail-row">
             <label>省份ID：</label>
-            <span>{{ currentCompany.provinceId }}</span>
+            <span>{{ currentAppeal.provicneid }}</span>
           </div>
           <div class="detail-row">
             <label>市：</label>
-            <span>{{ currentCompany.city }}</span>
+            <span>{{ currentAppeal.city }}</span>
           </div>
           <div class="detail-row">
             <label>市ID：</label>
-            <span>{{ currentCompany.cityId }}</span>
+            <span>{{ currentAppeal.cityid }}</span>
           </div>
-
           <div class="detail-row">
             <label>区县：</label>
-            <span>{{ currentCompany.area }}</span>
+            <span>{{ currentAppeal.area }}</span>
           </div>
-
           <div class="detail-row">
             <label>区县ID：</label>
-            <span>{{ currentCompany.areaId }}</span>
+            <span>{{ currentAppeal.areaid }}</span>
+          </div>
+          <div class="detail-row">
+            <label>地址：</label>
+            <span>{{ currentAppeal.kuAddress }}</span>
           </div>
 
           <div class="detail-row">
-            <label>地址：</label>
-            <span>{{ currentCompany.address }}</span>
+            <label>等级：</label>
+            <span>{{ currentAppeal.level }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>等次：</label>
+            <span>{{ currentAppeal.grade }}</span>
+          </div>
+          <div class="detail-row">
+            <label>所有制：</label>
+            <span>{{ currentAppeal.publicflag }}</span>
+          </div>
+          <div class="detail-row">
+            <label>类别：</label>
+            <span>{{ currentAppeal.classify }}</span>
+          </div>
+          <div class="detail-row">
+            <label>总分院kid：</label>
+            <span>{{ currentAppeal.generalBranchKid }}</span>
+          </div>
+          <div class="detail-row">
+            <label>总分院名称：</label>
+            <span>{{ currentAppeal.generalBranchName }}</span>
+          </div>
+          <div class="detail-row">
+            <label>军队医院：</label>
+            <span>{{ currentAppeal.militaryHos }}</span>
+          </div>
+          <div class="detail-row">
+            <label>登记号：</label>
+            <span>{{ currentAppeal.regcode }}</span>
+          </div>
+          <div class="detail-row">
+            <label>有效期：</label>
+            <span>{{ currentAppeal.validity }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>诊疗科室：</label>
+            <span>{{ currentAppeal.subjects }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>法人代表：</label>
+            <span>{{ currentAppeal.legalperson }}</span>
           </div>
 
           <div class="detail-row">
             <label>统一社会信用代码：</label>
-            <span>{{ currentCompany.creditCode }}</span>
+            <span>{{ currentAppeal.usci }}</span>
           </div>
 
           <div class="detail-row">
-            <label>类别：</label>
-            <span>{{ currentCompany.classify }}</span>
+            <label>经营方式：</label>
+            <span>{{ currentAppeal.operation }}</span>
           </div>
-
           <div class="detail-row">
-            <label>企业类型：</label>
-            <span>{{ currentCompany.econKind }}</span>
+            <label>经营范围：</label>
+            <span>{{ currentAppeal.scope }}</span>
           </div>
-
           <div class="detail-row">
-            <label>登记状态：</label>
-            <span>{{ currentCompany.signStatus }}</span>
+            <label>总分店kid：</label>
+            <span>{{ currentAppeal.mainBranchKid }}</span>
           </div>
-
           <div class="detail-row">
-            <label>所属行业：</label>
-            <span>{{ currentCompany.industry }}</span>
+            <label>总分店名称：</label>
+            <span>{{ currentAppeal.mainBranchName }}</span>
           </div>
-
           <div class="detail-row">
-            <label>成立日期：</label>
-            <span>{{ currentCompany.createDate }}</span>
+            <label>成立时间：</label>
+            <span>{{ currentAppeal.createDate }}</span>
           </div>
           <div class="detail-row">
             <label>注册资金：</label>
-            <span>{{ currentCompany.registCapi }}</span>
+            <span>{{ currentAppeal.registCapi }}</span>
           </div>
-
           <div class="detail-row">
-            <label>法人：</label>
-            <span>{{ currentCompany.operName }}</span>
+            <label>企业类型：</label>
+            <span>{{ currentAppeal.econKind }}</span>
           </div>
-
           <div class="detail-row">
-            <label>经营范围：</label>
-            <span>{{ currentCompany.scope }}</span>
+            <label>登记状态：</label>
+            <span>{{ currentAppeal.signStatus }}</span>
           </div>
-
+          <div class="detail-row">
+            <label>所属行业：</label>
+            <span>{{ currentAppeal.industry }}</span>
+          </div>
           <div class="detail-row">
             <label>登记机关：</label>
-            <span>{{ currentCompany.belong }}</span>
+            <span>{{ currentAppeal.belong }}</span>
           </div>
 
-
-
-
-          <div class="detail-row">
-            <label>豪森重复数据ID：</label>
-            <span>{{ currentCompany.repeatId }}</span>
-          </div>
-
-
-          <div class="detail-row">
-            <label>是否新增：</label>
-            <span>{{ currentCompany.isInsert }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>重复编码：</label>
-            <span>{{ currentCompany.repeatId }}</span>
-          </div>
-
-
-          <div class="detail-row">
-            <label>添加日期：</label>
-            <span>{{ currentCompany.addtime }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>更新日期：</label>
-            <span>{{ currentCompany.updatetime }}</span>
-          </div>
-
-
-          <div class="detail-row">
-            <label>状态：</label>
-            <span :class="{
-                'status-active': currentCompany.status === '1',
-                'status-uninactive': currentCompany.status === '3',
-                'status-inactive': currentCompany.status === '4'
-              }">
-              {{
-                currentCompany.status === '1' ? '清洗成功' :
-                    currentCompany.status === '3' ? '无法清洗' :
-                        currentCompany.status === '4' ? '禁用客户' : '其他状态'
-              }}
-            </span>
-          </div>
         </div>
+
+
         <div class="modal-footer">
           <button class="modal-close-btn" @click="closeDetailModal">关闭</button>
         </div>
+
       </div>
     </div>
   </div>
@@ -362,7 +383,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      CompanyData: {
+      AppealData: {
         content: [],
         totalElements: 0,
         totalPages: 0,
@@ -388,7 +409,7 @@ export default {
       pageSize: 10,
       pageNumber: 0,
       showDetailModal: false,
-      currentCompany: {},
+      currentAppeal: {},
 
       // 列定义
       columns: [
@@ -397,12 +418,12 @@ export default {
         {label: '原始名称', width: 100},
         {label: 'keyId', width: 100},
         {label: '标准名称', width: 100},
-        {label: '历史名称', width: 100},
+        // {label: '历史名称', width: 100},
         {label: '省份', width: 100},
         {label: '城市', width: 100},
         {label: '区县', width: 100},
         {label: '地址', width: 100},
-        {label: '状态', width: 100},
+        {label: '申诉原因', width: 100},
         {label: '操作', width: 100}
       ],
       resizing: false,
@@ -412,11 +433,11 @@ export default {
     }
   },
   mounted() {
-    this.fetchCompanyData();
+    this.fetchAppealData();
   },
   methods: {
 
-    async fetchCompanyData() {
+    async fetchAppealData() {
       this.loading = true;
       try {
         const params = {
@@ -460,7 +481,7 @@ export default {
           params: params
         });
 
-        this.CompanyData = response.data.data;
+        this.AppealData = response.data.data;
 
       } catch (error) {
         console.error('获取申诉数据失败:', error);
@@ -469,9 +490,12 @@ export default {
         this.loading = false;
       }
     },
+
+    async toExcel() {},
+
     handleSearch() {
       this.pageNumber = 0;
-      this.fetchCompanyData();
+      this.fetchAppealData();
     },
     resetSearch() {
       this.searchForm = {
@@ -487,32 +511,32 @@ export default {
         originalName: ''
       };
       this.pageNumber = 0;
-      this.fetchCompanyData();
+      this.fetchAppealData();
     },
     prevPage() {
       if (this.pageNumber > 0) {
         this.pageNumber--;
-        this.fetchCompanyData();
+        this.fetchAppealData();
       }
     },
     nextPage() {
-      if (this.pageNumber < this.CompanyData.totalPages - 1) {
+      if (this.pageNumber < this.AppealData.totalPages - 1) {
         this.pageNumber++;
-        this.fetchCompanyData();
+        this.fetchAppealData();
       }
     },
     handlePageSizeChange() {
       this.pageNumber = 0;
-      this.fetchCompanyData();
+      this.fetchAppealData();
     },
-    showDetail(Company) {
-      this.currentCompany = Company;
-      console.log(Company);
+    showDetail(Appeal) {
+      this.currentAppeal = Appeal;
+      console.log(Appeal);
       this.showDetailModal = true;
     },
     closeDetailModal() {
       this.showDetailModal = false;
-      this.currentCompany = {};
+      this.currentAppeal = {};
     },
     // 列宽调整方法
     startResize(e, index) {
@@ -546,7 +570,7 @@ export default {
 </script>
 
 <style scoped>
-.Company-data-view {
+.Appeal-data-view {
   display: flex;
   flex-direction: column;
   height: 85vh;
@@ -555,7 +579,7 @@ export default {
   background: white;
 }
 
-/*.Company-data-view {*/
+/*.Appeal-data-view {*/
 /*  display: flex;*/
 /*  flex-direction: column;*/
 /*  width: 1950px; !* 固定宽度 *!*/
@@ -655,15 +679,15 @@ button {
   border-radius: 4px;
 }
 
-.Company-table {
+.Appeal-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
   table-layout: fixed;
 }
 
-.Company-table th,
-.Company-table td {
+.Appeal-table th,
+.Appeal-table td {
   border: 1px solid #ebeef5;
   padding: 12px;
   text-align: left;
@@ -672,7 +696,7 @@ button {
   white-space: nowrap;
 }
 
-.Company-table th {
+.Appeal-table th {
   background-color: #f5f7fa;
   font-weight: bold;
   position: sticky;
@@ -681,11 +705,11 @@ button {
   -webkit-user-select: none;
 }
 
-.Company-table tr:nth-child(even) {
+.Appeal-table tr:nth-child(even) {
   background-color: #fafafa;
 }
 
-.Company-table tr:hover {
+.Appeal-table tr:hover {
   background-color: #f5f7fa;
 }
 
@@ -874,7 +898,7 @@ h1 {
 }
 
 /* 表格字体 */
-.Company-table {
+.Appeal-table {
   font-size: calc(15px + 0.1vw);
 }
 

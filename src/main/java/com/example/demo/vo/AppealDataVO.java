@@ -10,6 +10,7 @@ public class AppealDataVO {
     private String dataCode;           // data_code → dataCode
     private String originalName;       // original_name → originalName
     private String originalProvince;   // original_province → originalProvince
+    private String originalAddress;
     private String companyName;        // company_name → companyName
     private String appealRemark;       // appeal_remark → appealRemark
     private String solveRemark;        // solve_remark → solveRemark
@@ -17,8 +18,8 @@ public class AppealDataVO {
     private String keyid;              // keyid → keyId (更符合驼峰规则)
     private String name;
     private String nameHistory;        // name_history → nameHistory
-    private String province;           // provicne → province (修正拼写错误)
-    private String provinceid;         // provicneid → provinceId (修正拼写错误)
+    private String provicne;           // provicne → province (修正拼写错误)
+    private String provicneid;         // provicneid → provinceId (修正拼写错误)
     private String city;
     private String cityid;             // cityid → cityId
     private String area;

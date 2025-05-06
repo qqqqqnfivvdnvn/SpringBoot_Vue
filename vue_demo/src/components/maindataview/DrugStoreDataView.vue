@@ -124,12 +124,12 @@
               <template v-else-if="index === 2">{{ DrugStore.originalName }}</template>
               <template v-else-if="index === 3">{{ DrugStore.keyid }}</template>
               <template v-else-if="index === 4">{{ DrugStore.name }}</template>
-              <template v-else-if="index === 5">{{ DrugStore.historyName }}</template>
-              <template v-else-if="index === 6">{{ DrugStore.province }}</template>
-              <template v-else-if="index === 7">{{ DrugStore.city }}</template>
-              <template v-else-if="index === 8">{{ DrugStore.area }}</template>
-              <template v-else-if="index === 9">{{ DrugStore.address }}</template>
-              <template v-else-if="index === 10">
+<!--              <template v-else-if="index === 5">{{ DrugStore.historyName }}</template>-->
+              <template v-else-if="index === 5">{{ DrugStore.province }}</template>
+              <template v-else-if="index === 6">{{ DrugStore.city }}</template>
+              <template v-else-if="index === 7">{{ DrugStore.area }}</template>
+              <template v-else-if="index === 8">{{ DrugStore.address }}</template>
+              <template v-else-if="index === 9">
                         <span :class="{
                           'status-active': DrugStore.status === '1',
                           'status-uninactive': DrugStore.status === '3',
@@ -140,7 +140,7 @@
                                 DrugStore.status === '4' ? '禁用客户' : '错误' }}
                         </span>
               </template>
-              <template v-else-if="index === 11">
+              <template v-else-if="index === 10">
                 <button class="detail-btn" @click="showDetail(DrugStore)">详情</button>
               </template>
             </td>
@@ -445,7 +445,7 @@ export default {
         {label: '原始名称', width: 100},
         {label: 'keyId', width: 100},
         {label: '标准名称', width: 100},
-        {label: '历史名称', width: 100},
+        // {label: '历史名称', width: 100},
         {label: '省份', width: 100},
         {label: '城市', width: 100},
         {label: '区县', width: 100},

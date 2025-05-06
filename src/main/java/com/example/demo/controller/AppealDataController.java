@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -25,5 +26,14 @@ public class AppealDataController {
         ApiResponseDTO<Page<AppealDataVO>> appealData = appealDataService.getAppealData(condition, pageable);
         return ResponseEntity.ok(appealData);
     }
+
+    @PostMapping("/toExcel")
+    public ResponseEntity<AppealDataVO>  toExcelData(AppealDataVO appealDataVO) {
+        System.out.println(appealDataVO);
+        return ResponseEntity.ok(appealDataVO);
+    }
+
+
+
 
 }
