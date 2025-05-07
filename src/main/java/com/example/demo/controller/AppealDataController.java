@@ -88,7 +88,6 @@ public class AppealDataController {
             // 填充数据
             int rowNum = 1;
             for (AppealDataVO data : dataList) {
-                System.out.println(data);
                 XSSFRow row = sheet.createRow(rowNum++);
                 int colNum = 0;
                 row.createCell(colNum++).setCellValue(data.getBatchCode() != null ? data.getBatchCode() : "");
