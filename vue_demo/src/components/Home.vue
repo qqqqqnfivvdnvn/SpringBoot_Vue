@@ -2,10 +2,9 @@
   <div class="home-page" :style="homePageStyle">
     <!-- 导航栏 -->
     <nav class="navbar">
-      <div class="navbar-brand">ADOS 后台管理</div>
+      <div class="navbar-brand">项目管理系统</div>
       <div class="navbar-links">
-        <router-link to="/home" @click="resetToDashboard">首页</router-link>
-
+        <router-link to="/home">首页</router-link>
         <router-link to="/settings">设置</router-link>
         <div class="avatar">
           <img src="@/assets/avatar-modified.png" alt="用户头像" />
@@ -17,106 +16,117 @@
       </div>
     </nav>
 
-    <!-- 主要内容区域 -->
-    <div class="main-content">
-      <!-- 左侧功能栏 -->
-      <div class="sidebar" :class="{ 'collapsed': isSidebarCollapsed }">
-        <div class="sidebar-header">
-          <span v-if="!isSidebarCollapsed">功能菜单</span>
-          <button class="collapse-button" @click="toggleSidebar">
-            <font-awesome-icon :icon="isSidebarCollapsed ? ['fas', 'angle-double-right'] : ['fas', 'angle-double-left']"/>
+    <!-- 全屏平铺的项目入口区域 -->
+    <div class="fullscreen-projects">
+      <div class="projects-container">
+        <h2 class="projects-title">我的项目</h2>
+
+        <!-- 项目搜索框 -->
+        <div class="projects-search">
+          <font-awesome-icon :icon="['fas', 'search']" class="search-icon"/>
+          <input
+              type="text"
+              placeholder="搜索项目..."
+              v-model="searchQuery"
+              @input="filterProjects"
+          >
+        </div>
+
+        <!-- 项目分类标签 -->
+        <div class="projects-tabs">
+          <button
+              v-for="tab in tabs"
+              :key="tab.id"
+              :class="{ 'active': activeTab === tab.id }"
+              @click="activeTab = tab.id"
+          >
+            {{ tab.label }}
           </button>
         </div>
-        <ul class="sidebar-menu">
-          <!-- 主数据查看菜单 -->
-          <li>
-            <div class="menu-item" @click="toggleMenu('user')">
-              <span>
-                <font-awesome-icon :icon="['fas', 'th-list']" size="1x"/>
-                <span v-if="!isSidebarCollapsed">主数据</span>
-              </span>
-              <span v-if="!isSidebarCollapsed" class="arrow">
-                {{ openMenus.user ? '▼' : '▶' }}
-              </span>
+
+        <!-- 项目卡片网格 -->
+        <div class="projects-grid">
+          <div
+              v-for="project in filteredProjects"
+              :key="project.id"
+              class="project-card"
+              @click="navigateToProject(project)"
+          >
+            <div class="project-icon" :style="{ backgroundColor: project.color }">
+              <font-awesome-icon :icon="['fas', project.icon]" size="2x"/>
             </div>
-            <ul v-if="openMenus.user && !isSidebarCollapsed" class="sub-menu">
-
-              <li @click="showHospitalData">
-                <font-awesome-icon :icon="['fas', 'hospital-alt']" size="1x"/> &nbsp;
-                <span>医院主数据</span>
-              </li>
-              <li @click="showDrugStoreData">
-                <font-awesome-icon :icon="['fas', 'store-alt']" size="1x"/> &nbsp;
-                <span>药店主数据</span>
-              </li>
-              <li @click="CompanyDataView">
-                <font-awesome-icon :icon="['fas', 'synagogue']" size="1x"/> &nbsp;
-                <span>商业主数据</span>
-              </li>
-            </ul>
-          </li>
-
-          <!-- 数据申诉 -->
-          <li>
-            <div class="menu-item" @click="toggleMenu('dataManagement')">
-              <span>
-                <font-awesome-icon :icon="['fas', 'file-alt']" size="1x"/>
-                <span v-if="!isSidebarCollapsed">数据申诉</span>
-              </span>
-              <span v-if="!isSidebarCollapsed" class="arrow">
-                {{ openMenus.dataManagement ? '▼' : '▶' }}
-              </span>
-            </div>
-            <ul v-if="openMenus.dataManagement && !isSidebarCollapsed" class="sub-menu">
-
-              <li @click="showAppealData">
-                <font-awesome-icon :icon="['fas', 'book-reader']" size="1x"/> &nbsp;
-                <span>数据查看</span>
-              </li>
-
-              <li @click="navigateTo('/data-management/export')">
-                <font-awesome-icon :icon="['fas', 'cat']" size="1x"/> &nbsp;
-                <span>数据导入</span>
-              </li>
-            </ul>
-          </li>
-
-        </ul>
-      </div>
-
-      <!-- 右侧内容区域 -->
-      <div class="content" :class="{ 'expanded': isSidebarCollapsed }">
-        <!-- 简化后的标签页头部 -->
-        <div class="content-header">
-          <div class="tabs-container">
-            <div class="tabs">
-              <div
-                  v-for="tab in tabs"
-                  :key="tab.id"
-                  :class="{ 'active': tab.active }"
-                  class="tab"
-                  @click="switchTab(tab.id)"
-              >
-                {{ tab.title }}
-                <span
-                    v-if="tabs.length > 1"
-                    class="close-tab"
-                    @click.stop="closeTab(tab.id)"
-                >
-              ×
-            </span>
+            <div class="project-info">
+              <h3>{{ project.name }}</h3>
+              <p>{{ project.description }}</p>
+              <div class="project-meta">
+                <span><font-awesome-icon :icon="['fas', 'user']"/> {{ project.owner }}</span>
+                <span><font-awesome-icon :icon="['fas', 'calendar-alt']"/> {{ project.updated }}</span>
               </div>
+            </div>
+            <div class="project-actions">
+              <button @click.stop="toggleFavorite(project)">
+                <font-awesome-icon
+                    :icon="['fas', project.isFavorite ? 'star' : 'star']"
+                    :class="{ 'favorite': project.isFavorite }"
+                />
+              </button>
             </div>
           </div>
         </div>
 
-        <transition name="fade" mode="out-in">
-          <component :is="currentViewComponent"></component>
-        </transition>
-
+        <!-- 添加新项目按钮 -->
+        <div class="add-project" @click="showAddProjectDialog">
+          <font-awesome-icon :icon="['fas', 'plus-circle']" size="3x"/>
+          <span>添加新项目</span>
+        </div>
       </div>
     </div>
 
+    <!-- 添加项目对话框 -->
+    <div class="dialog-overlay" v-if="showDialog">
+      <div class="dialog">
+        <h3>添加新项目</h3>
+        <div class="dialog-content">
+          <div class="form-group">
+            <label>项目名称</label>
+            <input type="text" v-model="newProject.name" placeholder="输入项目名称">
+          </div>
+          <div class="form-group">
+            <label>项目描述</label>
+            <textarea v-model="newProject.description" placeholder="输入项目描述"></textarea>
+          </div>
+          <div class="form-group">
+            <label>项目图标</label>
+            <div class="icon-selector">
+              <button
+                  v-for="icon in availableIcons"
+                  :key="icon"
+                  :class="{ 'selected': newProject.icon === icon }"
+                  @click="newProject.icon = icon"
+              >
+                <font-awesome-icon :icon="['fas', icon]"/>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>项目颜色</label>
+            <div class="color-selector">
+              <div
+                  v-for="color in availableColors"
+                  :key="color"
+                  :style="{ backgroundColor: color }"
+                  :class="{ 'selected': newProject.color === color }"
+                  @click="newProject.color = color"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button class="cancel" @click="showDialog = false">取消</button>
+          <button class="confirm" @click="addNewProject">确认添加</button>
+        </div>
+      </div>
+    </div>
 
     <!-- 悬浮提示框 -->
     <div v-if="showToast" class="toast">
@@ -126,138 +136,176 @@
 </template>
 
 <script>
-import HospitalDataView from '@/components/maindataview/HospitalDataView.vue';
-import HomeDashboardView from '@/components/homechart/HomeDashboardView.vue';
-import DrugStoreDataView from '@/components/maindataview/DrugStoreDataView.vue';
-import CompanyDataView from '@/components/maindataview/CompanyDataView.vue';
-import AppealDataView from '@/components/appealdataview/AppealDataView.vue';
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  components: {
-    HospitalDataView,
-    HomeDashboardView,
-    DrugStoreDataView,
-    CompanyDataView,
-    AppealDataView
-  },
-
   data() {
     return {
-      openMenus: {
-        user: false,
-        dataManagement: false,
-      },
       showToast: false,
       toastMessage: '',
-      isSidebarCollapsed: false,
       homePageStyle: {
         background: 'linear-gradient(135deg, #e3d2ff, #e3d2ff)',
       },
-      currentView: 'HomeDashboardView' // 默认显示HomeDashboard
-      ,
+      searchQuery: '',
+      activeTab: 'all',
       tabs: [
-        // { id: 'dashboard', title: '仪表盘', component: 'HomeDashboardView', active: true }
+        { id: 'all', label: '全部项目' },
+        { id: 'recent', label: '最近访问' },
+        { id: 'favorites', label: '我的收藏' },
+        { id: 'personal', label: '个人项目' },
+        { id: 'team', label: '团队项目' }
       ],
-      activeTab: 'dashboard'
+      projects: [
+        {
+          id: 1,
+          name: '主数据管理系统',
+          description: '医院、药店、商业公司主数据管理平台',
+          icon: 'database',
+          color: '#9478cc',
+          owner: '管理员',
+          updated: '今天',
+          isFavorite: true,
+          type: 'team'
+        },
+        {
+          id: 2,
+          name: '数据申诉平台',
+          description: '处理数据申诉和修正请求',
+          icon: 'file-alt',
+          color: '#6ab7ff',
+          owner: '数据部',
+          updated: '昨天',
+          isFavorite: false,
+          type: 'team'
+        },
+        {
+          id: 3,
+          name: '数据分析报表',
+          description: '生成各类数据分析报表',
+          icon: 'chart-line',
+          color: '#ff9e7d',
+          owner: '分析部',
+          updated: '2天前',
+          isFavorite: true,
+          type: 'team'
+        },
+        {
+          id: 4,
+          name: '个人学习项目',
+          description: '个人技术学习与实践',
+          icon: 'laptop-code',
+          color: '#7dcf85',
+          owner: '我',
+          updated: '3天前',
+          isFavorite: false,
+          type: 'personal'
+        },
+        {
+          id: 5,
+          name: '客户关系管理',
+          description: '客户信息与关系管理系统',
+          icon: 'users',
+          color: '#f9c74f',
+          owner: '销售部',
+          updated: '1周前',
+          isFavorite: false,
+          type: 'team'
+        },
+        {
+          id: 6,
+          name: '项目文档中心',
+          description: '所有项目文档集中管理',
+          icon: 'book',
+          color: '#90be6d',
+          owner: '文档部',
+          updated: '1周前',
+          isFavorite: true,
+          type: 'team'
+        }
+      ],
+      showDialog: false,
+      newProject: {
+        name: '',
+        description: '',
+        icon: 'project-diagram',
+        color: '#9478cc'
+      },
+      availableIcons: ['project-diagram', 'database', 'chart-line', 'laptop-code', 'users', 'book', 'file-alt', 'hospital', 'store'],
+      availableColors: ['#9478cc', '#6ab7ff', '#ff9e7d', '#7dcf85', '#f9c74f', '#90be6d', '#577590', '#f94144']
     };
   },
-
   computed: {
-    currentViewComponent() {
-      return this.currentView; // 直接返回组件名
+    filteredProjects() {
+      let filtered = this.projects;
+
+      // 按标签筛选
+      if (this.activeTab !== 'all') {
+        filtered = filtered.filter(project => {
+          if (this.activeTab === 'recent') {
+            return project.updated.includes('天') || project.updated === '今天';
+          } else if (this.activeTab === 'favorites') {
+            return project.isFavorite;
+          } else {
+            return project.type === this.activeTab;
+          }
+        });
+      }
+
+      // 按搜索词筛选
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        filtered = filtered.filter(project =>
+            project.name.toLowerCase().includes(query) ||
+            project.description.toLowerCase().includes(query)
+        );
+      }
+
+      return filtered;
     }
   },
-
   methods: {
-
-    toggleMenu(menu) {
-      this.openMenus[menu] = !this.openMenus[menu];
+    navigateToProject(project) {
+      this.showToastMessage(`正在进入项目: ${project.name}`);
+      // 实际应用中可能是: this.$router.push(`/project/${project.id}`);
     },
-
-
-    // -----------------------------加载医院主数据视图组件
-
-    addTab(title, component) {
-      // 检查是否已存在相同标签
-      const existingTab = this.tabs.find(tab => tab.component === component);
-      if (existingTab) {
-        this.switchTab(existingTab.id);
+    toggleFavorite(project) {
+      project.isFavorite = !project.isFavorite;
+      this.showToastMessage(project.isFavorite ? '已添加到收藏' : '已取消收藏');
+    },
+    showAddProjectDialog() {
+      this.newProject = {
+        name: '',
+        description: '',
+        icon: 'project-diagram',
+        color: '#9478cc'
+      };
+      this.showDialog = true;
+    },
+    addNewProject() {
+      if (!this.newProject.name.trim()) {
+        this.showToastMessage('请输入项目名称');
         return;
       }
 
-      const tabId = 'tab-' + Date.now();
-      this.tabs.forEach(tab => tab.active = false);
-      this.tabs.push({
-        id: tabId,
-        title,
-        component,
-        active: true
-      });
-      this.activeTab = tabId;
-      this.currentView = component;
+      const newProject = {
+        id: this.projects.length + 1,
+        name: this.newProject.name,
+        description: this.newProject.description,
+        icon: this.newProject.icon,
+        color: this.newProject.color,
+        owner: '我',
+        updated: '刚刚',
+        isFavorite: false,
+        type: 'personal'
+      };
+
+      this.projects.unshift(newProject);
+      this.showDialog = false;
+      this.showToastMessage('项目添加成功');
     },
-    switchTab(tabId) {
-      this.tabs.forEach(tab => {
-        tab.active = tab.id === tabId;
-        if (tab.active) {
-          this.currentView = tab.component;
-          this.activeTab = tabId;
-        }
-      });
+    filterProjects() {
+      // 搜索功能已在计算属性中实现
     },
-
-    closeTab(tabId) {
-      if (this.tabs.length <= 1) return;
-
-      const index = this.tabs.findIndex(tab => tab.id === tabId);
-      if (this.tabs[index].active) {
-        const newActiveTab = index > 0 ? this.tabs[index - 1] : this.tabs[index + 1];
-        newActiveTab.active = true;
-        this.currentView = newActiveTab.component;
-        this.activeTab = newActiveTab.id;
-      }
-      this.tabs.splice(index, 1);
-    },
-
-    showHospitalData() {
-      this.addTab('医院主数据', 'HospitalDataView');
-      window.location.hash = '/dataBase/hospital';
-    },
-
-    showDrugStoreData() {
-      this.addTab('药店主数据', 'DrugStoreDataView');
-      window.location.hash = '/dataBase/drugstore';
-    },
-    CompanyDataView() {
-      this.addTab('商业主数据', 'CompanyDataView');
-      window.location.hash = '/dataBase/company';
-    },
-
-    showAppealData() {
-      this.addTab('申诉数据', 'AppealDataView');
-      window.location.hash = '/appealData/showAppealData';
-    },
-
-
-    resetToDashboard() {
-      const dashboardTab = this.tabs.find(tab => tab.component === 'HomeDashboardView');
-      if (dashboardTab) {
-        this.switchTab(dashboardTab.id);
-      } else {
-        this.addTab('仪表盘', 'HomeDashboardView');
-      }
-      window.location.hash = '';
-    },
-
-
-
-    // -----------用户退出登录
-
-    navigateTo(path) {
-      this.$router.push(path);
-    },
-
 
     async handleLogout() {
       try {
@@ -271,7 +319,6 @@ export default {
         console.error('退出失败:', error);
       }
     },
-
     clearAuthData() {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -284,16 +331,13 @@ export default {
       setTimeout(() => {
         this.showToast = false;
       }, 3000);
-    },
-
-    toggleSidebar() {
-      this.isSidebarCollapsed = !this.isSidebarCollapsed;
     }
   }
 };
 </script>
 
 <style scoped>
+/* 基础样式 */
 .home-page {
   display: flex;
   flex-direction: column;
@@ -310,11 +354,11 @@ export default {
   background-color: #af96e6;
   color: #fff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: fixed; /* 固定定位 */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000; /* 确保导航栏位于最上层 */
+  z-index: 1000;
 }
 
 .navbar-brand {
@@ -338,15 +382,13 @@ export default {
   text-decoration: underline;
 }
 
-/* 头像样式 */
 .avatar img {
   width: 45px;
   height: 45px;
-  border-radius: 50%; /* 圆形头像 */
+  border-radius: 50%;
   cursor: pointer;
 }
 
-/* 退出登录按钮样式 */
 .logout-button {
   background-color: #fff;
   color: #9478cc;
@@ -357,119 +399,323 @@ export default {
   font-size: 1rem;
   display: flex;
   align-items: center;
-  gap: 8px; /* 按钮文字和图标之间的间距 */
+  gap: 8px;
 }
 
 .logout-button:hover {
   background-color: #f0f0f0;
 }
 
-.logout-button i {
-  font-size: 0.9rem; /* 关闭图标大小 */
-}
-
-/* 主要内容区域 */
-.main-content {
-  display: flex;
-  flex: 1;
-  background-color: #fff; /* 右侧内容区域背景色为白色 */
-  margin-top: 80px; /* 增加与导航栏的间距 */
-}
-
-/* 左侧功能栏样式 */
-.sidebar {
-  width: 250px;
-  background-color: #fff;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+/* 全屏项目区域 */
+.fullscreen-projects {
+  margin-top: 85px; /* 与导航栏的间距 */
   padding: 20px;
-  transition: width 0.3s ease;
-  position: fixed; /* 固定定位 */
-  top: 90px; /* 增加与导航栏的间距 */
-  bottom: 0;
-  z-index: 999; /* 确保位于内容区域之上 */
+  height: calc(100vh - 85px);
+  overflow-y: auto;
+  background-color: #f9f9f9;
 }
 
-.sidebar.collapsed {
-  width: 60px;
-  background-color: #fff; /* 折叠状态下背景色为白色 */
+.projects-container {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 20px;
+.projects-title {
   color: #333;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
 }
 
-.sidebar-menu {
-  list-style: none;
-  padding: 0;
+.projects-search {
+  position: relative;
+  margin-bottom: 20px;
+  max-width: 400px;
 }
 
-.sidebar-menu li {
-  margin-bottom: 10px;
-}
-
-.menu-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  cursor: pointer;
+.projects-search input {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  border: 1px solid #ddd;
   border-radius: 5px;
-  transition: background-color 0.2s;
+  font-size: 1rem;
 }
 
-.menu-item:hover {
-  background-color: #f0f0f0;
-}
-
-.menu-item span {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.arrow {
-  margin-left: 8px;
-  font-size: 0.8rem;
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
   color: #9478cc;
 }
 
-.sub-menu {
-  list-style: none;
-  padding-left: 20px;
-  margin-top: 5px;
+.projects-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
-.sub-menu li {
-  padding: 8px;
+.projects-tabs button {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 20px;
   cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 
-.sub-menu li:hover {
-  background-color: #f0f0f0;
+.projects-tabs button:hover {
+  background: #f5f5f5;
 }
 
-/* 右侧内容区域样式 */
-.content {
-  flex: 1;
+.projects-tabs button.active {
+  background: #9478cc;
+  color: white;
+  border-color: #9478cc;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.project-card {
+  background: white;
+  border-radius: 8px;
   padding: 20px;
-  background-color: #fff; /* 右侧内容区域背景色为白色 */
-  transition: margin-left 0.3s ease;
-  margin-left: 280px; /* 初始左侧边距（250px + 10px） */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  cursor: pointer;
+  border-left: 4px solid #9478cc;
+  height: 180px;
 }
 
-.content.expanded {
-  margin-left: 90px; /* 折叠状态下的左侧边距（60px + 10px） */
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* 悬浮提示框样式 */
+.project-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.project-info h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.project-info p {
+  margin: 0 0 15px 0;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.project-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: auto;
+}
+
+.project-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.project-actions {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.project-actions button {
+  background: none;
+  border: none;
+  color: #ddd;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.project-actions button:hover {
+  color: #f9c74f;
+}
+
+.project-actions .favorite {
+  color: #f9c74f;
+}
+
+.add-project {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #9478cc;
+  height: 180px;
+}
+
+.add-project:hover {
+  border-color: #9478cc;
+  background: rgba(148, 120, 204, 0.05);
+}
+
+.add-project span {
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+/* 对话框样式 */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  padding: 20px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dialog h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.dialog-content {
+  margin: 20px 0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.icon-selector {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.icon-selector button {
+  background: #f5f5f5;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.icon-selector button.selected {
+  background: #9478cc;
+  color: white;
+}
+
+.color-selector {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.color-selector div {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.color-selector div.selected {
+  border-color: #333;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.dialog-actions button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.dialog-actions .cancel {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  color: #666;
+}
+
+.dialog-actions .confirm {
+  background: #9478cc;
+  border: 1px solid #9478cc;
+  color: white;
+}
+
+/* 悬浮提示框 */
 .toast {
   position: fixed;
   top: 20px;
@@ -499,69 +745,38 @@ export default {
   }
 }
 
-/* 折叠按钮样式 */
-.collapse-button {
-  background: none;
-  border: none;
-  color: #9478cc;
-  cursor: pointer;
-  font-size: 1.2rem;
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .projects-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .projects-tabs {
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+
+  .projects-tabs button {
+    white-space: nowrap;
+  }
+
+  .project-card,
+  .add-project {
+    height: 160px;
+  }
 }
 
-.collapse-button:hover {
-  color: #af96e6;
-}
+@media (max-width: 480px) {
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
 
-/* 内容标题栏样式 */
-.content-header {
-  background-color: white;
-  padding: 0;
-  margin-bottom: 5px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  .navbar-links {
+    gap: 10px;
+  }
 
-}
-
-.tabs-container {
-  overflow-x: auto;
-  padding: 0 10px;
-}
-
-.tabs {
-  display: flex;
-  min-width: fit-content;
-}
-
-.tab {
-  padding: 10px 20px;
-  cursor: pointer;
-  border: 1px solid #ddd;
-  border-bottom: none;
-  border-radius: 5px 5px 0 0;
-  margin-right: 5px;
-  background-color: #f8f9fa;
-  display: flex;
-  align-items: center;
-  position: relative;
-  white-space: nowrap;
-}
-
-.tab.active {
-  background-color: #fff;
-  border-bottom: 1px solid #fff;
-  margin-bottom: -1px;
-  color: #9478cc;
-  font-weight: bold;
-}
-
-.close-tab {
-  margin-left: 8px;
-  font-size: 1.2rem;
-  color: #999;
-  line-height: 1;
-}
-
-.close-tab:hover {
-  color: #666;
+  .logout-button span {
+    display: none;
+  }
 }
 </style>

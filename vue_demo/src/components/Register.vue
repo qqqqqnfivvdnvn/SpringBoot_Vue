@@ -2,7 +2,7 @@
   <div class="register-page">
     <div class="register-container">
       <div class="welcome-section">
-        <h1>ADOS</h1>
+        <h1>主数据管理系统</h1>
         <h2>欢迎加入！</h2>
         <p>请填写以下信息完成注册</p>
       </div>

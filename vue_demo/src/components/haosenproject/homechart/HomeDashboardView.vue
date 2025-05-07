@@ -78,10 +78,10 @@
 
 
 <script>
-import BarChart from '@/components/homechart/CleanBarChart.vue';
-import PieChart from '@/components/homechart/MainDataPieChart.vue';
-import LineChart from '@/components/homechart/AppealUpdateChart.vue';
-import RosePieChart from '@/components/homechart/BranchBarChart.vue';
+import BarChart from '@/components/haosenproject/homechart/CleanBarChart.vue';
+import PieChart from '@/components/haosenproject/homechart/MainDataPieChart.vue';
+import LineChart from '@/components/haosenproject/homechart/AppealUpdateChart.vue';
+import RosePieChart from '@/components/haosenproject/homechart/BranchBarChart.vue';
 import axios from 'axios';
 
 export default {

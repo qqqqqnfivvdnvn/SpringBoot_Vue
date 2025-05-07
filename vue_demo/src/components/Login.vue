@@ -3,9 +3,9 @@
   <div class="login-page">
     <div class="login-container">
       <div class="welcome-section">
-        <h1>ADOS</h1>
+        <h1>主数据管理系统</h1>
         <h2>欢迎回来！</h2>
-        <p>请使用您的个人信息登录以保持连接</p>
+<!--        <p>请使用您的个人信息登录以保持连接</p>-->
       </div>
       <form @submit.prevent="handleSubmit" class="form-section">
         <h2>登录</h2>

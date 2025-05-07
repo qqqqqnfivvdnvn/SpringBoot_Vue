@@ -2,14 +2,16 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Register from '@/components/Register.vue';
 import Login from '@/components/Login.vue';
 import Home from '@/components/Home.vue';
-import BarData from '@/components/homechart/CleanBarChart.vue';
-import MainData from '@/components/homechart/MainDataPieChart.vue';
-import BranchBar from '@/components/homechart/BranchBarChart.vue';
-import HospitalData from '@/components/maindataview/HospitalDataView.vue';
-import HomeDashboard from '@/components/homechart/HomeDashboardView.vue';
-import DrugStoreData from '@/components/maindataview/DrugStoreDataView.vue';
-import CompanyData from '@/components/maindataview/CompanyDataView.vue';
-import AppealDataView from '@/components/appealdataview/AppealDataView.vue';
+import HaosenHome from '@/components/haosenproject/haosenhome.vue';
+import BarData from '@/components/haosenproject/homechart/CleanBarChart.vue';
+import MainData from '@/components/haosenproject/homechart/MainDataPieChart.vue';
+import BranchBar from '@/components/haosenproject/homechart/BranchBarChart.vue';
+import HospitalData from '@/components/haosenproject/maindataview/HospitalDataView.vue';
+import HomeDashboard from '@/components/haosenproject/homechart/HomeDashboardView.vue';
+import DrugStoreData from '@/components/haosenproject/maindataview/DrugStoreDataView.vue';
+import CompanyData from '@/components/haosenproject/maindataview/CompanyDataView.vue';
+import AppealDataView from '@/components/haosenproject/appealdataview/AppealDataView.vue';
+
 const routes = [
     {
         path: '/',
@@ -32,13 +34,21 @@ const routes = [
         component: Home,
         meta: { requiresAuth: true } // 需要登录才能访问
     },
+
+    // 豪森项目路由配置
+    {
+        path: '/getHaosenHome',
+        name: 'getHaosenHome',
+        component: HaosenHome,
+        meta: { requiresAuth: true } // 需要登录才能访问
+    },
+
     {
         path: '/getCleanBarData',
         name: 'getCleanBarData',
         component: BarData,
         meta: { requiresAuth: true } // 需要登录才能访问
-    }
-    ,
+    },
     {
         path: '/getMainPieData',
         name: 'getMainPieData',
