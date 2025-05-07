@@ -11,6 +11,7 @@ import HomeDashboard from '@/components/haosenproject/homechart/HomeDashboardVie
 import DrugStoreData from '@/components/haosenproject/maindataview/DrugStoreDataView.vue';
 import CompanyData from '@/components/haosenproject/maindataview/CompanyDataView.vue';
 import AppealDataView from '@/components/haosenproject/appealdataview/AppealDataView.vue';
+import Demo from '@/components/haosenproject/demo.vue';
 
 const routes = [
     {
@@ -34,14 +35,30 @@ const routes = [
         component: Home,
         meta: { requiresAuth: true } // 需要登录才能访问
     },
+    // 项目跳转路由配置
 
-    // 豪森项目路由配置
     {
-        path: '/getHaosenHome',
-        name: 'getHaosenHome',
-        component: HaosenHome,
-        meta: { requiresAuth: true } // 需要登录才能访问
+        path: '/projects',
+        children: [
+            {
+                path: '/project/:id',
+                name: 'HaosenHome',
+                component: HaosenHome,
+                meta: { requiresAuth: true }, // 需要登录才能访问
+                props: true
+            },
+
+            {
+                path: '/project/:id',
+                name: 'Demo',
+                component: Demo,
+                meta: { requiresAuth: true } // 需要登录才能访问
+
+            },
+
+        ]
     },
+
 
     {
         path: '/getCleanBarData',

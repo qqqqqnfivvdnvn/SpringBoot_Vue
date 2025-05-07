@@ -267,6 +267,7 @@ export default {
     navigateToProject(project) {
       this.showToastMessage(`正在进入项目: ${project.name}`);
       // 实际应用中可能是: this.$router.push(`/project/${project.id}`);
+      this.$router.push(`/project/${project.id}`);
     },
     toggleFavorite(project) {
       project.isFavorite = !project.isFavorite;
