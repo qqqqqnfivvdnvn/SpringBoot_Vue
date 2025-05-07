@@ -68,8 +68,8 @@ public class AppealDataController {
 
             // 创建表头
             String[] headers = {
-                    "批次编号", "dataId", "数据类型", "原始编码", "原始名称",
-                    "省份", "原始地址", "经销商", "申诉备注", "申诉解决",
+                    "批次编号", "dataId", "数据类型", "原始数据编码", "原始数据名称",
+                    "省份", "original_address", "经销商", "申诉备注", "申诉解决",
                     "机构类型", "keyid", "标准名称", "历史名称", "省",
                     "省份ID", "市", "市ID", "区县", "区县ID",
                     "地址", "等级", "等次", "所有制", "类别",
@@ -88,6 +88,7 @@ public class AppealDataController {
             // 填充数据
             int rowNum = 1;
             for (AppealDataVO data : dataList) {
+                System.out.println(data);
                 XSSFRow row = sheet.createRow(rowNum++);
                 int colNum = 0;
                 row.createCell(colNum++).setCellValue(data.getBatchCode() != null ? data.getBatchCode() : "");
