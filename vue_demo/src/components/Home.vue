@@ -158,7 +158,7 @@ export default {
       projects: [
         {
           id: 1,
-          name: '主数据管理系统',
+          name: 'HaosenHome',
           description: '医院、药店、商业公司主数据管理平台',
           icon: 'database',
           color: '#9478cc',
@@ -169,7 +169,7 @@ export default {
         },
         {
           id: 2,
-          name: '数据申诉平台',
+          name: 'Demo',
           description: '处理数据申诉和修正请求',
           icon: 'file-alt',
           color: '#6ab7ff',
@@ -266,8 +266,11 @@ export default {
   methods: {
     navigateToProject(project) {
       this.showToastMessage(`正在进入项目: ${project.name}`);
-      // 实际应用中可能是: this.$router.push(`/project/${project.id}`);
-      this.$router.push(`/project/${project.id}`);
+
+      // this.$router.push(`/project/${project.id}`);
+      this.$router.push({ name: project.name, params: { id: project.name } });
+
+
     },
     toggleFavorite(project) {
       project.isFavorite = !project.isFavorite;
