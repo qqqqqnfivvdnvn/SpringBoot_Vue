@@ -760,7 +760,7 @@ button {
 }
 
 .status-active {
-  color: #6da1e4;
+  color: #78a2cc;
   font-weight: bold;
 }
 

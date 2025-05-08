@@ -2,25 +2,25 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.vo.UserLoginDataVO;
-import com.example.demo.entity.User;
+import com.example.demo.entity.Users;
 
 import java.util.List;
 
 public interface UserService {
 
-    public List<User> findAll();
+    public List<Users> findAll();
 
-    public ApiResponseDTO<UserLoginDataVO> login(User user);
+    public ApiResponseDTO<UserLoginDataVO> login(Users user);
 
 
-    public ApiResponseDTO<User> findByName(User user);
+    public ApiResponseDTO<Users> register(Users user);
 
 
     public int delete(String id);
 
-    public int update(User user);
+    public int update(Users user);
 
-    public List<User> getUsersByPage(String name, int offset, int limit);
+    public List<Users> getUsersByPage(String name, int offset, int limit);
 
 
 

@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.vo.UserLoginDataVO;
-import com.example.demo.entity.User;
+import com.example.demo.entity.Users;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +22,13 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<User> findAll() {
+    public List<Users> findAll() {
         return userMapper.findAll();
     }
 
     @Override
-    public ApiResponseDTO<UserLoginDataVO> login(User user) {
-        User searchUser = userMapper.findByName(user.getUsername());
+    public ApiResponseDTO<UserLoginDataVO> login(Users user) {
+        Users searchUser = userMapper.findByName(user.getUsername());
 
         UserLoginDataVO responseData = new UserLoginDataVO();
 
@@ -54,8 +54,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponseDTO<User> findByName(User user) {
-        User kuUser = userMapper.findByName(user.getUsername());
+    public ApiResponseDTO<Users> register(Users user) {
+        Users kuUser = userMapper.findByName(user.getUsername());
 
         // 判断用户名是否已被注册
         if (kuUser != null) {
@@ -85,12 +85,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int update(User user) {
+    public int update(Users user) {
         return userMapper.update(user);
     }
 
     @Override
-    public List<User> getUsersByPage(String name, int page, int limit) {
+    public List<Users> getUsersByPage(String name, int page, int limit) {
         int offset = (page - 1) * limit;
         return userMapper.findByPage(name, offset, limit);
     }

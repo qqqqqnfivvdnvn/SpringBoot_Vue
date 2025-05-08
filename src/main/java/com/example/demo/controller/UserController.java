@@ -3,7 +3,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.vo.UserLoginDataVO;
-import com.example.demo.entity.User;
+import com.example.demo.entity.Users;
 import com.example.demo.service.impl.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +35,7 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseDTO<UserLoginDataVO>> login(@RequestBody User user) {
+    public ResponseEntity<ApiResponseDTO<UserLoginDataVO>> login(@RequestBody Users user) {
         System.out.println(user);
         ApiResponseDTO<UserLoginDataVO> result = userService.login(user);
         return ResponseEntity.ok(result);
@@ -45,8 +45,8 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponseDTO<User>> insertUser(@RequestBody User user) {
-        ApiResponseDTO<User> result = userService.findByName(user);
+    public ResponseEntity<ApiResponseDTO<Users>> registerUser(@RequestBody Users user) {
+        ApiResponseDTO<Users> result = userService.register(user);
 
         return ResponseEntity.ok(result);
 
@@ -85,7 +85,7 @@ public class UserController {
 
     @GetMapping("/alluser")
     public String getUser() throws JsonProcessingException {
-        List<User> userList = userService.findAll();
+        List<Users> userList = userService.findAll();
         // 使用 Jackson 将列表转换为 JSON 字符串
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(userList);
@@ -103,7 +103,7 @@ public class UserController {
     }
 
     @PostMapping("/updateuser")
-    public String updateUser(User user) throws JsonProcessingException {
+    public String updateUser(Users user) throws JsonProcessingException {
         int i = userService.update(user);
         if (i == 0) {
             return "更新条数" + i;
@@ -114,7 +114,7 @@ public class UserController {
     }
 
     @GetMapping("/pageuser")
-    public List<User> getUsers(
+    public List<Users> getUsers(
             @RequestParam String name,
             @RequestParam int offset,
             @RequestParam int limit

@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Data
 @TableName("Users")
 
-public class User  implements Serializable  {
+public class Users implements Serializable  {
 
     private String id;
     private String username;

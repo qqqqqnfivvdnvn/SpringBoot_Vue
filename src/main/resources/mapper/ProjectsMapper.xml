@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ProjectsMapper">
+
+
+    <insert id="addProject">
+        insert into test..projects (id,name,description,icon,color,owner,updated,is_favorite,type)
+        values (#{id},#{name},#{description},#{icon},#{color},#{owner},#{updated},#{isFavorite},#{type})
+    </insert>
+
+    <select id="findProject" resultType="int">
+        select count(*) from test..projects where name = #{name}
+    </select>
+
+</mapper>

@@ -2,7 +2,7 @@ package com.example.demo.mapper;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.demo.entity.User;
+import com.example.demo.entity.Users;
 
 import org.apache.ibatis.annotations.*;
 
@@ -11,27 +11,25 @@ import java.util.List;
 @Mapper
 
 @DS("master_sqlserver")
-public interface UserMapper  extends BaseMapper<User>{
+public interface UserMapper  extends BaseMapper<Users>{
 
-    @Select("SELECT * FROM test..users")
-    public List<User> findAll();
+    @Select("SELECT id,username, password,email,addtime FROM test..users")
+    public List<Users> findAll();
 
     @Select("SELECT top 1 id,username,password,email FROM test..users WHERE username = #{username}")
-    public User findByName(String username);
+    public Users findByName(String username);
 
     @Insert("INSERT INTO test..users (id,username, password,email,addtime) VALUES (#{id},#{username},#{password},#{email},#{addtime})")
-    public int insert(User user);
+    public int insert(Users user);
 
     @Delete("DELETE FROM test..users WHERE id = #{id}")
     public int delete(String id);
 
     @Update("UPDATE test..users SET username = #{username}, password = #{password}, email = #{email} WHERE id = #{id}")
-    public int update(User user);
+    public int update(Users user);
 
 
-
-
-    List<User> findByPage(String name, int offset, int limit);
+    List<Users> findByPage(String name, int offset, int limit);
 
 
 

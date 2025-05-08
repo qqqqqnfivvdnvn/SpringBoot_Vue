@@ -86,6 +86,7 @@
     <div class="dialog-overlay" v-if="showDialog">
       <div class="dialog">
         <h3>添加新项目</h3>
+
         <div class="dialog-content">
           <div class="form-group">
             <label>项目名称</label>
@@ -136,7 +137,8 @@
 </template>
 
 <script>
-import axios from "axios";
+
+import axios from 'axios';
 
 export default {
   data() {
@@ -265,10 +267,11 @@ export default {
   },
   methods: {
     navigateToProject(project) {
-      this.showToastMessage(`正在进入项目: ${project.name}`);
+      this.showToastMessage('加载中...');
 
-      // this.$router.push(`/project/${project.id}`);
-      this.$router.push({ name: project.name, params: { id: project.name } });
+      setTimeout(() => {
+        this.$router.push({ name: project.name, params: { id: project.name } });
+      }, 400);
 
 
     },
@@ -285,26 +288,42 @@ export default {
       };
       this.showDialog = true;
     },
-    addNewProject() {
+    async addNewProject() {
       if (!this.newProject.name.trim()) {
         this.showToastMessage('请输入项目名称');
+
         return;
       }
+      // {name: '==', description: '===', icon: 'database', color: '#6ab7ff'}
+      console.log(
+        this.newProject.name
+      );
 
-      const newProject = {
-        id: this.projects.length + 1,
+      const response = await axios.post('/api/projects/addProject', {
         name: this.newProject.name,
         description: this.newProject.description,
         icon: this.newProject.icon,
-        color: this.newProject.color,
-        owner: '我',
-        updated: '刚刚',
-        isFavorite: false,
-        type: 'personal'
-      };
+        color: this.newProject.color
+      });
 
-      this.projects.unshift(newProject);
+
+      // const newProject = {
+      //   id: this.projects.length + 1,
+      //   name: this.newProject.name,
+      //   description: this.newProject.description,
+      //   icon: this.newProject.icon,
+      //   color: this.newProject.color,
+      //   owner: '我',
+      //   updated: '刚刚',
+      //   isFavorite: false,
+      //   type: 'personal'
+      // };
+
+
+      // this.projects.unshift(newProject);
+
       this.showDialog = false;
+
       this.showToastMessage('项目添加成功');
     },
     filterProjects() {

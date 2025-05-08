@@ -13,7 +13,7 @@ from '@fortawesome/free-solid-svg-icons'
 
 import { faTwitter, faVuejs } from '@fortawesome/free-brands-svg-icons'
 
-const app = createApp(App); // 创建应用实例 "plus-circle"
+const app = createApp(App); // 创建应用实例 star-regular
 
 // 将图标添加到库中
 library.add(faHospital,faStore,faUniversity,faSignOutAlt,faAngleDoubleLeft,
