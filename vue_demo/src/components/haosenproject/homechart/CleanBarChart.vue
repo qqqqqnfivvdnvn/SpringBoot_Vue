@@ -83,7 +83,7 @@ onMounted(async () => {
         yAxis: [
           {
             type: 'value',
-            name: '数量',
+            // name: '数量',
             axisLine: {
               lineStyle: {
                 color: '#000000',
@@ -101,7 +101,7 @@ onMounted(async () => {
           },
           {
             type: 'value',
-            name: '总计',
+            // name: '总计',
             axisLine: {
               lineStyle: {
                 color: '#000000',

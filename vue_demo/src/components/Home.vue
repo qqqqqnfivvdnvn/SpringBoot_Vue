@@ -59,18 +59,11 @@
               <h3>{{ project.name }}</h3>
               <p>{{ project.description }}</p>
               <div class="project-meta">
-                <span><font-awesome-icon :icon="['fas', 'user']"/> {{ project.owner }}</span>
-                <span><font-awesome-icon :icon="['fas', 'calendar-alt']"/> {{ project.updated }}</span>
+<!--                <span><font-awesome-icon :icon="['fas', 'user']"/> {{ project.owner }}</span>-->
+                <span><font-awesome-icon :icon="['fas', 'calendar-alt']"/> {{ project.addtime }}</span>
               </div>
             </div>
-            <div class="project-actions">
-              <button @click.stop="toggleFavorite(project)">
-                <font-awesome-icon
-                    :icon="['fas', project.isFavorite ? 'star' : 'star']"
-                    :class="{ 'favorite': project.isFavorite }"
-                />
-              </button>
-            </div>
+
           </div>
         </div>
 
@@ -94,7 +87,7 @@
           </div>
           <div class="form-group">
             <label>项目描述</label>
-            <textarea v-model="newProject.description" placeholder="输入项目描述"></textarea>
+            <textarea  v-model="newProject.description" placeholder="输入项目描述"></textarea>
           </div>
           <div class="form-group">
             <label>项目图标</label>
@@ -139,10 +132,13 @@
 <script>
 
 import axios from 'axios';
+import {onMounted} from "vue";
 
 export default {
   data() {
+
     return {
+      userData:{},
       showToast: false,
       toastMessage: '',
       homePageStyle: {
@@ -153,78 +149,11 @@ export default {
       tabs: [
         { id: 'all', label: '全部项目' },
         { id: 'recent', label: '最近访问' },
-        { id: 'favorites', label: '我的收藏' },
-        { id: 'personal', label: '个人项目' },
-        { id: 'team', label: '团队项目' }
+        // { id: 'favorites', label: '我的收藏' },
+        // { id: 'personal', label: '个人项目' },
+        // { id: 'team', label: '团队项目' }
       ],
-      projects: [
-        {
-          id: 1,
-          name: 'HaosenHome',
-          description: '医院、药店、商业公司主数据管理平台',
-          icon: 'database',
-          color: '#9478cc',
-          owner: '管理员',
-          updated: '今天',
-          isFavorite: true,
-          type: 'team'
-        },
-        {
-          id: 2,
-          name: 'Demo',
-          description: '处理数据申诉和修正请求',
-          icon: 'file-alt',
-          color: '#6ab7ff',
-          owner: '数据部',
-          updated: '昨天',
-          isFavorite: false,
-          type: 'team'
-        },
-        {
-          id: 3,
-          name: '数据分析报表',
-          description: '生成各类数据分析报表',
-          icon: 'chart-line',
-          color: '#ff9e7d',
-          owner: '分析部',
-          updated: '2天前',
-          isFavorite: true,
-          type: 'team'
-        },
-        {
-          id: 4,
-          name: '个人学习项目',
-          description: '个人技术学习与实践',
-          icon: 'laptop-code',
-          color: '#7dcf85',
-          owner: '我',
-          updated: '3天前',
-          isFavorite: false,
-          type: 'personal'
-        },
-        {
-          id: 5,
-          name: '客户关系管理',
-          description: '客户信息与关系管理系统',
-          icon: 'users',
-          color: '#f9c74f',
-          owner: '销售部',
-          updated: '1周前',
-          isFavorite: false,
-          type: 'team'
-        },
-        {
-          id: 6,
-          name: '项目文档中心',
-          description: '所有项目文档集中管理',
-          icon: 'book',
-          color: '#90be6d',
-          owner: '文档部',
-          updated: '1周前',
-          isFavorite: true,
-          type: 'team'
-        }
-      ],
+      projects: [],
       showDialog: false,
       newProject: {
         name: '',
@@ -236,6 +165,24 @@ export default {
       availableColors: ['#9478cc', '#6ab7ff', '#ff9e7d', '#7dcf85', '#f9c74f', '#90be6d', '#577590', '#f94144']
     };
   },
+
+
+  // 生命周期钩子中
+  created() {
+    this.getProjects();
+
+    const tempData = sessionStorage.getItem('userData');
+    if (tempData) {
+      try {
+        this.userData = JSON.parse(tempData);
+        console.log('userData:', this.userData);
+
+      } catch (e) {
+        console.error('解析 tempData 失败', e);
+      }
+    }
+
+  },
   computed: {
     filteredProjects() {
       let filtered = this.projects;
@@ -244,11 +191,12 @@ export default {
       if (this.activeTab !== 'all') {
         filtered = filtered.filter(project => {
           if (this.activeTab === 'recent') {
-            return project.updated.includes('天') || project.updated === '今天';
-          } else if (this.activeTab === 'favorites') {
-            return project.isFavorite;
-          } else {
-            return project.type === this.activeTab;
+            const now = new Date();
+            const projectDate = new Date(project.addtime); // 假设 addtime 是 ISO 字符串或时间戳
+
+            const diffDays = Math.floor((now - projectDate) / (1000 * 60 * 60 * 24));
+            console.log(diffDays);
+            return diffDays <= 3; // 最近7天内的项目
           }
         });
       }
@@ -267,18 +215,30 @@ export default {
   },
   methods: {
     navigateToProject(project) {
-      this.showToastMessage('加载中...');
+      // 检查路由是否存在
+      if (!this.$router.hasRoute(project.routeName)) {
+        console.error('路由不存在:', project.routeName);
+        this.showToastMessage('路由不存在，请联系管理员添加');
+        return;
+      }
 
-      setTimeout(() => {
-        this.$router.push({ name: project.name, params: { id: project.name } });
-      }, 400);
-
-
+      this.$router.push({
+        name: project.routeName,
+        params: { id: project.routeName }
+      }).catch(error => {
+        console.error('路由跳转失败:', error);
+        this.showToastMessage('路由跳转失败');
+      });
     },
-    toggleFavorite(project) {
-      project.isFavorite = !project.isFavorite;
-      this.showToastMessage(project.isFavorite ? '已添加到收藏' : '已取消收藏');
+
+    getProjects() {
+      axios.get('/api/projects/getAllProjects')
+       .then(response => {
+          this.projects = response.data.data;
+        })
     },
+
+
     showAddProjectDialog() {
       this.newProject = {
         name: '',
@@ -288,43 +248,32 @@ export default {
       };
       this.showDialog = true;
     },
+
+
     async addNewProject() {
       if (!this.newProject.name.trim()) {
         this.showToastMessage('请输入项目名称');
 
         return;
       }
-      // {name: '==', description: '===', icon: 'database', color: '#6ab7ff'}
-      console.log(
-        this.newProject.name
-      );
 
       const response = await axios.post('/api/projects/addProject', {
         name: this.newProject.name,
         description: this.newProject.description,
         icon: this.newProject.icon,
-        color: this.newProject.color
+        color: this.newProject.color,
+        userId: this.userData.userid,
+        userName: this.userData.username
       });
 
 
-      // const newProject = {
-      //   id: this.projects.length + 1,
-      //   name: this.newProject.name,
-      //   description: this.newProject.description,
-      //   icon: this.newProject.icon,
-      //   color: this.newProject.color,
-      //   owner: '我',
-      //   updated: '刚刚',
-      //   isFavorite: false,
-      //   type: 'personal'
-      // };
-
-
-      // this.projects.unshift(newProject);
 
       this.showDialog = false;
 
       this.showToastMessage('项目添加成功');
+      this.getProjects();
+
+
     },
     filterProjects() {
       // 搜索功能已在计算属性中实现
@@ -355,11 +304,14 @@ export default {
         this.showToast = false;
       }, 3000);
     }
-  }
+  },
+
+
 };
 </script>
 
 <style scoped>
+
 /* 基础样式 */
 .home-page {
   display: flex;
@@ -439,7 +391,7 @@ export default {
 }
 
 .projects-container {
-  max-width: 1400px;
+  max-width: 1500px;
   margin: 0 auto;
 }
 
@@ -656,7 +608,7 @@ export default {
 
 .form-group input,
 .form-group textarea {
-  width: 100%;
+  width: 98%;
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;

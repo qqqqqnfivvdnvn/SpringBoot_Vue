@@ -22,11 +22,12 @@ onMounted(async() => {
       const dates = response.data.data.map(item => item.day);
       const appeal = response.data.data.map(item => item.appealCount);
       const update = response.data.data.map(item => item.updateCount);
-
+      const hscode = response.data.data.map(item => item.hscodeCount);
       data = {
         dates: dates,
         appeal: appeal,
-        update: update
+        update: update,
+        hscode: hscode
       };
     }
   } catch (error) {
@@ -59,7 +60,7 @@ onMounted(async() => {
       },
     },
     legend: {
-      data: ['更新', '申诉'],
+      data: ['更新', '申诉','豪森编码'],
       bottom: 10,
       textStyle: {
         color: '#333333',
@@ -160,7 +161,34 @@ onMounted(async() => {
         itemStyle: {
           color: '#F47A7A'
         }
-      }
+      },
+      {
+        name: '豪森编码',
+        type: 'line',
+        smooth: true,
+        lineStyle: {
+          width: 3,
+          color: '#40b786'
+        },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+              offset: 0,
+              color: 'rgb(64, 183, 134, 0.5)'
+            },
+            {
+              offset: 1,
+              color: 'rgb(64, 183, 134, 0.1)'
+            }
+          ])
+        },
+        data: data.hscode,
+        symbol: 'circle',
+        symbolSize: 8,
+        itemStyle: {
+          color: '#40b786'
+        }
+      },
     ]
   };
 

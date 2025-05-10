@@ -134,7 +134,7 @@
               <template v-else-if="index === 3">{{ Appeal.keyid }}</template>
               <template v-else-if="index === 4">{{ Appeal.name }}</template>
 <!--              <template v-else-if="index === 5">{{ Appeal.nameHistory }}</template>-->
-              <template v-else-if="index === 5">{{ Appeal.provicne }}</template>
+              <template v-else-if="index === 5">{{ Appeal.province }}</template>
               <template v-else-if="index === 6">{{ Appeal.city }}</template>
               <template v-else-if="index === 7">{{ Appeal.area }}</template>
               <template v-else-if="index === 8">{{ Appeal.kuAddress }}</template>
@@ -252,11 +252,11 @@
           </div>
           <div class="detail-row">
             <label>省：</label>
-            <span>{{ currentAppeal.provicne }}</span>
+            <span>{{ currentAppeal.province }}</span>
           </div>
           <div class="detail-row">
             <label>省份ID：</label>
-            <span>{{ currentAppeal.provicneid }}</span>
+            <span>{{ currentAppeal.provinceid }}</span>
           </div>
           <div class="detail-row">
             <label>市：</label>

@@ -83,40 +83,48 @@
 
     <select id="getAppealUpdateData" resultType="com.example.demo.vo.AppealUpdateDataVO">
         <![CDATA[
-        WITH date_series AS (
-            SELECT generate_series(
-                                   CURRENT_DATE - INTERVAL '6 days',
-                                   CURRENT_DATE,
-                                   INTERVAL '1 day'
-                   )::date AS day
-            ),
-            appeal_table AS (
+        WITH date_series AS (SELECT generate_series(
+                                                    CURRENT_DATE - INTERVAL '6 days',
+                                                    CURRENT_DATE,
+                                                    INTERVAL '1 day'
+                                    ) ::date
+            AS day
+            )
+           , appeal_table AS (
         SELECT
-            DATE(add_time) AS day,
-            COUNT(*) AS table1_count
+            DATE (add_time) AS day, COUNT (*) AS table1_count
         FROM appeal_and_update
-        WHERE add_time >= CURRENT_DATE - INTERVAL '6 days' and type='1'
-        GROUP BY DATE(add_time)
+        WHERE add_time >= CURRENT_DATE - INTERVAL '6 days' and type ='1'
+        GROUP BY DATE (add_time)
             ),
             update_table AS (
         SELECT
-            DATE(add_time) AS day,
-            COUNT(*) AS table2_count
+            DATE (add_time) AS day, COUNT (*) AS table2_count
         FROM appeal_and_update
-        WHERE add_time >= CURRENT_DATE - INTERVAL '6 days' and type='2'
-        GROUP BY DATE(add_time)
-            )
+        WHERE add_time >= CURRENT_DATE - INTERVAL '6 days' and type ='2'
+        GROUP BY DATE (add_time)
+            ),
+            hs_code_table AS (
+
         SELECT
-            ds.day,
-            COALESCE(t1.table1_count, 0) AS appealcount,
-            COALESCE(t2.table2_count, 0) AS updatecount
+            DATE (add_time) AS day, COUNT (*) AS table3_count
+        FROM data_result
+        WHERE add_time >= CURRENT_DATE - INTERVAL '6 days' and feedback_type='2'
+        GROUP BY DATE (add_time)
+
+            )
+        SELECT ds.day,
+               COALESCE(t1.table1_count, 0) AS appealcount,
+               COALESCE(t2.table2_count, 0) AS updatecount,
+               COALESCE(t3.table3_count, 0) AS hscodecount
         from date_series ds
                  LEFT JOIN
-             appeal_table t1 on ds.day=t1.day
+             appeal_table t1 on ds.day = t1.day
                  LEFT JOIN
-             update_table t2 on ds.day=t2.day
+             update_table t2 on ds.day = t2.day
+                 LEFT JOIN
+             hs_code_table t3 on ds.day = t3.day
         ORDER BY ds.day
-
         ]]>
     </select>
 

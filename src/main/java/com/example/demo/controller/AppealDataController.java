@@ -1,18 +1,37 @@
 package com.example.demo.controller;
+
+import com.example.demo.dto.FileMessageDTO;
+import com.example.demo.service.impl.InputAppealService;
+import com.example.demo.utils.ExcelReader;
 import com.example.demo.vo.AppealDataVO;
+import com.example.demo.vo.InputAppealDataVO;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Objects;
+
+import org.apache.http.impl.client.CloseableHttpClient;
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.dto.AppealConditionDTO;
 import com.example.demo.service.impl.AppealDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +41,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.apache.http.util.EntityUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @Controller
@@ -34,17 +57,20 @@ public class AppealDataController {
     @Autowired
     private AppealDataService appealDataService;
 
+
     @RequestMapping("/getAppealData")
     public ResponseEntity<ApiResponseDTO<Page<AppealDataVO>>> getAppealData(AppealConditionDTO condition, Pageable pageable) {
         ApiResponseDTO<Page<AppealDataVO>> appealData = appealDataService.getAppealData(condition, pageable);
         return ResponseEntity.ok(appealData);
     }
 
+//    导出申诉数据
+
     @RequestMapping("/exportAppealData")
     ResponseEntity<byte[]> exportAppealData(AppealConditionDTO condition, Pageable pageable) throws UnsupportedEncodingException {
 
         ApiResponseDTO<Page<AppealDataVO>> appealData = appealDataService.getAppealData(condition, pageable);
-        List<AppealDataVO> dataList  = appealData.getData().getContent();
+        List<AppealDataVO> dataList = appealData.getData().getContent();
 
         // 导出Excel
         byte[] excelBytes = exportToExcel(dataList);
@@ -59,7 +85,7 @@ public class AppealDataController {
     }
 
 
-    private   byte[] exportToExcel(List<AppealDataVO> dataList) {
+    private byte[] exportToExcel(List<AppealDataVO> dataList) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              XSSFWorkbook workbook = new XSSFWorkbook()) {
 
@@ -68,17 +94,16 @@ public class AppealDataController {
 
             // 创建表头
             String[] headers = {
-                    "批次编号", "dataId", "数据类型", "原始数据编码", "原始数据名称",
+                    "批次编号", "data_id", "数据类型", "原始数据编码", "原始数据名称",
                     "省份", "original_address", "经销商", "申诉备注", "申诉解决",
-                    "机构类型", "keyid", "标准名称", "历史名称", "省",
-                    "省份ID", "市", "市ID", "区县", "区县ID",
+                    "机构类型", "keyid", "医院名称", "历史名称", "省",
+                    "省ID", "市", "市ID", "区县", "区县ID",
                     "地址", "等级", "等次", "所有制", "类别",
                     "总分院kid", "总分院名称", "军队医院", "登记号", "有效期",
                     "诊疗科室", "法人代表", "统一社会信用代码", "经营方式", "经营范围",
                     "总分店kid", "总分店名称", "成立时间", "注册资金", "企业类型",
                     "登记状态", "所属行业", "登记机关"
             };
-
             // 创建表头行
             XSSFRow headerRow = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
@@ -104,8 +129,8 @@ public class AppealDataController {
                 row.createCell(colNum++).setCellValue(data.getKeyid() != null ? data.getKeyid() : "");
                 row.createCell(colNum++).setCellValue(data.getName() != null ? data.getName() : "");
                 row.createCell(colNum++).setCellValue(data.getNameHistory() != null ? data.getNameHistory() : "");
-                row.createCell(colNum++).setCellValue(data.getProvicne() != null ? data.getProvicne() : "");
-                row.createCell(colNum++).setCellValue(data.getProvicneid() != null ? data.getProvicneid() : "");
+                row.createCell(colNum++).setCellValue(data.getProvince() != null ? data.getProvince() : "");
+                row.createCell(colNum++).setCellValue(data.getProvinceid() != null ? data.getProvinceid() : "");
                 row.createCell(colNum++).setCellValue(data.getCity() != null ? data.getCity() : "");
                 row.createCell(colNum++).setCellValue(data.getCityid() != null ? data.getCityid() : "");
                 row.createCell(colNum++).setCellValue(data.getArea() != null ? data.getArea() : "");
@@ -148,4 +173,80 @@ public class AppealDataController {
     }
 
 
+//    导入申诉数据
+
+
+    @Autowired
+    private InputAppealService inputAppralService;
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
+    @PostMapping("/importAppealData")
+    public ResponseEntity<ApiResponseDTO<FileMessageDTO>> importAppealData(@RequestParam("file") MultipartFile file) throws IOException {
+
+        // 1. 保存文件到服务器
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Path filePath = uploadPath.resolve(Objects.requireNonNull(file.getOriginalFilename()));
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+
+        // 2. 解析Excel
+        ExcelReader reader = new ExcelReader();
+        FileMessageDTO fileMessage = new FileMessageDTO();
+
+        try {
+            List<InputAppealDataVO> appeals = reader.readExcel(filePath.toString(), InputAppealDataVO.class);
+            // 3. 导入申诉数据
+            for (InputAppealDataVO appeal : appeals) {
+                inputAppralService.inputAppeal(appeal);
+            }
+
+            // 4. 调用豪森的申诉接口 http://192.168.33.9:8000/appeal_data
+            // {'code': 200, 'msg': '数据推送成功', 'error': '', 'batch_count':batch_count
+
+            try (CloseableHttpClient httpClient = HttpClients.custom()
+                    .setDefaultRequestConfig(RequestConfig.custom()
+                            // 设置连接超时时间（单位：毫秒）
+                            .setConnectTimeout(10)
+                            // 设置读取超时时间（单位：毫秒）
+                            .setSocketTimeout(10)
+                            .build())
+                    .build()) {
+
+                HttpGet request = new HttpGet("http://192.168.33.9:8000/appeal_data");
+
+                HttpResponse response = httpClient.execute(request);
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+
+                    String jsonResponse = EntityUtils.toString(entity, "UTF-8");
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    JsonNode rootNode = objectMapper.readTree(jsonResponse);
+                    int code = rootNode.path("code").asInt();
+                    if (code == 200) {
+                        fileMessage.setProcessedCount(appeals.size());
+                        fileMessage.setMessage("success");
+                        fileMessage.setAppealMessage("申诉数据推送成功");
+                    }
+
+                }
+
+            } catch (Exception e) {
+                fileMessage.setAppealMessage("申诉数据推送失败");
+            }
+
+
+        } catch (IOException e) {
+            fileMessage.setMessage("申诉数据推送失败");
+        }
+
+
+        return ResponseEntity.ok(ApiResponseDTO.success(fileMessage));
+
+    }
 }

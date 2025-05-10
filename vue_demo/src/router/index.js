@@ -11,7 +11,8 @@ import HomeDashboard from '@/components/haosenproject/homechart/HomeDashboardVie
 import DrugStoreData from '@/components/haosenproject/maindataview/DrugStoreDataView.vue';
 import CompanyData from '@/components/haosenproject/maindataview/CompanyDataView.vue';
 import AppealDataView from '@/components/haosenproject/appealdataview/AppealDataView.vue';
-import Demo from '@/components/haosenproject/demo.vue';
+import ImportAppealData from '@/components/haosenproject/appealdataview/ImportAppealDataView.vue';
+
 
 const routes = [
     {
@@ -46,14 +47,6 @@ const routes = [
                 component: HaosenHome,
                 meta: { requiresAuth: true }, // 需要登录才能访问
                 props: true
-            },
-
-            {
-                path: '/project/:id',
-                name: 'Demo',
-                component: Demo,
-                meta: { requiresAuth: true } // 需要登录才能访问
-
             },
 
         ]
@@ -107,6 +100,7 @@ const routes = [
                 component: CompanyData,
                 meta: { requiresAuth: true } // 需要登录才能访问
             }
+
         ]
     },
 
@@ -120,6 +114,12 @@ const routes = [
             component: AppealDataView,
             meta: { requiresAuth: true } // 需要登录才能访问
         },
+            {
+                path: 'importAppealData',
+                name: 'importAppealData',
+                component: ImportAppealData,
+                meta: { requiresAuth: true } // 需要登录才能访问
+            }
         ] // 需要登录才能访问
     },
 

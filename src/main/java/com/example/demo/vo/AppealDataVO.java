@@ -18,8 +18,8 @@ public class AppealDataVO {
     private String keyid;              // keyid → keyId (更符合驼峰规则)
     private String name;
     private String nameHistory;        // name_history → nameHistory
-    private String provicne;           // provicne → province (修正拼写错误)
-    private String provicneid;         // provicneid → provinceId (修正拼写错误)
+    private String province;           // provicne → province (修正拼写错误)
+    private String provinceid;         // provicneid → provinceId (修正拼写错误)
     private String city;
     private String cityid;             // cityid → cityId
     private String area;

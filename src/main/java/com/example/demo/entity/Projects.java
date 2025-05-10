@@ -4,15 +4,16 @@ import lombok.Data;
 
 @Data
 public class Projects {
-//    id	name	description	icon	color	owner	updated	is_favorite	type
+//    id	name	description	icon	color	updated	is_favorite	type	route_name	addtime	user_id
     private String id;
     private String name;
     private String description;
     private String icon;
     private String color;
-    private String owner;
-    private String updated;
-    private String isFavorite;
-    private String type;
+    private String routeName;
+    private String addtime;
+    private String userId;
+    private String userName;
+
 
 }

@@ -8,6 +8,6 @@ public class AppealUpdateDataVO {
     private String day;
     private int appealCount;
     private int updateCount;
-
+    private int hscodeCount;
 
 }

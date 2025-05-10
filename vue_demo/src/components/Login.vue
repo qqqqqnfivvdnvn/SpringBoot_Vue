@@ -83,6 +83,8 @@ export default {
           this.showToastMessage(response.data.message || '登录成功！');
 
           // 获取重定向路径或默认跳转到首页
+          sessionStorage.setItem('userData', JSON.stringify(response.data.data));
+
           const redirectPath = this.$route.query.redirect || '/home';
 
           setTimeout(() => {

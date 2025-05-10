@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -39,7 +40,8 @@ public class ProjectsServiceImpl implements ProjectsService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         // 格式化当前时间
         String formattedTime = now.format(formatter);
-        project.setUpdated(formattedTime);
+        project.setAddtime(formattedTime);
+
         int i = projectsMapper.addProject(project);
         if (i > 0) {
             return ApiResponseDTO.success(project);
@@ -47,5 +49,11 @@ public class ProjectsServiceImpl implements ProjectsService {
             return ApiResponseDTO.error("项目添加失败！");
         }
     }
+
+    @Override
+    public ApiResponseDTO<List<Projects>> getAllProjects() {
+        return ApiResponseDTO.success(projectsMapper.findAllProjects());
+    }
+
 
 }

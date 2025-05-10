@@ -75,9 +75,9 @@
                 <span>数据查看</span>
               </li>
 
-              <li @click="navigateTo('/data-management/export')">
+              <li @click=importAppealData>
                 <font-awesome-icon :icon="['fas', 'cat']" size="1x"/> &nbsp;
-                <span>数据导入</span>
+                <span>申诉提交</span>
               </li>
             </ul>
           </li>
@@ -132,6 +132,8 @@ import HomeDashboardView from '@/components/haosenproject/homechart/HomeDashboar
 import DrugStoreDataView from '@/components/haosenproject/maindataview/DrugStoreDataView.vue';
 import CompanyDataView from '@/components/haosenproject/maindataview/CompanyDataView.vue';
 import AppealDataView from '@/components/haosenproject/appealdataview/AppealDataView.vue';
+import ImportAppealDataView from '@/components/haosenproject/appealdataview/ImportAppealDataView.vue';
+
 import axios from 'axios';
 
 export default {
@@ -140,7 +142,8 @@ export default {
     HomeDashboardView,
     DrugStoreDataView,
     CompanyDataView,
-    AppealDataView
+    AppealDataView,
+    ImportAppealDataView
   },
 
   data() {
@@ -238,6 +241,11 @@ export default {
     showAppealData() {
       this.addTab('申诉数据', 'AppealDataView');
       window.location.hash = '/appealData/showAppealData';
+    },
+
+    importAppealData() {
+      this.addTab('申诉提交', 'ImportAppealDataView');
+      window.location.hash = '/appealData/importAppealData';
     },
 
 
