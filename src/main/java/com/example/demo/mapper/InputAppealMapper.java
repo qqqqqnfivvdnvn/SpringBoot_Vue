@@ -10,5 +10,5 @@ public interface InputAppealMapper {
 
     public int inputAppeal(InputAppealDataVO inputAppealDataVO );
 
-
+    public int deleteAllAppeal();
 }

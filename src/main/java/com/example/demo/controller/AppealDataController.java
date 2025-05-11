@@ -8,6 +8,7 @@ import com.example.demo.vo.InputAppealDataVO;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -39,6 +40,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -177,76 +181,92 @@ public class AppealDataController {
 
 
     @Autowired
-    private InputAppealService inputAppralService;
+    private InputAppealService inputAppealService;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+
     @PostMapping("/importAppealData")
-    public ResponseEntity<ApiResponseDTO<FileMessageDTO>> importAppealData(@RequestParam("file") MultipartFile file) throws IOException {
-
-        // 1. 保存文件到服务器
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-
-        Path filePath = uploadPath.resolve(Objects.requireNonNull(file.getOriginalFilename()));
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-
-        // 2. 解析Excel
-        ExcelReader reader = new ExcelReader();
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<ApiResponseDTO<FileMessageDTO>> importAppealData(@RequestParam("file") MultipartFile file) {
         FileMessageDTO fileMessage = new FileMessageDTO();
 
         try {
+            // 1. 保存文件到服务器（非事务操作）
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            Path filePath = uploadPath.resolve(Objects.requireNonNull(file.getOriginalFilename()));
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // 2. 解析Excel
+            ExcelReader reader = new ExcelReader();
             List<InputAppealDataVO> appeals = reader.readExcel(filePath.toString(), InputAppealDataVO.class);
-            // 3. 导入申诉数据
+
+            // 3. 数据库操作（事务内）
+            inputAppealService.deleteAllAppeal();
+            // 3. 清空并导入数据（事务操作）
             for (InputAppealDataVO appeal : appeals) {
-                inputAppralService.inputAppeal(appeal);
+                inputAppealService.inputAppeal(appeal);
             }
 
-            // 4. 调用豪森的申诉接口 http://192.168.33.9:8000/appeal_data
-            // {'code': 200, 'msg': '数据推送成功', 'error': '', 'batch_count':batch_count
-
-            try (CloseableHttpClient httpClient = HttpClients.custom()
-                    .setDefaultRequestConfig(RequestConfig.custom()
-                            // 设置连接超时时间（单位：毫秒）
-                            .setConnectTimeout(10)
-                            // 设置读取超时时间（单位：毫秒）
-                            .setSocketTimeout(10)
-                            .build())
-                    .build()) {
-
-                HttpGet request = new HttpGet("http://192.168.33.9:8000/appeal_data");
-
-                HttpResponse response = httpClient.execute(request);
-                HttpEntity entity = response.getEntity();
-                if (entity != null) {
-
-                    String jsonResponse = EntityUtils.toString(entity, "UTF-8");
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    JsonNode rootNode = objectMapper.readTree(jsonResponse);
-                    int code = rootNode.path("code").asInt();
-                    if (code == 200) {
-                        fileMessage.setProcessedCount(appeals.size());
-                        fileMessage.setMessage("success");
-                        fileMessage.setAppealMessage("申诉数据推送成功");
-                    }
-
-                }
-
-            } catch (Exception e) {
+            // 4. 关键API调用（必须在事务内）
+            String AppealMessage = callExternalAppealApi();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(AppealMessage);
+            if (rootNode.get("code").asInt() == 200){
+                // 5. 全部成功后的响应
+                fileMessage.setProcessedCount(appeals.size());
+                fileMessage.setMessage("success");
+                fileMessage.setAppealMessage("申诉数据推送成功");
+            } else {
+                fileMessage.setMessage(rootNode.get("msg").asText());
                 fileMessage.setAppealMessage("申诉数据推送失败");
             }
+            return ResponseEntity.ok(ApiResponseDTO.success(fileMessage));
 
-
-        } catch (IOException e) {
-            fileMessage.setMessage("申诉数据推送失败");
+        } catch (RuntimeException e) {
+            // 业务异常（如API调用失败）
+            fileMessage.setMessage("fail");
+            fileMessage.setAppealMessage("申诉数据推送失败");
+            return ResponseEntity.ok(ApiResponseDTO.error("申诉数据推送失败"));
+        } catch (Exception e) {
+            // 系统异常
+            fileMessage.setMessage("系统处理异常");
+            fileMessage.setAppealMessage("申诉数据处理失败");
+            return ResponseEntity.ok(ApiResponseDTO.success(fileMessage));
         }
 
+    }
 
-        return ResponseEntity.ok(ApiResponseDTO.success(fileMessage));
 
+//    调用外部申诉API
+//    @return true-成功 false-失败
+//     调用外部申诉API
+//    @return 返回API的完整JSON响应字符串，失败时返回null
+
+    private String callExternalAppealApi() {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpGet request = new HttpGet("http://192.168.33.9:8000/appeal_data");
+
+            // 设置合理超时（10秒）
+            RequestConfig config = RequestConfig.custom()
+                    .setConnectTimeout(1000)
+                    .setSocketTimeout(1000)
+                    .build();
+            request.setConfig(config);
+
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                // 获取完整响应内容
+                return EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+
+            }
+        } catch (Exception e) {
+
+            return "接口调用失败";
+        }
     }
 }
+

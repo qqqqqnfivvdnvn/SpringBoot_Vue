@@ -18,4 +18,9 @@ public class InputAppealServiceImpl implements InputAppealService {
         return inputAppealMapper.inputAppeal(inputAppealDataVO);
 
     }
+
+    @Override
+    public int deleteAllAppeal() {
+        return inputAppealMapper.deleteAllAppeal();
+    }
 }

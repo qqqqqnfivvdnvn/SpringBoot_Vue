@@ -10,4 +10,11 @@
 
     </insert>
 
+    <update id="deleteAllAppeal" >
+        TRUNCATE TABLE test..haosen_data_demo
+    </update>
+
+
+
+
 </mapper>

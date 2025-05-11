@@ -6,4 +6,6 @@ public interface InputAppealService {
 
     public int inputAppeal(InputAppealDataVO inputAppealDataVO);
 
+    public int deleteAllAppeal();
+
 }
