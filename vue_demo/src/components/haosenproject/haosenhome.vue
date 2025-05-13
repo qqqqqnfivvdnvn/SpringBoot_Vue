@@ -5,7 +5,7 @@
     <nav class="navbar">
       <div class="navbar-brand">主数据后台管理</div>
       <div class="navbar-links">
-        <router-link to="/project/HaosenHome" @click="resetToDashboard">首页</router-link>
+        <router-link to="/project/HaosenHome" @click="resetToDashboard">仪表盘</router-link>
 
         <router-link to="/home">返回项目管理</router-link>
         <div class="avatar">
