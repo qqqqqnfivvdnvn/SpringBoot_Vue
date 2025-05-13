@@ -31,16 +31,16 @@
         <ul class="sidebar-menu">
           <!-- 主数据查看菜单 -->
           <li>
-            <div class="menu-item" @click="toggleMenu('user')">
+            <div class="menu-item" @click="toggleMenu('mainDataManagement')">
               <span>
                 <font-awesome-icon :icon="['fas', 'th-list']" size="1x"/>
                 <span v-if="!isSidebarCollapsed">主数据</span>
               </span>
               <span v-if="!isSidebarCollapsed" class="arrow">
-                {{ openMenus.user ? '▼' : '▶' }}
+                {{ openMenus.mainDataManagement ? '▼' : '▶' }}
               </span>
             </div>
-            <ul v-if="openMenus.user && !isSidebarCollapsed" class="sub-menu">
+            <ul v-if="openMenus.mainDataManagement && !isSidebarCollapsed" class="sub-menu">
 
               <li @click="showHospitalData">
                 <font-awesome-icon :icon="['fas', 'hospital-alt']" size="1x"/> &nbsp;
@@ -57,23 +57,43 @@
             </ul>
           </li>
 
-          <!-- 数据申诉 -->
+
+          <!-- 数据清洗 -->
           <li>
-            <div class="menu-item" @click="toggleMenu('dataManagement')">
+            <div class="menu-item" @click="toggleMenu('cleanManagement')">
               <span>
-                <font-awesome-icon :icon="['fas', 'file-alt']" size="1x"/>
-                <span v-if="!isSidebarCollapsed">数据申诉</span>
+                <font-awesome-icon :icon="['fas', 'oil-can']" size="1x"/>
+                <span v-if="!isSidebarCollapsed">数据清洗</span>
               </span>
               <span v-if="!isSidebarCollapsed" class="arrow">
-                {{ openMenus.dataManagement ? '▼' : '▶' }}
+                {{ openMenus.cleanManagement ? '▼' : '▶' }}
               </span>
             </div>
-            <ul v-if="openMenus.dataManagement && !isSidebarCollapsed" class="sub-menu">
+            <ul v-if="openMenus.cleanManagement && !isSidebarCollapsed" class="sub-menu">
 
               <li @click=importCleanData>
                 <font-awesome-icon :icon="['fas', 'eraser']" size="1x"/> &nbsp;
                 <span>清洗提交</span>
               </li>
+
+
+            </ul>
+          </li>
+
+
+          <!-- 数据申诉 -->
+          <li>
+            <div class="menu-item" @click="toggleMenu('appealManagement')">
+              <span>
+                <font-awesome-icon :icon="['fas', 'flag']" size="1x"/>
+                <span v-if="!isSidebarCollapsed">数据申诉</span>
+              </span>
+              <span v-if="!isSidebarCollapsed" class="arrow">
+                {{ openMenus.appealManagement ? '▼' : '▶' }}
+              </span>
+            </div>
+            <ul v-if="openMenus.appealManagement && !isSidebarCollapsed" class="sub-menu">
+
 
               <li @click="showAppealData">
                 <font-awesome-icon :icon="['fas', 'book-reader']" size="1x"/> &nbsp;
@@ -88,6 +108,30 @@
 
             </ul>
           </li>
+
+          <!-- 数据更新 -->
+          <li>
+            <div class="menu-item" @click="toggleMenu('updateManagement')">
+              <span>
+                <font-awesome-icon :icon="['fas', 'file-alt']" size="1x"/>
+                <span v-if="!isSidebarCollapsed">数据更新</span>
+              </span>
+              <span v-if="!isSidebarCollapsed" class="arrow">
+                {{ openMenus.updateManagement ? '▼' : '▶' }}
+              </span>
+            </div>
+            <ul v-if="openMenus.updateManagement && !isSidebarCollapsed" class="sub-menu">
+
+              <li @click="importUpdateData">
+                <font-awesome-icon :icon="['fas', 'snowman']" size="1x"/> &nbsp;
+                <span>更新提交</span>
+              </li>
+
+
+
+            </ul>
+          </li>
+
 
         </ul>
       </div>
@@ -141,7 +185,7 @@ import CompanyDataView from '@/components/haosenproject/maindataview/CompanyData
 import AppealDataView from '@/components/haosenproject/appealdataview/AppealDataView.vue';
 import ImportAppealDataView from '@/components/haosenproject/appealdataview/ImportAppealDataView.vue';
 import ImportCleanDataView from '@/components/haosenproject/cleandataview/ImportCleanDataView.vue';
-
+import ImportUpdateDataView from '@/components/haosenproject/updatedataView/ImportUpdateDataView.vue';
 
 import axios from 'axios';
 
@@ -153,14 +197,17 @@ export default {
     CompanyDataView,
     AppealDataView,
     ImportAppealDataView,
-    ImportCleanDataView
+    ImportCleanDataView,
+    ImportUpdateDataView
   },
 
   data() {
     return {
       openMenus: {
-        user: false,
-        dataManagement: false,
+        mainDataManagement: false,
+        updateManagement: false,
+        cleanManagement: false,
+        appealManagement: false
       },
       showToast: false,
       toastMessage: '',
@@ -261,6 +308,11 @@ export default {
     importCleanData() {
       this.addTab('清洗提交', 'ImportCleanDataView');
       window.location.hash = '/cleanData/ImportCleanDataView';
+    },
+
+    importUpdateData() {
+      this.addTab('更新提交', 'ImportUpdateDataView');
+      window.location.hash = '/updateData/ImportCleanDataView';
     },
 
     resetToDashboard() {

@@ -15,6 +15,8 @@ import ImportAppealData from '@/components/haosenproject/appealdataview/ImportAp
 
 import ImportCleanData from '@/components/haosenproject/cleandataview/ImportCleanDataView.vue';
 
+import ImportUpdateData from '@/components/haosenproject/updatedataView/ImportUpdateDataView.vue';
+
 
 const routes = [
     {
@@ -136,6 +138,21 @@ const routes = [
 
         ] // 需要登录才能访问
     },
+
+    {
+        path: '/updateData',
+        children: [
+            {
+                path: 'importUpdateData',
+                name: 'importUpdateData',
+                component: ImportUpdateData,
+                meta: { requiresAuth: true } // 需要登录才能访问
+            }
+
+        ] // 需要登录才能访问
+    },
+
+
 
 ];
 

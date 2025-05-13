@@ -5,7 +5,7 @@
       <div class="navbar-brand">项目管理系统</div>
       <div class="navbar-links">
         <router-link to="/home">首页</router-link>
-        <router-link to="/settings">设置</router-link>
+        <router-link to="">设置</router-link>
         <div class="avatar">
           <img src="@/assets/avatar-modified.png" alt="用户头像" />
         </div>
