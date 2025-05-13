@@ -19,10 +19,19 @@ public interface HomeDataMapper {
     public List<BarDataVO> getCleanBarData();
 
     //实现饼图的数据方法
-    public   List<PieDataVO> getMainPieData();
+    public   PieDataVO getMainPieDataHosClean();
+
+    public   PieDataVO getMainPieDataDrugStore();
+
+    public   PieDataVO getMainPieDataCompany();
+
 
     //实现玫瑰饼图的数据方法
-    public   List<PieDataVO> getBranchBarData();
+    public   PieDataVO getBranchBarDataMainBranch();
+
+
+    public   PieDataVO getBranchBarDataGeneralBranch();
+
 
     //实现折线图的数据方法
     public   List<AppealUpdateDataVO> getAppealUpdateData();

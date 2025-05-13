@@ -70,15 +70,22 @@
             </div>
             <ul v-if="openMenus.dataManagement && !isSidebarCollapsed" class="sub-menu">
 
+              <li @click=importCleanData>
+                <font-awesome-icon :icon="['fas', 'eraser']" size="1x"/> &nbsp;
+                <span>清洗提交</span>
+              </li>
+
               <li @click="showAppealData">
                 <font-awesome-icon :icon="['fas', 'book-reader']" size="1x"/> &nbsp;
-                <span>数据查看</span>
+                <span>申诉查看</span>
               </li>
 
               <li @click=importAppealData>
                 <font-awesome-icon :icon="['fas', 'cat']" size="1x"/> &nbsp;
                 <span>申诉提交</span>
               </li>
+
+
             </ul>
           </li>
 
@@ -133,6 +140,8 @@ import DrugStoreDataView from '@/components/haosenproject/maindataview/DrugStore
 import CompanyDataView from '@/components/haosenproject/maindataview/CompanyDataView.vue';
 import AppealDataView from '@/components/haosenproject/appealdataview/AppealDataView.vue';
 import ImportAppealDataView from '@/components/haosenproject/appealdataview/ImportAppealDataView.vue';
+import ImportCleanDataView from '@/components/haosenproject/cleandataview/ImportCleanDataView.vue';
+
 
 import axios from 'axios';
 
@@ -143,7 +152,8 @@ export default {
     DrugStoreDataView,
     CompanyDataView,
     AppealDataView,
-    ImportAppealDataView
+    ImportAppealDataView,
+    ImportCleanDataView
   },
 
   data() {
@@ -245,9 +255,13 @@ export default {
 
     importAppealData() {
       this.addTab('申诉提交', 'ImportAppealDataView');
-      window.location.hash = '/appealData/importAppealData';
+      window.location.hash = '/appealData/importCleanData';
     },
 
+    importCleanData() {
+      this.addTab('清洗提交', 'ImportCleanDataView');
+      window.location.hash = '/cleanData/ImportCleanDataView';
+    },
 
     resetToDashboard() {
       const dashboardTab = this.tabs.find(tab => tab.component === 'HomeDashboardView');

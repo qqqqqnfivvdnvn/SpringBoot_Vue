@@ -2,11 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.FileMessageDTO;
 import com.example.demo.service.impl.InputAppealService;
-import com.example.demo.utils.ExcelReader;
+import com.example.demo.utils.AppealExcelReader;
 import com.example.demo.vo.AppealDataVO;
 import com.example.demo.vo.InputAppealDataVO;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -16,7 +14,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -41,8 +38,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -179,16 +174,14 @@ public class AppealDataController {
 
 //    导入申诉数据
 
-
     @Autowired
     private InputAppealService inputAppealService;
 
-    @Value("${file.upload-dir}")
+    @Value("${file.upload-dir}"+"\\appeal_file")
     private String uploadDir;
 
 
     @PostMapping("/importAppealData")
-    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponseDTO<FileMessageDTO>> importAppealData(@RequestParam("file") MultipartFile file) {
         FileMessageDTO fileMessage = new FileMessageDTO();
 
@@ -202,8 +195,14 @@ public class AppealDataController {
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
             // 2. 解析Excel
-            ExcelReader reader = new ExcelReader();
+            AppealExcelReader reader = new AppealExcelReader();
             List<InputAppealDataVO> appeals = reader.readExcel(filePath.toString(), InputAppealDataVO.class);
+
+            if (appeals.isEmpty()) {
+                fileMessage.setMessage("文件内容为空");
+                fileMessage.setAppealMessage("申诉数据导入失败");
+                return ResponseEntity.ok(ApiResponseDTO.success(fileMessage));
+            }
 
             // 3. 数据库操作（事务内）
             inputAppealService.deleteAllAppeal();

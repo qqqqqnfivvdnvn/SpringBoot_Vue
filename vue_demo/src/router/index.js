@@ -13,6 +13,8 @@ import CompanyData from '@/components/haosenproject/maindataview/CompanyDataView
 import AppealDataView from '@/components/haosenproject/appealdataview/AppealDataView.vue';
 import ImportAppealData from '@/components/haosenproject/appealdataview/ImportAppealDataView.vue';
 
+import ImportCleanData from '@/components/haosenproject/cleandataview/ImportCleanDataView.vue';
+
 
 const routes = [
     {
@@ -106,7 +108,6 @@ const routes = [
 
     {
         path: '/appealData',
-
         children: [
             {
             path: 'showAppealData',
@@ -120,6 +121,19 @@ const routes = [
                 component: ImportAppealData,
                 meta: { requiresAuth: true } // 需要登录才能访问
             }
+        ] // 需要登录才能访问
+    },
+
+    {
+        path: '/cleanData',
+        children: [
+            {
+                path: 'importCleanData',
+                name: 'importCleanData',
+                component: ImportCleanData,
+                meta: { requiresAuth: true } // 需要登录才能访问
+            }
+
         ] // 需要登录才能访问
     },
 

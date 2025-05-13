@@ -35,15 +35,21 @@ public class HomeDataServiceImpl implements HomeDataService {
 
     @Override
     public ApiResponseDTO<List<PieDataVO>> getMainPieData() {
+        PieDataVO mainPieDataHosClean = homeDataMapper.getMainPieDataHosClean();
+        PieDataVO mainPieDataDrugStore = homeDataMapper.getMainPieDataDrugStore();
+        PieDataVO mainPieDataCompany = homeDataMapper.getMainPieDataCompany();
+        List<PieDataVO> mainPieData = List.of(mainPieDataHosClean, mainPieDataDrugStore, mainPieDataCompany);
+        return ApiResponseDTO.success(mainPieData);
 
-        return ApiResponseDTO.success(homeDataMapper.getMainPieData());
 
     }
 
     @Override
     public ApiResponseDTO<List<PieDataVO>> getBranchBarData() {
-
-        return ApiResponseDTO.success(homeDataMapper.getBranchBarData());
+        PieDataVO branchBarDataGeneralBranch = homeDataMapper.getBranchBarDataGeneralBranch();
+        PieDataVO branchBarDataMainBranch = homeDataMapper.getBranchBarDataMainBranch();
+        List<PieDataVO> branchBarData = List.of(branchBarDataGeneralBranch, branchBarDataMainBranch);
+        return ApiResponseDTO.success(branchBarData);
 
     }
 

@@ -6,7 +6,7 @@
 
     <select id="findByPage" resultType= "com.example.demo.entity.Users">
         SELECT id, username, password,email, addtime
-        FROM test..users
+        FROM haosen_project..users
         WHERE username LIKE CONCAT('%', #{name}, '%')
         ORDER BY id
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY

@@ -147,7 +147,7 @@
           </tbody>
         </table>
         <div v-else class="no-data">
-          {{ loading ? '数据加载中...' : '没有找到匹配的医院数据' }}
+          {{ loading ? '数据加载中...' : '没有找到匹配的数据' }}
         </div>
         <div class="pagination" v-if="AppealData.content && AppealData.content.length > 0">
           <button

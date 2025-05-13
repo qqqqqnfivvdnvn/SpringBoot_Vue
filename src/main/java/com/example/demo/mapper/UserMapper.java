@@ -13,19 +13,19 @@ import java.util.List;
 @DS("master_sqlserver")
 public interface UserMapper  extends BaseMapper<Users>{
 
-    @Select("SELECT id,username, password,email,addtime FROM test..users")
+    @Select("SELECT id,username, password,email,addtime FROM haosen_project..users")
     public List<Users> findAll();
 
-    @Select("SELECT top 1 id,username,password,email FROM test..users WHERE username = #{username}")
+    @Select("SELECT top 1 id,username,password,email FROM haosen_project..users WHERE username = #{username}")
     public Users findByName(String username);
 
-    @Insert("INSERT INTO test..users (id,username, password,email,addtime) VALUES (#{id},#{username},#{password},#{email},#{addtime})")
+    @Insert("INSERT INTO haosen_project..users (id,username, password,email,addtime) VALUES (#{id},#{username},#{password},#{email},#{addtime})")
     public int insert(Users user);
 
-    @Delete("DELETE FROM test..users WHERE id = #{id}")
+    @Delete("DELETE FROM haosen_project..users WHERE id = #{id}")
     public int delete(String id);
 
-    @Update("UPDATE test..users SET username = #{username}, password = #{password}, email = #{email} WHERE id = #{id}")
+    @Update("UPDATE test..haosen_project SET username = #{username}, password = #{password}, email = #{email} WHERE id = #{id}")
     public int update(Users user);
 
 

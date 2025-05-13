@@ -5,16 +5,16 @@
 
 
     <insert id="addProject">
-        insert into test..projects (id,name,description,icon,color,route_name,addtime,user_id,user_name)
+        insert into haosen_project..projects (id,name,description,icon,color,route_name,addtime,user_id,user_name)
         values (#{id},#{name},#{description},#{icon},#{color},#{routeName},#{addtime},#{userId},#{userName})
     </insert>
 
     <select id="findProject" resultType="int">
-        select count(*) from test..projects where name = #{name}
+        select count(*) from haosen_project..projects where name = #{name}
     </select>
 
     <select id="findAllProjects" resultType="com.example.demo.entity.Projects">
-select id,name,description,icon,color,route_name,CAST(addtime AS DATE) as addtime,user_id,user_name from test..projects
+select id,name,description,icon,color,route_name,CAST(addtime AS DATE) as addtime,user_id,user_name from haosen_project..projects
     </select>
 
 
