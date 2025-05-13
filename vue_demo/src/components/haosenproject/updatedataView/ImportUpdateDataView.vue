@@ -157,7 +157,7 @@ export default {
         formData.append('file', this.selectedFile);
 
         // 调用API接口
-        const response = await axios.post('/api/appealData/importAppealData', formData, {
+        const response = await axios.post('/api/updateData/importUpdateData', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           },

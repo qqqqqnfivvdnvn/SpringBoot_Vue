@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.HaoSenMainDataQueryMapper">
+
+    <!-- 医疗机构条件查询SQL -->
+    <sql id="conditionHospitalWhere">
+        <where>
+            status in ('1','3','4')
+
+            <if test="condition.dataCode != null and condition.dataCode != ''">
+                AND data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
+            </if>
+
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE CONCAT('%', #{condition.name}, '%')
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND province LIKE CONCAT('%', #{condition.province}, '%')
+            </if>
+            <if test="condition.city != null and condition.city != ''">
+                AND city LIKE CONCAT('%', #{condition.city}, '%')
+            </if>
+            <if test="condition.area != null and condition.area != ''">
+                AND area LIKE CONCAT('%', #{condition.area}, '%')
+            </if>
+            <if test="condition.address != null and condition.address != ''">
+                AND address LIKE CONCAT('%', #{condition.address}, '%')
+            </if>
+            <if test="condition.originalName != null and condition.originalName != ''">
+                AND original_name LIKE CONCAT('%', #{condition.originalName}, '%')
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND hs_code LIKE CONCAT('%', #{condition.hsCode}, '%')
+            </if>
+
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND keyid LIKE CONCAT('%', #{condition.keyid}, '%')
+            </if>
+
+            <if test="condition.dataId != null and condition.dataId != ''">
+                AND data_id LIKE CONCAT('%', #{condition.dataId}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 医疗机构分页查询 -->
+    <select id="HospitalQueryByCondition" resultType="com.example.demo.entity.HaoSenHospital">
+        SELECT
+        a.batch_code,a.data_code,a.original_name,a.elian_id,a.name,a.name_history,province,a.province_id,a.city,a.city_id,a.area,a.area_id,a.usci,
+        CASE
+        WHEN a.level = '1' THEN '一级'
+        WHEN a.level = '2' THEN '二级'
+        WHEN a.level = '3' THEN '三级'
+        WHEN a.level = '4' THEN '未定级'
+        ELSE NULL
+        END level,
+        CASE
+        WHEN a.grade = '1' THEN '甲等'
+        WHEN a.grade = '2' THEN '乙等'
+        WHEN a.grade = '3' THEN '丙等'
+        WHEN a.grade = '4' THEN '未定等'
+        ELSE NULL
+        END  grade
+        ,
+        CASE
+        WHEN a.publicflag = '1' THEN '公立'
+        WHEN a.publicflag = '2' THEN '民营'
+        ELSE NULL
+        END publicflag
+        ,b.医院类别 hos_class,CASE
+        WHEN a.hos_big_class = '2' THEN '市级医院'
+        WHEN a.hos_big_class = '3' THEN '县区医院'
+        WHEN a.hos_big_class = '4' THEN '卫生院/卫生服务中心'
+        WHEN a.hos_big_class = '7' THEN '诊所/医务室'
+        WHEN a.hos_big_class = '9' THEN '其他'
+        ELSE NULL
+        END hos_big_class,b.类别名称1 class1,b.类别名称2 class2,b.类别名称3 class3,b.类别名称4 class4,b.类别名称5 class5,a.general_branch,
+        CASE
+        WHEN a.military_hos = '0' THEN '否'
+        WHEN a.military_hos = '1' THEN '是'
+        ELSE NULL
+        END  military_hos,
+        CASE
+        WHEN a.internet_hos = '0' THEN '否'
+        WHEN a.internet_hos = '1' THEN '是'
+        ELSE NULL
+        END internet_hos
+        ,CASE
+        WHEN a.med_union_community = '1' THEN '医共体'
+        WHEN a.med_union_community = '2' THEN '医联体'
+        WHEN a.med_union_community = '3' THEN NULL
+        ELSE NULL
+        END med_union_community
+        ,a.ybcode,a.regcode,a.validity,a.menzhen,a.bed_count,a.medical_count,a.subjects,a.legalperson,a.address,a.remarks,a.data_id,
+        CASE
+        WHEN a.is_city = '1' THEN '是'
+        WHEN a.is_city = '0' THEN '否'
+        ELSE NULL
+        END  is_city,CASE
+        WHEN a.is_insert='1' THEN '是'
+        WHEN a.is_insert='0' THEN '否'
+        ELSE null
+        END is_insert
+        ,a.repeat_id,a.updatetime,a.status,CASE
+        WHEN a.data_type='1' THEN '存量'
+        WHEN a.data_type='2' THEN '增量'
+        ELSE null
+        END data_type,a.keyid,a.ku_address,a.general_branch_kid,a.general_branch_name,a.hs_code,a.addtime,a.appeal_dataid
+        FROM base_org_hos_clean a
+        LEFT JOIN
+        豪森五级属性对应表0819 b
+        on
+        a.class5=b.类别名称5_枚举值
+        <include refid="conditionHospitalWhere"/>
+        ORDER BY addtime desc
+        LIMIT #{page.pageSize} OFFSET #{page.offset}
+    </select>
+
+
+    <!-- 医疗机构统计总数 -->
+    <select id="countHospitalCondition" resultType="long">
+        SELECT COUNT(*)
+        FROM base_org_hos_clean
+        <include refid="conditionHospitalWhere"/>
+    </select>
+
+
+
+
+
+
+
+    <!-- 药店条件查询SQL -->
+    <sql id="conditionDrugStoreWhere">
+        <where>
+            status in ('1','3','4')
+
+            <if test="condition.dataCode != null and condition.dataCode != ''">
+                AND data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
+            </if>
+
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE CONCAT('%', #{condition.name}, '%')
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND province LIKE CONCAT('%', #{condition.province}, '%')
+            </if>
+            <if test="condition.city != null and condition.city != ''">
+                AND city LIKE CONCAT('%', #{condition.city}, '%')
+            </if>
+            <if test="condition.area != null and condition.area != ''">
+                AND area LIKE CONCAT('%', #{condition.area}, '%')
+            </if>
+            <if test="condition.address != null and condition.address != ''">
+                AND address LIKE CONCAT('%', #{condition.address}, '%')
+            </if>
+            <if test="condition.originalName != null and condition.originalName != ''">
+                AND original_name LIKE CONCAT('%', #{condition.originalName}, '%')
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND hs_code LIKE CONCAT('%', #{condition.hsCode}, '%')
+            </if>
+
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND keyid LIKE CONCAT('%', #{condition.keyid}, '%')
+            </if>
+
+            <if test="condition.dataId != null and condition.dataId != ''">
+                AND data_id LIKE CONCAT('%', #{condition.dataId}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 药店分页查询 -->
+    <select id="DrugStoreQueryByCondition" resultType="com.example.demo.entity.HaoSenDrugStore">
+        SELECT data_code,name,history_name,province,province_id,city,city_id,area,area_id,usci,
+        CASE
+        WHEN pharmacy_ature = '1' THEN '连锁总部'
+        WHEN pharmacy_ature = '2' THEN '单体药店'
+        WHEN pharmacy_ature = '3' THEN '批发商'
+        WHEN pharmacy_ature = '5' THEN '连锁门店'
+        ELSE NULL
+        END pharmacy_ature,CASE
+        WHEN operation = '1' THEN '零售'
+        WHEN operation = '2' THEN '连锁'
+        WHEN operation = '3' THEN '批发'
+        ELSE NULL
+        END operation,scope,CASE
+        WHEN location = '1' THEN '院内店'
+        WHEN location = '2' THEN '院边店'
+        WHEN location = '3' THEN '社区店'
+        WHEN location = '4' THEN '商圈店'
+        ELSE NULL
+        END location,main_branch,ybcode,
+        CASE
+        WHEN two_channels = '0' THEN '否'
+        WHEN two_channels = '1' THEN '是'
+        ELSE NULL
+        END two_channels,is_internet,
+        CASE
+        WHEN dtp = '0' THEN '否'
+        WHEN dtp = '1' THEN '是'
+        ELSE NULL
+        END dtp,license_number,validity,CASE
+        WHEN mztc = '0' THEN '否'
+        WHEN mztc = '1' THEN '是'
+        ELSE NULL
+        END mztc,create_date,regist_capi,oper_name,address,remarks,batch_code,elian_id,data_id,CASE
+        WHEN is_city = '1' THEN '是'
+        WHEN is_city = '0' THEN '否'
+        ELSE NULL
+        END is_city,
+        CASE
+        WHEN is_yb = '0' THEN '否'
+        WHEN is_yb = '1' THEN '是'
+        ELSE NULL
+        END
+        is_yb,CASE
+        WHEN is_insert='1' THEN '是'
+        WHEN is_insert='0' THEN '否'
+        ELSE null
+        END is_insert,repeat_id,original_name,updatetime,status,CASE
+        WHEN data_type='1' THEN '存量'
+        WHEN data_type='2' THEN '增量'
+        ELSE null
+        END data_type,keyid,main_branch_kid,main_branch_name,hs_code,addtime,appeal_dataid
+        from base_org_drug_store
+        <include refid="conditionDrugStoreWhere"/>
+        ORDER BY addtime desc
+        LIMIT #{page.pageSize} OFFSET #{page.offset}
+
+    </select>
+
+
+    <select id="countDrugStoreCondition" resultType="long">
+        SELECT COUNT(*)
+        FROM base_org_drug_store
+        <include refid="conditionDrugStoreWhere"/>
+    </select>
+
+
+    <!-- 商业条件查询SQL -->
+    <sql id="conditionCompanyWhere">
+        <where>
+            status in ('1','3','4')
+
+            <if test="condition.dataCode != null and condition.dataCode != ''">
+                AND data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
+            </if>
+
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE CONCAT('%', #{condition.name}, '%')
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND province LIKE CONCAT('%', #{condition.province}, '%')
+            </if>
+            <if test="condition.city != null and condition.city != ''">
+                AND city LIKE CONCAT('%', #{condition.city}, '%')
+            </if>
+            <if test="condition.area != null and condition.area != ''">
+                AND area LIKE CONCAT('%', #{condition.area}, '%')
+            </if>
+            <if test="condition.address != null and condition.address != ''">
+                AND address LIKE CONCAT('%', #{condition.address}, '%')
+            </if>
+            <if test="condition.originalName != null and condition.originalName != ''">
+                AND original_name LIKE CONCAT('%', #{condition.originalName}, '%')
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND hs_code LIKE CONCAT('%', #{condition.hsCode}, '%')
+            </if>
+
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND keyid LIKE CONCAT('%', #{condition.keyid}, '%')
+            </if>
+
+            <if test="condition.dataId != null and condition.dataId != ''">
+                AND data_id LIKE CONCAT('%', #{condition.dataId}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <select id="CompanyQueryByCondition" resultType="com.example.demo.entity.HaoSenCompany">
+        SELECT
+        batch_code,data_id,data_code,original_name,elian_id,name,name_history,province,province_id,city,city_id,area,area_id,address,credit_code,regist_capi,econ_kind,scope,sign_status,industry,oper_name,create_date,belong,
+        CASE
+        WHEN classify='1' THEN '批发商'
+        WHEN classify='2' THEN '批发零售商'
+        ELSE null
+        END classify,CASE
+        WHEN is_insert='1' THEN '是'
+        WHEN is_insert='0' THEN '否'
+        ELSE null
+        END is_insert,repeat_id,remarks,updatetime,status,CASE
+        WHEN data_type='1' THEN '存量'
+        WHEN data_type='2' THEN '增量'
+        ELSE null
+        END data_type,keyid,hs_code,addtime,appeal_dataid from base_org_company
+        <include refid="conditionCompanyWhere"/>
+        ORDER BY addtime desc
+        LIMIT #{page.pageSize} OFFSET #{page.offset}
+
+    </select>
+
+    <select id="countCompanyCondition" resultType="long">
+        SELECT COUNT(*)
+        FROM base_org_company
+        <include refid="conditionCompanyWhere"/>
+    </select>
+
+
+</mapper>
