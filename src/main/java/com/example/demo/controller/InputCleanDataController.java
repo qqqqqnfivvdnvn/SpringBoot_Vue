@@ -39,7 +39,7 @@ public class InputCleanDataController {
     @Autowired
     private InputCleanDataService inputCleanDataService;
 
-    @Value("${file.upload-dir}"+"\\clean_file")
+    @Value("${file.upload-dir}"+"\\update_file")
     private String uploadDir;
 
     @PostMapping("/importCleanData")
