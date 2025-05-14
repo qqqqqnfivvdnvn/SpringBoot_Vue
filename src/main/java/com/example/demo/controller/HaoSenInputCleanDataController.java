@@ -39,7 +39,7 @@ public class HaoSenInputCleanDataController {
     @Autowired
     private HaoSenInputCleanDataService inputCleanDataService;
 
-    @Value("${file.upload-dir}"+"\\update_file")
+    @Value("${file.upload-dir}"+"\\clean_file")
     private String uploadDir;
 
     @PostMapping("/importCleanData")
