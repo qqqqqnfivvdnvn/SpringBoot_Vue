@@ -12,7 +12,7 @@ public class HaoSenInputAppealDataVO {
     @ExcelColumn(name = "data_id")
     private String dataId;
 
-    @ExcelColumn(name = "机构类型")
+    @ExcelColumn(name = "数据类型")
     private String dataType;
 
     @ExcelColumn(name = "原始数据编码")

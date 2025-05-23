@@ -4,92 +4,164 @@
       <div class="search-form">
         <div class="form-item">
           <label>原始编码：</label>
-          <input
-              v-model="searchForm.dataCode"
-              placeholder="请输入原始编码"
-              @keyup.enter="handleSearch"
-          >
-        </div>
 
+          <div class="input-wrapper">
+            <input
+                v-model="searchForm.dataCode"
+                placeholder="请输入原始编码"
+                @keyup.enter="handleSearch"
+            >
+            <i v-if="searchForm.dataCode"
+               class="fas fa-times-circle clear-icon"
+               @click="searchForm.dataCode = ''; handleSearch()">
+              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
+            </i>
+          </div>
+
+        </div>
 
         <div class="form-item">
           <label>原始名称：</label>
-          <input
-              v-model="searchForm.originalName"
-              placeholder="请输入原始名称"
-              @keyup.enter="handleSearch"
-          >
+          <div class="input-wrapper">
+            <input
+                v-model="searchForm.originalName"
+                placeholder="请输入原始名称"
+                @keyup.enter="handleSearch"
+            >
+            <i v-if="searchForm.originalName"
+               class="fas fa-times-circle clear-icon"
+               @click="searchForm.originalName = ''; handleSearch()">
+              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
+            </i>
+          </div>
         </div>
 
         <div class="form-item">
           <label>DataId：</label>
-          <input
-              v-model="searchForm.dataId"
-              placeholder="请输入DataId"
-              @keyup.enter="handleSearch"
-          >
+          <div class="input-wrapper">
+            <input
+                v-model="searchForm.dataId"
+                placeholder="请输入DataId"
+                @keyup.enter="handleSearch"
+            >
+            <i v-if="searchForm.dataId"
+               class="fas fa-times-circle clear-icon"
+               @click="searchForm.dataId = ''; handleSearch()">
+              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
+            </i>
+          </div>
+
         </div>
 
         <div class="form-item">
           <label>KeyId：</label>
-          <input
-              v-model="searchForm.keyid"
-              placeholder="请输入KeyId"
-              @keyup.enter="handleSearch"
-          >
+          <div class="input-wrapper">
+            <input
+                v-model="searchForm.keyid"
+                placeholder="请输入KeyId"
+                @keyup.enter="handleSearch"
+            >
+            <i v-if="searchForm.keyid"
+               class="fas fa-times-circle clear-icon"
+               @click="searchForm.keyid = ''; handleSearch()">
+              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
+            </i>
+          </div>
         </div>
 
         <div class="form-item">
           <label>清洗后的编码：</label>
-          <input
-              v-model="searchForm.hsCode"
-              placeholder="请输入清洗后的编码"
-              @keyup.enter="handleSearch"
-          >
+          <div class="input-wrapper">
+            <input
+                v-model="searchForm.hsCode"
+                placeholder="请输入清洗后的编码"
+                @keyup.enter="handleSearch"
+            >
+            <i v-if="searchForm.hsCode"
+               class="fas fa-times-circle clear-icon"
+               @click="searchForm.hsCode = ''; handleSearch()">
+              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
+            </i>
+          </div>
         </div>
 
         <div class="form-item">
           <label>省份：</label>
-          <input
-              v-model="searchForm.province"
-              placeholder="请输入省份"
-              @keyup.enter="handleSearch"
-          >
+          <div class="input-wrapper">
+            <input
+                v-model="searchForm.province"
+                placeholder="请输入省份"
+                @keyup.enter="handleSearch"
+            >
+            <i v-if="searchForm.province"
+               class="fas fa-times-circle clear-icon"
+               @click="searchForm.province = ''; handleSearch()">
+              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
+            </i>
+          </div>
         </div>
         <div class="form-item">
           <label>市：</label>
-          <input
-              v-model="searchForm.city"
-              placeholder="请输入市"
-              @keyup.enter="handleSearch"
-          >
+          <div class="input-wrapper">
+            <input
+                v-model="searchForm.city"
+                placeholder="请输入市"
+                @keyup.enter="handleSearch"
+            >
+            <i v-if="searchForm.city"
+               class="fas fa-times-circle clear-icon"
+               @click="searchForm.city = ''; handleSearch()">
+              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
+            </i>
+          </div>
         </div>
 
         <div class="form-item">
           <label>区县：</label>
-          <input
-              v-model="searchForm.area"
-              placeholder="请输入区县"
-              @keyup.enter="handleSearch"
-          >
+          <div class="input-wrapper">
+            <input
+                v-model="searchForm.area"
+                placeholder="请输入区县"
+                @keyup.enter="handleSearch"
+            >
+            <i v-if="searchForm.area"
+               class="fas fa-times-circle clear-icon"
+               @click="searchForm.area = ''; handleSearch()">
+              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
+            </i>
+          </div>
         </div>
 
         <div class="form-item">
           <label>输入医院名称：</label>
-          <input
-              v-model="searchForm.name"
-              placeholder="请输入医院名称"
-              @keyup.enter="handleSearch"
-          >
+          <div class="input-wrapper">
+            <input
+                v-model="searchForm.name"
+                placeholder="请输入医院名称"
+                @keyup.enter="handleSearch"
+            >
+            <i v-if="searchForm.name"
+               class="fas fa-times-circle clear-icon"
+               @click="searchForm.name = ''; handleSearch()">
+              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
+            </i>
+          </div>
         </div>
 
         <div class="form-item">
           <label>输入医院地址：</label>
-          <input
-              v-model="searchForm.address"
-              placeholder="请输入医院地址"
-              @keyup.enter="handleSearch"
-          >
+          <div class="input-wrapper">
+            <input
+                v-model="searchForm.address"
+                placeholder="请输入医院地址"
+                @keyup.enter="handleSearch"
+            >
+            <i v-if="searchForm.address"
+               class="fas fa-times-circle clear-icon"
+               @click="searchForm.address = ''; handleSearch()">
+              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
+            </i>
+          </div>
         </div>
 
         <div class="form-actions">
@@ -124,7 +196,7 @@
               <template v-else-if="index === 2">{{ hospital.originalName }}</template>
               <template v-else-if="index === 3">{{ hospital.keyid }}</template>
               <template v-else-if="index === 4">{{ hospital.name }}</template>
-<!--              <template v-else-if="index === 5">{{ hospital.nameHistory }}</template>-->
+              <!--              <template v-else-if="index === 5">{{ hospital.nameHistory }}</template>-->
               <template v-else-if="index === 5">{{ hospital.province }}</template>
               <template v-else-if="index === 6">{{ hospital.city }}</template>
               <template v-else-if="index === 7">{{ hospital.area }}</template>
@@ -616,6 +688,8 @@ export default {
 </script>
 
 <style scoped>
+
+
 .hospital-data-view {
   display: flex;
   flex-direction: column;
@@ -945,6 +1019,34 @@ h1 {
 /* 表格字体 */
 .hospital-table {
   font-size: calc(15px + 0.1vw);
+}
+
+
+.input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.input-wrapper input {
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  min-width: 200px;
+  /* Make space for the clear icon */
+  padding: 8px 30px 8px 12px;
+}
+
+.clear-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #c0c4cc;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.clear-icon:hover {
+  color: #909399;
 }
 
 </style>

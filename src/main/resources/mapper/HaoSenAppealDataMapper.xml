@@ -23,7 +23,7 @@
                 AND area LIKE CONCAT('%', #{condition.area}, '%')
             </if>
             <if test="condition.address != null and condition.address != ''">
-                AND address LIKE CONCAT('%', #{condition.address}, '%')
+                AND ku_address LIKE CONCAT('%', #{condition.address}, '%')
             </if>
             <if test="condition.originalName != null and condition.originalName != ''">
                 AND original_name LIKE CONCAT('%', #{condition.originalName}, '%')
@@ -182,7 +182,7 @@
         (
         SELECT b.batch_code ,b.data_id,b.data_type ,b.data_code ,b.original_name ,c.original_province ,c.company_name
         ,a.remarks appeal_remark,null solve_remark,'医院' institution_type,b.keyid,b.name ,b.name_history ,f.省
-        provicne,f.省id provicneid,f.市 city,f.市id cityid,f.区县 area,f.区县id areaid,b.ku_address ,CASE
+        province,f.省id provinceid,f.市 city,f.市id cityid,f.区县 area,f.区县id areaid,b.ku_address ,CASE
         WHEN b.level='1' THEN '一级'
         WHEN b.level='2' THEN '二级'
         WHEN b.level='3' THEN '三级'
@@ -232,7 +232,7 @@
 
         SELECT b.batch_code,b.data_id,b.data_type ,b.data_code ,b.original_name ,c.original_province ,c.company_name
         ,a.remarks appeal_remark,null solve_remark,'药店' institution_type,b.keyid,b.name name,b.history_name
-        name_history,f.省 provicne,f.省id provicneid,f.市 city,f.市id cityid,f.区县 area,f.区县id areaid,b.address ,null
+        name_history,f.省 province,f.省id provinceid,f.市 city,f.市id cityid,f.区县 area,f.区县id areaid,b.address ,null
         level,null grade,null publicflag,
         CASE
         WHEN b.pharmacy_ature='1' THEN '连锁药店总部'
@@ -270,7 +270,7 @@
 
         SELECT b.batch_code,b.data_id,b.data_type ,b.data_code ,b.original_name ,c.original_province ,c.company_name
         ,a.remarks appeal_remark ,null solve_remark,'商业' institution_type,b.keyid,b.name ,b.name_history ,f.省
-        provicne,f.省id provicneid,f.市 city,f.市id cityid,f.区县 area,f.区县id areaid,b.address ,null level,null
+        province,f.省id provinceid,f.市 city,f.市id cityid,f.区县 area,f.区县id areaid,b.address ,null level,null
         grade,null publicflag,
         CASE
         WHEN b.classify='1' THEN '批发商'
