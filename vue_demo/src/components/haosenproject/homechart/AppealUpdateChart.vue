@@ -1,5 +1,5 @@
 <template>
-  <div ref="chart" style="width: 850px; height: 400px;"></div>
+  <div ref="chart" style="width: 37.5rem; height: 16.6875rem;"></div>
 </template>
 
 <script setup>
@@ -41,7 +41,7 @@ onMounted(async() => {
       left: 'center',
       textStyle: {
         color: '#333333',
-        fontSize: 18,
+        fontSize: 13,
         fontWeight: 'bold',
         fontFamily: 'Arial, sans-serif',
       },
@@ -57,6 +57,7 @@ onMounted(async() => {
       textStyle: {
         color: '#333333',
         fontFamily: 'Arial, sans-serif',
+        fontSize: 12,
       },
     },
     legend: {
@@ -65,7 +66,11 @@ onMounted(async() => {
       textStyle: {
         color: '#333333',
         fontFamily: 'Arial, sans-serif',
+        fontSize: 12,
       },
+      itemWidth: 20, // 设置图标宽度
+      itemHeight: 10, // 设置图标高度
+
     },
     grid: {
       left: '3%',
@@ -87,6 +92,7 @@ onMounted(async() => {
       axisLabel: {
         color: '#333333',
         fontFamily: 'Arial, sans-serif',
+        fontSize: 12,
       },
     },
     yAxis: {
@@ -100,6 +106,7 @@ onMounted(async() => {
       axisLabel: {
         color: '#333333',
         fontFamily: 'Arial, sans-serif',
+        fontSize: 12,
       },
       splitLine: {
         lineStyle: {
@@ -132,7 +139,7 @@ onMounted(async() => {
         symbol: 'circle',
         symbolSize: 8,
         itemStyle: {
-          color: '#6DA9E4'
+          color: '#6DA9E4',
         }
       },
       {
@@ -186,7 +193,8 @@ onMounted(async() => {
         symbol: 'circle',
         symbolSize: 8,
         itemStyle: {
-          color: '#40b786'
+          color: '#40b786',
+          fontSize: 12
         }
       },
     ]

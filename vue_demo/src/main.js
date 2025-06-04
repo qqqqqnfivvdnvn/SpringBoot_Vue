@@ -3,7 +3,7 @@ import App from './App.vue';
 import router from './router'; // 引入路由配置
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
+import scaleDirective from './directives/scale';
 
 // 导入需要的具体图标 fa-sign-out
 import {faHospital, faStore, faUniversity, faSignOutAlt,faAngleDoubleLeft ,faAngleDoubleRight,faUser,faTrash,faClock,
@@ -26,5 +26,6 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 
 app.use(router); // 注册路由 times-circle
 
+app.directive('scale', scaleDirective);
 
 app.mount('#app'); // 挂载到 #app

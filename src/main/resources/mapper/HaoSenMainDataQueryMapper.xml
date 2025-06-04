@@ -47,7 +47,8 @@
     <!-- 医疗机构分页查询 -->
     <select id="HospitalQueryByCondition" resultType="com.example.demo.entity.HaoSenHospital">
         SELECT
-        a.batch_code,a.data_code,a.original_name,a.elian_id,a.name,a.name_history,province,a.province_id,a.city,a.city_id,a.area,a.area_id,a.usci,
+        a.batch_code,a.data_code,a.original_name,a.elian_id,a.name,a.name_history,c.省 province,c.省id province_id,c.市
+        city,c.市id city_id,c. 区县 area,c. 区县id area_id,a.usci,
         CASE
         WHEN a.level = '1' THEN '一级'
         WHEN a.level = '2' THEN '二级'
@@ -61,7 +62,7 @@
         WHEN a.grade = '3' THEN '丙等'
         WHEN a.grade = '4' THEN '未定等'
         ELSE NULL
-        END  grade
+        END grade
         ,
         CASE
         WHEN a.publicflag = '1' THEN '公立'
@@ -80,7 +81,7 @@
         WHEN a.military_hos = '0' THEN '否'
         WHEN a.military_hos = '1' THEN '是'
         ELSE NULL
-        END  military_hos,
+        END military_hos,
         CASE
         WHEN a.internet_hos = '0' THEN '否'
         WHEN a.internet_hos = '1' THEN '是'
@@ -97,21 +98,22 @@
         WHEN a.is_city = '1' THEN '是'
         WHEN a.is_city = '0' THEN '否'
         ELSE NULL
-        END  is_city,CASE
+        END is_city,CASE
         WHEN a.is_insert='1' THEN '是'
         WHEN a.is_insert='0' THEN '否'
         ELSE null
         END is_insert
-        ,a.repeat_id,a.updatetime,a.status,CASE
-        WHEN a.data_type='1' THEN '存量'
-        WHEN a.data_type='2' THEN '增量'
-        ELSE null
-        END data_type,a.keyid,a.ku_address,a.general_branch_kid,a.general_branch_name,a.hs_code,a.addtime,a.appeal_dataid
+        ,a.repeat_id,a.updatetime,a.status,
+        a.data_type,a.keyid,a.ku_address,a.general_branch_kid,a.general_branch_name,a.hs_code,a.addtime,a.appeal_dataid
         FROM base_org_hos_clean a
         LEFT JOIN
         豪森五级属性对应表0819 b
         on
         a.class5=b.类别名称5_枚举值
+        LEFT JOIN
+        豪森_行政区划表0928_对应关系 c
+        on
+        a.area_id=c.豪森_对应区县id
         <include refid="conditionHospitalWhere"/>
         ORDER BY addtime desc
         LIMIT #{page.pageSize} OFFSET #{page.offset}
@@ -124,11 +126,6 @@
         FROM base_org_hos_clean
         <include refid="conditionHospitalWhere"/>
     </select>
-
-
-
-
-
 
 
     <!-- 药店条件查询SQL -->
@@ -174,7 +171,8 @@
 
     <!-- 药店分页查询 -->
     <select id="DrugStoreQueryByCondition" resultType="com.example.demo.entity.HaoSenDrugStore">
-        SELECT data_code,name,history_name,province,province_id,city,city_id,area,area_id,usci,
+        SELECT data_code,name,history_name,b.省 province,b.省id province_id,b.市 city,b.市id city_id,b. 区县 area,b. 区县id
+        area_id,usci,
         CASE
         WHEN pharmacy_ature = '1' THEN '连锁总部'
         WHEN pharmacy_ature = '2' THEN '单体药店'
@@ -220,12 +218,13 @@
         WHEN is_insert='1' THEN '是'
         WHEN is_insert='0' THEN '否'
         ELSE null
-        END is_insert,repeat_id,original_name,updatetime,status,CASE
-        WHEN data_type='1' THEN '存量'
-        WHEN data_type='2' THEN '增量'
-        ELSE null
-        END data_type,keyid,main_branch_kid,main_branch_name,hs_code,addtime,appeal_dataid
+        END
+        is_insert,repeat_id,original_name,updatetime,status,data_type,keyid,main_branch_kid,main_branch_name,hs_code,addtime,appeal_dataid
         from base_org_drug_store
+        LEFT JOIN
+        豪森_行政区划表0928_对应关系 b
+        on
+        area_id=b.豪森_对应区县id
         <include refid="conditionDrugStoreWhere"/>
         ORDER BY addtime desc
         LIMIT #{page.pageSize} OFFSET #{page.offset}
@@ -283,7 +282,9 @@
 
     <select id="CompanyQueryByCondition" resultType="com.example.demo.entity.HaoSenCompany">
         SELECT
-        batch_code,data_id,data_code,original_name,elian_id,name,name_history,province,province_id,city,city_id,area,area_id,address,credit_code,regist_capi,econ_kind,scope,sign_status,industry,oper_name,create_date,belong,
+        batch_code,data_id,data_code,original_name,elian_id,name,name_history,b.省 province,b.省id province_id,b.市
+        city,b.市id city_id,b. 区县 area,b.区县id
+        area_id,address,credit_code,regist_capi,econ_kind,scope,sign_status,industry,oper_name,create_date,belong,
         CASE
         WHEN classify='1' THEN '批发商'
         WHEN classify='2' THEN '批发零售商'
@@ -292,11 +293,13 @@
         WHEN is_insert='1' THEN '是'
         WHEN is_insert='0' THEN '否'
         ELSE null
-        END is_insert,repeat_id,remarks,updatetime,status,CASE
-        WHEN data_type='1' THEN '存量'
-        WHEN data_type='2' THEN '增量'
-        ELSE null
-        END data_type,keyid,hs_code,addtime,appeal_dataid from base_org_company
+        END is_insert,repeat_id,remarks,updatetime,status, data_type,keyid,hs_code,addtime,appeal_dataid from
+        base_org_company
+        LEFT JOIN
+        豪森_行政区划表0928_对应关系 b
+        on
+        area_id=b.豪森_对应区县id
+
         <include refid="conditionCompanyWhere"/>
         ORDER BY addtime desc
         LIMIT #{page.pageSize} OFFSET #{page.offset}

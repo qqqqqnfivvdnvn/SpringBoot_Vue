@@ -4,7 +4,6 @@
       <div class="search-form">
         <div class="form-item">
           <label>原始编码：</label>
-
           <div class="input-wrapper">
             <input
                 v-model="searchForm.dataCode"
@@ -17,7 +16,6 @@
               <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
             </i>
           </div>
-
         </div>
 
         <div class="form-item">
@@ -50,7 +48,6 @@
               <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
             </i>
           </div>
-
         </div>
 
         <div class="form-item">
@@ -70,7 +67,7 @@
         </div>
 
         <div class="form-item">
-          <label>清洗后的编码：</label>
+          <label>豪森编码：</label>
           <div class="input-wrapper">
             <input
                 v-model="searchForm.hsCode"
@@ -100,6 +97,7 @@
             </i>
           </div>
         </div>
+
         <div class="form-item">
           <label>市：</label>
           <div class="input-wrapper">
@@ -133,11 +131,11 @@
         </div>
 
         <div class="form-item">
-          <label>输入医院名称：</label>
+          <label>输入药店名称：</label>
           <div class="input-wrapper">
             <input
                 v-model="searchForm.name"
-                placeholder="请输入医院名称"
+                placeholder="请输入药店名称"
                 @keyup.enter="handleSearch"
             >
             <i v-if="searchForm.name"
@@ -149,11 +147,11 @@
         </div>
 
         <div class="form-item">
-          <label>输入医院地址：</label>
+          <label>输入药店地址：</label>
           <div class="input-wrapper">
             <input
                 v-model="searchForm.address"
-                placeholder="请输入医院地址"
+                placeholder="请输入药店地址"
                 @keyup.enter="handleSearch"
             >
             <i v-if="searchForm.address"
@@ -196,21 +194,20 @@
               <template v-else-if="index === 2">{{ DrugStore.originalName }}</template>
               <template v-else-if="index === 3">{{ DrugStore.keyid }}</template>
               <template v-else-if="index === 4">{{ DrugStore.name }}</template>
-              <!--              <template v-else-if="index === 5">{{ DrugStore.historyName }}</template>-->
               <template v-else-if="index === 5">{{ DrugStore.province }}</template>
               <template v-else-if="index === 6">{{ DrugStore.city }}</template>
               <template v-else-if="index === 7">{{ DrugStore.area }}</template>
               <template v-else-if="index === 8">{{ DrugStore.address }}</template>
               <template v-else-if="index === 9">
-                        <span :class="{
-                          'status-active': DrugStore.status === '1',
-                          'status-uninactive': DrugStore.status === '3',
-                          'status-inactive': DrugStore.status === '4'
-                        }">
-                          {{ DrugStore.status === '1' ? '清洗成功' :
-                            DrugStore.status === '3' ? '无法清洗' :
-                                DrugStore.status === '4' ? '禁用客户' : '错误' }}
-                        </span>
+                <span :class="{
+                  'status-active': DrugStore.status === '1',
+                  'status-uninactive': DrugStore.status === '3',
+                  'status-inactive': DrugStore.status === '4'
+                }">
+                  {{ DrugStore.status === '1' ? '清洗成功' :
+                    DrugStore.status === '3' ? '无法清洗' :
+                        DrugStore.status === '4' ? '禁用客户' : '其他状态' }}
+                </span>
               </template>
               <template v-else-if="index === 10">
                 <button class="detail-btn" @click="showDetail(DrugStore)">详情</button>
@@ -220,7 +217,7 @@
           </tbody>
         </table>
         <div v-else class="no-data">
-          {{ loading ? '数据加载中...' : '没有找到匹配的医院数据' }}
+          {{ loading ? '数据加载中...' : '没有找到匹配的药店数据' }}
         </div>
         <div class="pagination" v-if="DrugStoreData.content && DrugStoreData.content.length > 0">
           <button
@@ -253,7 +250,7 @@
     <div v-if="showDetailModal" class="modal-overlay" @click.self="closeDetailModal">
       <div class="modal-container">
         <div class="modal-header">
-          <h3>医院详情</h3>
+          <h3>药店详情</h3>
           <span class="close-btn" @click="closeDetailModal">&times;</span>
         </div>
 
@@ -266,7 +263,6 @@
             <label>原始编码：</label>
             <span>{{ currentDrugStore.dataCode }}</span>
           </div>
-
 
           <div class="detail-row">
             <label>keyId：</label>
@@ -374,14 +370,17 @@
             <label>药品经营许可证有效期：</label>
             <span>{{ currentDrugStore.validity }}</span>
           </div>
+
           <div class="detail-row">
             <label>是否门诊统筹：</label>
             <span>{{ currentDrugStore.mztc }}</span>
           </div>
+
           <div class="detail-row">
             <label>成立日期：</label>
             <span>{{ currentDrugStore.createDate }}</span>
           </div>
+
           <div class="detail-row">
             <label>注册资金：</label>
             <span>{{ currentDrugStore.registCapi }}</span>
@@ -397,7 +396,6 @@
             <span>{{ currentDrugStore.ybcode }}</span>
           </div>
 
-
           <div class="detail-row">
             <label>是否医保药店：</label>
             <span>{{ currentDrugStore.isYb }}</span>
@@ -408,22 +406,14 @@
             <span>{{ currentDrugStore.repeatId }}</span>
           </div>
 
-
-
           <div class="detail-row">
             <label>经营范围：</label>
             <span>{{ currentDrugStore.scope }}</span>
           </div>
 
-
           <div class="detail-row">
             <label>是否新增：</label>
             <span>{{ currentDrugStore.isInsert }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>重复编码：</label>
-            <span>{{ currentDrugStore.repeatId }}</span>
           </div>
 
           <div class="detail-row">
@@ -450,8 +440,6 @@
             <label>更新日期：</label>
             <span>{{ currentDrugStore.updatetime }}</span>
           </div>
-
-
 
           <div class="detail-row">
             <label>状态：</label>
@@ -492,7 +480,6 @@ export default {
       },
       loading: false,
       searchForm: {
-        // dataCode   dataId keyid hsCode province city area name address
         dataCode: '',
         name: '',
         dataId: '',
@@ -503,7 +490,6 @@ export default {
         area: '',
         address: '',
         originalName: ''
-
       },
       pageSize: 10,
       pageNumber: 0,
@@ -517,12 +503,11 @@ export default {
         {label: '原始名称', width: 100},
         {label: 'keyId', width: 100},
         {label: '标准名称', width: 100},
-        // {label: '历史名称', width: 100},
-        {label: '省份', width: 100},
-        {label: '城市', width: 100},
-        {label: '区县', width: 100},
+        {label: '省份', width: 50},
+        {label: '城市', width: 50},
+        {label: '区县', width: 50},
         {label: '地址', width: 100},
-        {label: '状态', width: 100},
+        {label: '状态', width: 50},
         {label: '操作', width: 100}
       ],
       resizing: false,
@@ -535,7 +520,6 @@ export default {
     this.fetchDrugStoreData();
   },
   methods: {
-
     async fetchDrugStoreData() {
       this.loading = true;
       try {
@@ -627,7 +611,6 @@ export default {
     },
     showDetail(DrugStore) {
       this.currentDrugStore = DrugStore;
-      console.log(DrugStore);
       this.showDetailModal = true;
     },
     closeDetailModal() {
@@ -651,7 +634,7 @@ export default {
         const dx = e.clientX - this.startX;
         const newWidth = this.startWidth + dx;
 
-        if (newWidth > 50) { // 最小宽度限制
+        if (newWidth > 50 && newWidth < 500) { // 最小宽度限制
           this.columns[this.resizeColumnIndex].width = newWidth;
         }
       }
@@ -670,33 +653,25 @@ export default {
   display: flex;
   flex-direction: column;
   height: 85vh;
-  padding: 20px;
+  width: 1250px;
+  padding: 12px;
   box-sizing: border-box;
   background: white;
+  font-size: 12px;
 }
-
-/*.DrugStore-data-view {*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  width: 1950px; !* 固定宽度 *!*/
-/*  height: 1000px; !* 固定高度 *!*/
-/*  padding: 20px;*/
-/*  box-sizing: border-box;*/
-/*  background: white;*/
-/*}*/
 
 .search-container {
   flex-shrink: 0;
-  margin-bottom: 10px;
-  padding: 20px;
+  margin-bottom: 8px;
+  padding: 12px;
   background: #f5f7fa;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .search-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -706,30 +681,30 @@ export default {
 }
 
 .form-item label {
-  margin-right: 8px;
+  margin-right: 4px;
   font-weight: bold;
   white-space: nowrap;
 }
 
 .form-item input {
-  padding: 8px 12px;
+  padding: 5px 8px;
   border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  min-width: 200px;
+  border-radius: 3px;
+  min-width: 120px;
 }
 
 .form-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   margin-left: auto;
 }
 
 button {
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 5px 10px;
+  border-radius: 3px;
   cursor: pointer;
   border: none;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .search-btn {
@@ -753,7 +728,7 @@ button {
 .detail-btn {
   background: #67c23a;
   color: white;
-  padding: 6px 12px;
+  padding: 4px 8px;
 }
 
 .detail-btn:hover {
@@ -772,20 +747,20 @@ button {
   flex: 1;
   overflow: auto;
   border: 1px solid #ebeef5;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .DrugStore-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 12px;
   table-layout: fixed;
 }
 
 .DrugStore-table th,
 .DrugStore-table td {
   border: 1px solid #ebeef5;
-  padding: 12px;
+  padding: 6px 8px;
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -810,7 +785,7 @@ button {
 }
 
 .status-active {
-  color: #6da1e4;
+  color: #78a2cc;
   font-weight: bold;
 }
 
@@ -824,33 +799,31 @@ button {
   font-weight: bold;
 }
 
-
 .no-data {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
   color: #909399;
-  font-size: 16px;
 }
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
-  gap: 15px;
-  padding: 10px;
+  margin-top: 12px;
+  gap: 8px;
+  padding: 6px;
   background: #f5f7fa;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .page-btn {
-  padding: 6px 12px;
+  padding: 4px 8px;
   background: #ffffff;
   border: 1px solid #dcdfe6;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .page-btn:disabled {
@@ -859,18 +832,17 @@ button {
 }
 
 .page-info {
-  font-size: 14px;
+  font-size: 12px;
   color: #606266;
 }
 
 .pagination select {
-  padding: 6px;
-  border-radius: 4px;
+  padding: 4px;
+  border-radius: 3px;
   border: 1px solid #dcdfe6;
   background: white;
 }
 
-/* 详情弹窗样式 */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -886,18 +858,18 @@ button {
 
 .modal-container {
   background: white;
-  border-radius: 8px;
-  width: 600px;
-  max-width: 90%;
-  max-height: 80vh;
+  border-radius: 6px;
+  width: 400px;
+  max-width: 80%;
+  max-height: 60vh;
   overflow-y: auto;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
 }
 
 .modal-header {
-  padding: 16px 20px;
+  padding: 10px 12px;
   border-bottom: 1px solid #ebeef5;
   display: flex;
   justify-content: space-between;
@@ -906,12 +878,13 @@ button {
 
 .modal-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 14px;
   color: #303133;
+  font-weight: bold;
 }
 
 .close-btn {
-  font-size: 24px;
+  font-size: 14px;
   color: #909399;
   cursor: pointer;
 }
@@ -921,19 +894,19 @@ button {
 }
 
 .modal-body {
-  padding: 20px;
+  padding: 12px;
   flex: 1;
 }
 
 .detail-row {
   display: flex;
-  margin-bottom: 15px;
-  line-height: 1.5;
+  margin-bottom: 8px;
+  line-height: 1.4;
 }
 
 .detail-row label {
   font-weight: bold;
-  min-width: 100px;
+  min-width: 70px;
   color: #606266;
 }
 
@@ -943,18 +916,18 @@ button {
 }
 
 .modal-footer {
-  padding: 12px 20px;
+  padding: 8px 12px;
   border-top: 1px solid #ebeef5;
   display: flex;
   justify-content: flex-end;
 }
 
 .modal-close-btn {
-  padding: 8px 16px;
+  padding: 5px 10px;
   background: #409eff;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
 }
 
@@ -962,10 +935,9 @@ button {
   background: #66b1ff;
 }
 
-/* 列宽调整相关样式 */
 .th-content {
   position: relative;
-  padding-right: 16px;
+  padding-right: 10px;
 }
 
 .resize-handle {
@@ -973,7 +945,7 @@ button {
   right: 0;
   top: 0;
   bottom: 0;
-  width: 5px;
+  width: 3px;
   cursor: col-resize;
   background-color: transparent;
 }
@@ -982,46 +954,30 @@ button {
   background-color: #409eff;
 }
 
-
-/* 基础字体大小使用vw单位 */
-
-body {
-  font-size: calc(14px + 0.2vw); /* 14px为基础大小，0.2vw为视口宽度比例 */
-}
-
-h1 {
-  font-size: calc(24px + 0.5vw);
-}
-
-/* 表格字体 */
-.DrugStore-table {
-  font-size: calc(15px + 0.1vw);
-}
 .input-wrapper {
   position: relative;
   display: inline-block;
+
 }
 
 .input-wrapper input {
   border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  min-width: 200px;
-  /* Make space for the clear icon */
-  padding: 8px 30px 8px 12px;
+  border-radius: 3px;
+  min-width: 120px;
+  padding: 5px 20px 5px 8px;
+  font-size: 11px;
 }
 
 .clear-icon {
   position: absolute;
-  right: 10px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
   color: #c0c4cc;
   cursor: pointer;
-  font-size: 16px;
 }
 
 .clear-icon:hover {
   color: #909399;
 }
-
 </style>

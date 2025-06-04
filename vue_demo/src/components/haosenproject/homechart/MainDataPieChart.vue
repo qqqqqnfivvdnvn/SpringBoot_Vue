@@ -1,5 +1,5 @@
 <template>
-  <div ref="chart" style="width: 850px; height: 400px;"></div>
+  <div ref="chart" style="width: 37.5rem; height: 16.6875rem;"></div>
 </template>
 
 <script setup>
@@ -15,21 +15,18 @@ onMounted(async() => {
     devicePixelRatio: window.devicePixelRatio > 1 ? 2 : 1
   });
 
-  const response = await axios.post('/api/homeData/getMainPieData'); // 替换为你的后端 API 地址
+  const response = await axios.post('/api/homeData/getMainPieData');
   let baseData;
   try {
     if (response.data.code === 200){
-      // 2. 强制转换数值类型
-       baseData = response.data.data.map(item => ({
+      baseData = response.data.data.map(item => ({
         name: item.name,
-        value: Number(item.value) || 0 // 确保为数字
+        value: Number(item.value) || 0
       }));
     }
   } catch (error) {
     console.error(error);
   }
-
-
 
   const colorMap = {
     '医院': '#6da1e4',
@@ -48,7 +45,7 @@ onMounted(async() => {
       left: 'center',
       textStyle: {
         color: '#333333',
-        fontSize: 18,
+        fontSize: 13,
         fontWeight: 'bold',
         fontFamily: 'Arial, sans-serif',
       },
@@ -59,7 +56,7 @@ onMounted(async() => {
         const total = baseData.reduce((sum, item) => sum + item.value, 0);
         const percent = ((params.value / total) * 100).toFixed(1);
         return `
-          <div style="font-family:Arial,sans-serif;color:#333333">
+          <div style="font-family:Arial,sans-serif;color:#333333;font-size:11px">
             ${params.name}<br/>
             数量: <span style="font-weight:bold">${params.value}</span><br/>
             占比: <span style="font-weight:bold">${percent}%</span>
@@ -69,6 +66,7 @@ onMounted(async() => {
       textStyle: {
         color: '#333333',
         fontFamily: 'Arial, sans-serif',
+        fontSize: 12,
       },
     },
     legend: {
@@ -79,7 +77,10 @@ onMounted(async() => {
       textStyle: {
         color: '#333333',
         fontFamily: 'Arial, sans-serif',
+        fontSize: 12,
       },
+      itemWidth: 20, // 设置图标宽度
+      itemHeight: 10, // 设置图标高度
     },
     grid: {
       backgroundColor: '#F5F5F5',
@@ -110,7 +111,7 @@ onMounted(async() => {
         },
         label: {
           show: true,
-          fontSize: 14
+          fontSize: 12
         }
       },
       labelLine: {

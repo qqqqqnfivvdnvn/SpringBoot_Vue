@@ -1,5 +1,5 @@
 <template>
-  <div ref="chart" style="width: 850px; height: 400px;"></div>
+  <div ref="chart" style="width: 37.5rem; height: 16.6875rem;"></div>
 </template>
 
 <script setup>
@@ -36,7 +36,7 @@ onMounted(async () => {
           left: 'center',
           textStyle: {
             color: '#333333',
-            fontSize: 18,
+            fontSize: 13,
             fontWeight: 'bold',
             fontFamily: 'Arial, sans-serif',
           },
@@ -49,6 +49,7 @@ onMounted(async () => {
           textStyle: {
             color: '#333333',
             fontFamily: 'Arial, sans-serif',
+            fontSize: 12,
           },
         },
         legend: {
@@ -57,7 +58,10 @@ onMounted(async () => {
           textStyle: {
             color: '#333333',
             fontFamily: 'Arial, sans-serif',
+            fontSize: 12,
           },
+          itemWidth: 20, // 设置图标宽度
+          itemHeight: 10, // 设置图标高度
         },
         grid: {
           left: '3%',
@@ -76,8 +80,10 @@ onMounted(async () => {
             },
           },
           axisLabel: {
+            interval: 0,  // ← 关键配置
             color: '#333333',
             fontFamily: 'Arial, sans-serif',
+            fontSize: 11,
           },
         },
         yAxis: [
@@ -92,6 +98,7 @@ onMounted(async () => {
             axisLabel: {
               color: '#333333',
               fontFamily: 'Arial, sans-serif',
+              fontSize: 12,
             },
             splitLine: {
               lineStyle: {
@@ -110,6 +117,7 @@ onMounted(async () => {
             axisLabel: {
               color: '#333333',
               fontFamily: 'Arial, sans-serif',
+              fontSize: 12,
             },
             splitLine: {
               show: false,
@@ -149,7 +157,7 @@ onMounted(async () => {
             type: 'line',
             yAxisIndex: 1,
             data: totalCount,
-            smooth: true,  // 保持平滑曲线
+            smooth: true,
             symbol: 'circle',
             symbolSize: 8,
             itemStyle: {
@@ -157,21 +165,13 @@ onMounted(async () => {
             },
             lineStyle: {
               width: 3,
-              // 移除了阴影效果
             },
-            // label: {
-            //   show: true,
-            //   position: 'top',
-            //   formatter: '{c}',
-            //   color: '#9478cc',
-            //   fontFamily: 'Arial, sans-serif',
-            // },
             emphasis: {
               lineStyle: {
                 width: 4
               },
               itemStyle: {
-                color: '#427aa4' // 保持悬停颜色一致
+                color: '#427aa4'
               }
             }
           }
@@ -179,6 +179,7 @@ onMounted(async () => {
       };
 
       myChart.setOption(option);
+      window.addEventListener('resize', () => myChart.resize());
     } else {
       console.error('获取数据失败:', response.data.msg);
     }

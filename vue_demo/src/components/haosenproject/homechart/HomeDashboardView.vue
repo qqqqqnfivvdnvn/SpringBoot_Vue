@@ -1,5 +1,3 @@
-
-
 <template>
   <div class="dashboard-view">
     <div class="grid-container">
@@ -8,48 +6,34 @@
         <!-- 五个数据卡片 -->
 
         <div class="grid-item-small">
-          <font-awesome-icon :icon="['fas', 'hospital'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
-          <div style="display: flex; flex-direction: column; align-items: center;  ">
-            <span style="font-weight: bold;font-size: 24px;color:#000000 ">医院周清洗</span>
-            <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ cleanCount.hospitalCount }} </span>
-          </div>
-
-        </div>
-
-        <div class="grid-item-small" >
-          <font-awesome-icon :icon="['fas', 'store'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
-
-          <div style="display: flex; flex-direction: column; align-items: center;  ">
-            <span style="font-weight: bold;font-size: 24px;color:#000000 ">药店周清洗</span>
-            <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{ cleanCount.drugstoreCount }} </span>
-          </div>
-
+            <font-awesome-icon :icon="['fas', 'hospital']" size="2x" /> &nbsp;
+            <span style="font-weight: bold; font-size: 16px; color: #000000">医院周清洗</span> &nbsp;
+            <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.hospitalCount }}</span>
         </div>
 
         <div class="grid-item-small">
-          <font-awesome-icon :icon="['fas', 'university'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
-          <div style="display: flex; flex-direction: column; align-items: center;  ">
-            <span style="font-weight: bold;font-size: 24px;color:#000000 ">商业周清洗</span>
-            <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{  cleanCount.companyCount }} </span>
-          </div>
+          <font-awesome-icon :icon="['fas', 'store']" size="2x"></font-awesome-icon> &nbsp;
+            <span style="font-weight: bold; font-size: 16px; color: #000000">药店周清洗</span> &nbsp;
+            <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.drugstoreCount }}</span>
         </div>
 
         <div class="grid-item-small">
-          <font-awesome-icon :icon="['fas', 'trash'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
-          <div style="display: flex; flex-direction: column; align-items: center;  ">
-            <span style="font-weight: bold;font-size: 24px;color:#000000 ">申诉待处理</span>
-            <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{  cleanCount.unappealingCount }} </span>
-          </div>
+          <font-awesome-icon :icon="['fas', 'university']" size="2x"></font-awesome-icon> &nbsp;
+          <span style="font-weight: bold; font-size: 16px; color: #000000">商业周清洗</span> &nbsp;
+          <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.companyCount }}</span>
         </div>
 
         <div class="grid-item-small">
-          <font-awesome-icon :icon="['fas', 'clock'] " size="2x"></font-awesome-icon> &nbsp;&nbsp;
-          <div style="display: flex; flex-direction: column; align-items: center;  ">
-            <span style="font-weight: bold;font-size: 24px;color:#000000 ">待清洗</span>
-            <span style="font-size: 22px; color:#2575fc;font-weight: bold ">{{  cleanCount.uncleanedCount }} </span>
-          </div>
+          <font-awesome-icon :icon="['fas', 'trash']" size="2x"></font-awesome-icon> &nbsp;
+            <span style="font-weight: bold; font-size: 16px; color: #000000">申诉待处理</span> &nbsp;
+            <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.unappealingCount }}</span>
         </div>
 
+        <div class="grid-item-small">
+          <font-awesome-icon :icon="['fas', 'clock']" size="2x"></font-awesome-icon> &nbsp;
+            <span style="font-weight: bold; font-size: 16px; color: #000000">待清洗</span> &nbsp;
+            <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.uncleanedCount }}</span>
+        </div>
 
       </div>
 
@@ -71,11 +55,10 @@
           <LineChart />
         </div>
       </div>
+
     </div>
   </div>
-
 </template>
-
 
 <script>
 import BarChart from '@/components/haosenproject/homechart/CleanBarChart.vue';
@@ -126,14 +109,13 @@ export default {
 };
 </script>
 
-
 <style scoped>
 
 /* 网格布局 */
 .grid-container {
   display: grid;
-  grid-template-rows: 150px 1fr 1fr; /* 第一行高度缩小，第二行和第三行平分剩余空间 */
-  gap: 10px; /* 网格之间的间距 */
+  grid-template-rows: 100px 1fr 1fr; /* 第一行高度缩小，第二行和第三行平分剩余空间 */
+  gap: 6px; /* 网格之间的间距 */
   height: 100%;
 }
 
@@ -141,8 +123,8 @@ export default {
 .grid-item-container {
   grid-column: 1 / -1; /* 占据整行 */
   display: flex; /* 使用 Flexbox 布局 */
-  gap: 10px; /* 盒子之间的间距 */
-  height: 150px; /* 高度与原来的 grid-item-1-3 一致 */
+  gap: 6px; /* 盒子之间的间距 */
+  height: 100px; /* 高度与原来的 grid-item-1-3 一致 */
 }
 
 /* 新增样式：每个小盒子的样式 */
@@ -153,15 +135,15 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
   color: #333;
-  border-radius: 5px;
+  border-radius: 3px;
   transition: box-shadow 0.2s;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 悬浮效果 */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* 悬浮效果 */
 }
 
 .grid-item-small:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* 悬浮时阴影加深 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* 悬浮时阴影加深 */
 }
 
 /* 第二行和第三行：合并 4、5、6 格和 7、8、9 格，并分为两个格子 */
@@ -170,7 +152,7 @@ export default {
   grid-column: 1 / -1; /* 占据整行 */
   display: grid;
   grid-template-columns: 1fr 1fr; /* 分为两个格子 */
-  gap: 10px; /* 子网格之间的间距 */
+  gap: 6px; /* 子网格之间的间距 */
 }
 
 /* 子网格项样式 */
@@ -180,15 +162,15 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
   color: #333;
-  border-radius: 5px;
+  border-radius: 3px;
   transition: box-shadow 0.2s;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 悬浮效果 */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* 悬浮效果 */
 }
 
 .sub-grid-item:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* 悬浮时阴影加深 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* 悬浮时阴影加深 */
 }
 
 </style>

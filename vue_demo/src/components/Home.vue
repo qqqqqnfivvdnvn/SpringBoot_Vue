@@ -19,7 +19,6 @@
     <!-- 全屏平铺的项目入口区域 -->
     <div class="fullscreen-projects">
       <div class="projects-container">
-        <h2 class="projects-title">我的项目</h2>
 
         <!-- 项目搜索框 -->
         <div class="projects-search">
@@ -59,17 +58,15 @@
               <h3>{{ project.name }}</h3>
               <p>{{ project.description }}</p>
               <div class="project-meta">
-<!--                <span><font-awesome-icon :icon="['fas', 'user']"/> {{ project.owner }}</span>-->
                 <span><font-awesome-icon :icon="['fas', 'calendar-alt']"/> {{ project.addtime }}</span>
               </div>
             </div>
-
           </div>
         </div>
 
         <!-- 添加新项目按钮 -->
         <div class="add-project" @click="showAddProjectDialog">
-          <font-awesome-icon :icon="['fas', 'plus-circle']" size="3x"/>
+          <font-awesome-icon :icon="['fas', 'plus-circle']" size="2x"/>
           <span>添加新项目</span>
         </div>
       </div>
@@ -130,15 +127,12 @@
 </template>
 
 <script>
-
 import axios from 'axios';
-import {onMounted} from "vue";
 
 export default {
   data() {
-
     return {
-      userData:{},
+      userData: {},
       showToast: false,
       toastMessage: '',
       homePageStyle: {
@@ -148,10 +142,6 @@ export default {
       activeTab: 'all',
       tabs: [
         { id: 'all', label: '全部项目' },
-        { id: 'recent', label: '最近访问' },
-        // { id: 'favorites', label: '我的收藏' },
-        // { id: 'personal', label: '个人项目' },
-        // { id: 'team', label: '团队项目' }
       ],
       projects: [],
       showDialog: false,
@@ -166,8 +156,6 @@ export default {
     };
   },
 
-
-  // 生命周期钩子中
   created() {
     this.getProjects();
 
@@ -176,32 +164,16 @@ export default {
       try {
         this.userData = JSON.parse(tempData);
         console.log('userData:', this.userData);
-
       } catch (e) {
         console.error('解析 tempData 失败', e);
       }
     }
-
   },
+
   computed: {
     filteredProjects() {
       let filtered = this.projects;
 
-      // 按标签筛选
-      if (this.activeTab !== 'all') {
-        filtered = filtered.filter(project => {
-          if (this.activeTab === 'recent') {
-            const now = new Date();
-            const projectDate = new Date(project.addtime); // 假设 addtime 是 ISO 字符串或时间戳
-
-            const diffDays = Math.floor((now - projectDate) / (1000 * 60 * 60 * 24));
-            console.log(diffDays);
-            return diffDays <= 3; // 最近7天内的项目
-          }
-        });
-      }
-
-      // 按搜索词筛选
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         filtered = filtered.filter(project =>
@@ -213,9 +185,9 @@ export default {
       return filtered;
     }
   },
+
   methods: {
     navigateToProject(project) {
-      // 检查路由是否存在
       if (!this.$router.hasRoute(project.routeName)) {
         console.error('路由不存在:', project.routeName);
         this.showToastMessage('路由不存在，请联系管理员添加');
@@ -233,11 +205,10 @@ export default {
 
     getProjects() {
       axios.get('/api/projects/getAllProjects')
-       .then(response => {
-          this.projects = response.data.data;
-        })
+          .then(response => {
+            this.projects = response.data.data;
+          })
     },
-
 
     showAddProjectDialog() {
       this.newProject = {
@@ -249,11 +220,9 @@ export default {
       this.showDialog = true;
     },
 
-
     async addNewProject() {
       if (!this.newProject.name.trim()) {
         this.showToastMessage('请输入项目名称');
-
         return;
       }
 
@@ -266,15 +235,11 @@ export default {
         userName: this.userData.username
       });
 
-
-
       this.showDialog = false;
-
       this.showToastMessage('项目添加成功');
       this.getProjects();
-
-
     },
+
     filterProjects() {
       // 搜索功能已在计算属性中实现
     },
@@ -291,6 +256,7 @@ export default {
         console.error('退出失败:', error);
       }
     },
+
     clearAuthData() {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -305,13 +271,10 @@ export default {
       }, 3000);
     }
   },
-
-
 };
 </script>
 
 <style scoped>
-
 /* 基础样式 */
 .home-page {
   display: flex;
@@ -325,10 +288,10 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 15px;
   background-color: #af96e6;
   color: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: fixed;
   top: 0;
   left: 0;
@@ -337,20 +300,20 @@ export default {
 }
 
 .navbar-brand {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bold;
 }
 
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
 .navbar-links a {
   color: #fff;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .navbar-links a:hover {
@@ -358,8 +321,8 @@ export default {
 }
 
 .avatar img {
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   cursor: pointer;
 }
@@ -368,13 +331,13 @@ export default {
   background-color: #fff;
   color: #9478cc;
   border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+  padding: 6px 12px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .logout-button:hover {
@@ -383,41 +346,41 @@ export default {
 
 /* 全屏项目区域 */
 .fullscreen-projects {
-  margin-top: 85px; /* 与导航栏的间距 */
-  padding: 20px;
-  height: calc(100vh - 85px);
+  margin-top: 70px; /* 与导航栏的间距 */
+  padding: 15px;
+  height: calc(100vh - 70px);
   overflow-y: auto;
   background-color: #f9f9f9;
 }
 
 .projects-container {
-  max-width: 1500px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .projects-title {
   color: #333;
-  margin-bottom: 20px;
-  font-size: 1.8rem;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
 }
 
 .projects-search {
   position: relative;
-  margin-bottom: 20px;
-  max-width: 400px;
+  margin-bottom: 15px;
+  max-width: 350px;
 }
 
 .projects-search input {
   width: 100%;
-  padding: 10px 15px 10px 40px;
+  padding: 8px 12px 8px 35px;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
 }
 
 .search-icon {
   position: absolute;
-  left: 15px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #9478cc;
@@ -425,18 +388,19 @@ export default {
 
 .projects-tabs {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 15px;
   flex-wrap: wrap;
 }
 
 .projects-tabs button {
-  padding: 8px 16px;
+  padding: 6px 12px;
   border: 1px solid #ddd;
   background: white;
-  border-radius: 20px;
+  border-radius: 16px;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 0.9rem;
 }
 
 .projects-tabs button:hover {
@@ -451,52 +415,52 @@ export default {
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
 }
 
 .project-card {
   background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
   position: relative;
   cursor: pointer;
-  border-left: 4px solid #9478cc;
-  height: 180px;
+  border-left: 3px solid #9478cc;
+  height: 150px;
 }
 
 .project-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .project-icon {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .project-info h3 {
-  margin: 0 0 10px 0;
+  margin: 0 0 8px 0;
   color: #333;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .project-info p {
-  margin: 0 0 15px 0;
+  margin: 0 0 10px 0;
   color: #666;
-  font-size: 0.9rem;
-  line-height: 1.4;
+  font-size: 0.8rem;
+  line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -506,7 +470,7 @@ export default {
 .project-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #999;
   margin-top: auto;
 }
@@ -514,29 +478,7 @@ export default {
 .project-meta span {
   display: flex;
   align-items: center;
-  gap: 5px;
-}
-
-.project-actions {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-}
-
-.project-actions button {
-  background: none;
-  border: none;
-  color: #ddd;
-  cursor: pointer;
-  font-size: 1.2rem;
-}
-
-.project-actions button:hover {
-  color: #f9c74f;
-}
-
-.project-actions .favorite {
-  color: #f9c74f;
+  gap: 4px;
 }
 
 .add-project {
@@ -544,23 +486,24 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 30px;
+  padding: 20px;
   border: 2px dashed #ddd;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
   color: #9478cc;
-  height: 180px;
+  height: 150px;
 }
 
 .add-project:hover {
   border-color: #9478cc;
-  background: rgba(148, 120, 204, 0.05);
+  background: rgba(148, 120, 204, 0.03);
 }
 
 .add-project span {
-  margin-top: 10px;
+  margin-top: 8px;
   font-weight: 500;
+  font-size: 0.9rem;
 }
 
 /* 对话框样式 */
@@ -579,66 +522,70 @@ export default {
 
 .dialog {
   background: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  padding: 20px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  width: 85%;
+  max-width: 450px;
+  padding: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .dialog h3 {
   margin-top: 0;
   color: #333;
+  font-size: 1.1rem;
 }
 
 .dialog-content {
-  margin: 20px 0;
+  margin: 15px 0;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
   font-weight: 500;
   color: #555;
+  font-size: 0.8rem;
+  font-family: Arial, sans-serif; /* 设置统一的字体 */
 }
 
 .form-group input,
 .form-group textarea {
-  width: 98%;
-  padding: 8px 12px;
+  width: 96%;
+  padding: 6px 10px;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-family: Arial, sans-serif; /* 设置统一的字体 */
 }
 
 .form-group textarea {
-  min-height: 80px;
+  min-height: 60px;
   resize: vertical;
 }
 
 .icon-selector {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .icon-selector button {
   background: #f5f5f5;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: #666;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .icon-selector button.selected {
@@ -648,14 +595,14 @@ export default {
 
 .color-selector {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .color-selector div {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid transparent;
@@ -668,14 +615,15 @@ export default {
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px;
 }
 
 .dialog-actions button {
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 6px 12px;
+  border-radius: 3px;
   cursor: pointer;
   font-weight: 500;
+  font-size: 0.8rem;
 }
 
 .dialog-actions .cancel {
@@ -693,42 +641,34 @@ export default {
 /* 悬浮提示框 */
 .toast {
   position: fixed;
-  top: 20px;
+  top: 15px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #9478cc;
   color: #fff;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 8px 16px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   animation: fadeInOut 3s ease-in-out;
 }
 
 @keyframes fadeInOut {
-  0% {
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* 响应式调整 */
 @media (max-width: 768px) {
   .projects-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 
   .projects-tabs {
     overflow-x: auto;
-    padding-bottom: 10px;
+    padding-bottom: 8px;
   }
 
   .projects-tabs button {
@@ -737,7 +677,7 @@ export default {
 
   .project-card,
   .add-project {
-    height: 160px;
+    height: 130px;
   }
 }
 

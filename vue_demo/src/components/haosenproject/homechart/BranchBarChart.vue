@@ -1,5 +1,5 @@
 <template>
-  <div ref="chart" style="width: 850px; height: 400px;"></div>
+  <div ref="chart" style="width: 37.5rem; height: 16.6875rem;"></div>
 </template>
 
 <script setup>
@@ -39,7 +39,7 @@ onMounted(async() => {
       left: 'center',
       textStyle: {
         color: '#333333',
-        fontSize: 18,
+        fontSize: 13,
         fontWeight: 'bold',
         fontFamily: 'Arial, sans-serif',
       },
@@ -52,16 +52,9 @@ onMounted(async() => {
       textStyle: {
         color: '#333333',
         fontFamily: 'Arial, sans-serif',
+        fontSize: 12,
       },
     },
-    // legend: {
-    //   data: ['数量'], // 与 series 的 name 一致
-    //   textStyle: {
-    //     color: '#333333',
-    //     fontFamily: 'Arial, sans-serif',
-    //   },
-    //   top: 30
-    // },
     grid: {
       left: '3%',
       right: '4%',
@@ -76,6 +69,7 @@ onMounted(async() => {
       axisLabel: {
         color: '#333333',
         fontFamily: 'Arial, sans-serif',
+        fontSize: 12,
         interval: 0 // 确保所有标签都显示
       },
       axisLine: {
@@ -92,6 +86,7 @@ onMounted(async() => {
       axisLabel: {
         color: '#333333',
         fontFamily: 'Arial, sans-serif',
+        fontSize: 12,
       },
       axisLine: {
         lineStyle: {

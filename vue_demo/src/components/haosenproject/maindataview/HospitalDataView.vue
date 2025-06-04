@@ -36,6 +36,8 @@
           </div>
         </div>
 
+
+
         <div class="form-item">
           <label>DataId：</label>
           <div class="input-wrapper">
@@ -70,7 +72,7 @@
         </div>
 
         <div class="form-item">
-          <label>清洗后的编码：</label>
+          <label>豪森编码：</label>
           <div class="input-wrapper">
             <input
                 v-model="searchForm.hsCode"
@@ -213,8 +215,10 @@
                         </span>
               </template>
               <template v-else-if="index === 10">
-                <button class="detail-btn" @click="showDetail(hospital)">详情</button>
+                <button class="detail-btn" @click="showDetail(hospital)">详情</button> &nbsp;
+                <button class="update-btn" @click="updateDetail(hospital)">更新</button>
               </template>
+
             </td>
           </tr>
           </tbody>
@@ -494,6 +498,132 @@
         </div>
       </div>
     </div>
+
+    <!-- 更新弹窗 -->
+    <div v-if="updateDetailModal" class="modal-overlay" @click.self="closeUpdateModal">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>数据更新</h3>
+          <span class="close-btn" @click="closeUpdateModal">&times;</span>
+        </div>
+
+        <div class="modal-body">
+          <form @submit.prevent="saveChanges" class="hospital-form">
+            <div class="form-grid">
+              <!-- 第一列 -->
+              <div class="form-column">
+
+                <div class="form-group">
+                  <label class="form-label">批次编号：</label>
+                  <input v-model="currentHospital.batchCode" readonly class="form-input">
+                </div>
+
+
+                <div class="form-group">
+                  <label class="form-label">dataId：</label>
+                  <input v-model="currentHospital.dataId" readonly class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">数据类型：</label>
+                  <input v-model="currentHospital.dataType"  readonly class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">原始编码：</label>
+                  <input v-model="currentHospital.dataCode" readonly class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">原始名称：</label>
+                  <input v-model="currentHospital.originalName" readonly class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">机构类型：</label>
+                  <input  readonly class="form-input" value="医院">
+                </div>
+
+              </div>
+
+              <!-- 第二列 -->
+              <div class="form-column">
+
+                <div class="form-group">
+                  <label class="form-label">备注：</label>
+                  <input  class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">keyId：</label>
+                  <input v-model="currentHospital.keyid" class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">医院名称：</label>
+                  <input v-model="currentHospital.name" class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">历史名称：</label>
+                  <input v-model="currentHospital.nameHistory" class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">省：</label>
+                  <input v-model="currentHospital.province" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">省ID：</label>
+                  <input v-model="currentHospital.provinceId" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">市：</label>
+                  <input v-model="currentHospital.city" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">市ID：</label>
+                  <input v-model="currentHospital.cityId" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">区县：</label>
+                  <input v-model="currentHospital.area" class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">区县ID：</label>
+                  <input v-model="currentHospital.areaId" class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">地址：</label>
+                  <input v-model="currentHospital.address" class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">等级：</label>
+                  <input v-model="currentHospital.level" class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">等次：</label>
+                  <input v-model="currentHospital.grade" class="form-input">
+                </div>
+
+
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">提交推送</button>
+              <button type="button" class="btn btn-secondary" @click="closeUpdateModal">取消</button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -514,7 +644,6 @@ export default {
       loading: false,
       searchForm: {
         // dataCode   dataId keyid hsCode province city area name address
-
         dataCode: '',
         name: '',
         dataId: '',
@@ -530,6 +659,7 @@ export default {
       pageSize: 10,
       pageNumber: 0,
       showDetailModal: false,
+      updateDetailModal: false,
       currentHospital: {},
 
       // 列定义
@@ -539,12 +669,11 @@ export default {
         {label: '原始名称', width: 100},
         {label: 'keyId', width: 100},
         {label: '标准名称', width: 100},
-        // {label: '历史名称', width: 100},
-        {label: '省份', width: 100},
-        {label: '城市', width: 100},
-        {label: '区县', width: 100},
+        {label: '省份', width: 50},
+        {label: '城市', width: 50},
+        {label: '区县', width: 50},
         {label: '地址', width: 100},
-        {label: '状态', width: 100},
+        {label: '状态', width: 50},
         {label: '操作', width: 100}
       ],
       resizing: false,
@@ -647,15 +776,30 @@ export default {
       this.pageNumber = 0;
       this.fetchHospitalData();
     },
+
+    // 详情查看
     showDetail(hospital) {
       this.currentHospital = hospital;
-      console.log(hospital);
       this.showDetailModal = true;
     },
+
     closeDetailModal() {
       this.showDetailModal = false;
       this.currentHospital = {};
     },
+
+    // 更新查看
+    updateDetail(hospital) {
+      this.currentHospital = hospital;
+      this.updateDetailModal = true;
+    },
+
+    closeUpdateModal() {
+      this.updateDetailModal = false;
+      this.currentHospital = {};
+    },
+
+
     // 列宽调整方法
     startResize(e, index) {
       this.resizing = true;
@@ -673,7 +817,7 @@ export default {
         const dx = e.clientX - this.startX;
         const newWidth = this.startWidth + dx;
 
-        if (newWidth > 50) { // 最小宽度限制
+        if (newWidth > 50 && newWidth < 500) { // 最小宽度限制
           this.columns[this.resizeColumnIndex].width = newWidth;
         }
       }
@@ -688,39 +832,29 @@ export default {
 </script>
 
 <style scoped>
-
-
 .hospital-data-view {
   display: flex;
   flex-direction: column;
   height: 85vh;
-  padding: 20px;
+  width: 1250px;
+  padding: 12px;
   box-sizing: border-box;
   background: white;
+  font-size: 12px;
 }
-
-/*.hospital-data-view {*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  width: 1950px; !* 固定宽度 *!*/
-/*  height: 1000px; !* 固定高度 *!*/
-/*  padding: 20px;*/
-/*  box-sizing: border-box;*/
-/*  background: white;*/
-/*}*/
 
 .search-container {
   flex-shrink: 0;
-  margin-bottom: 10px;
-  padding: 20px;
+  margin-bottom: 8px;
+  padding: 12px;
   background: #f5f7fa;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .search-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -730,30 +864,32 @@ export default {
 }
 
 .form-item label {
-  margin-right: 8px;
+  margin-right: 4px;
   font-weight: bold;
   white-space: nowrap;
+  font-size: 12px;
 }
 
 .form-item input {
-  padding: 8px 12px;
+  padding: 5px 8px;
   border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  min-width: 200px;
+  border-radius: 3px;
+  min-width: 120px;
+  font-size: 12px;
 }
 
 .form-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   margin-left: auto;
 }
 
 button {
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 5px 10px;
+  border-radius: 3px;
   cursor: pointer;
   border: none;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .search-btn {
@@ -777,11 +913,21 @@ button {
 .detail-btn {
   background: #67c23a;
   color: white;
-  padding: 6px 12px;
+  padding: 4px 8px;
 }
 
 .detail-btn:hover {
   background: #85ce61;
+}
+
+.update-btn {
+  background: #3073d7;
+  color: white;
+  padding: 4px 8px;
+}
+
+.update-btn:hover {
+  background: #3073d7;
 }
 
 .data-container {
@@ -796,20 +942,20 @@ button {
   flex: 1;
   overflow: auto;
   border: 1px solid #ebeef5;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .hospital-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 12px;
   table-layout: fixed;
 }
 
 .hospital-table th,
 .hospital-table td {
   border: 1px solid #ebeef5;
-  padding: 12px;
+  padding: 6px 8px;
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -848,33 +994,32 @@ button {
   font-weight: bold;
 }
 
-
 .no-data {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
   color: #909399;
-  font-size: 16px;
+  font-size: 12px;
 }
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
-  gap: 15px;
-  padding: 10px;
+  margin-top: 12px;
+  gap: 8px;
+  padding: 6px;
   background: #f5f7fa;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .page-btn {
-  padding: 6px 12px;
+  padding: 4px 8px;
   background: #ffffff;
   border: 1px solid #dcdfe6;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .page-btn:disabled {
@@ -883,18 +1028,18 @@ button {
 }
 
 .page-info {
-  font-size: 14px;
+  font-size: 12px;
   color: #606266;
 }
 
 .pagination select {
-  padding: 6px;
-  border-radius: 4px;
+  padding: 4px;
+  border-radius: 3px;
   border: 1px solid #dcdfe6;
   background: white;
+  font-size: 12px;
 }
 
-/* 详情弹窗样式 */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -910,18 +1055,18 @@ button {
 
 .modal-container {
   background: white;
-  border-radius: 8px;
-  width: 600px;
-  max-width: 90%;
-  max-height: 80vh;
+  border-radius: 6px;
+  width: 400px;
+  max-width: 80%;
+  max-height: 60vh;
   overflow-y: auto;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
 }
 
 .modal-header {
-  padding: 16px 20px;
+  padding: 10px 12px;
   border-bottom: 1px solid #ebeef5;
   display: flex;
   justify-content: space-between;
@@ -930,12 +1075,13 @@ button {
 
 .modal-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 12px;
   color: #303133;
+  font-weight: bold;
 }
 
 .close-btn {
-  font-size: 24px;
+  font-size: 12px;
   color: #909399;
   cursor: pointer;
 }
@@ -945,51 +1091,53 @@ button {
 }
 
 .modal-body {
-  padding: 20px;
+  padding: 12px;
   flex: 1;
 }
 
 .detail-row {
   display: flex;
-  margin-bottom: 15px;
-  line-height: 1.5;
+  margin-bottom: 8px;
+  line-height: 1.4;
 }
 
 .detail-row label {
   font-weight: bold;
-  min-width: 100px;
+  min-width: 70px;
   color: #606266;
+  font-size: 12px;
 }
 
 .detail-row span {
   flex: 1;
   word-break: break-word;
+  font-size: 12px;
 }
 
 .modal-footer {
-  padding: 12px 20px;
+  padding: 8px 12px;
   border-top: 1px solid #ebeef5;
   display: flex;
   justify-content: flex-end;
 }
 
 .modal-close-btn {
-  padding: 8px 16px;
+  padding: 5px 10px;
   background: #409eff;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .modal-close-btn:hover {
   background: #66b1ff;
 }
 
-/* 列宽调整相关样式 */
 .th-content {
   position: relative;
-  padding-right: 16px;
+  padding-right: 10px;
 }
 
 .resize-handle {
@@ -997,7 +1145,7 @@ button {
   right: 0;
   top: 0;
   bottom: 0;
-  width: 5px;
+  width: 3px;
   cursor: col-resize;
   background-color: transparent;
 }
@@ -1006,22 +1154,6 @@ button {
   background-color: #409eff;
 }
 
-/* 基础字体大小使用vw单位 */
-/* 基础字体大小使用vw单位 */
-body {
-  font-size: calc(14px + 0.2vw); /* 14px为基础大小，0.2vw为视口宽度比例 */
-}
-
-h1 {
-  font-size: calc(24px + 0.5vw);
-}
-
-/* 表格字体 */
-.hospital-table {
-  font-size: calc(15px + 0.1vw);
-}
-
-
 .input-wrapper {
   position: relative;
   display: inline-block;
@@ -1029,24 +1161,115 @@ h1 {
 
 .input-wrapper input {
   border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  min-width: 200px;
-  /* Make space for the clear icon */
-  padding: 8px 30px 8px 12px;
+  border-radius: 3px;
+  min-width: 120px;
+  padding: 5px 20px 5px 8px;
+  font-size: 11px;
 }
 
 .clear-icon {
   position: absolute;
-  right: 10px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
   color: #c0c4cc;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 12px;
 }
 
 .clear-icon:hover {
   color: #909399;
 }
 
+.hospital-form {
+  padding: 12px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #555;
+  font-size: 12px;
+}
+
+.form-input {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 12px;
+  transition: border-color 0.3s;
+  background-color: #fff;
+}
+
+.form-input:focus {
+  border-color: #409eff;
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(64, 158, 255, 0.2);
+}
+
+.form-input[readonly] {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.btn {
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background-color: #409eff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #66b1ff;
+}
+
+.btn-secondary {
+  background-color: #fff;
+  color: #606266;
+  border-color: #dcdfe6;
+}
+
+.btn-secondary:hover {
+  color: #409eff;
+  border-color: #c6e2ff;
+  background-color: #ecf5ff;
+}
 </style>
+
+
+
+

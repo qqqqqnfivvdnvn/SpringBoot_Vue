@@ -1,4 +1,3 @@
-
 <template>
   <div class="home-page" :style="homePageStyle">
     <!-- 导航栏 -->
@@ -6,13 +5,12 @@
       <div class="navbar-brand">主数据后台管理</div>
       <div class="navbar-links">
         <router-link to="/project/HaosenHome" @click="resetToDashboard">仪表盘</router-link>
-
         <router-link to="/home">返回项目管理</router-link>
         <div class="avatar">
           <img src="@/assets/avatar-modified.png" alt="用户头像" />
         </div>
         <button class="logout-button" @click="handleLogout">
-          <font-awesome-icon :icon="['fas', 'sign-out-alt']" size="1x" />
+          <font-awesome-icon :icon="['fas', 'sign-out-alt']" size="sm" />
           退出登录
         </button>
       </div>
@@ -25,7 +23,7 @@
         <div class="sidebar-header">
           <span v-if="!isSidebarCollapsed">功能菜单</span>
           <button class="collapse-button" @click="toggleSidebar">
-            <font-awesome-icon :icon="isSidebarCollapsed ? ['fas', 'angle-double-right'] : ['fas', 'angle-double-left']"/>
+            <font-awesome-icon :icon="isSidebarCollapsed ? ['fas', 'angle-double-right'] : ['fas', 'angle-double-left']" size="sm" />
           </button>
         </div>
         <ul class="sidebar-menu">
@@ -33,7 +31,7 @@
           <li>
             <div class="menu-item" @click="toggleMenu('mainDataManagement')">
               <span>
-                <font-awesome-icon :icon="['fas', 'th-list']" size="1x"/>
+                <font-awesome-icon :icon="['fas', 'th-list']" size="sm" />
                 <span v-if="!isSidebarCollapsed">主数据</span>
               </span>
               <span v-if="!isSidebarCollapsed" class="arrow">
@@ -41,28 +39,26 @@
               </span>
             </div>
             <ul v-if="openMenus.mainDataManagement && !isSidebarCollapsed" class="sub-menu">
-
               <li @click="showHospitalData">
-                <font-awesome-icon :icon="['fas', 'hospital-alt']" size="1x"/> &nbsp;
+                <font-awesome-icon :icon="['fas', 'hospital-alt']" size="sm" /> &nbsp;
                 <span>医院主数据</span>
               </li>
               <li @click="showDrugStoreData">
-                <font-awesome-icon :icon="['fas', 'store-alt']" size="1x"/> &nbsp;
+                <font-awesome-icon :icon="['fas', 'store-alt']" size="sm" /> &nbsp;
                 <span>药店主数据</span>
               </li>
               <li @click="CompanyDataView">
-                <font-awesome-icon :icon="['fas', 'synagogue']" size="1x"/> &nbsp;
+                <font-awesome-icon :icon="['fas', 'synagogue']" size="sm" /> &nbsp;
                 <span>商业主数据</span>
               </li>
             </ul>
           </li>
 
-
           <!-- 数据清洗 -->
           <li>
             <div class="menu-item" @click="toggleMenu('cleanManagement')">
               <span>
-                <font-awesome-icon :icon="['fas', 'oil-can']" size="1x"/>
+                <font-awesome-icon :icon="['fas', 'oil-can']" size="sm" />
                 <span v-if="!isSidebarCollapsed">数据清洗</span>
               </span>
               <span v-if="!isSidebarCollapsed" class="arrow">
@@ -70,22 +66,18 @@
               </span>
             </div>
             <ul v-if="openMenus.cleanManagement && !isSidebarCollapsed" class="sub-menu">
-
-              <li @click=importCleanData>
-                <font-awesome-icon :icon="['fas', 'eraser']" size="1x"/> &nbsp;
+              <li @click="importCleanData">
+                <font-awesome-icon :icon="['fas', 'eraser']" size="sm" /> &nbsp;
                 <span>清洗提交</span>
               </li>
-
-
             </ul>
           </li>
-
 
           <!-- 数据申诉 -->
           <li>
             <div class="menu-item" @click="toggleMenu('appealManagement')">
               <span>
-                <font-awesome-icon :icon="['fas', 'flag']" size="1x"/>
+                <font-awesome-icon :icon="['fas', 'flag']" size="sm" />
                 <span v-if="!isSidebarCollapsed">数据申诉</span>
               </span>
               <span v-if="!isSidebarCollapsed" class="arrow">
@@ -93,19 +85,14 @@
               </span>
             </div>
             <ul v-if="openMenus.appealManagement && !isSidebarCollapsed" class="sub-menu">
-
-
               <li @click="showAppealData">
-                <font-awesome-icon :icon="['fas', 'book-reader']" size="1x"/> &nbsp;
-                <span>申诉查看</span>
+                <font-awesome-icon :icon="['fas', 'book-reader']" size="sm" /> &nbsp;
+                <span >申诉查看</span>
               </li>
-
-              <li @click=importAppealData>
-                <font-awesome-icon :icon="['fas', 'cat']" size="1x"/> &nbsp;
+              <li @click="importAppealData">
+                <font-awesome-icon :icon="['fas', 'cat']" size="sm" /> &nbsp;
                 <span>申诉提交</span>
               </li>
-
-
             </ul>
           </li>
 
@@ -113,7 +100,7 @@
           <li>
             <div class="menu-item" @click="toggleMenu('updateManagement')">
               <span>
-                <font-awesome-icon :icon="['fas', 'file-alt']" size="1x"/>
+                <font-awesome-icon :icon="['fas', 'file-alt']" size="sm" />
                 <span v-if="!isSidebarCollapsed">数据更新</span>
               </span>
               <span v-if="!isSidebarCollapsed" class="arrow">
@@ -121,18 +108,12 @@
               </span>
             </div>
             <ul v-if="openMenus.updateManagement && !isSidebarCollapsed" class="sub-menu">
-
               <li @click="importUpdateData">
-                <font-awesome-icon :icon="['fas', 'snowman']" size="1x"/> &nbsp;
+                <font-awesome-icon :icon="['fas', 'snowman']" size="sm" /> &nbsp;
                 <span>更新提交</span>
               </li>
-
-
-
             </ul>
           </li>
-
-
         </ul>
       </div>
 
@@ -155,8 +136,8 @@
                     class="close-tab"
                     @click.stop="closeTab(tab.id)"
                 >
-              ×
-            </span>
+                  ×
+                </span>
               </div>
             </div>
           </div>
@@ -165,10 +146,8 @@
         <transition name="fade" mode="out-in">
           <component :is="currentViewComponent"></component>
         </transition>
-
       </div>
     </div>
-
 
     <!-- 悬浮提示框 -->
     <div v-if="showToast" class="toast">
@@ -215,10 +194,8 @@ export default {
       homePageStyle: {
         background: 'linear-gradient(135deg, #e3d2ff, #e3d2ff)',
       },
-      currentView: 'HomeDashboardView' // 默认显示HomeDashboard
-      ,
+      currentView: 'HomeDashboardView', // 默认显示 HomeDashboard
       tabs: [
-        // { id: 'dashboard', title: '仪表盘', component: 'HomeDashboardView', active: true }
       ],
       activeTab: 'dashboard'
     };
@@ -231,54 +208,8 @@ export default {
   },
 
   methods: {
-
     toggleMenu(menu) {
       this.openMenus[menu] = !this.openMenus[menu];
-    },
-
-
-    // -----------------------------加载医院主数据视图组件
-
-    addTab(title, component) {
-      // 检查是否已存在相同标签
-      const existingTab = this.tabs.find(tab => tab.component === component);
-      if (existingTab) {
-        this.switchTab(existingTab.id);
-        return;
-      }
-
-      const tabId = 'tab-' + Date.now();
-      this.tabs.forEach(tab => tab.active = false);
-      this.tabs.push({
-        id: tabId,
-        title,
-        component,
-        active: true
-      });
-      this.activeTab = tabId;
-      this.currentView = component;
-    },
-    switchTab(tabId) {
-      this.tabs.forEach(tab => {
-        tab.active = tab.id === tabId;
-        if (tab.active) {
-          this.currentView = tab.component;
-          this.activeTab = tabId;
-        }
-      });
-    },
-
-    closeTab(tabId) {
-      if (this.tabs.length <= 1) return;
-
-      const index = this.tabs.findIndex(tab => tab.id === tabId);
-      if (this.tabs[index].active) {
-        const newActiveTab = index > 0 ? this.tabs[index - 1] : this.tabs[index + 1];
-        newActiveTab.active = true;
-        this.currentView = newActiveTab.component;
-        this.activeTab = newActiveTab.id;
-      }
-      this.tabs.splice(index, 1);
     },
 
     showHospitalData() {
@@ -290,6 +221,7 @@ export default {
       this.addTab('药店主数据', 'DrugStoreDataView');
       window.location.hash = '/dataBase/drugstore';
     },
+
     CompanyDataView() {
       this.addTab('商业主数据', 'CompanyDataView');
       window.location.hash = '/dataBase/company';
@@ -325,14 +257,9 @@ export default {
       window.location.hash = '';
     },
 
-
-
-    // -----------用户退出登录
-
     navigateTo(path) {
       this.$router.push(path);
     },
-
 
     async handleLogout() {
       try {
@@ -363,6 +290,48 @@ export default {
 
     toggleSidebar() {
       this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    },
+
+    addTab(title, component) {
+      const existingTab = this.tabs.find(tab => tab.component === component);
+      if (existingTab) {
+        this.switchTab(existingTab.id);
+        return;
+      }
+
+      const tabId = 'tab-' + Date.now();
+      this.tabs.forEach(tab => tab.active = false);
+      this.tabs.push({
+        id: tabId,
+        title,
+        component,
+        active: true
+      });
+      this.activeTab = tabId;
+      this.currentView = component;
+    },
+
+    switchTab(tabId) {
+      this.tabs.forEach(tab => {
+        tab.active = tab.id === tabId;
+        if (tab.active) {
+          this.currentView = tab.component;
+          this.activeTab = tabId;
+        }
+      });
+    },
+
+    closeTab(tabId) {
+      if (this.tabs.length <= 1) return;
+
+      const index = this.tabs.findIndex(tab => tab.id === tabId);
+      if (this.tabs[index].active) {
+        const newActiveTab = index > 0 ? this.tabs[index - 1] : this.tabs[index + 1];
+        newActiveTab.active = true;
+        this.currentView = newActiveTab.component;
+        this.activeTab = newActiveTab.id;
+      }
+      this.tabs.splice(index, 1);
     }
   }
 };
@@ -382,10 +351,10 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 15px;
   background-color: #af96e6;
   color: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: fixed; /* 固定定位 */
   top: 0;
   left: 0;
@@ -394,20 +363,20 @@ export default {
 }
 
 .navbar-brand {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bold;
 }
 
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
 .navbar-links a {
   color: #fff;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .navbar-links a:hover {
@@ -416,8 +385,8 @@ export default {
 
 /* 头像样式 */
 .avatar img {
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%; /* 圆形头像 */
   cursor: pointer;
 }
@@ -427,13 +396,13 @@ export default {
   background-color: #fff;
   color: #9478cc;
   border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+  padding: 6px 12px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
-  gap: 8px; /* 按钮文字和图标之间的间距 */
+  gap: 6px; /* 按钮文字和图标之间的间距 */
 }
 
 .logout-button:hover {
@@ -441,32 +410,32 @@ export default {
 }
 
 .logout-button i {
-  font-size: 0.9rem; /* 关闭图标大小 */
+  font-size: 0.8rem; /* 关闭图标大小 */
 }
 
 /* 主要内容区域 */
 .main-content {
   display: flex;
   flex: 1;
-  background-color: #fff; /* 右侧内容区域背景色为白色 */
-  margin-top: 80px; /* 增加与导航栏的间距 */
+  background-color: #f9f9f9; /* 右侧内容区域背景色为白色 */
+  margin-top: 60px; /* 增加与导航栏的间距 */
 }
 
 /* 左侧功能栏样式 */
 .sidebar {
-  width: 250px;
+  width: 200px;
   background-color: #fff;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  padding: 15px;
   transition: width 0.3s ease;
   position: fixed; /* 固定定位 */
-  top: 90px; /* 增加与导航栏的间距 */
+  top: 75px; /* 增加与导航栏的间距 */
   bottom: 0;
   z-index: 999; /* 确保位于内容区域之上 */
 }
 
 .sidebar.collapsed {
-  width: 60px;
+  width: 50px;
   background-color: #fff; /* 折叠状态下背景色为白色 */
 }
 
@@ -474,9 +443,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   color: #333;
 }
 
@@ -493,9 +462,10 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 8px;
+  font-size: 0.9rem;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 4px;
   transition: background-color 0.2s;
 }
 
@@ -506,25 +476,27 @@ export default {
 .menu-item span {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+
 }
 
 .arrow {
-  margin-left: 8px;
-  font-size: 0.8rem;
+  margin-left: 6px;
+  font-size: 0.7rem;
   color: #9478cc;
 }
 
 .sub-menu {
   list-style: none;
-  padding-left: 20px;
+  padding-left: 15px;
   margin-top: 5px;
+  font-size: 0.83rem;
 }
 
 .sub-menu li {
-  padding: 8px;
+  padding: 6px;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 4px;
   transition: background-color 0.2s;
 }
 
@@ -535,14 +507,14 @@ export default {
 /* 右侧内容区域样式 */
 .content {
   flex: 1;
-  padding: 20px;
+  padding: 5px;
   background-color: #fff; /* 右侧内容区域背景色为白色 */
   transition: margin-left 0.3s ease;
-  margin-left: 280px; /* 初始左侧边距（250px + 10px） */
+  margin-left: 230px; /* 初始左侧边距（200px + 10px） */
 }
 
 .content.expanded {
-  margin-left: 90px; /* 折叠状态下的左侧边距（60px + 10px） */
+  margin-left: 80px; /* 折叠状态下的左侧边距（50px + 10px） */
 }
 
 /* 悬浮提示框样式 */
@@ -553,9 +525,9 @@ export default {
   transform: translateX(-50%);
   background-color: #9478cc;
   color: #fff;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 8px 16px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   animation: fadeInOut 3s ease-in-out;
 }
@@ -581,7 +553,7 @@ export default {
   border: none;
   color: #9478cc;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .collapse-button:hover {
@@ -593,9 +565,8 @@ export default {
   background-color: white;
   padding: 0;
   margin-bottom: 5px;
-  border-radius: 5px;
+  border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-
 }
 
 .tabs-container {
@@ -606,20 +577,22 @@ export default {
 .tabs {
   display: flex;
   min-width: fit-content;
+
 }
 
 .tab {
-  padding: 10px 20px;
+  padding: 8px 16px;
   cursor: pointer;
   border: 1px solid #ddd;
   border-bottom: none;
-  border-radius: 5px 5px 0 0;
+  border-radius: 4px 4px 0 0;
   margin-right: 5px;
   background-color: #f8f9fa;
   display: flex;
   align-items: center;
   position: relative;
   white-space: nowrap;
+  font-size: 0.75rem;
 }
 
 .tab.active {
@@ -631,8 +604,8 @@ export default {
 }
 
 .close-tab {
-  margin-left: 8px;
-  font-size: 1.2rem;
+  margin-left: 6px;
+  font-size: 1rem;
   color: #999;
   line-height: 1;
 }
@@ -641,5 +614,3 @@ export default {
   color: #666;
 }
 </style>
-
-

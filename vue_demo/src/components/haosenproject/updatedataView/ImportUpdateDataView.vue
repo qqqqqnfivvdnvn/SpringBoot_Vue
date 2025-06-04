@@ -198,35 +198,41 @@ export default {
 </script>
 
 <style scoped>
+.appeal-management-view {
+  padding: 12px;
+  background: white;
+  font-size: 13px;
+}
 
 /* 上传区域样式 */
 .upload-container {
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 }
 
 .upload-card {
   background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
-  border-left: 4px solid #9478cc;
+  border-radius: 3px;
+  padding: 12px;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.05);
+  border-left: 3px solid #9478cc;
 }
 
 .upload-title {
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   color: #333;
-  font-size: 18px;
+  font-size: 17px;
+  font-weight: bold;
 }
 
 .upload-area {
-  border: 2px dashed #dcdfe6;
-  border-radius: 6px;
-  padding: 40px 20px;
+  border: 1px dashed #dcdfe6;
+  border-radius: 3px;
+  padding: 20px 12px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   background: white;
 }
 
@@ -240,16 +246,22 @@ export default {
 }
 
 .upload-icon {
-  font-size: 48px;
+  font-size: 29px;
   color: #9478cc;
-  margin-bottom: 15px;
+  margin-bottom: 8px;
   transition: all 0.3s;
 }
 
 .upload-text {
-  margin: 0 0 10px;
+  margin: 0 0 6px;
   color: #606266;
-  font-size: 16px;
+  font-size: 15px;
+}
+
+.upload-hint {
+  margin: 0;
+  color: #909399;
+  font-size: 12px;
 }
 
 .upload-btn {
@@ -258,7 +270,7 @@ export default {
   color: #9478cc;
   cursor: pointer;
   padding: 0;
-  margin-left: 5px;
+  margin-left: 4px;
   font-size: inherit;
   font-weight: 500;
 }
@@ -267,30 +279,27 @@ export default {
   text-decoration: underline;
 }
 
-.upload-hint {
-  margin: 0;
-  color: #909399;
-  font-size: 14px;
-}
+
 
 .file-info {
-  margin-top: 20px;
-  padding: 10px;
-  background: #f0f2f5;
-  border-radius: 4px;
+  margin-top: 12px;
+  padding: 6px;
+  background: #f5f7fa;
+  border-radius: 3px;
   display: inline-flex;
   align-items: center;
 }
 
 .file-name {
   font-weight: bold;
-  margin-right: 5px;
+  margin-right: 4px;
+  font-size: 13px;
 }
 
 .file-size {
   color: #909399;
-  margin-right: 10px;
-  font-size: 14px;
+  margin-right: 8px;
+  font-size: 13px;
 }
 
 .file-remove {
@@ -298,9 +307,9 @@ export default {
   border: none;
   color: #f56c6c;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1;
-  padding: 0 5px;
+  padding: 0 4px;
 }
 
 .file-remove:hover {
@@ -312,13 +321,13 @@ export default {
 }
 
 .submit-btn {
-  padding: 10px 20px;
+  padding: 5px 10px;
   background: #9478cc;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 13px;
   transition: all 0.3s;
 }
 
@@ -331,18 +340,6 @@ export default {
   cursor: not-allowed;
   opacity: 0.7;
 }
-
-/* 响应式调整 */
-@media (max-width: 768px) {
-  .upload-area {
-    padding: 30px 15px;
-  }
-
-  .upload-text, .upload-hint {
-    font-size: 14px;
-  }
-}
-
 
 /* 弹窗样式 */
 .modal-overlay {
@@ -360,23 +357,23 @@ export default {
 
 .modal-content {
   background: white;
-  border-radius: 8px;
+  border-radius: 3px;
   width: 400px;
   max-width: 90%;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
 .modal-content.success {
-  border-top: 4px solid #67c23a;
+  border-top: 3px solid #67c23a;
 }
 
 .modal-content.error {
-  border-top: 4px solid #f56c6c;
+  border-top: 3px solid #f56c6c;
 }
 
 .modal-header {
-  padding: 15px 20px;
+  padding: 10px 12px;
   border-bottom: 1px solid #ebeef5;
   display: flex;
   justify-content: space-between;
@@ -385,13 +382,14 @@ export default {
 
 .modal-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 .modal-close {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 17px;
   cursor: pointer;
   color: #909399;
 }
@@ -401,36 +399,50 @@ export default {
 }
 
 .modal-body {
-  padding: 20px;
+  padding: 12px;
 }
 
 .modal-body p {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
+  font-size: 13px;
 }
 
 .result-details {
   color: #909399;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .modal-footer {
-  padding: 12px 20px;
+  padding: 8px 12px;
   border-top: 1px solid #ebeef5;
   text-align: right;
 }
 
 .modal-btn {
-  padding: 8px 16px;
+  padding: 5px 10px;
   background: #9478cc;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   transition: all 0.3s;
 }
 
 .modal-btn:hover {
   background: #af96e6;
 }
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .upload-area {
+    padding: 15px 10px;
+  }
+
+  .upload-text, .upload-hint {
+    font-size: 12px;
+  }
+}
 </style>
+
+
