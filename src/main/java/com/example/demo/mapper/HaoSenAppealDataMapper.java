@@ -20,5 +20,7 @@ public interface HaoSenAppealDataMapper {
     long countAppealCondition(@Param("condition") HaoSenAppealConditionDTO condition);
 
 
+    public List<HaoSenAppealDataVO> exportAppealData();
+
 
 }

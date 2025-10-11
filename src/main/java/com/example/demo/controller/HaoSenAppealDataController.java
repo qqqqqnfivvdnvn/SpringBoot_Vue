@@ -65,10 +65,13 @@ public class HaoSenAppealDataController {
 //    导出申诉数据
 
     @RequestMapping("/exportAppealData")
-    ResponseEntity<byte[]> exportAppealData(HaoSenAppealConditionDTO condition, Pageable pageable) throws UnsupportedEncodingException {
+    ResponseEntity<byte[]> exportAppealData() throws UnsupportedEncodingException {
 
-        ApiResponseDTO<Page<HaoSenAppealDataVO>> appealData = appealDataService.getAppealData(condition, pageable);
-        List<HaoSenAppealDataVO> dataList = appealData.getData().getContent();
+        ApiResponseDTO<List<HaoSenAppealDataVO>> appealData = appealDataService.exportAppealData();
+
+//        List<HaoSenAppealDataVO> dataList = appealData.getData().getContent();
+
+        List<HaoSenAppealDataVO> dataList = appealData.getData();
 
         // 导出Excel
         byte[] excelBytes = exportToExcel(dataList);

@@ -202,11 +202,16 @@
                 <span :class="{
                   'status-active': DrugStore.status === '1',
                   'status-uninactive': DrugStore.status === '3',
-                  'status-inactive': DrugStore.status === '4'
+                  'status-inactive': DrugStore.status === '4',
+                  'status-invalid': DrugStore.status === '2',
+                  'status-repeat': DrugStore.status === '5'
+
                 }">
                   {{ DrugStore.status === '1' ? '清洗成功' :
                     DrugStore.status === '3' ? '无法清洗' :
-                        DrugStore.status === '4' ? '禁用客户' : '其他状态' }}
+                        DrugStore.status === '4' ? '禁用客户':
+                            DrugStore.status === '2' ? '作废数据':
+                                DrugStore.status === '5' ? '重复数据': '其他状态' }}
                 </span>
               </template>
               <template v-else-if="index === 10">
@@ -446,12 +451,16 @@
             <span :class="{
                 'status-active': currentDrugStore.status === '1',
                 'status-uninactive': currentDrugStore.status === '3',
-                'status-inactive': currentDrugStore.status === '4'
+                'status-inactive': currentDrugStore.status === '4',
+                'status-invalid': currentDrugStore.status === '2',
+                'status-repeat': currentDrugStore.status === '5'
               }">
               {{
                 currentDrugStore.status === '1' ? '清洗成功' :
                     currentDrugStore.status === '3' ? '无法清洗' :
-                        currentDrugStore.status === '4' ? '禁用客户' : '其他状态'
+                        currentDrugStore.status === '4' ? '禁用客户':
+                            currentDrugStore.status === '2' ? '作废数据':
+                                currentDrugStore.status === '5' ? '重复数据' : '其他状态'
               }}
             </span>
           </div>
@@ -798,6 +807,19 @@ button {
   color: #f56c6c;
   font-weight: bold;
 }
+
+.status-repeat {
+  color: rgba(228, 109, 186, 0.5);
+  font-weight: bold;
+}
+
+.status-invalid {
+  color: #d77030;
+  font-weight: bold;
+}
+
+
+
 
 .no-data {
   display: flex;

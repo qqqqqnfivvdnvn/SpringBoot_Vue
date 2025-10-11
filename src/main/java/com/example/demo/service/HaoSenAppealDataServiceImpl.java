@@ -27,4 +27,11 @@ public class HaoSenAppealDataServiceImpl implements HaoSenAppealDataService {
         return ApiResponseDTO.success(page);
 
     }
+
+    @Override
+    public ApiResponseDTO<List<HaoSenAppealDataVO>> exportAppealData() {
+        List<HaoSenAppealDataVO> appealData = appealDataMapper.exportAppealData();
+        return ApiResponseDTO.success(appealData);
+
+    }
 }

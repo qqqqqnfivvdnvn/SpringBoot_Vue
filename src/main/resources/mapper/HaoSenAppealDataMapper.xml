@@ -300,6 +300,133 @@
         <include refid="conditionCompanyWhere"/>
     </select>
 
+    <select id="exportAppealData" resultType="com.example.demo.vo.HaoSenAppealDataVO">
+
+        SELECT
+            batch_code,data_id,data_type,data_code,original_name,original_province,original_address,company_name,appeal_remark,solve_remark,institution_type,keyid,name,name_history,province,provinceid,city,cityid,area,areaid,ku_address,level,grade,publicflag,classify,general_branch_kid,general_branch_name,military_hos,regcode,validity,subjects,legalperson,usci,operation,scope,main_branch_kid,main_branch_name,create_date,regist_capi,econ_kind,sign_status,industry,belong
+        from
+            (
+                SELECT b.batch_code ,b.data_id,b.data_type ,b.data_code ,b.original_name ,c.original_province ,c.original_address,c.company_name
+                        ,a.remarks appeal_remark,null solve_remark,'医院' institution_type,b.keyid,b.name ,b.name_history ,f.省
+                                   province,f.省id provinceid,f.市 city,f.市id cityid,f.区县 area,f.区县id areaid,b.ku_address ,CASE
+                                                                                                                                    WHEN b.level='1' THEN '一级'
+                                                                                                                                    WHEN b.level='2' THEN '二级'
+                                                                                                                                    WHEN b.level='3' THEN '三级'
+                                                                                                                                    WHEN b.level='4' THEN '未定级'
+                                                                                                                                    ELSE null
+                           END level,CASE
+                                         WHEN b.grade='1' THEN '甲等'
+                                         WHEN b.grade='2' THEN '乙等'
+                                         WHEN b.grade='3' THEN '丙等'
+                                         WHEN b.grade='4' THEN '未定等'
+                                         ELSE null
+                           END grade,CASE
+                                         WHEN b.publicflag='1' THEN '公立'
+                                         WHEN b.publicflag='2' THEN '民营'
+                                         ELSE null
+                           END publicflag, g.类别名称5 classify,b.general_branch_kid ,b.general_branch_name ,
+                       CASE
+                           WHEN b.military_hos='0' THEN null
+                           WHEN b.military_hos='1' THEN 1
+                           ELSE null
+                           END military_hos,b.regcode ,b.validity ,b.subjects ,b.legalperson ,b.usci ,null operation,null scope, null
+                                   main_branch_kid,null main_branch_name,null create_date,null regist_capi,null econ_kind,null sign_status,null
+                                   industry,null belong,addtime
+                from
+                    (
+                        SELECT data_code,remarks from data_result WHERE status is null and feedback_type='1'
+                    ) a
+                        LEFT JOIN
+                    base_org_hos_clean b
+                    on
+                        a.data_code=b.data_code
+                        LEFT JOIN
+                    origin_data c
+                    on
+                        b.data_id=c.data_id
+                        LEFT JOIN
+                    豪森_行政区划表0928_对应关系 f
+                    on
+                        b.area_id=f.豪森_对应区县id
+                        LEFT JOIN
+                    豪森五级属性对应表0819 g
+                    on
+                        b.class5=g.类别名称5_枚举值
+                WHERE b.data_id is not null
+
+                UNION
+
+                SELECT b.batch_code,b.data_id,b.data_type ,b.data_code ,b.original_name ,c.original_province,c.original_address ,c.company_name
+                        ,a.remarks appeal_remark,null solve_remark,'药店' institution_type,b.keyid,b.name name,b.history_name
+                                   name_history,f.省 province,f.省id provinceid,f.市 city,f.市id cityid,f.区县 area,f.区县id areaid,b.address ,null
+                                   level,null grade,null publicflag,
+                       CASE
+                           WHEN b.pharmacy_ature='1' THEN '连锁药店总部'
+                           WHEN b.pharmacy_ature='2' THEN '零售单体药店'
+                           WHEN b.pharmacy_ature='3' THEN '批发商'
+                           WHEN b.pharmacy_ature='5' THEN '零售连锁门店'
+                           ELSE null
+                           END classify ,null general_branch_kid,null general_branch_name,null military_hos,null regcode,null validity,null
+                                   subjects, b.oper_name ,b.usci ,
+                       CASE
+                           WHEN b.operation='1' THEN '零售'
+                           WHEN b.operation='2' THEN '连锁'
+                           WHEN b.operation='3' THEN '批发'
+                           ELSE null
+                           END operation,b.scope ,b.main_branch_kid ,b.main_branch_name ,b.create_date ,b.regist_capi ,null econ_kind,null
+                                   sign_status,null industry,null belong,addtime from
+                    (
+                        SELECT data_code,remarks from data_result WHERE status is null and feedback_type='1'
+                    ) a
+                        LEFT JOIN
+                    base_org_drug_store b
+                    on
+                        a.data_code=b.data_code
+                        LEFT JOIN
+                    origin_data c
+                    on
+                        b.data_id=c.data_id
+                        LEFT JOIN
+                    豪森_行政区划表0928_对应关系 f
+                    on
+                        b.area_id=f.豪森_对应区县id
+                WHERE b.data_id is not null
+
+                UNION
+
+                SELECT b.batch_code,b.data_id,b.data_type ,b.data_code ,b.original_name ,c.original_province,c.original_address ,c.company_name
+                        ,a.remarks appeal_remark ,null solve_remark,'商业' institution_type,b.keyid,b.name ,b.name_history ,f.省
+                                   province,f.省id provinceid,f.市 city,f.市id cityid,f.区县 area,f.区县id areaid,b.address ,null level,null
+                                   grade,null publicflag,
+                       CASE
+                           WHEN b.classify='1' THEN '批发商'
+                           WHEN b.classify='2' THEN '批发零售商'
+                           ELSE null
+                           END classify,null general_branch_kid,null general_branch_name,null military_hos,null regcode,null validity,null
+                                   subjects ,b.oper_name legalperson,b. credit_code ,null operation,b.scope ,null main_branch_kid,null
+                                   main_branch_name,b.create_date ,b.regist_capi ,b.econ_kind ,b.sign_status ,b.industry ,b.belong ,addtime
+                from
+                    (
+                        SELECT data_code,remarks from data_result WHERE status is null and feedback_type='1'
+                    ) a
+                        LEFT JOIN
+                    base_org_company b
+                    on
+                        a.data_code=b.data_code
+                        LEFT JOIN
+                    origin_data c
+                    on
+                        b.data_id=c.data_id
+                        LEFT JOIN
+                    豪森_行政区划表0928_对应关系 f
+                    on
+                        b.area_id=f.豪森_对应区县id
+                WHERE b.data_id is not null
+
+            ) a
+
+
+    </select>
 
 
 </mapper>

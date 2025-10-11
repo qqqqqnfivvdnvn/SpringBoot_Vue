@@ -202,11 +202,17 @@
                 <span :class="{
                   'status-active': Company.status === '1',
                   'status-uninactive': Company.status === '3',
-                  'status-inactive': Company.status === '4'
+                  'status-inactive': Company.status === '4',
+                  'status-invalid': Company.status === '2',
+                  'status-repeat': Company.status === '5'
                 }">
-                  {{ Company.status === '1' ? '清洗成功' :
-                    Company.status === '3' ? '无法清洗' :
-                        Company.status === '4' ? '禁用客户' : '其他状态' }}
+                  {{
+                    Company.status === '1' ? '清洗成功' :
+                        Company.status === '3' ? '无法清洗' :
+                            Company.status === '4' ? '禁用客户':
+                                Company.status === '2' ? '作废数据':
+                                    Company.status === '5' ? '重复数据': '其他状态'
+                  }}
                 </span>
               </template>
               <template v-else-if="index === 10">
@@ -395,12 +401,17 @@
             <span :class="{
                 'status-active': currentCompany.status === '1',
                 'status-uninactive': currentCompany.status === '3',
-                'status-inactive': currentCompany.status === '4'
+                'status-inactive': currentCompany.status === '4',
+                'status-invalid': currentCompany.status === '2',
+                'status-repeat': currentCompany.status === '5',
               }">
               {{
                 currentCompany.status === '1' ? '清洗成功' :
                     currentCompany.status === '3' ? '无法清洗' :
-                        currentCompany.status === '4' ? '禁用客户' : '其他状态'
+                        currentCompany.status === '4' ? '禁用客户' :
+                            currentCompany.status === '2' ? '作废数据' :
+                                currentCompany.status === '5' ? '数据重复'
+                                    : '其他状态'
               }}
             </span>
           </div>
@@ -747,6 +758,18 @@ button {
   color: #f56c6c;
   font-weight: bold;
 }
+
+.status-repeat {
+  color: rgba(228, 109, 186, 0.5);
+  font-weight: bold;
+}
+
+.status-invalid {
+  color: #d77030;
+  font-weight: bold;
+}
+
+
 
 .no-data {
   display: flex;

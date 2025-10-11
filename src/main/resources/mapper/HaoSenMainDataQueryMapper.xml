@@ -6,7 +6,7 @@
     <!-- 医疗机构条件查询SQL -->
     <sql id="conditionHospitalWhere">
         <where>
-            status in ('1','3','4')
+            status in ('1','2','3','4','5')
 
             <if test="condition.dataCode != null and condition.dataCode != ''">
                 AND data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
@@ -131,7 +131,7 @@
     <!-- 药店条件查询SQL -->
     <sql id="conditionDrugStoreWhere">
         <where>
-            status in ('1','3','4')
+            status in  ('1','2','3','4','5')
 
             <if test="condition.dataCode != null and condition.dataCode != ''">
                 AND data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
@@ -242,7 +242,7 @@
     <!-- 商业条件查询SQL -->
     <sql id="conditionCompanyWhere">
         <where>
-            status in ('1','3','4')
+            status in  ('1','2','3','4','5')
 
             <if test="condition.dataCode != null and condition.dataCode != ''">
                 AND data_code LIKE CONCAT('%', #{condition.dataCode}, '%')

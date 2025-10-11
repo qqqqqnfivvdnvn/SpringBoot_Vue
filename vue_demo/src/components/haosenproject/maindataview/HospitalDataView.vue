@@ -207,11 +207,16 @@
                         <span :class="{
                           'status-active': hospital.status === '1',
                           'status-uninactive': hospital.status === '3',
-                          'status-inactive': hospital.status === '4'
+                          'status-inactive': hospital.status === '4',
+                          'status-invalid': hospital.status === '2',
+                          'status-repeat': hospital.status === '5'
                         }">
                           {{ hospital.status === '1' ? '清洗成功' :
                             hospital.status === '3' ? '无法清洗' :
-                                hospital.status === '4' ? '禁用客户' : '错误' }}
+                                hospital.status === '4' ? '禁用客户' :
+                                    hospital.status === '2' ? '数据作废' :
+                                        hospital.status === '5' ? '数据重复' :
+                                            '其他状态' }}
                         </span>
               </template>
               <template v-else-if="index === 10">
@@ -482,17 +487,22 @@
             <label>状态：</label>
             <span :class="{
                 'status-active': currentHospital.status === '1',
+                'status-invalid': currentHospital.status === '2',
                 'status-uninactive': currentHospital.status === '3',
-                'status-inactive': currentHospital.status === '4'
+                'status-inactive': currentHospital.status === '4',
+                'status-repeat': currentHospital.status === '5'
               }">
               {{
                 currentHospital.status === '1' ? '清洗成功' :
-                    currentHospital.status === '3' ? '无法清洗' :
-                        currentHospital.status === '4' ? '禁用客户' : '其他状态'
+                    currentHospital.status === '2' ? '数据作废' :
+                        currentHospital.status === '3' ? '无法清洗' :
+                            currentHospital.status === '4' ? '禁用客户' :
+                                currentHospital.status === '5' ? '数据重复':'其他状态'
               }}
             </span>
           </div>
         </div>
+
         <div class="modal-footer">
           <button class="modal-close-btn" @click="closeDetailModal">关闭</button>
         </div>
@@ -543,6 +553,8 @@
                   <label class="form-label">机构类型：</label>
                   <input  readonly class="form-input" value="医院">
                 </div>
+
+
 
               </div>
 
@@ -612,6 +624,7 @@
 
 
               </div>
+
             </div>
 
             <div class="form-actions">
@@ -993,6 +1006,17 @@ button {
   color: #f56c6c;
   font-weight: bold;
 }
+
+.status-repeat {
+  color: rgba(228, 109, 186, 0.5);
+  font-weight: bold;
+}
+
+.status-invalid {
+  color: #d77030;
+  font-weight: bold;
+}
+
 
 .no-data {
   display: flex;

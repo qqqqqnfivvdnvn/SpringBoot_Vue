@@ -571,7 +571,6 @@ export default {
         };
 
         const response = await axios.get('/api/appealData/exportAppealData', {
-          params: params,
           responseType: 'blob'
         });
 
