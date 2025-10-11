@@ -62,22 +62,25 @@ public class HaoSenAppealDataController {
         return ResponseEntity.ok(appealData);
     }
 
-//    导出申诉数据
-
+    //    导出申诉数据
     @RequestMapping("/exportAppealData")
     ResponseEntity<byte[]> exportAppealData() throws UnsupportedEncodingException {
 
-        ApiResponseDTO<List<HaoSenAppealDataVO>> appealData = appealDataService.exportAppealData();
+        ApiResponseDTO<List<HaoSenAppealDataVO>> listApiResponseDTO = appealDataService.exportAppealData();
 
-//        List<HaoSenAppealDataVO> dataList = appealData.getData().getContent();
+        List<HaoSenAppealDataVO> dataList = listApiResponseDTO.getData();
 
-        List<HaoSenAppealDataVO> dataList = appealData.getData();
+
+        // List<HaoSenAppealDataVO> dataList = appealData.getData().getContent();
 
         // 导出Excel
         byte[] excelBytes = exportToExcel(dataList);
 
+
         // 设置响应头
         HttpHeaders headers = new HttpHeaders();
+
+
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment",
                 URLEncoder.encode("申诉数据.xlsx", StandardCharsets.UTF_8.toString()));
@@ -105,15 +108,20 @@ public class HaoSenAppealDataController {
                     "总分店kid", "总分店名称", "成立时间", "注册资金", "企业类型",
                     "登记状态", "所属行业", "登记机关"
             };
+
+
+
             // 创建表头行
             XSSFRow headerRow = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
                 headerRow.createCell(i).setCellValue(headers[i]);
             }
 
+
             // 填充数据
             int rowNum = 1;
             for (HaoSenAppealDataVO data : dataList) {
+
                 XSSFRow row = sheet.createRow(rowNum++);
                 int colNum = 0;
                 row.createCell(colNum++).setCellValue(data.getBatchCode() != null ? data.getBatchCode() : "");
@@ -159,6 +167,7 @@ public class HaoSenAppealDataController {
                 row.createCell(colNum++).setCellValue(data.getSignStatus() != null ? data.getSignStatus() : "");
                 row.createCell(colNum++).setCellValue(data.getIndustry() != null ? data.getIndustry() : "");
                 row.createCell(colNum++).setCellValue(data.getBelong() != null ? data.getBelong() : "");
+
             }
 
             // 自动调整列宽
@@ -168,6 +177,7 @@ public class HaoSenAppealDataController {
 
             workbook.write(out);
             return out.toByteArray();
+
         } catch (Exception e) {
             throw new RuntimeException("导出Excel失败", e);
         }
@@ -254,8 +264,8 @@ public class HaoSenAppealDataController {
 
             // 设置合理超时（10秒）
             RequestConfig config = RequestConfig.custom()
-                    .setConnectTimeout(1000)
-                    .setSocketTimeout(1000)
+                    .setConnectTimeout(1800000)
+                    .setSocketTimeout(1800000)
                     .build();
             request.setConfig(config);
 

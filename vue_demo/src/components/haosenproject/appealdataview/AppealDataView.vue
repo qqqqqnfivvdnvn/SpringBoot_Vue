@@ -570,9 +570,11 @@ export default {
           ...this.searchForm
         };
 
-        const response = await axios.get('/api/appealData/exportAppealData', {
-          responseType: 'blob'
-        });
+        const response = await axios.get('/api/appealData/exportAppealData',
+            {
+              responseType: 'blob'
+            }
+        );
 
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
