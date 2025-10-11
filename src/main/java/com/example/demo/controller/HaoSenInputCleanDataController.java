@@ -113,8 +113,8 @@ public class HaoSenInputCleanDataController {
 
             // 设置合理超时（10秒）
             RequestConfig config = RequestConfig.custom()
-                    .setConnectTimeout(1000)
-                    .setSocketTimeout(1000)
+                    .setConnectTimeout(1800000)
+                    .setSocketTimeout(1800000)
                     .build();
             request.setConfig(config);
 
