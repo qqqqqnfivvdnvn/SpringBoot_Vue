@@ -7,7 +7,7 @@
         <router-link to="/project/HaosenHome" @click="resetToDashboard">仪表盘</router-link>
         <router-link to="/home">返回项目管理</router-link>
         <div class="avatar">
-          <img src="@/assets/avatar-modified.png" alt="用户头像" />
+          <img src="../../assets/images/avatar-modified.png" alt="用户头像" />
         </div>
         <button class="logout-button" @click="handleLogout">
           <font-awesome-icon :icon="['fas', 'sign-out-alt']" size="sm" />

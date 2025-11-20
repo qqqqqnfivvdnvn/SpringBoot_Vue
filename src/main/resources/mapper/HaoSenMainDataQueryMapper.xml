@@ -104,7 +104,14 @@
         ELSE null
         END is_insert
         ,a.repeat_id,a.updatetime,a.status,
-        a.data_type,a.keyid,a.ku_address,a.general_branch_kid,a.general_branch_name,a.hs_code,a.addtime,a.appeal_dataid
+        a.data_type,a.keyid,a.ku_address,a.general_branch_kid,a.general_branch_name,a.hs_code,a.addtime,a.appeal_dataid,
+        CASE
+        WHEN a.internet_hosclassify='1' THEN 'A类'
+        WHEN a.internet_hosclassify='2' THEN 'B类'
+        WHEN a.internet_hosclassify='3' THEN 'C类'
+        ELSE
+        a.internet_hosclassify
+        END internet_hosclassify,a.field1
         FROM base_org_hos_clean a
         LEFT JOIN
         豪森五级属性对应表0819 b
@@ -219,7 +226,7 @@
         WHEN is_insert='0' THEN '否'
         ELSE null
         END
-        is_insert,repeat_id,original_name,updatetime,status,data_type,keyid,main_branch_kid,main_branch_name,hs_code,addtime,appeal_dataid
+        is_insert,repeat_id,original_name,updatetime,status,data_type,keyid,main_branch_kid,main_branch_name,hs_code,addtime,appeal_dataid,sign_status,hos_inside,hos_outside,field1
         from base_org_drug_store
         LEFT JOIN
         豪森_行政区划表0928_对应关系 b
@@ -293,7 +300,7 @@
         WHEN is_insert='1' THEN '是'
         WHEN is_insert='0' THEN '否'
         ELSE null
-        END is_insert,repeat_id,remarks,updatetime,status, data_type,keyid,hs_code,addtime,appeal_dataid from
+        END is_insert,repeat_id,remarks,updatetime,status, data_type,keyid,hs_code,addtime,appeal_dataid,field1 from
         base_org_company
         LEFT JOIN
         豪森_行政区划表0928_对应关系 b

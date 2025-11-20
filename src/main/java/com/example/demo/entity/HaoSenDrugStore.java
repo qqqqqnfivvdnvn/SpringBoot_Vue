@@ -49,4 +49,9 @@ public class HaoSenDrugStore {
     private String addtime;
     private String appealDataId;
 
+    private String signStatus;
+    private String hosInside;
+    private String hosOutside;
+    private String field1;
+
 }

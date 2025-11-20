@@ -247,7 +247,7 @@
         WHEN b.operation='2' THEN '连锁'
         WHEN b.operation='3' THEN '批发'
         ELSE null
-        END operation,b.scope ,b.main_branch_kid ,b.main_branch_name ,b.create_date ,b.regist_capi ,null econ_kind,null
+        END operation,b.scope ,b.main_branch_kid ,b.main_branch_name ,b.create_date ,b.regist_capi ,null econ_kind,
         sign_status,null industry,null belong,addtime from
         (
         SELECT data_code,remarks from data_result WHERE status is null and feedback_type='1'
@@ -330,7 +330,7 @@
                            WHEN b.military_hos='1' THEN 1
                            ELSE null
                            END military_hos,b.regcode ,b.validity ,b.subjects ,b.legalperson ,b.usci ,null operation,null scope, null
-                                   main_branch_kid,null main_branch_name,null create_date,null regist_capi,null econ_kind, sign_status,null
+                                   main_branch_kid,null main_branch_name,null create_date,null regist_capi,null econ_kind,null sign_status,null
                                    industry,null belong,addtime
                 from
                     (
@@ -373,7 +373,7 @@
                            WHEN b.operation='2' THEN '连锁'
                            WHEN b.operation='3' THEN '批发'
                            ELSE null
-                           END operation,b.scope ,b.main_branch_kid ,b.main_branch_name ,b.create_date ,b.regist_capi ,null econ_kind,null
+                           END operation,b.scope ,b.main_branch_kid ,b.main_branch_name ,b.create_date ,b.regist_capi ,null econ_kind,
                                    sign_status,null industry,null belong,addtime from
                     (
                         SELECT data_code,remarks from data_result WHERE status is null and feedback_type='1'

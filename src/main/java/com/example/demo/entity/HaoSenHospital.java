@@ -57,5 +57,8 @@ public class HaoSenHospital {
     private String hsCode;
     private String addtime;
     private String appealDataid;
+//    field1 internet_hosclassify
+    private String internetHosclassify;
+    private String field1;
     
 }

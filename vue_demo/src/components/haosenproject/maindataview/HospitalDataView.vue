@@ -4,7 +4,6 @@
       <div class="search-form">
         <div class="form-item">
           <label>原始编码：</label>
-
           <div class="input-wrapper">
             <input
                 v-model="searchForm.dataCode"
@@ -17,7 +16,6 @@
               <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
             </i>
           </div>
-
         </div>
 
         <div class="form-item">
@@ -36,8 +34,6 @@
           </div>
         </div>
 
-
-
         <div class="form-item">
           <label>DataId：</label>
           <div class="input-wrapper">
@@ -52,7 +48,6 @@
               <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
             </i>
           </div>
-
         </div>
 
         <div class="form-item">
@@ -180,6 +175,7 @@
           <tr>
             <th v-for="(column, index) in columns" :key="index"
                 :style="{ width: column.width + 'px' }"
+                :class="{ 'fixed-column': column.fixed }"
                 @mousedown="startResize($event, index)">
               <div class="th-content">
                 {{ column.label }}
@@ -192,13 +188,13 @@
           <tbody>
           <tr v-for="hospital in hospitalData.content" :key="hospital.dataId">
             <td v-for="(column, index) in columns" :key="index"
-                :style="{ width: column.width + 'px' }">
+                :style="{ width: column.width + 'px' }"
+                :class="{ 'fixed-column': column.fixed }">
               <template v-if="index === 0">{{ hospital.dataId }}</template>
               <template v-else-if="index === 1">{{ hospital.dataCode }}</template>
               <template v-else-if="index === 2">{{ hospital.originalName }}</template>
               <template v-else-if="index === 3">{{ hospital.keyid }}</template>
               <template v-else-if="index === 4">{{ hospital.name }}</template>
-              <!--              <template v-else-if="index === 5">{{ hospital.nameHistory }}</template>-->
               <template v-else-if="index === 5">{{ hospital.province }}</template>
               <template v-else-if="index === 6">{{ hospital.city }}</template>
               <template v-else-if="index === 7">{{ hospital.area }}</template>
@@ -223,7 +219,6 @@
                 <button class="detail-btn" @click="showDetail(hospital)">详情</button> &nbsp;
                 <button class="update-btn" @click="updateDetail(hospital)">更新</button>
               </template>
-
             </td>
           </tr>
           </tbody>
@@ -276,6 +271,10 @@
             <span>{{ currentHospital.dataCode }}</span>
           </div>
 
+          <div class="detail-row">
+            <label>原始名称：</label>
+            <span>{{ currentHospital.originalName }}</span>
+          </div>
 
           <div class="detail-row">
             <label>keyId：</label>
@@ -471,6 +470,18 @@
             <span>{{ currentHospital.generalBranchName }}</span>
           </div>
 
+
+          <div class="detail-row">
+            <label>互联网医院类别：</label>
+            <span>{{ currentHospital.internetHosclassify }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>经纬度：</label>
+            <span>{{ currentHospital.field1 }}</span>
+          </div>
+
+
           <div class="detail-row">
             <label>添加日期：</label>
             <span>{{ currentHospital.addtime }}</span>
@@ -480,7 +491,6 @@
             <label>更新日期：</label>
             <span>{{ currentHospital.updatetime }}</span>
           </div>
-
 
 
           <div class="detail-row">
@@ -528,7 +538,6 @@
                   <input v-model="currentHospital.batchCode" readonly class="form-input">
                 </div>
 
-
                 <div class="form-group">
                   <label class="form-label">dataId：</label>
                   <input v-model="currentHospital.dataId" readonly class="form-input">
@@ -553,9 +562,6 @@
                   <label class="form-label">机构类型：</label>
                   <input  readonly class="form-input" value="医院">
                 </div>
-
-
-
               </div>
 
               <!-- 第二列 -->
@@ -621,11 +627,9 @@
                   <label class="form-label">等次：</label>
                   <input v-model="currentHospital.grade" class="form-input">
                 </div>
-
-
               </div>
-
             </div>
+
 
             <div class="form-actions">
               <button type="submit" class="btn btn-primary">提交推送</button>
@@ -633,9 +637,9 @@
             </div>
           </form>
         </div>
-
       </div>
     </div>
+
 
   </div>
 </template>
@@ -656,7 +660,6 @@ export default {
       },
       loading: false,
       searchForm: {
-        // dataCode   dataId keyid hsCode province city area name address
         dataCode: '',
         name: '',
         dataId: '',
@@ -667,7 +670,6 @@ export default {
         area: '',
         address: '',
         originalName: ''
-
       },
       pageSize: 10,
       pageNumber: 0,
@@ -675,7 +677,7 @@ export default {
       updateDetailModal: false,
       currentHospital: {},
 
-      // 列定义
+      // 列定义 - 为操作列添加 fixed 属性
       columns: [
         {label: 'dataId', width: 100},
         {label: '原始编码', width: 100},
@@ -687,7 +689,7 @@ export default {
         {label: '区县', width: 50},
         {label: '地址', width: 100},
         {label: '状态', width: 50},
-        {label: '操作', width: 100}
+        {label: '操作', width: 100, fixed: true}  // 添加 fixed: true
       ],
       resizing: false,
       resizeColumnIndex: null,
@@ -695,11 +697,11 @@ export default {
       startWidth: 0
     }
   },
+
   mounted() {
     this.fetchHospitalData();
   },
   methods: {
-
     async fetchHospitalData() {
       this.loading = true;
       try {
@@ -812,7 +814,6 @@ export default {
       this.currentHospital = {};
     },
 
-
     // 列宽调整方法
     startResize(e, index) {
       this.resizing = true;
@@ -845,16 +846,36 @@ export default {
 </script>
 
 <style scoped>
+
 .hospital-data-view {
   display: flex;
   flex-direction: column;
-  height: 85vh;
-  width: 1250px;
+  height: 100%;
+  width: 100%;
+  max-width: min(1250px, 95vw);
   padding: 12px;
   box-sizing: border-box;
   background: white;
   font-size: 12px;
+  margin: 0 auto;
 }
+
+/* 2K屏幕优化 */
+@media (min-width: 2000px) and (max-width: 2600px) {
+  .hospital-data-view {
+    max-width: min(2200px, 96vw);
+  }
+}
+
+/* 超宽屏幕 */
+@media (min-width: 2600px) {
+  .hospital-data-view {
+    max-width: min(2400px, 95vw);
+  }
+}
+
+
+
 
 .search-container {
   flex-shrink: 0;
@@ -956,10 +977,12 @@ button {
   overflow: auto;
   border: 1px solid #ebeef5;
   border-radius: 3px;
+  position: relative;
 }
 
 .hospital-table {
   width: 100%;
+  height: 80%;
   border-collapse: collapse;
   font-size: 12px;
   table-layout: fixed;
@@ -982,6 +1005,23 @@ button {
   top: 0;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* 固定列样式 */
+.fixed-column {
+  position: sticky;
+  right: 0;
+  background-color: #f5f7fa;
+  z-index: 10;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.hospital-table tr:nth-child(even) .fixed-column {
+  background-color: #fafafa;
+}
+
+.hospital-table tr:hover .fixed-column {
+  background-color: #f5f7fa;
 }
 
 .hospital-table tr:nth-child(even) {
@@ -1016,7 +1056,6 @@ button {
   color: #d77030;
   font-weight: bold;
 }
-
 
 .no-data {
   display: flex;
@@ -1255,14 +1294,6 @@ button {
   cursor: not-allowed;
 }
 
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  padding-top: 12px;
-  border-top: 1px solid #eee;
-}
-
 .btn {
   padding: 5px 10px;
   border-radius: 3px;
@@ -1293,7 +1324,3 @@ button {
   background-color: #ecf5ff;
 }
 </style>
-
-
-
-

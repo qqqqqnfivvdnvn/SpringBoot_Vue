@@ -105,8 +105,6 @@ public class HaoSenInputCleanDataController {
     }
 
 
-
-
     private String callExternalCleanDataApi() {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet request = new HttpGet("http://192.168.33.9:8000/clean_data");

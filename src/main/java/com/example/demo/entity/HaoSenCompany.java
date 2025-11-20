@@ -38,4 +38,5 @@ public class HaoSenCompany {
     private String hsCode;
     private String addtime;
     private String appealDataId;
+    private String field1;
 }

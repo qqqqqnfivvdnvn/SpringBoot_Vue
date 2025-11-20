@@ -184,6 +184,7 @@
           <tr>
             <th v-for="(column, index) in columns" :key="index"
                 :style="{ width: column.width + 'px' }"
+                :class="{ 'fixed-column': column.fixed }"
                 @mousedown="startResize($event, index)">
               <div class="th-content">
                 {{ column.label }}
@@ -196,7 +197,8 @@
           <tbody>
           <tr v-for="Appeal in AppealData.content" :key="Appeal.dataId">
             <td v-for="(column, index) in columns" :key="index"
-                :style="{ width: column.width + 'px' }">
+                :style="{ width: column.width + 'px' }"
+                :class="{ 'fixed-column': column.fixed }">
               <template v-if="index === 0">{{ Appeal.dataId }}</template>
               <template v-else-if="index === 1">{{ Appeal.dataCode }}</template>
               <template v-else-if="index === 2">{{ Appeal.originalName }}</template>
@@ -485,6 +487,7 @@ export default {
       showDetailModal: false,
       currentAppeal: {},
 
+      // 列定义 - 为操作列添加 fixed 属性
       columns: [
         {label: 'dataId', width: 100},
         {label: '原始编码', width: 100},
@@ -496,7 +499,7 @@ export default {
         {label: '区县', width: 50},
         {label: '地址', width: 100},
         {label: '申诉原因', width: 100},
-        {label: '操作', width: 100}
+        {label: '操作', width: 100, fixed: true}  // 添加 fixed: true
       ],
       resizing: false,
       resizeColumnIndex: null,
@@ -668,19 +671,34 @@ export default {
 }
 </script>
 
-
-
 <style scoped>
 .Appeal-data-view {
   display: flex;
   flex-direction: column;
-  height: 85vh;
-  width: 1250px;
+  height: 100%;
+  width: 100%;
+  max-width: min(1250px, 95vw);
   padding: 12px;
   box-sizing: border-box;
   background: white;
   font-size: 12px;
+  margin: 0 auto;
 }
+
+/* 2K屏幕优化 */
+@media (min-width: 2000px) and (max-width: 2600px) {
+  .Appeal-data-view {
+    max-width: min(2200px, 96vw);
+  }
+}
+
+/* 超宽屏幕 */
+@media (min-width: 2600px) {
+  .Appeal-data-view {
+    max-width: min(2400px, 95vw);
+  }
+}
+
 
 .search-container {
   flex-shrink: 0;
@@ -706,6 +724,7 @@ export default {
   margin-right: 4px;
   font-weight: bold;
   white-space: nowrap;
+  font-size: 12px;
 }
 
 .input-wrapper {
@@ -728,6 +747,7 @@ export default {
   transform: translateY(-50%);
   color: #c0c4cc;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .clear-icon:hover {
@@ -804,10 +824,12 @@ button {
   overflow: auto;
   border: 1px solid #ebeef5;
   border-radius: 3px;
+  position: relative;
 }
 
 .Appeal-table {
   width: 100%;
+  height: 80%;
   border-collapse: collapse;
   font-size: 12px;
   table-layout: fixed;
@@ -832,6 +854,23 @@ button {
   -webkit-user-select: none;
 }
 
+/* 固定列样式 */
+.fixed-column {
+  position: sticky;
+  right: 0;
+  background-color: #f5f7fa;
+  z-index: 10;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.Appeal-table tr:nth-child(even) .fixed-column {
+  background-color: #fafafa;
+}
+
+.Appeal-table tr:hover .fixed-column {
+  background-color: #f5f7fa;
+}
+
 .Appeal-table tr:nth-child(even) {
   background-color: #fafafa;
 }
@@ -846,6 +885,7 @@ button {
   align-items: center;
   height: 100%;
   color: #909399;
+  font-size: 12px;
 }
 
 .pagination {
@@ -882,6 +922,7 @@ button {
   border-radius: 3px;
   border: 1px solid #dcdfe6;
   background: white;
+  font-size: 12px;
 }
 
 /* Modal styles */
@@ -920,13 +961,13 @@ button {
 
 .modal-header h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: 12px;
   color: #303133;
   font-weight: bold;
 }
 
 .close-btn {
-  font-size: 14px;
+  font-size: 12px;
   color: #909399;
   cursor: pointer;
 }
@@ -950,11 +991,13 @@ button {
   font-weight: bold;
   min-width: 70px;
   color: #606266;
+  font-size: 12px;
 }
 
 .detail-row span {
   flex: 1;
   word-break: break-word;
+  font-size: 12px;
 }
 
 .modal-footer {
@@ -971,6 +1014,7 @@ button {
   border: none;
   border-radius: 3px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .modal-close-btn:hover {
@@ -996,7 +1040,6 @@ button {
 .resize-handle:hover {
   background-color: #409eff;
 }
+
+
 </style>
-
-
-

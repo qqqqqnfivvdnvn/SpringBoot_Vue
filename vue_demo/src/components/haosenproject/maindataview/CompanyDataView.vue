@@ -176,6 +176,7 @@
           <tr>
             <th v-for="(column, index) in columns" :key="index"
                 :style="{ width: column.width + 'px' }"
+                :class="{ 'fixed-column': column.fixed }"
                 @mousedown="startResize($event, index)">
               <div class="th-content">
                 {{ column.label }}
@@ -188,7 +189,8 @@
           <tbody>
           <tr v-for="Company in CompanyData.content" :key="Company.dataId">
             <td v-for="(column, index) in columns" :key="index"
-                :style="{ width: column.width + 'px' }">
+                :style="{ width: column.width + 'px' }"
+                :class="{ 'fixed-column': column.fixed }">
               <template v-if="index === 0">{{ Company.dataId }}</template>
               <template v-else-if="index === 1">{{ Company.dataCode }}</template>
               <template v-else-if="index === 2">{{ Company.originalName }}</template>
@@ -268,6 +270,11 @@
           <div class="detail-row">
             <label>原始编码：</label>
             <span>{{ currentCompany.dataCode }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>原始名称：</label>
+            <span>{{ currentCompany.originalName }}</span>
           </div>
 
           <div class="detail-row">
@@ -387,6 +394,13 @@
           </div>
 
           <div class="detail-row">
+            <label>经纬度：</label>
+            <span>{{ currentCompany.field1 }}</span>
+          </div>
+
+
+
+          <div class="detail-row">
             <label>添加日期：</label>
             <span>{{ currentCompany.addtime }}</span>
           </div>
@@ -395,6 +409,7 @@
             <label>更新日期：</label>
             <span>{{ currentCompany.updatetime }}</span>
           </div>
+
 
           <div class="detail-row">
             <label>状态：</label>
@@ -456,7 +471,7 @@ export default {
       showDetailModal: false,
       currentCompany: {},
 
-      // 列定义
+      // 列定义 - 为操作列添加 fixed 属性
       columns: [
         {label: 'dataId', width: 100},
         {label: '原始编码', width: 100},
@@ -468,7 +483,7 @@ export default {
         {label: '区县', width: 50},
         {label: '地址', width: 100},
         {label: '状态', width: 50},
-        {label: '操作', width: 100}
+        {label: '操作', width: 100, fixed: true}  // 添加 fixed: true
       ],
       resizing: false,
       resizeColumnIndex: null,
@@ -612,13 +627,30 @@ export default {
 .Company-data-view {
   display: flex;
   flex-direction: column;
-  height: 85vh;
-  width: 1250px; /* 调整为与医院和药店页面一致 */
+  height: 100%;
+  width: 100%;
+  max-width: min(1250px, 95vw);
   padding: 12px;
   box-sizing: border-box;
   background: white;
   font-size: 12px;
+  margin: 0 auto;
 }
+
+/* 2K屏幕优化 */
+@media (min-width: 2000px) and (max-width: 2600px) {
+  .Company-data-view {
+    max-width: min(2200px, 96vw);
+  }
+}
+
+/* 超宽屏幕 */
+@media (min-width: 2600px) {
+  .Company-data-view {
+    max-width: min(2400px, 95vw);
+  }
+}
+
 
 .search-container {
   flex-shrink: 0;
@@ -644,6 +676,7 @@ export default {
   margin-right: 4px;
   font-weight: bold;
   white-space: nowrap;
+  font-size: 12px;
 }
 
 .form-item input {
@@ -651,6 +684,7 @@ export default {
   border: 1px solid #dcdfe6;
   border-radius: 3px;
   min-width: 120px;
+  font-size: 12px;
 }
 
 .form-actions {
@@ -708,10 +742,12 @@ button {
   overflow: auto;
   border: 1px solid #ebeef5;
   border-radius: 3px;
+  position: relative;
 }
 
 .Company-table {
   width: 100%;
+  height: 80%;
   border-collapse: collapse;
   font-size: 12px;
   table-layout: fixed;
@@ -734,6 +770,23 @@ button {
   top: 0;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* 固定列样式 */
+.fixed-column {
+  position: sticky;
+  right: 0;
+  background-color: #f5f7fa;
+  z-index: 10;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.Company-table tr:nth-child(even) .fixed-column {
+  background-color: #fafafa;
+}
+
+.Company-table tr:hover .fixed-column {
+  background-color: #f5f7fa;
 }
 
 .Company-table tr:nth-child(even) {
@@ -768,8 +821,6 @@ button {
   color: #d77030;
   font-weight: bold;
 }
-
-
 
 .no-data {
   display: flex;
@@ -814,6 +865,7 @@ button {
   border-radius: 3px;
   border: 1px solid #dcdfe6;
   background: white;
+  font-size: 12px;
 }
 
 /* 详情弹窗样式 */
@@ -852,13 +904,13 @@ button {
 
 .modal-header h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: 12px;
   color: #303133;
   font-weight: bold;
 }
 
 .close-btn {
-  font-size: 14px;
+  font-size: 12px;
   color: #909399;
   cursor: pointer;
 }
@@ -882,11 +934,13 @@ button {
   font-weight: bold;
   min-width: 70px;
   color: #606266;
+  font-size: 12px;
 }
 
 .detail-row span {
   flex: 1;
   word-break: break-word;
+  font-size: 12px;
 }
 
 .modal-footer {
@@ -903,6 +957,7 @@ button {
   border: none;
   border-radius: 3px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .modal-close-btn:hover {

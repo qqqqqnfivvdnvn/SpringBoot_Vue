@@ -176,6 +176,7 @@
           <tr>
             <th v-for="(column, index) in columns" :key="index"
                 :style="{ width: column.width + 'px' }"
+                :class="{ 'fixed-column': column.fixed }"
                 @mousedown="startResize($event, index)">
               <div class="th-content">
                 {{ column.label }}
@@ -188,7 +189,8 @@
           <tbody>
           <tr v-for="DrugStore in DrugStoreData.content" :key="DrugStore.dataId">
             <td v-for="(column, index) in columns" :key="index"
-                :style="{ width: column.width + 'px' }">
+                :style="{ width: column.width + 'px' }"
+                :class="{ 'fixed-column': column.fixed }">
               <template v-if="index === 0">{{ DrugStore.dataId }}</template>
               <template v-else-if="index === 1">{{ DrugStore.dataCode }}</template>
               <template v-else-if="index === 2">{{ DrugStore.originalName }}</template>
@@ -205,7 +207,6 @@
                   'status-inactive': DrugStore.status === '4',
                   'status-invalid': DrugStore.status === '2',
                   'status-repeat': DrugStore.status === '5'
-
                 }">
                   {{ DrugStore.status === '1' ? '清洗成功' :
                     DrugStore.status === '3' ? '无法清洗' :
@@ -267,6 +268,11 @@
           <div class="detail-row">
             <label>原始编码：</label>
             <span>{{ currentDrugStore.dataCode }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>原始名称：</label>
+            <span>{{ currentDrugStore.originalName }}</span>
           </div>
 
           <div class="detail-row">
@@ -436,6 +442,28 @@
             <span>{{ currentDrugStore.mainBranchName }}</span>
           </div>
 
+
+          <div class="detail-row">
+            <label>登记状态：</label>
+            <span>{{ currentDrugStore.signStatus }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>院内店：</label>
+            <span>{{ currentDrugStore.hosInside }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>院边店：</label>
+            <span>{{ currentDrugStore.hosOutside }}</span>
+          </div>
+
+          <div class="detail-row">
+            <label>经纬度：</label>
+            <span>{{ currentDrugStore.field1 }}</span>
+          </div>
+
+
           <div class="detail-row">
             <label>添加日期：</label>
             <span>{{ currentDrugStore.addtime }}</span>
@@ -445,6 +473,7 @@
             <label>更新日期：</label>
             <span>{{ currentDrugStore.updatetime }}</span>
           </div>
+
 
           <div class="detail-row">
             <label>状态：</label>
@@ -505,7 +534,7 @@ export default {
       showDetailModal: false,
       currentDrugStore: {},
 
-      // 列定义
+      // 列定义 - 为操作列添加 fixed 属性
       columns: [
         {label: 'dataId', width: 100},
         {label: '原始编码', width: 100},
@@ -517,7 +546,7 @@ export default {
         {label: '区县', width: 50},
         {label: '地址', width: 100},
         {label: '状态', width: 50},
-        {label: '操作', width: 100}
+        {label: '操作', width: 100, fixed: true}  // 添加 fixed: true
       ],
       resizing: false,
       resizeColumnIndex: null,
@@ -661,13 +690,30 @@ export default {
 .DrugStore-data-view {
   display: flex;
   flex-direction: column;
-  height: 85vh;
-  width: 1250px;
+  height: 100%;
+  width: 100%;
+  max-width: min(1250px, 95vw);
   padding: 12px;
   box-sizing: border-box;
   background: white;
   font-size: 12px;
+  margin: 0 auto;
 }
+
+/* 2K屏幕优化 */
+@media (min-width: 2000px) and (max-width: 2600px) {
+  .DrugStore-data-view  {
+    max-width: min(2200px, 96vw);
+  }
+}
+
+/* 超宽屏幕 */
+@media (min-width: 2600px) {
+  .DrugStore-data-view  {
+    max-width: min(2400px, 95vw);
+  }
+}
+
 
 .search-container {
   flex-shrink: 0;
@@ -693,6 +739,7 @@ export default {
   margin-right: 4px;
   font-weight: bold;
   white-space: nowrap;
+  font-size: 12px;
 }
 
 .form-item input {
@@ -700,6 +747,7 @@ export default {
   border: 1px solid #dcdfe6;
   border-radius: 3px;
   min-width: 120px;
+  font-size: 12px;
 }
 
 .form-actions {
@@ -757,10 +805,12 @@ button {
   overflow: auto;
   border: 1px solid #ebeef5;
   border-radius: 3px;
+  position: relative;
 }
 
 .DrugStore-table {
   width: 100%;
+  height: 80%;
   border-collapse: collapse;
   font-size: 12px;
   table-layout: fixed;
@@ -783,6 +833,23 @@ button {
   top: 0;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* 固定列样式 */
+.fixed-column {
+  position: sticky;
+  right: 0;
+  background-color: #f5f7fa;
+  z-index: 10;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.DrugStore-table tr:nth-child(even) .fixed-column {
+  background-color: #fafafa;
+}
+
+.DrugStore-table tr:hover .fixed-column {
+  background-color: #f5f7fa;
 }
 
 .DrugStore-table tr:nth-child(even) {
@@ -818,15 +885,13 @@ button {
   font-weight: bold;
 }
 
-
-
-
 .no-data {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
   color: #909399;
+  font-size: 12px;
 }
 
 .pagination {
@@ -863,6 +928,7 @@ button {
   border-radius: 3px;
   border: 1px solid #dcdfe6;
   background: white;
+  font-size: 12px;
 }
 
 .modal-overlay {
@@ -900,13 +966,13 @@ button {
 
 .modal-header h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: 12px;
   color: #303133;
   font-weight: bold;
 }
 
 .close-btn {
-  font-size: 14px;
+  font-size: 12px;
   color: #909399;
   cursor: pointer;
 }
@@ -930,11 +996,13 @@ button {
   font-weight: bold;
   min-width: 70px;
   color: #606266;
+  font-size: 12px;
 }
 
 .detail-row span {
   flex: 1;
   word-break: break-word;
+  font-size: 12px;
 }
 
 .modal-footer {
@@ -951,6 +1019,7 @@ button {
   border: none;
   border-radius: 3px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .modal-close-btn:hover {
@@ -979,7 +1048,6 @@ button {
 .input-wrapper {
   position: relative;
   display: inline-block;
-
 }
 
 .input-wrapper input {
@@ -997,6 +1065,7 @@ button {
   transform: translateY(-50%);
   color: #c0c4cc;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .clear-icon:hover {

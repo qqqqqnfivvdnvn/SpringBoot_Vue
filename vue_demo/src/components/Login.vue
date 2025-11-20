@@ -75,12 +75,15 @@ export default {
           password: this.password
         });
 
+
+
         if (response.data.code === 200) {
           // 存储token和用户信息
           localStorage.setItem('token', response.data.data.token);
           localStorage.setItem('user', JSON.stringify(response.data.data.user));
 
-          this.showToastMessage(response.data.message || '登录成功！');
+          // this.showToastMessage(response.data.msg || '登录成功！');
+          this.showToastMessage('登录成功！');
 
           // 获取重定向路径或默认跳转到首页
           sessionStorage.setItem('userData', JSON.stringify(response.data.data));
@@ -92,12 +95,15 @@ export default {
           }, 400);
 
         } else if (response.data.code === 500) {
-          this.showToastMessage(response.data.message );
+
+          this.showToastMessage(response.data.msg );
         }
       } catch (error) {
         console.log(error);
         if (error.response) {
-          this.showToastMessage(error.response.data.message || '登录失败');
+          // this.showToastMessage(error.response.data.msg || '登录失败');
+          this.showToastMessage('登录失败');
+
         } else {
           this.showToastMessage('请求失败，请检查网络连接');
         }
