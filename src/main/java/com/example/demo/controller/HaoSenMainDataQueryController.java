@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.entity.HaoSenDrugStore;
 import com.example.demo.entity.HaoSenHospital;
+import com.example.demo.entity.HaoSenOrganization;
 import com.example.demo.service.impl.HaoSenMainDataQueryService;
 import com.example.demo.dto.HaoSenDrugStoreConditionDTO;
 import com.example.demo.dto.HaoSenHospitalConditionDTO;
@@ -30,11 +31,11 @@ public class HaoSenMainDataQueryController {
 
 
     @GetMapping("/getHospitalData")
-    public ResponseEntity<ApiResponseDTO<Page<HaoSenHospital>>> getHospital(@RequestParam(defaultValue = "0") int page,
-                                                                            @RequestParam(defaultValue = "10") int size,
-                                                                            @ModelAttribute HaoSenHospitalConditionDTO hospitalCondition) {
+    public ResponseEntity<ApiResponseDTO<Page<HaoSenOrganization>>> getHospital(@RequestParam(defaultValue = "0") int page,
+                                                                                @RequestParam(defaultValue = "10") int size,
+                                                                                @ModelAttribute HaoSenHospitalConditionDTO hospitalCondition) {
         Pageable pageable = PageRequest.of(page, size);
-        ApiResponseDTO<Page<HaoSenHospital>> hospitalList = mainDataQueryService.getHospitalList(hospitalCondition, pageable);
+        ApiResponseDTO<Page<HaoSenOrganization>> hospitalList = mainDataQueryService.getHospitalList(hospitalCondition, pageable);
         return  ResponseEntity.ok(hospitalList);
     }
 
@@ -56,4 +57,13 @@ public class HaoSenMainDataQueryController {
         return ResponseEntity.ok(companyList);
 
     }
+
+    //    医疗机构数据导出接口
+    @GetMapping("/exportHospitalData")
+    public ResponseEntity<ApiResponseDTO<byte[]>> exportHospitalData(@ModelAttribute HaoSenHospitalConditionDTO hospitalCondition) {
+
+
+        return ResponseEntity.ok(mainDataQueryService.exportHospitalList(hospitalCondition));
+    }
+
 }

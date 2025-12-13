@@ -4,6 +4,7 @@ import com.baomidou.dynamic.datasource.annotation.DS;
 import com.example.demo.dto.HaoSenAppealConditionDTO;
 
 import com.example.demo.vo.HaoSenAppealDataVO;
+import com.example.demo.vo.HaoSenInputAppealDataVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,8 @@ public interface HaoSenAppealDataMapper {
 
 
     public List<HaoSenAppealDataVO> exportAppealData();
+
+
 
 
 }

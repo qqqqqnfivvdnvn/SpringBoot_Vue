@@ -1,5 +1,6 @@
 <template>
-  <div ref="chart" style="width: 37.5rem; height: 16.6875rem;"></div>
+  <!--  class="chart"-->
+  <div ref="chart"   style="width: 37rem; height: 16rem;"></div>
 </template>
 
 <script setup>
@@ -9,7 +10,7 @@ import axios from "axios";
 
 const chart = ref(null);
 
-onMounted(async() => {
+onMounted(async () => {
   const myChart = echarts.init(chart.value, null, {
     renderer: 'svg',
     devicePixelRatio: window.devicePixelRatio > 1 ? 2 : 1
@@ -18,7 +19,7 @@ onMounted(async() => {
   const response = await axios.post('/api/homeData/getAppealUpdateData'); // 替换为你的后端 API 地址
   let data;
   try {
-    if (response.data.code === 200){
+    if (response.data.code === 200) {
       const dates = response.data.data.map(item => item.day);
       const appeal = response.data.data.map(item => item.appealCount);
       const update = response.data.data.map(item => item.updateCount);
@@ -61,7 +62,7 @@ onMounted(async() => {
       },
     },
     legend: {
-      data: ['更新', '申诉','豪森编码'],
+      data: ['更新', '申诉', '豪森编码'],
       bottom: 10,
       textStyle: {
         color: '#333333',
@@ -203,7 +204,7 @@ onMounted(async() => {
   myChart.setOption(option);
 
   // 响应式调整
-  window.addEventListener('resize', function() {
+  window.addEventListener('resize', function () {
     myChart.resize();
   });
 });
@@ -211,4 +212,8 @@ onMounted(async() => {
 
 <style scoped>
 /* 可以在这里添加样式 */
+.chart {
+  width: 100%;
+  height: 100%;
+}
 </style>

@@ -1,1326 +1,1 @@
-<template>
-  <div class="hospital-data-view">
-    <div class="search-container">
-      <div class="search-form">
-        <div class="form-item">
-          <label>原始编码：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.dataCode"
-                placeholder="请输入原始编码"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.dataCode"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.dataCode = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>原始名称：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.originalName"
-                placeholder="请输入原始名称"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.originalName"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.originalName = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>DataId：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.dataId"
-                placeholder="请输入DataId"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.dataId"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.dataId = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>KeyId：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.keyid"
-                placeholder="请输入KeyId"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.keyid"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.keyid = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>豪森编码：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.hsCode"
-                placeholder="请输入清洗后的编码"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.hsCode"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.hsCode = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>省份：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.province"
-                placeholder="请输入省份"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.province"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.province = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-        <div class="form-item">
-          <label>市：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.city"
-                placeholder="请输入市"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.city"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.city = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>区县：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.area"
-                placeholder="请输入区县"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.area"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.area = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>输入医院名称：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.name"
-                placeholder="请输入医院名称"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.name"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.name = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>输入医院地址：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.address"
-                placeholder="请输入医院地址"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.address"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.address = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button class="search-btn" @click="handleSearch">查询</button>
-          <button class="reset-btn" @click="resetSearch">重置</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="data-container">
-      <div class="table-wrapper">
-        <table class="hospital-table" v-if="hospitalData.content && hospitalData.content.length > 0">
-          <thead>
-          <tr>
-            <th v-for="(column, index) in columns" :key="index"
-                :style="{ width: column.width + 'px' }"
-                :class="{ 'fixed-column': column.fixed }"
-                @mousedown="startResize($event, index)">
-              <div class="th-content">
-                {{ column.label }}
-                <div class="resize-handle"
-                     @mousedown.stop="startResize($event, index)"></div>
-              </div>
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="hospital in hospitalData.content" :key="hospital.dataId">
-            <td v-for="(column, index) in columns" :key="index"
-                :style="{ width: column.width + 'px' }"
-                :class="{ 'fixed-column': column.fixed }">
-              <template v-if="index === 0">{{ hospital.dataId }}</template>
-              <template v-else-if="index === 1">{{ hospital.dataCode }}</template>
-              <template v-else-if="index === 2">{{ hospital.originalName }}</template>
-              <template v-else-if="index === 3">{{ hospital.keyid }}</template>
-              <template v-else-if="index === 4">{{ hospital.name }}</template>
-              <template v-else-if="index === 5">{{ hospital.province }}</template>
-              <template v-else-if="index === 6">{{ hospital.city }}</template>
-              <template v-else-if="index === 7">{{ hospital.area }}</template>
-              <template v-else-if="index === 8">{{ hospital.address }}</template>
-              <template v-else-if="index === 9">
-                        <span :class="{
-                          'status-active': hospital.status === '1',
-                          'status-uninactive': hospital.status === '3',
-                          'status-inactive': hospital.status === '4',
-                          'status-invalid': hospital.status === '2',
-                          'status-repeat': hospital.status === '5'
-                        }">
-                          {{ hospital.status === '1' ? '清洗成功' :
-                            hospital.status === '3' ? '无法清洗' :
-                                hospital.status === '4' ? '禁用客户' :
-                                    hospital.status === '2' ? '数据作废' :
-                                        hospital.status === '5' ? '数据重复' :
-                                            '其他状态' }}
-                        </span>
-              </template>
-              <template v-else-if="index === 10">
-                <button class="detail-btn" @click="showDetail(hospital)">详情</button> &nbsp;
-                <button class="update-btn" @click="updateDetail(hospital)">更新</button>
-              </template>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-        <div v-else class="no-data">
-          {{ loading ? '数据加载中...' : '没有找到匹配的医院数据' }}
-        </div>
-        <div class="pagination" v-if="hospitalData.content && hospitalData.content.length > 0">
-          <button
-              :disabled="hospitalData.first"
-              @click="prevPage"
-              class="page-btn"
-          >
-            上一页
-          </button>
-          <span class="page-info">
-            第 {{ hospitalData.number + 1 }} 页 / 共 {{ hospitalData.totalPages }} 页 (共 {{ hospitalData.totalElements }} 条)
-          </span>
-          <button
-              :disabled="hospitalData.last"
-              @click="nextPage"
-              class="page-btn"
-          >
-            下一页
-          </button>
-          <select v-model="pageSize" @change="handlePageSizeChange">
-            <option value="10">每页10条</option>
-            <option value="20">每页20条</option>
-            <option value="50">每页50条</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- 详情弹窗 -->
-    <div v-if="showDetailModal" class="modal-overlay" @click.self="closeDetailModal">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3>医院详情</h3>
-          <span class="close-btn" @click="closeDetailModal">&times;</span>
-        </div>
-
-        <div class="modal-body">
-          <div class="detail-row">
-            <label>dataId：</label>
-            <span>{{ currentHospital.dataId }}</span>
-          </div>
-          <div class="detail-row">
-            <label>原始编码：</label>
-            <span>{{ currentHospital.dataCode }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>原始名称：</label>
-            <span>{{ currentHospital.originalName }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>keyId：</label>
-            <span>{{ currentHospital.keyid }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>数据类型：</label>
-            <span>{{ currentHospital.dataType }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>豪森清洗后编码：</label>
-            <span>{{ currentHospital.hsCode }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>标准名称：</label>
-            <span>{{ currentHospital.name }}</span>
-          </div>
-          <div class="detail-row">
-            <label>历史名称：</label>
-            <span>{{ currentHospital.nameHistory }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>省份：</label>
-            <span>{{ currentHospital.province }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>省份ID：</label>
-            <span>{{ currentHospital.provinceId }}</span>
-          </div>
-          <div class="detail-row">
-            <label>市：</label>
-            <span>{{ currentHospital.city }}</span>
-          </div>
-          <div class="detail-row">
-            <label>市ID：</label>
-            <span>{{ currentHospital.cityId }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>区县：</label>
-            <span>{{ currentHospital.area }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>区县ID：</label>
-            <span>{{ currentHospital.areaId }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否市区：</label>
-            <span>{{ currentHospital.isCity }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>地址：</label>
-            <span>{{ currentHospital.address }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>统一社会信用代码：</label>
-            <span>{{ currentHospital.usci }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>等级：</label>
-            <span>{{ currentHospital.level }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>等次：</label>
-            <span>{{ currentHospital.grade }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>所有制：</label>
-            <span>{{ currentHospital.publicflag }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>豪森医院类型：</label>
-            <span>{{ currentHospital.hosClass }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>豪森医院大类：</label>
-            <span>{{ currentHospital.hosBigClass }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>一级属性：</label>
-            <span>{{ currentHospital.class1 }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>二级属性：</label>
-            <span>{{ currentHospital.class2 }}</span>
-          </div>
-          <div class="detail-row">
-            <label>三级属性：</label>
-            <span>{{ currentHospital.class3 }}</span>
-          </div>
-          <div class="detail-row">
-            <label>四级属性：</label>
-            <span>{{ currentHospital.class4 }}</span>
-          </div>
-          <div class="detail-row">
-            <label>五级属性：</label>
-            <span>{{ currentHospital.class5 }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否军队医院：</label>
-            <span>{{ currentHospital.militaryHos }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否互联网医院：</label>
-            <span>{{ currentHospital.internetHos }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>医联体/医共体：</label>
-            <span>{{ currentHospital.medUnionCommunity }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>医保编码：</label>
-            <span>{{ currentHospital.ybcode }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>登记号：</label>
-            <span>{{ currentHospital.regcode }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>许可证有效期：</label>
-            <span>{{ currentHospital.validity }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否门诊统筹：</label>
-            <span>{{ currentHospital.menzhen }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>床位数目：</label>
-            <span>{{ currentHospital.bedCount }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>医护人数：</label>
-            <span>{{ currentHospital.medicalCount }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>诊疗科目：</label>
-            <span>{{ currentHospital.subjects }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>法人：</label>
-            <span>{{ currentHospital.legalperson }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否新增：</label>
-            <span>{{ currentHospital.isInsert }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>豪森重复数据ID：</label>
-            <span>{{ currentHospital.repeatId }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>上级单位豪森编码：</label>
-            <span>{{ currentHospital.generalBranch }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>上级单位KeyId：</label>
-            <span>{{ currentHospital.generalBranchKid }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>上级单位名称：</label>
-            <span>{{ currentHospital.generalBranchName }}</span>
-          </div>
-
-
-          <div class="detail-row">
-            <label>互联网医院类别：</label>
-            <span>{{ currentHospital.internetHosclassify }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>经纬度：</label>
-            <span>{{ currentHospital.field1 }}</span>
-          </div>
-
-
-          <div class="detail-row">
-            <label>添加日期：</label>
-            <span>{{ currentHospital.addtime }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>更新日期：</label>
-            <span>{{ currentHospital.updatetime }}</span>
-          </div>
-
-
-          <div class="detail-row">
-            <label>状态：</label>
-            <span :class="{
-                'status-active': currentHospital.status === '1',
-                'status-invalid': currentHospital.status === '2',
-                'status-uninactive': currentHospital.status === '3',
-                'status-inactive': currentHospital.status === '4',
-                'status-repeat': currentHospital.status === '5'
-              }">
-              {{
-                currentHospital.status === '1' ? '清洗成功' :
-                    currentHospital.status === '2' ? '数据作废' :
-                        currentHospital.status === '3' ? '无法清洗' :
-                            currentHospital.status === '4' ? '禁用客户' :
-                                currentHospital.status === '5' ? '数据重复':'其他状态'
-              }}
-            </span>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button class="modal-close-btn" @click="closeDetailModal">关闭</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 更新弹窗 -->
-    <div v-if="updateDetailModal" class="modal-overlay" @click.self="closeUpdateModal">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3>数据更新</h3>
-          <span class="close-btn" @click="closeUpdateModal">&times;</span>
-        </div>
-
-        <div class="modal-body">
-          <form @submit.prevent="saveChanges" class="hospital-form">
-            <div class="form-grid">
-              <!-- 第一列 -->
-              <div class="form-column">
-
-                <div class="form-group">
-                  <label class="form-label">批次编号：</label>
-                  <input v-model="currentHospital.batchCode" readonly class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">dataId：</label>
-                  <input v-model="currentHospital.dataId" readonly class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">数据类型：</label>
-                  <input v-model="currentHospital.dataType"  readonly class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">原始编码：</label>
-                  <input v-model="currentHospital.dataCode" readonly class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">原始名称：</label>
-                  <input v-model="currentHospital.originalName" readonly class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">机构类型：</label>
-                  <input  readonly class="form-input" value="医院">
-                </div>
-              </div>
-
-              <!-- 第二列 -->
-              <div class="form-column">
-
-                <div class="form-group">
-                  <label class="form-label">备注：</label>
-                  <input  class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">keyId：</label>
-                  <input v-model="currentHospital.keyid" class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">医院名称：</label>
-                  <input v-model="currentHospital.name" class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">历史名称：</label>
-                  <input v-model="currentHospital.nameHistory" class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">省：</label>
-                  <input v-model="currentHospital.province" class="form-input">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">省ID：</label>
-                  <input v-model="currentHospital.provinceId" class="form-input">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">市：</label>
-                  <input v-model="currentHospital.city" class="form-input">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">市ID：</label>
-                  <input v-model="currentHospital.cityId" class="form-input">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">区县：</label>
-                  <input v-model="currentHospital.area" class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">区县ID：</label>
-                  <input v-model="currentHospital.areaId" class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">地址：</label>
-                  <input v-model="currentHospital.address" class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">等级：</label>
-                  <input v-model="currentHospital.level" class="form-input">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">等次：</label>
-                  <input v-model="currentHospital.grade" class="form-input">
-                </div>
-              </div>
-            </div>
-
-
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary">提交推送</button>
-              <button type="button" class="btn btn-secondary" @click="closeUpdateModal">取消</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-
-  </div>
-</template>
-
-<script>
-import axios from 'axios';
-
-export default {
-  data() {
-    return {
-      hospitalData: {
-        content: [],
-        totalElements: 0,
-        totalPages: 0,
-        first: true,
-        last: false,
-        number: 0
-      },
-      loading: false,
-      searchForm: {
-        dataCode: '',
-        name: '',
-        dataId: '',
-        keyid: '',
-        hsCode: '',
-        province: '',
-        city: '',
-        area: '',
-        address: '',
-        originalName: ''
-      },
-      pageSize: 10,
-      pageNumber: 0,
-      showDetailModal: false,
-      updateDetailModal: false,
-      currentHospital: {},
-
-      // 列定义 - 为操作列添加 fixed 属性
-      columns: [
-        {label: 'dataId', width: 100},
-        {label: '原始编码', width: 100},
-        {label: '原始名称', width: 100},
-        {label: 'keyId', width: 100},
-        {label: '标准名称', width: 100},
-        {label: '省份', width: 50},
-        {label: '城市', width: 50},
-        {label: '区县', width: 50},
-        {label: '地址', width: 100},
-        {label: '状态', width: 50},
-        {label: '操作', width: 100, fixed: true}  // 添加 fixed: true
-      ],
-      resizing: false,
-      resizeColumnIndex: null,
-      startX: 0,
-      startWidth: 0
-    }
-  },
-
-  mounted() {
-    this.fetchHospitalData();
-  },
-  methods: {
-    async fetchHospitalData() {
-      this.loading = true;
-      try {
-        const params = {
-          page: this.pageNumber,
-          size: this.pageSize
-        };
-
-        // 添加搜索条件
-        if (this.searchForm.dataCode) {
-          params.dataCode = this.searchForm.dataCode;
-        }
-        if (this.searchForm.name) {
-          params.name = this.searchForm.name;
-        }
-        if (this.searchForm.dataId) {
-          params.dataId = this.searchForm.dataId;
-        }
-        if (this.searchForm.keyid) {
-          params.keyid = this.searchForm.keyid;
-        }
-        if (this.searchForm.hsCode) {
-          params.hsCode = this.searchForm.hsCode;
-        }
-        if (this.searchForm.province) {
-          params.province = this.searchForm.province;
-        }
-        if (this.searchForm.city) {
-          params.city = this.searchForm.city;
-        }
-        if (this.searchForm.area) {
-          params.area = this.searchForm.area;
-        }
-        if (this.searchForm.address) {
-          params.address = this.searchForm.address;
-        }
-        if (this.searchForm.originalName) {
-          params.originalName = this.searchForm.originalName;
-        }
-
-        const response = await axios.get('/api/mainData/getHospitalData', {
-          params: params
-        });
-
-        this.hospitalData = response.data.data;
-
-      } catch (error) {
-        console.error('获取医院数据失败:', error);
-        this.$message.error('获取医院数据失败');
-      } finally {
-        this.loading = false;
-      }
-    },
-    handleSearch() {
-      this.pageNumber = 0;
-      this.fetchHospitalData();
-    },
-    resetSearch() {
-      this.searchForm = {
-        dataCode: '',
-        name: '',
-        dataId: '',
-        keyid: '',
-        hsCode: '',
-        province: '',
-        city: '',
-        area: '',
-        address: '',
-        originalName: ''
-      };
-      this.pageNumber = 0;
-      this.fetchHospitalData();
-    },
-    prevPage() {
-      if (this.pageNumber > 0) {
-        this.pageNumber--;
-        this.fetchHospitalData();
-      }
-    },
-    nextPage() {
-      if (this.pageNumber < this.hospitalData.totalPages - 1) {
-        this.pageNumber++;
-        this.fetchHospitalData();
-      }
-    },
-    handlePageSizeChange() {
-      this.pageNumber = 0;
-      this.fetchHospitalData();
-    },
-
-    // 详情查看
-    showDetail(hospital) {
-      this.currentHospital = hospital;
-      this.showDetailModal = true;
-    },
-
-    closeDetailModal() {
-      this.showDetailModal = false;
-      this.currentHospital = {};
-    },
-
-    // 更新查看
-    updateDetail(hospital) {
-      this.currentHospital = hospital;
-      this.updateDetailModal = true;
-    },
-
-    closeUpdateModal() {
-      this.updateDetailModal = false;
-      this.currentHospital = {};
-    },
-
-    // 列宽调整方法
-    startResize(e, index) {
-      this.resizing = true;
-      this.resizeColumnIndex = index;
-      this.startX = e.clientX;
-      this.startWidth = this.columns[index].width;
-
-      document.addEventListener('mousemove', this.handleResize);
-      document.addEventListener('mouseup', this.stopResize);
-
-      e.preventDefault();
-    },
-    handleResize(e) {
-      if (this.resizing) {
-        const dx = e.clientX - this.startX;
-        const newWidth = this.startWidth + dx;
-
-        if (newWidth > 50 && newWidth < 500) { // 最小宽度限制
-          this.columns[this.resizeColumnIndex].width = newWidth;
-        }
-      }
-    },
-    stopResize() {
-      this.resizing = false;
-      document.removeEventListener('mousemove', this.handleResize);
-      document.removeEventListener('mouseup', this.stopResize);
-    }
-  }
-}
-</script>
-
-<style scoped>
-
-.hospital-data-view {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  max-width: min(1250px, 95vw);
-  padding: 12px;
-  box-sizing: border-box;
-  background: white;
-  font-size: 12px;
-  margin: 0 auto;
-}
-
-/* 2K屏幕优化 */
-@media (min-width: 2000px) and (max-width: 2600px) {
-  .hospital-data-view {
-    max-width: min(2200px, 96vw);
-  }
-}
-
-/* 超宽屏幕 */
-@media (min-width: 2600px) {
-  .hospital-data-view {
-    max-width: min(2400px, 95vw);
-  }
-}
-
-
-
-
-.search-container {
-  flex-shrink: 0;
-  margin-bottom: 8px;
-  padding: 12px;
-  background: #f5f7fa;
-  border-radius: 3px;
-}
-
-.search-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.form-item {
-  display: flex;
-  align-items: center;
-}
-
-.form-item label {
-  margin-right: 4px;
-  font-weight: bold;
-  white-space: nowrap;
-  font-size: 12px;
-}
-
-.form-item input {
-  padding: 5px 8px;
-  border: 1px solid #dcdfe6;
-  border-radius: 3px;
-  min-width: 120px;
-  font-size: 12px;
-}
-
-.form-actions {
-  display: flex;
-  gap: 8px;
-  margin-left: auto;
-}
-
-button {
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  border: none;
-  font-size: 12px;
-}
-
-.search-btn {
-  background: #409eff;
-  color: white;
-}
-
-.search-btn:hover {
-  background: #66b1ff;
-}
-
-.reset-btn {
-  background: #f5f7fa;
-  border: 1px solid #dcdfe6;
-}
-
-.reset-btn:hover {
-  background: #e6e9ed;
-}
-
-.detail-btn {
-  background: #67c23a;
-  color: white;
-  padding: 4px 8px;
-}
-
-.detail-btn:hover {
-  background: #85ce61;
-}
-
-.update-btn {
-  background: #3073d7;
-  color: white;
-  padding: 4px 8px;
-}
-
-.update-btn:hover {
-  background: #3073d7;
-}
-
-.data-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.table-wrapper {
-  flex: 1;
-  overflow: auto;
-  border: 1px solid #ebeef5;
-  border-radius: 3px;
-  position: relative;
-}
-
-.hospital-table {
-  width: 100%;
-  height: 80%;
-  border-collapse: collapse;
-  font-size: 12px;
-  table-layout: fixed;
-}
-
-.hospital-table th,
-.hospital-table td {
-  border: 1px solid #ebeef5;
-  padding: 6px 8px;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.hospital-table th {
-  background-color: #f5f7fa;
-  font-weight: bold;
-  position: sticky;
-  top: 0;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-/* 固定列样式 */
-.fixed-column {
-  position: sticky;
-  right: 0;
-  background-color: #f5f7fa;
-  z-index: 10;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.hospital-table tr:nth-child(even) .fixed-column {
-  background-color: #fafafa;
-}
-
-.hospital-table tr:hover .fixed-column {
-  background-color: #f5f7fa;
-}
-
-.hospital-table tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-.hospital-table tr:hover {
-  background-color: #f5f7fa;
-}
-
-.status-active {
-  color: #78a2cc;
-  font-weight: bold;
-}
-
-.status-uninactive {
-  color: #9478cc;
-  font-weight: bold;
-}
-
-.status-inactive {
-  color: #f56c6c;
-  font-weight: bold;
-}
-
-.status-repeat {
-  color: rgba(228, 109, 186, 0.5);
-  font-weight: bold;
-}
-
-.status-invalid {
-  color: #d77030;
-  font-weight: bold;
-}
-
-.no-data {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  color: #909399;
-  font-size: 12px;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 12px;
-  gap: 8px;
-  padding: 6px;
-  background: #f5f7fa;
-  border-radius: 3px;
-}
-
-.page-btn {
-  padding: 4px 8px;
-  background: #ffffff;
-  border: 1px solid #dcdfe6;
-  cursor: pointer;
-  border-radius: 3px;
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page-info {
-  font-size: 12px;
-  color: #606266;
-}
-
-.pagination select {
-  padding: 4px;
-  border-radius: 3px;
-  border: 1px solid #dcdfe6;
-  background: white;
-  font-size: 12px;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-container {
-  background: white;
-  border-radius: 6px;
-  width: 400px;
-  max-width: 80%;
-  max-height: 60vh;
-  overflow-y: auto;
-  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-header {
-  padding: 10px 12px;
-  border-bottom: 1px solid #ebeef5;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: 12px;
-  color: #303133;
-  font-weight: bold;
-}
-
-.close-btn {
-  font-size: 12px;
-  color: #909399;
-  cursor: pointer;
-}
-
-.close-btn:hover {
-  color: #606266;
-}
-
-.modal-body {
-  padding: 12px;
-  flex: 1;
-}
-
-.detail-row {
-  display: flex;
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-.detail-row label {
-  font-weight: bold;
-  min-width: 70px;
-  color: #606266;
-  font-size: 12px;
-}
-
-.detail-row span {
-  flex: 1;
-  word-break: break-word;
-  font-size: 12px;
-}
-
-.modal-footer {
-  padding: 8px 12px;
-  border-top: 1px solid #ebeef5;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.modal-close-btn {
-  padding: 5px 10px;
-  background: #409eff;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.modal-close-btn:hover {
-  background: #66b1ff;
-}
-
-.th-content {
-  position: relative;
-  padding-right: 10px;
-}
-
-.resize-handle {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  cursor: col-resize;
-  background-color: transparent;
-}
-
-.resize-handle:hover {
-  background-color: #409eff;
-}
-
-.input-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.input-wrapper input {
-  border: 1px solid #dcdfe6;
-  border-radius: 3px;
-  min-width: 120px;
-  padding: 5px 20px 5px 8px;
-  font-size: 11px;
-}
-
-.clear-icon {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #c0c4cc;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.clear-icon:hover {
-  color: #909399;
-}
-
-.hospital-form {
-  padding: 12px;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.form-column {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-label {
-  margin-bottom: 4px;
-  font-weight: 500;
-  color: #555;
-  font-size: 12px;
-}
-
-.form-input {
-  padding: 6px 8px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  font-size: 12px;
-  transition: border-color 0.3s;
-  background-color: #fff;
-}
-
-.form-input:focus {
-  border-color: #409eff;
-  outline: none;
-  box-shadow: 0 0 0 1px rgba(64, 158, 255, 0.2);
-}
-
-.form-input[readonly] {
-  background-color: #f5f5f5;
-  color: #999;
-  cursor: not-allowed;
-}
-
-.btn {
-  padding: 5px 10px;
-  border-radius: 3px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.3s;
-  border: 1px solid transparent;
-}
-
-.btn-primary {
-  background-color: #409eff;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #66b1ff;
-}
-
-.btn-secondary {
-  background-color: #fff;
-  color: #606266;
-  border-color: #dcdfe6;
-}
-
-.btn-secondary:hover {
-  color: #409eff;
-  border-color: #c6e2ff;
-  background-color: #ecf5ff;
-}
-</style>
+<template>  <div class="hospital-data-view">    <!-- 搜索区域 -->    <div class="search-container">      <div class="search-form">        <div class="form-item">          <label>原始编码：</label>          <div class="input-wrapper">            <input                v-model="searchForm.dataCode"                placeholder="请输入原始编码"                @keyup.enter="handleSearch"            >            <i v-if="searchForm.dataCode"               class="fas fa-times-circle clear-icon"               @click="searchForm.dataCode = ''; handleSearch()">              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />            </i>          </div>        </div>        <div class="form-item">          <label>原始名称：</label>          <div class="input-wrapper">            <input                v-model="searchForm.originalName"                placeholder="请输入原始名称"                @keyup.enter="handleSearch"            >            <i v-if="searchForm.originalName"               class="fas fa-times-circle clear-icon"               @click="searchForm.originalName = ''; handleSearch()">              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />            </i>          </div>        </div>        <div class="form-item">          <label>DataId：</label>          <div class="input-wrapper">            <input                v-model="searchForm.dataId"                placeholder="请输入DataId"                @keyup.enter="handleSearch"            >            <i v-if="searchForm.dataId"               class="fas fa-times-circle clear-icon"               @click="searchForm.dataId = ''; handleSearch()">              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />            </i>          </div>        </div>        <div class="form-item">          <label>KeyId：</label>          <div class="input-wrapper">            <input                v-model="searchForm.keyid"                placeholder="请输入KeyId"                @keyup.enter="handleSearch"            >            <i v-if="searchForm.keyid"               class="fas fa-times-circle clear-icon"               @click="searchForm.keyid = ''; handleSearch()">              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />            </i>          </div>        </div>        <div class="form-item">          <label>豪森编码：</label>          <div class="input-wrapper">            <input                v-model="searchForm.hsCode"                placeholder="请输入清洗后的编码"                @keyup.enter="handleSearch"            >            <i v-if="searchForm.hsCode"               class="fas fa-times-circle clear-icon"               @click="searchForm.hsCode = ''; handleSearch()">              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />            </i>          </div>        </div>        <div class="form-item">          <label>省份：</label>          <div class="input-wrapper">            <input                v-model="searchForm.province"                placeholder="请输入省份"                @keyup.enter="handleSearch"            >            <i v-if="searchForm.province"               class="fas fa-times-circle clear-icon"               @click="searchForm.province = ''; handleSearch()">              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />            </i>          </div>        </div>        <div class="form-item">          <label>市：</label>          <div class="input-wrapper">            <input                v-model="searchForm.city"                placeholder="请输入市"                @keyup.enter="handleSearch"            >            <i v-if="searchForm.city"               class="fas fa-times-circle clear-icon"               @click="searchForm.city = ''; handleSearch()">              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />            </i>          </div>        </div>        <div class="form-item">          <label>区县：</label>          <div class="input-wrapper">            <input                v-model="searchForm.area"                placeholder="请输入区县"                @keyup.enter="handleSearch"            >            <i v-if="searchForm.area"               class="fas fa-times-circle clear-icon"               @click="searchForm.area = ''; handleSearch()">              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />            </i>          </div>        </div>        <div class="form-item">          <label>医院名称：</label>          <div class="input-wrapper">            <input                v-model="searchForm.name"                placeholder="请输入医院名称"                @keyup.enter="handleSearch"            >            <i v-if="searchForm.name"               class="fas fa-times-circle clear-icon"               @click="searchForm.name = ''; handleSearch()">              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />            </i>          </div>        </div>        <div class="form-item">          <label>医院地址：</label>          <div class="input-wrapper">            <input                v-model="searchForm.address"                placeholder="请输入医院地址"                @keyup.enter="handleSearch"            >            <i v-if="searchForm.address"               class="fas fa-times-circle clear-icon"               @click="searchForm.address = ''; handleSearch()">              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />            </i>          </div>        </div>        <div class="form-actions">          <button class="search-btn" @click="handleSearch">查询</button>          <button class="reset-btn" @click="resetSearch">重置</button>          <button              class="export-btn"              @click="toExcel"              :disabled="exporting"              :style="{ opacity: exporting ? 0.7 : 1 }"          >            {{ exporting ? '导出中...' : '导出' }}          </button>        </div>      </div>    </div>    <!-- 数据表格区域 -->    <div class="data-container">      <div class="table-wrapper">        <table class="hospital-table" v-if="hospitalData.content && hospitalData.content.length > 0">          <thead>          <tr>            <th v-for="(column, index) in columns" :key="index"                :style="{ width: column.width + 'px' }"                :class="{ 'fixed-column': column.fixed }"                @mousedown="startResize($event, index)">              <div class="th-content">                {{ column.label }}                <div class="resize-handle" @mousedown.stop="startResize($event, index)"></div>              </div>            </th>          </tr>          </thead>          <tbody>          <tr v-for="hospital in hospitalData.content" :key="hospital.dataId">            <td v-for="(column, index) in columns" :key="index"                :style="{ width: column.width + 'px' }"                :class="{ 'fixed-column': column.fixed }">              <template v-if="index === 0">  <span      class="copy-btn"      @click="copyText(hospital.dataId, $event)"      :class="{ 'disabled-copy': !hospital.dataId }"  >    {{ hospital.dataId  }}  </span>              </template>              <template v-else-if="index === 1">  <span      class="copy-btn"      @click="copyText(hospital.dataCode, $event)"      :class="{ 'disabled-copy': !hospital.dataCode }"  >    {{ hospital.dataCode }}  </span>              </template>              <template v-else-if="index === 2">  <span      class="copy-btn"      @click="copyText(hospital.originalName, $event)"      :class="{ 'disabled-copy': !hospital.originalName }"  >    {{ hospital.originalName}}  </span>              </template>              <template v-else-if="index === 3">  <span      class="copy-btn"      @click="copyText(hospital.keyid, $event)"      :class="{ 'disabled-copy': !hospital.keyid }"  >    {{ hospital.keyid }}  </span>              </template>              <template v-else-if="index === 4">  <span      class="copy-btn"      @click="copyText(hospital.name, $event)"      :class="{ 'disabled-copy': !hospital.name }"  >    {{ hospital.name  }}  </span>              </template>              <template v-else-if="index === 5">{{ hospital.province }}</template>              <template v-else-if="index === 6">{{ hospital.city }}</template>              <template v-else-if="index === 7">{{ hospital.area }}</template>              <template v-else-if="index === 8">{{ hospital.address }}</template>              <template v-else-if="index === 9">                  <span :class="{                    'status-active': hospital.status === '1',                    'status-uninactive': hospital.status === '3',                    'status-inactive': hospital.status === '4',                    'status-invalid': hospital.status === '2',                    'status-repeat': hospital.status === '5'                  }">                    {{                      hospital.status === '1' ? '清洗成功' :                          hospital.status === '3' ? '无法清洗' :                              hospital.status === '4' ? '禁用客户' :                                  hospital.status === '2' ? '数据作废' :                                      hospital.status === '5' ? '数据重复' : '其他状态'                    }}                  </span>              </template>              <template v-else-if="index === 10">                <button class="detail-btn" @click="showDetail(hospital)">详情</button> &nbsp;                <button                    class="update-btn"                    :class="{ 'disabled-btn': !hospital.hsCode }"                    :disabled="!hospital.hsCode"                    @click="hospital.hsCode && updateDetail(hospital)"                >                  更新                </button>              </template>            </td>          </tr>          </tbody>        </table>        <div v-else class="no-data">          {{ loading ? '数据加载中...' : '没有找到匹配的医院数据' }}        </div>        <div class="pagination" v-if="hospitalData.content && hospitalData.content.length > 0">          <button :disabled="hospitalData.first" @click="prevPage" class="page-btn">上一页</button>          <span class="page-info">            第 {{ hospitalData.number + 1 }} 页 / 共 {{ hospitalData.totalPages }} 页 (共 {{ hospitalData.totalElements }} 条)          </span>          <button :disabled="hospitalData.last" @click="nextPage" class="page-btn">下一页</button>          <select v-model="pageSize" @change="handlePageSizeChange">            <option value="10">每页10条</option>            <option value="20">每页20条</option>            <option value="50">每页50条</option>          </select>        </div>      </div>    </div>    <!-- 详情弹窗 -->    <div v-if="showDetailModal" class="modal-overlay" @click.self="closeDetailModal">      <div class="modal-container">        <div class="modal-header">          <h3>医院详情</h3>          <span class="close-btn" @click="closeDetailModal">&times;</span>        </div>        <div class="modal-body">          <div class="detail-row">            <label>批次编号：</label>            <span class="copy-btn" @click="copyText(currentHospital.batchCode, $event)">              {{ currentHospital.batchCode }}            </span>          </div>          <div class="detail-row">            <label>dataId：</label>            <span class="copy-btn" @click="copyText(currentHospital.dataId, $event)">              {{ currentHospital.dataId }}            </span>          </div>          <div class="detail-row">            <label>原始编码：</label>            <span class="copy-btn" @click="copyText(currentHospital.dataCode, $event)">              {{ currentHospital.dataCode }}            </span>          </div>          <div class="detail-row">            <label>原始名称：</label>            <span class="copy-btn" @click="copyText(currentHospital.originalName, $event)">              {{ currentHospital.originalName }}            </span>          </div>          <div class="detail-row">            <label>原始省份：</label>            <span>{{ currentHospital.originalProvince }}</span>          </div>          <div class="detail-row">            <label>经销商：</label>            <span>{{ currentHospital.companyName }}</span>          </div>          <div class="detail-row">            <label>keyId：</label>            <span class="copy-btn" @click="copyText(currentHospital.keyid, $event)">              {{ currentHospital.keyid }}            </span>          </div>          <div class="detail-row">            <label>数据类型：</label>            <span v-if="currentHospital.dataType === '1'">存量</span>            <span v-else-if="currentHospital.dataType === '2'">增量</span>            <span v-else>未知</span>          </div>          <div class="detail-row">            <label>豪森清洗后编码：</label>            <span class="copy-btn" @click="copyText(currentHospital.hsCode, $event)">              {{ currentHospital.hsCode }}            </span>          </div>          <div class="detail-row">            <label>标准名称：</label>            <span class="copy-btn" @click="copyText(currentHospital.name, $event)">              {{ currentHospital.name }}            </span>          </div>          <div class="detail-row">            <label>历史名称：</label>            <span>{{ currentHospital.nameHistory }}</span>          </div>          <div class="detail-row">            <label>省份：</label>            <span>{{ currentHospital.province }}</span>          </div>          <div class="detail-row">            <label>省份ID：</label>            <span>{{ currentHospital.provinceId }}</span>          </div>          <div class="detail-row">            <label>市：</label>            <span>{{ currentHospital.city }}</span>          </div>          <div class="detail-row">            <label>市ID：</label>            <span>{{ currentHospital.cityId }}</span>          </div>          <div class="detail-row">            <label>区县：</label>            <span>{{ currentHospital.area }}</span>          </div>          <div class="detail-row">            <label>区县ID：</label>            <span>{{ currentHospital.areaId }}</span>          </div>          <div class="detail-row">            <label>是否市区：</label>            <span>{{ currentHospital.isCity }}</span>          </div>          <div class="detail-row">            <label>地址：</label>            <span>{{ currentHospital.address }}</span>          </div>          <div class="detail-row">            <label>统一社会信用代码：</label>            <span>{{ currentHospital.usci }}</span>          </div>          <div class="detail-row">            <label>等级：</label>            <span>{{ currentHospital.level }}</span>          </div>          <div class="detail-row">            <label>等次：</label>            <span>{{ currentHospital.grade }}</span>          </div>          <div class="detail-row">            <label>所有制：</label>            <span>{{ currentHospital.publicflag }}</span>          </div>          <div class="detail-row">            <label>豪森医院类型：</label>            <span>{{ currentHospital.hosClass }}</span>          </div>          <div class="detail-row">            <label>豪森医院大类：</label>            <span>{{ currentHospital.hosBigClass }}</span>          </div>          <div class="detail-row">            <label>一级属性：</label>            <span>{{ currentHospital.class1 }}</span>          </div>          <div class="detail-row">            <label>二级属性：</label>            <span>{{ currentHospital.class2 }}</span>          </div>          <div class="detail-row">            <label>三级属性：</label>            <span>{{ currentHospital.class3 }}</span>          </div>          <div class="detail-row">            <label>四级属性：</label>            <span>{{ currentHospital.class4 }}</span>          </div>          <div class="detail-row">            <label>五级属性：</label>            <span>{{ currentHospital.class5 }}</span>          </div>          <div class="detail-row">            <label>是否军队医院：</label>            <span v-if="currentHospital.militaryHos === '1' ">是</span>            <span v-else-if="currentHospital.militaryHos === '0' ">否</span>            <span v-else>未知</span>          </div>          <div class="detail-row">            <label>是否互联网医院：</label>            <span>{{ currentHospital.internetHos }}</span>          </div>          <div class="detail-row">            <label>医联体/医共体：</label>            <span>{{ currentHospital.medUnionCommunity }}</span>          </div>          <div class="detail-row">            <label>医保编码：</label>            <span>{{ currentHospital.ybcode }}</span>          </div>          <div class="detail-row">            <label>登记号：</label>            <span>{{ currentHospital.regcode }}</span>          </div>          <div class="detail-row">            <label>许可证有效期：</label>            <span>{{ currentHospital.validity }}</span>          </div>          <div class="detail-row">            <label>是否门诊统筹：</label>            <span>{{ currentHospital.menzhen }}</span>          </div>          <div class="detail-row">            <label>床位数目：</label>            <span>{{ currentHospital.bedCount }}</span>          </div>          <div class="detail-row">            <label>医护人数：</label>            <span>{{ currentHospital.medicalCount }}</span>          </div>          <div class="detail-row">            <label>诊疗科目：</label>            <span>{{ currentHospital.subjects }}</span>          </div>          <div class="detail-row">            <label>法人：</label>            <span>{{ currentHospital.legalperson }}</span>          </div>          <div class="detail-row">            <label>是否新增：</label>            <span>{{ currentHospital.isInsert }}</span>          </div>          <div class="detail-row">            <label>豪森重复数据ID：</label>            <span>{{ currentHospital.repeatId }}</span>          </div>          <div class="detail-row">            <label>上级单位豪森编码：</label>            <span>{{ currentHospital.generalBranch }}</span>          </div>          <div class="detail-row">            <label>上级单位KeyId：</label>            <span>{{ currentHospital.generalBranchKid }}</span>          </div>          <div class="detail-row">            <label>上级单位名称：</label>            <span>{{ currentHospital.generalBranchName }}</span>          </div>          <div class="detail-row">            <label>互联网医院类别：</label>            <span>{{ currentHospital.internetHosclassify }}</span>          </div>          <div class="detail-row">            <label>经纬度：</label>            <span>{{ currentHospital.field1 }}</span>          </div>          <div class="detail-row">            <label>添加日期：</label>            <span>{{ currentHospital.addtime }}</span>          </div>          <div class="detail-row">            <label>更新日期：</label>            <span>{{ currentHospital.updatetime }}</span>          </div>          <div class="detail-row">            <label>状态：</label>            <span :class="{              'status-active': currentHospital.status === '1',              'status-invalid': currentHospital.status === '2',              'status-uninactive': currentHospital.status === '3',              'status-inactive': currentHospital.status === '4',              'status-repeat': currentHospital.status === '5'            }">              {{                currentHospital.status === '1' ? '清洗成功' :                    currentHospital.status === '2' ? '数据作废' :                        currentHospital.status === '3' ? '无法清洗' :                            currentHospital.status === '4' ? '禁用客户' :                                currentHospital.status === '5' ? '数据重复':'其他状态'              }}            </span>          </div>        </div>        <div class="modal-footer">          <button class="modal-close-btn" @click="closeDetailModal">关闭</button>        </div>      </div>    </div>    <!-- 更新弹窗 -->    <div v-if="updateDetailModal" class="modal-overlay" @click.self="closeUpdateModal">      <div class="modal-container">        <div class="modal-header">          <h3>数据更新</h3>          <span class="close-btn" @click="closeUpdateModal">&times;</span>        </div>        <div class="modal-body">          <form @submit.prevent="saveChanges" class="hospital-form">            <div class="form-grid">              <!-- 第一列 -->              <div class="form-column">                <div class="form-group">                  <label class="form-label">批次编号：</label>                  <input v-model="currentUpdateHospital.batchCode" readonly class="form-input">                </div>                <div class="form-group">                  <label class="form-label">dataId：</label>                  <input v-model="currentUpdateHospital.dataId" readonly class="form-input">                </div>                <div class="form-group">                  <label class="form-label">数据类型：</label>                  <input                      :value="currentUpdateHospital.dataType === '1' ? '存量' : currentUpdateHospital.dataType === '2' ? '增量' : '未知'"                      readonly                      class="form-input"                  >                </div>                <div class="form-group">                  <label class="form-label">原始编码：</label>                  <input v-model="currentUpdateHospital.dataCode" readonly class="form-input">                </div>                <div class="form-group">                  <label class="form-label">原始名称：</label>                  <input v-model="currentUpdateHospital.originalName" readonly class="form-input">                </div>                <div class="form-group">                  <label class="form-label">原始省份：</label>                  <input v-model="currentUpdateHospital.originalProvince" readonly class="form-input">                </div>                <div class="form-group">                  <label class="form-label">经销商：</label>                  <input v-model="currentUpdateHospital.companyName" readonly class="form-input">                </div>              </div>              <!-- 第二列 -->              <div class="form-column">                <div class="form-group">                  <label class="form-label">机构类型：</label>                  <select v-model="currentUpdateHospital.orgType" class="form-input">                    <option value="医院">医院</option>                    <option value="药店">药店</option>                    <option value="商业">商业</option>                  </select>                </div>                <div class="form-group">                  <label class="form-label">keyId：</label>                  <input v-model="currentUpdateHospital.keyid" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">标准名称：</label>                  <input v-model="currentUpdateHospital.name" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">历史名称：</label>                  <input v-model="currentUpdateHospital.nameHistory" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">省：</label>                  <input v-model="currentUpdateHospital.province" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">省ID：</label>                  <input v-model="currentUpdateHospital.provinceId" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">市：</label>                  <input v-model="currentUpdateHospital.city" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">市ID：</label>                  <input v-model="currentUpdateHospital.cityId" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">区县：</label>                  <input v-model="currentUpdateHospital.area" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">区县ID：</label>                  <input v-model="currentUpdateHospital.areaId" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">地址：</label>                  <input v-model="currentUpdateHospital.address" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">等级：</label>                  <select v-model="currentUpdateHospital.level" class="form-input">                    <option value="未定级">未定级</option>                    <option value="一级">一级</option>                    <option value="二级">二级</option>                    <option value="三级">三级</option>                  </select>                </div>                <div class="form-group">                  <label class="form-label">等次：</label>                  <select v-model="currentUpdateHospital.grade" class="form-input">                    <option value="未定等">未定等</option>                    <option value="甲等">甲等</option>                    <option value="乙等">乙等</option>                    <option value="丙等">丙等</option>                  </select>                </div>                <div class="form-group">                  <label class="form-label">所有制：</label>                  <select v-model="currentUpdateHospital.publicflag" class="form-input">                    <option value="公立">公立</option>                    <option value="民营">民营</option>                  </select>                </div>                <div class="form-group">                  <label class="form-label">类别：</label>                  <input v-model="currentUpdateHospital.class5" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">总分院kid：</label>                  <input v-model="currentUpdateHospital.generalBranchKid" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">总分院名称：</label>                  <input v-model="currentUpdateHospital.generalBranchName" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">是否军队医院：</label>                  <select v-model="currentUpdateHospital.militaryHos" class="form-input">                    <option value="1">是</option>                    <option value="0">否</option>                  </select>                </div>                <div class="form-group">                  <label class="form-label">登记号：</label>                  <input v-model="currentUpdateHospital.regcode" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">有效期：</label>                  <input v-model="currentUpdateHospital.validity" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">诊疗科室：</label>                  <input v-model="currentUpdateHospital.subjects" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">法人代表：</label>                  <input v-model="currentUpdateHospital.legalperson" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">统一社会信用代码：</label>                  <input v-model="currentUpdateHospital.usci" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">经营方式：</label>                  <select v-model="currentUpdateHospital.operation" class="form-input">                    <option value="零售">零售</option>                    <option value="批发">批发</option>                    <option value="连锁">连锁</option>                  </select>                </div>                <div class="form-group">                  <label class="form-label">经营范围：</label>                  <input v-model="currentUpdateHospital.scope" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">总分店kid：</label>                  <input v-model="currentUpdateHospital.mainBranchKid" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">总分店名称：</label>                  <input v-model="currentUpdateHospital.mainBranchName" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">成立日期：</label>                  <input v-model="currentUpdateHospital.createDate" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">注册资金：</label>                  <input v-model="currentUpdateHospital.registCapi" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">企业类型：</label>                  <input v-model="currentUpdateHospital.econKind" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">登记状态：</label>                  <input v-model="currentUpdateHospital.signStatus" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">所属行业：</label>                  <input v-model="currentUpdateHospital.industry" class="form-input">                </div>                <div class="form-group">                  <label class="form-label">登记机关：</label>                  <input v-model="currentUpdateHospital.belong" class="form-input">                </div>              </div>            </div>          </form>        </div>        <div class="modal-footer">          <button @click="resetForm" class="btn btn-primary">重置匹配</button>          &nbsp;&nbsp;          <button              @click="findDaKuData"              class="btn btn-primary"              :class="{ 'disabled-btn': isFinding }"              :disabled="isFinding"          >            <span v-if="isFinding">              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>              匹配中...            </span>            <span v-else>匹配大库</span>          </button>          &nbsp;&nbsp;          <button              @click="saveChanges"              class="btn btn-primary"              :class="{ 'disabled-btn': isSaving }"              :disabled="isSaving"          >            <span v-if="isSaving">              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>              推送中...            </span>            <span v-else>提交推送</span>          </button>          &nbsp;&nbsp;          <button type="button" class="btn btn-secondary" @click="closeUpdateModal">取消</button>        </div>      </div>    </div>    <!-- 信息提示匹配弹窗 -->    <div v-if="showResultModal" class="modal-overlay" @click.self="closeModal">      <div class="modal-content" :class="{        'success': uploadResult.type === 'success',        'error': uploadResult.type === 'error',        'confirm': uploadResult.type === 'confirm'      }">        <div class="modal-header">          <h3>{{ uploadResult.success || '提示' }}</h3>          <button class="modal-close" @click="closeModal">&times;</button>        </div>        <div class="modal-body">          <p>{{ uploadResult.message }}</p>          <p v-if="uploadResult.details" class="result-details">{{ uploadResult.details }}</p>        </div>        <div class="modal-footer">          <template v-if="uploadResult.type === 'confirm'">            <button class="modal-btn confirm-btn" @click="closeModal">确定</button>            <button class="modal-btn cancel-btn" @click="showResultModal = false">取消</button>          </template>          <template v-else>            <button class="modal-btn" @click="closeModal">确定</button>          </template>        </div>      </div>    </div>  </div></template><script>import axios from 'axios';export default {  data() {    return {      hospitalData: {        content: [],        totalElements: 0,        totalPages: 0,        first: true,        last: false,        number: 0      },      loading: false,      searchForm: {        dataCode: '',        name: '',        dataId: '',        keyid: '',        hsCode: '',        province: '',        city: '',        area: '',        address: '',        originalName: ''      },      pageSize: 10,      pageNumber: 0,      showDetailModal: false,      updateDetailModal: false,      currentHospital: {},      matchedHospital: {},      originalHospital: {},      currentUpdateHospital: {},      showResultModal: false,      uploadResult: null,      isSaving: false,      isFinding: false,      columns: [        { label: 'dataId', width: 100 },        { label: '原始编码', width: 100 },        { label: '原始名称', width: 100 },        { label: 'keyId', width: 100 },        { label: '标准名称', width: 100 },        { label: '省份', width: 50 },        { label: '城市', width: 50 },        { label: '区县', width: 50 },        { label: '地址', width: 100 },        { label: '状态', width: 50 },        { label: '操作', width: 100, fixed: true }      ],      resizing: false,      resizeColumnIndex: null,      startX: 0,      exporting: false,      startWidth: 0    }  },  mounted() {    this.fetchHospitalData();  },  methods: {    async fetchHospitalData() {      this.loading = true;      try {        const params = {          page: this.pageNumber,          size: this.pageSize        };        // 添加搜索条件        if (this.searchForm.dataCode) params.dataCode = this.searchForm.dataCode;        if (this.searchForm.name) params.name = this.searchForm.name;        if (this.searchForm.dataId) params.dataId = this.searchForm.dataId;        if (this.searchForm.keyid) params.keyid = this.searchForm.keyid;        if (this.searchForm.hsCode) params.hsCode = this.searchForm.hsCode;        if (this.searchForm.province) params.province = this.searchForm.province;        if (this.searchForm.city) params.city = this.searchForm.city;        if (this.searchForm.area) params.area = this.searchForm.area;        if (this.searchForm.address) params.address = this.searchForm.address;        if (this.searchForm.originalName) params.originalName = this.searchForm.originalName;        const response = await axios.get('/api/mainData/getHospitalData', { params });        this.hospitalData = response.data.data;      } catch (error) {        this.uploadResult = {          success: '大库匹配结果',          message: '大库匹配失败，请检查keyid'        }        this.showResultModal = true;      } finally {        this.loading = false;      }    },    async copyText(text, e) {      try {        await navigator.clipboard.writeText(text);        const target = e.target;        const old = target.textContent;        target.textContent = '已复制';        setTimeout(() => (target.textContent = old), 400);      } catch (err) {        this.$message.error('复制失败，请手动复制');      }    },    // 导出相关方法    async toExcel() {      if (this.exporting) return;      this.exporting = true;      const params = {}      if (this.searchForm.dataCode) params.dataCode = this.searchForm.dataCode;      if (this.searchForm.name) params.name = this.searchForm.name;      if (this.searchForm.dataId) params.dataId = this.searchForm.dataId;      if (this.searchForm.keyid) params.keyid = this.searchForm.keyid;      if (this.searchForm.hsCode) params.hsCode = this.searchForm.hsCode;      if (this.searchForm.province) params.province = this.searchForm.province;      if (this.searchForm.city) params.city = this.searchForm.city;      if (this.searchForm.area) params.area = this.searchForm.area;      if (this.searchForm.address) params.address = this.searchForm.address;      if (this.searchForm.originalName) params.originalName = this.searchForm.originalName;      try {        const { data: jsonBlob } = await axios.get('/api/mainData/exportHospitalData',{ params,responseType: 'blob' }        );        const jsonText = await jsonBlob.text();        const { data: base64 } = JSON.parse(jsonText);        const byteChars = atob(base64);        const byteNums = new Uint8Array(byteChars.length);        for (let i = 0; i < byteChars.length; i++) {          byteNums[i] = byteChars.charCodeAt(i);        }        const excelBlob = new Blob([byteNums], {          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'        });        const url = URL.createObjectURL(excelBlob);        const link = document.createElement('a');        link.href = url;        link.download = `豪森医疗机构数据导出_${new Date().toLocaleDateString()}.xlsx`;        document.body.appendChild(link);        link.click();        document.body.removeChild(link);        URL.revokeObjectURL(url);      } catch (error) {        this.uploadResult = {          success: '导出结果',          message: '导出医疗机构数据失败!'        }        this.showResultModal = true;      } finally {        this.exporting = false;      }    },    handleSearch() {      this.pageNumber = 0;      this.fetchHospitalData();    },    resetSearch() {      this.searchForm = {        dataCode: '',        name: '',        dataId: '',        keyid: '',        hsCode: '',        province: '',        city: '',        area: '',        address: '',        originalName: ''      };      this.pageNumber = 0;      this.fetchHospitalData();    },    prevPage() {      if (this.pageNumber > 0) {        this.pageNumber--;        this.fetchHospitalData();      }    },    nextPage() {      if (this.pageNumber < this.hospitalData.totalPages - 1) {        this.pageNumber++;        this.fetchHospitalData();      }    },    handlePageSizeChange() {      this.pageNumber = 0;      this.fetchHospitalData();    },    showDetail(hospital) {      this.currentHospital = hospital;      this.showDetailModal = true;    },    closeDetailModal() {      this.showDetailModal = false;      this.currentHospital = {};    },    updateDetail(hospital) {      this.originalHospital = JSON.parse(JSON.stringify(hospital));      this.currentUpdateHospital = JSON.parse(JSON.stringify(hospital));      this.updateDetailModal = true;    },    async saveChanges() {      if (this.isSaving) return;      this.isSaving = true;      try {        const response = await axios.post('/api/updateData/inputOneUpdateHospitalData', this.currentUpdateHospital);        if (response.data.code === 200) {          this.uploadResult = {            success: '提交更新结果',            details: `已成功处理${response.data.data.processedCount || 0}条更新数据`          }        } else {          this.uploadResult = {            success: '提交更新结果',            message: '提交更新失败，请检查输入数据'          }        }        this.showResultModal = true;      } catch (error) {        this.uploadResult = {          success: '提交更新结果',          message: '提交更新失败，请检查输入数据'        }        this.showResultModal = true;      } finally {        this.isSaving = false;      }    },    async findDaKuData() {      if (this.isFinding) return;      this.isFinding = true;      try {        if (!this.currentUpdateHospital.keyid) {          this.uploadResult = {            success: '匹配结果',            message: '匹配失败，请先输入keyid'          }          this.showResultModal = true;          return;        }        const response = await axios.get('/api/updateData/findDaKuData', {          params: { keyid: this.currentUpdateHospital.keyid }        });        this.matchedHospital = response.data.data;        if (!this.matchedHospital) {          this.uploadResult = {            success: '匹配结果',            message: '匹配失败，请检查keyid是否正确'          }          this.showResultModal = true;          return;        }        this.updateFieldsFromMatch();      } catch (error) {        this.uploadResult = {          success: '匹配结果',          message: '匹配失败，请检查网络连接'        }        this.showResultModal = true;      } finally {        this.isFinding = false;      }    },    updateFieldsFromMatch() {      // const fieldsToUpdate = [      //   'keyid', 'name', 'nameHistory', 'province', 'provinceId',      //   'city', 'cityId', 'area', 'areaId', 'address', 'level',      //   'grade', 'publicflag', 'class5', 'regcode', 'validity',      //   'subjects', 'legalperson', 'usci'      // ];      // fieldsToUpdate.forEach(field => {      //   if (this.matchedHospital.hasOwnProperty(field)) {      //     this.currentUpdateHospital[field] = this.matchedHospital[field];      //   }      // });      // 单独一一对应数据      this.currentUpdateHospital.keyid = this.matchedHospital.keyid;      this.currentUpdateHospital.name = this.matchedHospital.name;      this.currentUpdateHospital.nameHistory = this.matchedHospital.nameHistory;      this.currentUpdateHospital.province = this.matchedHospital.province;      this.currentUpdateHospital.provinceId = this.matchedHospital.provinceid;      this.currentUpdateHospital.city = this.matchedHospital.city;      this.currentUpdateHospital.cityId = this.matchedHospital.cityid;      this.currentUpdateHospital.area = this.matchedHospital.area;      this.currentUpdateHospital.areaId = this.matchedHospital.areaid;      this.currentUpdateHospital.address = this.matchedHospital.kuAddress;      this.currentUpdateHospital.kuAddress = this.matchedHospital.kuAddress;      this.currentUpdateHospital.level = this.matchedHospital.level;      this.currentUpdateHospital.grade = this.matchedHospital.grade;      this.currentUpdateHospital.publicflag = this.matchedHospital.publicflag;      this.currentUpdateHospital.class5 = this.matchedHospital.classify;      this.currentUpdateHospital.generalBranchKid = this.matchedHospital.generalBranchKid;      this.currentUpdateHospital.generalBranchName = this.matchedHospital.generalBranchName;      this.currentUpdateHospital.militaryHos = this.matchedHospital.militaryHos;      this.currentUpdateHospital.regcode = this.matchedHospital.regcode;      this.currentUpdateHospital.validity = this.matchedHospital.validity;      this.currentUpdateHospital.subjects = this.matchedHospital.subjects;      this.currentUpdateHospital.legalperson = this.matchedHospital.legalperson;      this.currentUpdateHospital.usci = this.matchedHospital.usci;      // 药店      this.currentUpdateHospital.operation = this.matchedHospital.operation;      this.currentUpdateHospital.scope = this.matchedHospital.scope;      this.currentUpdateHospital.mainBranchKid = this.matchedHospital.mainBranchKid;      this.currentUpdateHospital.mainBranchName = this.matchedHospital.mainBranchName;      this.currentUpdateHospital.createDate = this.matchedHospital.createDate;      this.currentUpdateHospital.registCapi = this.matchedHospital.registCapi;      this.currentUpdateHospital.econKind = this.matchedHospital.econKind;      this.currentUpdateHospital.signStatus = this.matchedHospital.signStatus;      this.currentUpdateHospital.industry = this.matchedHospital.industry;      this.currentUpdateHospital.belong = this.matchedHospital.belong;    },    resetForm() {      if (!this.originalHospital) {        this.uploadResult = {          success: '重置结果',          message: '没有可重置的原始数据'        };        this.showResultModal = true;        return;      }      this.uploadResult = {        success: '确认重置',        message: '确定要重置所有修改吗？重置后将恢复为原始数据。',        type: 'confirm',        onConfirm: () => this.executeReset()      };      this.showResultModal = true;    },    executeReset() {      this.currentUpdateHospital = JSON.parse(JSON.stringify(this.originalHospital));      this.matchedHospital = null;      this.uploadResult = {        success: '重置结果',        message: '表单已重置为原始数据',        type: 'success'      };      this.showResultModal = true;    },    closeModal() {      if (this.uploadResult && this.uploadResult.type === 'confirm' && this.uploadResult.onConfirm) {        this.uploadResult.onConfirm();      }      this.showResultModal = false;    },    closeUpdateModal() {      this.updateDetailModal = false;      this.currentHospital = {};      this.originalHospital = {};      this.matchedHospital = {};      this.currentUpdateHospital = {};    },    startResize(e, index) {      this.resizing = true;      this.resizeColumnIndex = index;      this.startX = e.clientX;      this.startWidth = this.columns[index].width;      document.addEventListener('mousemove', this.handleResize);      document.addEventListener('mouseup', this.stopResize);      e.preventDefault();    },    handleResize(e) {      if (this.resizing) {        const dx = e.clientX - this.startX;        const newWidth = this.startWidth + dx;        if (newWidth > 50 && newWidth < 500) {          this.columns[this.resizeColumnIndex].width = newWidth;        }      }    },    stopResize() {      this.resizing = false;      document.removeEventListener('mousemove', this.handleResize);      document.removeEventListener('mouseup', this.stopResize);    }  }}</script><style scoped>/* ==================== 主容器 ==================== */.hospital-data-view {  display: flex;  flex-direction: column;  height: 100%;  width: 100%;  max-width: min(1250px, 95vw);  padding: 12px;  box-sizing: border-box;  background: white;  font-size: 12px;  margin: 0 auto;}/* ==================== 响应式调整 ==================== */@media (min-width: 2000px) and (max-width: 2600px) {  .hospital-data-view {    max-width: min(1860px, 90vw);  }}@media (min-width: 2600px) {  .hospital-data-view {    max-width: min(2400px, 95vw);  }}/* ==================== 搜索区域 ==================== */.search-container {  flex-shrink: 0;  margin-bottom: 8px;  padding: 12px;  background: #f5f7fa;  border-radius: 3px;}.search-form {  display: flex;  flex-wrap: wrap;  gap: 8px;  align-items: center;}.form-item {  display: flex;  align-items: center;}.form-item label {  margin-right: 4px;  font-weight: bold;  white-space: nowrap;  font-size: 12px;}.form-item input {  padding: 5px 8px;  border: 1px solid #dcdfe6;  border-radius: 3px;  min-width: 120px;  font-size: 12px;}.input-wrapper {  position: relative;  display: inline-block;}.input-wrapper input {  border: 1px solid #dcdfe6;  border-radius: 3px;  min-width: 120px;  padding: 5px 20px 5px 8px;  font-size: 11px;}.clear-icon {  position: absolute;  right: 8px;  top: 50%;  transform: translateY(-50%);  color: #c0c4cc;  cursor: pointer;  font-size: 12px;}.clear-icon:hover {  color: #909399;}/* ==================== 搜索按钮 ==================== */.form-actions {  display: flex;  gap: 8px;  margin-left: auto;}button {  padding: 5px 10px;  border-radius: 3px;  cursor: pointer;  border: none;  font-size: 12px;}.search-btn {  background: #409eff;  color: white;}.search-btn:hover {  background: #66b1ff;}.reset-btn {  background: #f5f7fa;  border: 1px solid #dcdfe6;}.reset-btn:hover {  background: #e6e9ed;}/* ==================== 数据表格区域 ==================== */.data-container {  flex: 1;  display: flex;  flex-direction: column;  min-height: 0;  overflow: hidden;}.table-wrapper {  flex: 1;  overflow: auto;  border: 1px solid #ebeef5;  border-radius: 3px;  position: relative;}/* ==================== 表格样式 ==================== */.hospital-table {  width: 100%;  height: 80%;  border-collapse: collapse;  font-size: 12px;  table-layout: fixed;}.hospital-table th,.hospital-table td {  border: 1px solid #ebeef5;  padding: 6px 8px;  text-align: left;  overflow: hidden;  text-overflow: ellipsis;  white-space: nowrap;}.hospital-table th {  background-color: #f5f7fa;  font-weight: bold;  position: sticky;  top: 0;  user-select: none;  -webkit-user-select: none;}.th-content {  position: relative;  padding-right: 10px;  text-align: center;}.resize-handle {  position: absolute;  right: 0;  top: 0;  bottom: 0;  width: 3px;  cursor: col-resize;  background-color: transparent;}.resize-handle:hover {  background-color: #409eff;}/* ==================== 表格行样式 ==================== */.hospital-table tr:nth-child(even) {  background-color: #fafafa;}.hospital-table tr:hover {  background-color: #f5f7fa;}/* ==================== 固定列样式 ==================== */.fixed-column {  position: sticky;  right: 0;  background-color: #f5f7fa;  z-index: 10;  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);}.hospital-table tr:nth-child(even) .fixed-column {  background-color: #fafafa;}.hospital-table tr:hover .fixed-column {  background-color: #f5f7fa;}/* ==================== 操作按钮 ==================== */.detail-btn {  background: #67c23a;  color: white;  padding: 4px 8px;}.detail-btn:hover {  background: #85ce61;}.update-btn {  background: #3073d7;  color: white;  padding: 4px 8px;}.update-btn:hover {  background: #3073d7;}/* ==================== 状态样式 ==================== */.status-active {  color: #78a2cc;  font-weight: bold;}.status-uninactive {  color: #9478cc;  font-weight: bold;}.status-inactive {  color: #f56c6c;  font-weight: bold;}.status-repeat {  color: rgba(228, 109, 186, 0.5);  font-weight: bold;}.status-invalid {  color: #d77030;  font-weight: bold;}/* ==================== 无数据提示 ==================== */.no-data {  display: flex;  justify-content: center;  align-items: center;  height: 100%;  color: #909399;  font-size: 12px;}/* ==================== 分页 ==================== */.pagination {  display: flex;  justify-content: center;  align-items: center;  margin-top: 12px;  gap: 8px;  padding: 6px;  background: #f5f7fa;  border-radius: 3px;}.page-btn {  padding: 4px 8px;  background: #ffffff;  border: 1px solid #dcdfe6;  cursor: pointer;  border-radius: 3px;}.page-btn:disabled {  opacity: 0.5;  cursor: not-allowed;}.page-info {  font-size: 12px;  color: #606266;}.pagination select {  padding: 4px;  border-radius: 3px;  border: 1px solid #dcdfe6;  background: white;  font-size: 12px;}/* ==================== 模态框 ==================== */.modal-overlay {  position: fixed;  top: 0;  left: 0;  right: 0;  bottom: 0;  background-color: rgba(0, 0, 0, 0.5);  display: flex;  justify-content: center;  align-items: center;  z-index: 1000;}.modal-container {  background: white;  border-radius: 6px;  width: 400px;  max-width: 80%;  max-height: 60vh;  overflow-y: auto;  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);  display: flex;  flex-direction: column;}.modal-header {  position: sticky;  top: 0;  z-index: 10;  background: #fff;  padding: 10px 12px;  border-bottom: 1px solid #ebeef5;  display: flex;  justify-content: space-between;  align-items: center;}.modal-header h3 {  flex: 1;  text-align: center;  margin: 0;  font-size: 13px;}.close-btn {  font-size: 16px;  color: #909399;  cursor: pointer;}.close-btn:hover {  color: #606266;}.modal-body {  padding: 12px;  flex: 1;}.modal-footer {  position: sticky;  bottom: 0;  left: 0;  right: 0;  background: #fff;  border-top: 1px solid #ebeef5;  padding: 10px 12px;  text-align: right;  z-index: 10;}/* ==================== 详情弹窗 ==================== */.detail-row {  display: flex;  margin-bottom: 8px;  line-height: 1.4;}.detail-row label {  font-weight: bold;  min-width: 70px;  color: #606266;  font-size: 12px;}.detail-row span {  flex: 1;  word-break: break-word;  font-size: 12px;}.copy-btn {  cursor: pointer;  color: #409eff;}.modal-close-btn {  padding: 5px 10px;  background: #409eff;  color: white;  border: none;  border-radius: 3px;  cursor: pointer;  font-size: 12px;}.modal-close-btn:hover {  background: #66b1ff;}/* ==================== 更新表单 ==================== */.hospital-form {  padding: 12px;}.form-grid {  display: grid;  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));  gap: 12px;  margin-bottom: 12px;}.form-column {  display: flex;  flex-direction: column;  gap: 8px;}.form-group {  display: flex;  flex-direction: column;}.form-label {  margin-bottom: 4px;  font-weight: 500;  color: #555;  font-size: 12px;}.form-input {  padding: 6px 8px;  border: 1px solid #ddd;  border-radius: 3px;  font-size: 12px;  transition: border-color 0.3s;  background-color: #fff;}.form-input:focus {  border-color: #409eff;  outline: none;  box-shadow: 0 0 0 1px rgba(64, 158, 255, 0.2);}.form-input[readonly] {  background-color: #f5f5f5;  color: #999;  cursor: not-allowed;}/* ==================== 按钮样式 ==================== */.btn {  padding: 5px 10px;  border-radius: 3px;  font-size: 12px;  cursor: pointer;  transition: all 0.3s;  border: 1px solid transparent;}.btn-primary {  background-color: #409eff;  color: white;}.btn-primary:hover {  background-color: #66b1ff;}.btn-secondary {  background-color: #fff;  color: #606266;  border-color: #dcdfe6;}.btn-secondary:hover {  color: #409eff;  border-color: #c6e2ff;  background-color: #ecf5ff;}/* ==================== 结果弹窗 ==================== */.modal-content {  background: white;  border-radius: 3px;  width: 400px;  max-width: 90%;  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);  overflow: hidden;}.modal-content.success {  border-top: 3px solid #67c23a;}.modal-content.error {  border-top: 3px solid #f56c6c;}.modal-content.confirm {  border-top: 3px solid #9478cc;}.modal-close {  background: none;  border: none;  font-size: 17px;  cursor: pointer;  color: #909399;}.modal-close:hover {  color: #606266;}.modal-body p {  margin: 0 0 8px;  font-size: 13px;  text-align: center;}.result-details {  color: #909399;  font-size: 12px;}.modal-btn {  padding: 5px 10px;  background: #9478cc;  color: white;  border: none;  border-radius: 3px;  cursor: pointer;  font-size: 13px;  transition: all 0.3s;}.modal-btn:hover {  background: #af96e6;}.confirm-btn {  background: #9478cc;  margin-right: 8px;}.confirm-btn:hover {  background: #af96e6;}.cancel-btn {  background: white;  color: #606266;  border: 1px solid #dcdfe6;}.cancel-btn:hover {  background: #f5f7fa;  color: #409eff;  border-color: #c6e2ff;}.disabled-btn {  background-color: #6c757d !important;  border-color: #6c757d !important;  opacity: 0.65;  cursor: not-allowed;}.export-btn {  background: #67c23a;  color: white;}.export-btn:hover {  background: #85ce61;}.export-btn:disabled {  background: #b3e19d;  cursor: not-allowed;  opacity: 0.7;}</style>

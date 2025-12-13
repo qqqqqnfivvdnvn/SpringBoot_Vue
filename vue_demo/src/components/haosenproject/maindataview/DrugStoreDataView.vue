@@ -131,7 +131,7 @@
         </div>
 
         <div class="form-item">
-          <label>输入药店名称：</label>
+          <label>药店名称：</label>
           <div class="input-wrapper">
             <input
                 v-model="searchForm.name"
@@ -147,7 +147,7 @@
         </div>
 
         <div class="form-item">
-          <label>输入药店地址：</label>
+          <label>药店地址：</label>
           <div class="input-wrapper">
             <input
                 v-model="searchForm.address"
@@ -256,28 +256,45 @@
     <div v-if="showDetailModal" class="modal-overlay" @click.self="closeDetailModal">
       <div class="modal-container">
         <div class="modal-header">
-          <h3>药店详情</h3>
+          <h3>药店数据详情</h3>
           <span class="close-btn" @click="closeDetailModal">&times;</span>
         </div>
 
         <div class="modal-body">
+
+
+
           <div class="detail-row">
             <label>dataId：</label>
-            <span>{{ currentDrugStore.dataId }}</span>
+            <span class="copy-btn"
+                  @click="copyText(currentDrugStore.dataId, $event)">
+              {{ currentDrugStore.dataId }}
+            </span>
+
           </div>
+
           <div class="detail-row">
             <label>原始编码：</label>
-            <span>{{ currentDrugStore.dataCode }}</span>
+            <span class="copy-btn"
+                  @click="copyText(currentDrugStore.dataCode, $event)">
+              {{ currentDrugStore.dataCode }}
+            </span>
           </div>
 
           <div class="detail-row">
             <label>原始名称：</label>
-            <span>{{ currentDrugStore.originalName }}</span>
+            <span class="copy-btn"
+                  @click="copyText(currentDrugStore.originalName, $event)">
+              {{ currentDrugStore.originalName }}
+            </span>
           </div>
 
           <div class="detail-row">
             <label>keyId：</label>
-            <span>{{ currentDrugStore.keyid }}</span>
+            <span class="copy-btn"
+                  @click="copyText(currentDrugStore.keyid, $event)">
+              {{ currentDrugStore.keyid }}
+            </span>
           </div>
 
           <div class="detail-row">
@@ -287,13 +304,22 @@
 
           <div class="detail-row">
             <label>豪森清洗后编码：</label>
-            <span>{{ currentDrugStore.hsCode }}</span>
+            <span class="copy-btn"
+                  @click="copyText(currentDrugStore.hsCode, $event)">
+              {{ currentDrugStore.hsCode }}
+            </span>
           </div>
 
           <div class="detail-row">
             <label>标准名称：</label>
-            <span>{{ currentDrugStore.name }}</span>
+
+            <span class="copy-btn"
+                  @click="copyText(currentDrugStore.name, $event)">
+              {{ currentDrugStore.name }}
+            </span>
+
           </div>
+
           <div class="detail-row">
             <label>历史名称：</label>
             <span>{{ currentDrugStore.historyName }}</span>
@@ -611,6 +637,20 @@ export default {
         this.loading = false;
       }
     },
+
+    async copyText(text, e) {
+      try {
+        await navigator.clipboard.writeText(text);
+        // 轻提示：把按钮文字临时换成“已复制”
+        const target = e.target;
+        const old = target.textContent;
+        target.textContent = '已复制';
+        setTimeout(() => (target.textContent = old), 1200);
+      } catch (err) {
+        this.$message.error('复制失败，请手动复制');
+      }
+    },
+
     handleSearch() {
       this.pageNumber = 0;
       this.fetchDrugStoreData();
@@ -702,18 +742,17 @@ export default {
 
 /* 2K屏幕优化 */
 @media (min-width: 2000px) and (max-width: 2600px) {
-  .DrugStore-data-view  {
-    max-width: min(2200px, 96vw);
+  .DrugStore-data-view {
+    max-width: min(1860px, 90vw);
   }
 }
 
 /* 超宽屏幕 */
 @media (min-width: 2600px) {
-  .DrugStore-data-view  {
+  .DrugStore-data-view {
     max-width: min(2400px, 95vw);
   }
 }
-
 
 .search-container {
   flex-shrink: 0;
@@ -957,6 +996,11 @@ button {
 }
 
 .modal-header {
+  position: sticky;   /* 关键：粘滞定位 */
+  top: 0;             /* 粘到顶部 */
+  z-index: 10;        /* 保证盖住下方内容 */
+  background: #fff;        /* 或任何你想要的纯色 */
+
   padding: 10px 12px;
   border-bottom: 1px solid #ebeef5;
   display: flex;
@@ -965,12 +1009,11 @@ button {
 }
 
 .modal-header h3 {
+  flex: 1;                   /* 中间列 */
+  text-align: center;        /* 文字居中 */
   margin: 0;
-  font-size: 12px;
-  color: #303133;
-  font-weight: bold;
+  font-size: 13px;           /* 按需调整 */
 }
-
 .close-btn {
   font-size: 12px;
   color: #909399;
@@ -1006,10 +1049,15 @@ button {
 }
 
 .modal-footer {
-  padding: 8px 12px;
+  position: sticky;      /* 如果兼容性要求高，可用 position:fixed 内部方案 */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
   border-top: 1px solid #ebeef5;
-  display: flex;
-  justify-content: flex-end;
+  padding: 10px 12px;
+  text-align: right;
+  z-index: 10;
 }
 
 .modal-close-btn {
@@ -1029,6 +1077,7 @@ button {
 .th-content {
   position: relative;
   padding-right: 10px;
+  text-align: center;
 }
 
 .resize-handle {
@@ -1070,5 +1119,12 @@ button {
 
 .clear-icon:hover {
   color: #909399;
+}
+
+/* 让鼠标看上去可点 */
+.copy-btn {
+  cursor: pointer;
+  color: #409eff;
+  /*text-decoration: underline;*/
 }
 </style>

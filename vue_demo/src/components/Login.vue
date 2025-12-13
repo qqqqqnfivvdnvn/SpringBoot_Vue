@@ -5,7 +5,7 @@
       <div class="welcome-section">
         <h1>主数据管理系统</h1>
         <h2>欢迎回来！</h2>
-<!--        <p>请使用您的个人信息登录以保持连接</p>-->
+        <!--        <p>请使用您的个人信息登录以保持连接</p>-->
       </div>
       <form @submit.prevent="handleSubmit" class="form-section">
         <h2>登录</h2>
@@ -33,9 +33,9 @@
         <button type="submit">登录</button>
         <div class="links">
           <router-link to="/register">新用户？注册</router-link>
-<!--          <router-link to="/forgot-password">忘记密码？</router-link>-->
+          <!--          <router-link to="/forgot-password">忘记密码？</router-link>-->
         </div>
-<!--        <p class="terms">使用条款：Whites editor</p>-->
+        <!--        <p class="terms">使用条款：Whites editor</p>-->
       </form>
 
       <!-- 悬浮提示框 -->
@@ -75,15 +75,12 @@ export default {
           password: this.password
         });
 
-
-
         if (response.data.code === 200) {
           // 存储token和用户信息
           localStorage.setItem('token', response.data.data.token);
           localStorage.setItem('user', JSON.stringify(response.data.data.user));
 
-          // this.showToastMessage(response.data.msg || '登录成功！');
-          this.showToastMessage('登录成功！');
+          this.showToastMessage(response.data.msg || '登录成功！');
 
           // 获取重定向路径或默认跳转到首页
           sessionStorage.setItem('userData', JSON.stringify(response.data.data));
@@ -95,15 +92,12 @@ export default {
           }, 400);
 
         } else if (response.data.code === 500) {
-
           this.showToastMessage(response.data.msg );
         }
       } catch (error) {
         console.log(error);
         if (error.response) {
-          // this.showToastMessage(error.response.data.msg || '登录失败');
-          this.showToastMessage('登录失败');
-
+          this.showToastMessage(error.response.data.msg || '登录失败');
         } else {
           this.showToastMessage('请求失败，请检查网络连接');
         }

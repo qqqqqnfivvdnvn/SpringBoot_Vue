@@ -15,7 +15,7 @@ public interface HaoSenHomeDataMapper {
 
     public HaoSenDetailsDataVO getHomeData();
 
-//    获取柱状图数据
+    //    获取柱状图数据
     public List<HaoSenBarDataVO> getCleanBarData();
 
     //实现饼图的数据方法

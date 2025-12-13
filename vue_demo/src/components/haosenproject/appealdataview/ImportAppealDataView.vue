@@ -181,7 +181,7 @@ export default {
         }
 
       } catch (error) {
-         console.error(error);
+        console.error(error);
         this.uploadResult = {
           success: false,
           // message: '申诉数据推送失败',

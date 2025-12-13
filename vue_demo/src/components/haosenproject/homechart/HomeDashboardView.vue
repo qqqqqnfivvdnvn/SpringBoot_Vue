@@ -6,15 +6,15 @@
         <!-- 五个数据卡片 -->
 
         <div class="grid-item-small">
-            <font-awesome-icon :icon="['fas', 'hospital']" size="2x" /> &nbsp;
-            <span style="font-weight: bold; font-size: 16px; color: #000000">医院周清洗</span> &nbsp;
-            <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.hospitalCount }}</span>
+          <font-awesome-icon :icon="['fas', 'hospital']" size="2x" /> &nbsp;
+          <span style="font-weight: bold; font-size: 16px; color: #000000">医院周清洗</span> &nbsp;
+          <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.hospitalCount }}</span>
         </div>
 
         <div class="grid-item-small">
           <font-awesome-icon :icon="['fas', 'store']" size="2x"></font-awesome-icon> &nbsp;
-            <span style="font-weight: bold; font-size: 16px; color: #000000">药店周清洗</span> &nbsp;
-            <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.drugstoreCount }}</span>
+          <span style="font-weight: bold; font-size: 16px; color: #000000">药店周清洗</span> &nbsp;
+          <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.drugstoreCount }}</span>
         </div>
 
         <div class="grid-item-small">
@@ -25,14 +25,14 @@
 
         <div class="grid-item-small">
           <font-awesome-icon :icon="['fas', 'trash']" size="2x"></font-awesome-icon> &nbsp;
-            <span style="font-weight: bold; font-size: 16px; color: #000000">申诉待处理</span> &nbsp;
-            <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.unappealingCount }}</span>
+          <span style="font-weight: bold; font-size: 16px; color: #000000">申诉待处理</span> &nbsp;
+          <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.unappealingCount }}</span>
         </div>
 
         <div class="grid-item-small">
           <font-awesome-icon :icon="['fas', 'clock']" size="2x"></font-awesome-icon> &nbsp;
-            <span style="font-weight: bold; font-size: 16px; color: #000000">待清洗</span> &nbsp;
-            <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.uncleanedCount }}</span>
+          <span style="font-weight: bold; font-size: 16px; color: #000000">待清洗</span> &nbsp;
+          <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.uncleanedCount }}</span>
         </div>
 
       </div>
@@ -111,12 +111,40 @@ export default {
 
 <style scoped>
 
+.dashboard-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: min(1250px, 95vw);
+  padding: 12px;
+  box-sizing: border-box;
+  background: white;
+  font-size: 12px;
+  margin: 0 auto;
+}
+
+/* 2K屏幕优化 */
+@media (min-width: 2000px) and (max-width: 2600px) {
+  .dashboard-view {
+    max-width: min(2200px, 96vw);
+  }
+}
+
+/* 超宽屏幕 */
+@media (min-width: 2600px) {
+  .dashboard-view {
+    max-width: min(2400px, 95vw);
+  }
+}
+
 /* 网格布局 */
 .grid-container {
   display: grid;
   grid-template-rows: 100px 1fr 1fr; /* 第一行高度缩小，第二行和第三行平分剩余空间 */
   gap: 6px; /* 网格之间的间距 */
   height: 100%;
+  width: 100%;
 }
 
 /* 新增样式：五个盒子的容器 */
@@ -173,4 +201,22 @@ export default {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* 悬浮时阴影加深 */
 }
 
+/* 确保图表占满容器 */
+.sub-grid-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.sub-grid-item >>> .chart-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.sub-grid-item >>> canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
 </style>

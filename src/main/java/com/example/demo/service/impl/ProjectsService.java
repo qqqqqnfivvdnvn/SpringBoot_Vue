@@ -10,6 +10,7 @@ public interface ProjectsService {
     public ApiResponseDTO<Projects> addProject(Projects project);
 
     public ApiResponseDTO<List<Projects>> getAllProjects();
+
 }
 
 

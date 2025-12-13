@@ -42,9 +42,8 @@
         </where>
     </sql>
 
+
     <select id="getAppealData" resultType="com.example.demo.vo.HaoSenAppealDataVO">
-
-
         SELECT
         batch_code,data_id,data_type,data_code,original_name,original_province,original_address,company_name,appeal_remark,solve_remark,institution_type,keyid,name,name_history,province,provinceid,city,cityid,area,areaid,ku_address,level,grade,publicflag,classify,general_branch_kid,general_branch_name,military_hos,regcode,validity,subjects,legalperson,usci,operation,scope,main_branch_kid,main_branch_name,create_date,regist_capi,econ_kind,sign_status,industry,belong
         from
@@ -95,7 +94,7 @@
         豪森五级属性对应表0819 g
         on
         b.class5=g.类别名称5_枚举值
-        WHERE b.data_id is not null
+        WHERE b.data_id is not null and b.status=1
 
         UNION
 
@@ -133,7 +132,7 @@
         豪森_行政区划表0928_对应关系 f
         on
         b.area_id=f.豪森_对应区县id
-        WHERE b.data_id is not null
+        WHERE b.data_id is not null  and b.status=1
 
         UNION
 
@@ -164,10 +163,9 @@
         豪森_行政区划表0928_对应关系 f
         on
         b.area_id=f.豪森_对应区县id
-        WHERE b.data_id is not null
+        WHERE b.data_id is not null  and b.status=1
 
         ) a
-
 
         <include refid="conditionCompanyWhere"/>
         ORDER BY addtime desc
@@ -226,7 +224,7 @@
         豪森五级属性对应表0819 g
         on
         b.class5=g.类别名称5_枚举值
-        WHERE b.data_id is not null
+        WHERE b.data_id is not null  and b.status=1
 
         UNION
 
@@ -264,7 +262,7 @@
         豪森_行政区划表0928_对应关系 f
         on
         b.area_id=f.豪森_对应区县id
-        WHERE b.data_id is not null
+        WHERE b.data_id is not null  and b.status=1
 
         UNION
 
@@ -295,10 +293,11 @@
         豪森_行政区划表0928_对应关系 f
         on
         b.area_id=f.豪森_对应区县id
-        WHERE b.data_id is not null
+        WHERE b.data_id is not null  and b.status=1
         ) a
         <include refid="conditionCompanyWhere"/>
     </select>
+
 
     <select id="exportAppealData" resultType="com.example.demo.vo.HaoSenAppealDataVO">
 
@@ -352,7 +351,7 @@
                     豪森五级属性对应表0819 g
                     on
                         b.class5=g.类别名称5_枚举值
-                WHERE b.data_id is not null
+                WHERE  b.status=1
 
                 UNION
 
@@ -374,7 +373,7 @@
                            WHEN b.operation='3' THEN '批发'
                            ELSE null
                            END operation,b.scope ,b.main_branch_kid ,b.main_branch_name ,b.create_date ,b.regist_capi ,null econ_kind,
-                                   sign_status,null industry,null belong,addtime from
+                       sign_status,null industry,null belong,addtime from
                     (
                         SELECT data_code,remarks from data_result WHERE status is null and feedback_type='1'
                     ) a
@@ -390,7 +389,7 @@
                     豪森_行政区划表0928_对应关系 f
                     on
                         b.area_id=f.豪森_对应区县id
-                WHERE b.data_id is not null
+                WHERE  b.status=1
 
                 UNION
 
@@ -421,12 +420,15 @@
                     豪森_行政区划表0928_对应关系 f
                     on
                         b.area_id=f.豪森_对应区县id
-                WHERE b.data_id is not null
+                WHERE  b.status=1
 
             ) a
 
 
     </select>
+
+
+
 
 
 </mapper>

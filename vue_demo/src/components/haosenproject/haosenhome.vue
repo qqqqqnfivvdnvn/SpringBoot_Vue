@@ -2,12 +2,12 @@
   <div class="home-page" :style="homePageStyle">
     <!-- 导航栏 -->
     <nav class="navbar">
-      <div class="navbar-brand">主数据后台管理</div>
+      <div class="navbar-brand">豪森主数据后台管理</div>
       <div class="navbar-links">
         <router-link to="/project/HaosenHome" @click="resetToDashboard">仪表盘</router-link>
         <router-link to="/home">返回项目管理</router-link>
         <div class="avatar">
-          <img src="../../assets/images/avatar-modified.png" alt="用户头像" />
+          <img src="@/assets/images/avatar-modified.png" alt="用户头像" />
         </div>
         <button class="logout-button" @click="handleLogout">
           <font-awesome-icon :icon="['fas', 'sign-out-alt']" size="sm" />

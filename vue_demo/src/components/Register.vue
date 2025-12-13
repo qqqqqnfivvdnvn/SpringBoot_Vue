@@ -85,8 +85,7 @@ export default {
         });
         // 根据后端返回的 code 判断是否成功
         if (response.data.code === 200) {
-          // this.showToastMessage(response.data.msg || '注册成功!'); // 显示成功提示
-          this.showToastMessage( '注册成功!')
+          this.showToastMessage(response.data.msg || '注册成功!'); // 显示成功提示
           // 延迟 1 秒后跳转到登录页面
           setTimeout(() => {
             this.$router.push('/login');
@@ -98,8 +97,7 @@ export default {
       } catch (error) {
         if (error.response) {
           // 如果后端返回了错误信息，显示错误信息
-          // this.showToastMessage(error.response.data.msg || '注册失败！');
-          this.showToastMessage( '注册失败！');
+          this.showToastMessage(error.response.data.msg || '注册失败！');
         } else {
           // 网络错误或其他异常
           this.showToastMessage('注册失败，请检查网络连接');

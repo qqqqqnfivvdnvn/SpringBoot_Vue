@@ -26,7 +26,9 @@ public class HaoSenAppealExcelReader {
         List<T> dataList = new ArrayList<>();
 
         try (FileInputStream fis = new FileInputStream(new File(filePath));
-             Workbook workbook = new XSSFWorkbook(fis)) {
+
+             Workbook workbook = new XSSFWorkbook(fis))
+        {
 
             Sheet sheet = workbook.getSheetAt(0);
             if (sheet.getPhysicalNumberOfRows() <= 1) {

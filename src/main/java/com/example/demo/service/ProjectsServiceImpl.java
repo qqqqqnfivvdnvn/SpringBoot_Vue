@@ -16,8 +16,7 @@ import java.util.UUID;
 public class ProjectsServiceImpl implements ProjectsService {
 
     @Autowired
-    private ProjectsMapper projectsMapper;
-
+    private ProjectsMapper  projectsMapper;
 
     @Override
     public ApiResponseDTO<Projects> addProject(Projects project) {

@@ -7,7 +7,7 @@
         <router-link to="/home">首页</router-link>
         <router-link to="">设置</router-link>
         <div class="avatar">
-          <img src="../assets/images/avatar-modified.png" alt="用户头像" />
+          <img src="@/assets/images/avatar-modified.png" alt="用户头像" />
         </div>
         <button class="logout-button" @click="handleLogout">
           <font-awesome-icon :icon="['fas', 'sign-out-alt']" size="1x" />
@@ -359,6 +359,7 @@ export default {
   margin-right: auto;
 }
 
+
 .projects-title {
   color: #333;
   margin-bottom: 15px;
@@ -655,18 +656,10 @@ export default {
 }
 
 @keyframes fadeInOut {
-  0% {
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* 响应式调整 */

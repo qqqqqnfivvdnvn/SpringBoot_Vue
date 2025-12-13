@@ -26,5 +26,6 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 
 app.use(router); // 注册路由 times-circle
 
-
 app.mount('#app'); // 挂载到 #app
+
+

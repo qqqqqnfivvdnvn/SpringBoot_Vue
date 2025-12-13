@@ -1,5 +1,6 @@
 <template>
   <div class="Appeal-data-view">
+    <!-- 搜索区域 -->
     <div class="search-container">
       <div class="search-form">
         <div class="form-item">
@@ -131,11 +132,11 @@
         </div>
 
         <div class="form-item">
-          <label>输入医院名称：</label>
+          <label>输入名称：</label>
           <div class="input-wrapper">
             <input
                 v-model="searchForm.name"
-                placeholder="请输入医院名称"
+                placeholder="请输入名称"
                 @keyup.enter="handleSearch"
             >
             <i v-if="searchForm.name"
@@ -147,11 +148,11 @@
         </div>
 
         <div class="form-item">
-          <label>输入医院地址：</label>
+          <label>输入地址：</label>
           <div class="input-wrapper">
             <input
                 v-model="searchForm.address"
-                placeholder="请输入医院地址"
+                placeholder="请输入地址"
                 @keyup.enter="handleSearch"
             >
             <i v-if="searchForm.address"
@@ -177,6 +178,7 @@
       </div>
     </div>
 
+    <!-- 数据表格区域 -->
     <div class="data-container">
       <div class="table-wrapper">
         <table class="Appeal-table" v-if="AppealData.content && AppealData.content.length > 0">
@@ -188,8 +190,7 @@
                 @mousedown="startResize($event, index)">
               <div class="th-content">
                 {{ column.label }}
-                <div class="resize-handle"
-                     @mousedown.stop="startResize($event, index)"></div>
+                <div class="resize-handle" @mousedown.stop="startResize($event, index)"></div>
               </div>
             </th>
           </tr>
@@ -211,6 +212,8 @@
               <template v-else-if="index === 9">{{ Appeal.appealRemark }}</template>
               <template v-else-if="index === 10">
                 <button class="detail-btn" @click="showDetail(Appeal)">详情</button>
+                &nbsp;
+                <button class="update-btn" @click="appealDetail(Appeal)">申诉</button>
               </template>
             </td>
           </tr>
@@ -219,6 +222,8 @@
         <div v-else class="no-data">
           {{ loading ? '数据加载中...' : '没有找到匹配的数据' }}
         </div>
+
+        <!-- 分页 -->
         <div class="pagination" v-if="AppealData.content && AppealData.content.length > 0">
           <button
               :disabled="AppealData.first"
@@ -255,27 +260,39 @@
         </div>
 
         <div class="modal-body">
-          <div class="detail-row">
+          <div class="detail-row" v-if="currentAppeal">
             <label>批次编号：</label>
-            <span>{{ currentAppeal.batchCode }}</span>
+            <span class="copy-btn" @click="copyText(currentAppeal.batchCode, $event)">
+              {{ currentAppeal.batchCode }}
+            </span>
           </div>
 
           <div class="detail-row">
-            <label>data_id：</label>
-            <span>{{ currentAppeal.dataId }}</span>
+            <label>dataId：</label>
+            <span class="copy-btn" @click="copyText(currentAppeal.dataId, $event)">
+              {{ currentAppeal.dataId }}
+            </span>
           </div>
 
           <div class="detail-row">
             <label>数据类型：</label>
-            <span>{{ currentAppeal.dataType }}</span>
+            <span v-if="currentAppeal.dataType === '1'">存量</span>
+            <span v-else-if="currentAppeal.dataType === '2'">增量</span>
+            <span v-else>未知</span>
           </div>
+
           <div class="detail-row">
             <label>原始数据编码：</label>
-            <span>{{ currentAppeal.dataCode }}</span>
+            <span class="copy-btn" @click="copyText(currentAppeal.dataCode, $event)">
+              {{ currentAppeal.dataCode }}
+            </span>
           </div>
+
           <div class="detail-row">
             <label>原始数据名称：</label>
-            <span>{{ currentAppeal.originalName }}</span>
+            <span class="copy-btn" @click="copyText(currentAppeal.originalName, $event)">
+              {{ currentAppeal.originalName }}
+            </span>
           </div>
 
           <div class="detail-row">
@@ -307,43 +324,56 @@
             <label>机构类型：</label>
             <span>{{ currentAppeal.institutionType }}</span>
           </div>
+
           <div class="detail-row">
-            <label>keyid：</label>
-            <span>{{ currentAppeal.keyid }}</span>
+            <label>keyId：</label>
+            <span class="copy-btn" @click="copyText(currentAppeal.keyid, $event)">
+              {{ currentAppeal.keyid }}
+            </span>
           </div>
+
           <div class="detail-row">
             <label>医院名称：</label>
-            <span>{{ currentAppeal.name }}</span>
+            <span class="copy-btn" @click="copyText(currentAppeal.name, $event)">
+              {{ currentAppeal.name }}
+            </span>
           </div>
 
           <div class="detail-row">
             <label>历史名称：</label>
             <span>{{ currentAppeal.nameHistory }}</span>
           </div>
+
           <div class="detail-row">
             <label>省：</label>
             <span>{{ currentAppeal.province }}</span>
           </div>
+
           <div class="detail-row">
             <label>省份ID：</label>
             <span>{{ currentAppeal.provinceid }}</span>
           </div>
+
           <div class="detail-row">
             <label>市：</label>
             <span>{{ currentAppeal.city }}</span>
           </div>
+
           <div class="detail-row">
             <label>市ID：</label>
             <span>{{ currentAppeal.cityid }}</span>
           </div>
+
           <div class="detail-row">
             <label>区县：</label>
             <span>{{ currentAppeal.area }}</span>
           </div>
+
           <div class="detail-row">
             <label>区县ID：</label>
             <span>{{ currentAppeal.areaid }}</span>
           </div>
+
           <div class="detail-row">
             <label>地址：</label>
             <span>{{ currentAppeal.kuAddress }}</span>
@@ -358,30 +388,37 @@
             <label>等次：</label>
             <span>{{ currentAppeal.grade }}</span>
           </div>
+
           <div class="detail-row">
             <label>所有制：</label>
             <span>{{ currentAppeal.publicflag }}</span>
           </div>
+
           <div class="detail-row">
             <label>类别：</label>
             <span>{{ currentAppeal.classify }}</span>
           </div>
+
           <div class="detail-row">
             <label>总分院kid：</label>
             <span>{{ currentAppeal.generalBranchKid }}</span>
           </div>
+
           <div class="detail-row">
             <label>总分院名称：</label>
             <span>{{ currentAppeal.generalBranchName }}</span>
           </div>
+
           <div class="detail-row">
             <label>军队医院：</label>
             <span>{{ currentAppeal.militaryHos }}</span>
           </div>
+
           <div class="detail-row">
             <label>登记号：</label>
             <span>{{ currentAppeal.regcode }}</span>
           </div>
+
           <div class="detail-row">
             <label>有效期：</label>
             <span>{{ currentAppeal.validity }}</span>
@@ -406,49 +443,335 @@
             <label>经营方式：</label>
             <span>{{ currentAppeal.operation }}</span>
           </div>
+
           <div class="detail-row">
             <label>经营范围：</label>
             <span>{{ currentAppeal.scope }}</span>
           </div>
+
           <div class="detail-row">
             <label>总分店kid：</label>
             <span>{{ currentAppeal.mainBranchKid }}</span>
           </div>
+
           <div class="detail-row">
             <label>总分店名称：</label>
             <span>{{ currentAppeal.mainBranchName }}</span>
           </div>
+
           <div class="detail-row">
             <label>成立时间：</label>
             <span>{{ currentAppeal.createDate }}</span>
           </div>
+
           <div class="detail-row">
             <label>注册资金：</label>
             <span>{{ currentAppeal.registCapi }}</span>
           </div>
+
           <div class="detail-row">
             <label>企业类型：</label>
             <span>{{ currentAppeal.econKind }}</span>
           </div>
+
           <div class="detail-row">
             <label>登记状态：</label>
             <span>{{ currentAppeal.signStatus }}</span>
           </div>
+
           <div class="detail-row">
             <label>所属行业：</label>
             <span>{{ currentAppeal.industry }}</span>
           </div>
+
           <div class="detail-row">
             <label>登记机关：</label>
             <span>{{ currentAppeal.belong }}</span>
           </div>
-
         </div>
 
         <div class="modal-footer">
           <button class="modal-close-btn" @click="closeDetailModal">关闭</button>
         </div>
+      </div>
+    </div>
 
+    <!-- 申诉处理弹窗 -->
+    <div v-if="appealDetailModal" class="modal-overlay" @click.self="closeUpdateModal">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>申诉处理</h3>
+          <span class="close-btn" @click="closeUpdateModal">&times;</span>
+        </div>
+
+        <div class="modal-body">
+          <form @submit.prevent="saveChanges" class="hospital-form">
+            <div class="form-grid">
+              <!-- 第一列 -->
+              <div class="form-column">
+                <div class="form-group">
+                  <label class="form-label">批次编号：</label>
+                  <input v-model="currentAppealDetail.batchCode" readonly class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">dataId：</label>
+                  <input v-model="currentAppealDetail.dataId" readonly class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">数据类型：</label>
+                  <input
+                      :value="currentAppealDetail.dataType === '1' ? '存量' : currentAppealDetail.dataType === '2' ? '增量' : '未知'"
+                      readonly
+                      class="form-input"
+                  >
+                </div>
+                <div class="form-group">
+                  <label class="form-label">原始编码：</label>
+                  <input v-model="currentAppealDetail.dataCode" readonly class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">原始名称：</label>
+                  <input v-model="currentAppealDetail.originalName" readonly class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">原始省份：</label>
+                  <input v-model="currentAppealDetail.originalProvince" readonly class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">经销商：</label>
+                  <input v-model="currentAppealDetail.companyName" readonly class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">申诉原因：</label>
+                  <input v-model="currentAppealDetail.appealRemark" readonly class="form-input">
+                </div>
+              </div>
+
+              <!-- 第二列 -->
+              <div class="form-column">
+                <div class="form-group">
+                  <label class="form-label">申诉解决：</label>
+                  <input v-model="currentAppealDetail.solveRemark" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">机构类型：</label>
+                  <select v-model="currentAppealDetail.institutionType" class="form-input">
+                    <option value="医院">医院</option>
+                    <option value="药店">药店</option>
+                    <option value="商业">商业</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">keyId：</label>
+                  <input v-model="currentAppealDetail.keyid" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">标准名称：</label>
+                  <input v-model="currentAppealDetail.name" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">历史名称：</label>
+                  <input v-model="currentAppealDetail.nameHistory" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">省：</label>
+                  <input v-model="currentAppealDetail.province" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">省ID：</label>
+                  <input v-model="currentAppealDetail.provinceid" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">市：</label>
+                  <input v-model="currentAppealDetail.city" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">市ID：</label>
+                  <input v-model="currentAppealDetail.cityid" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">区县：</label>
+                  <input v-model="currentAppealDetail.area" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">区县ID：</label>
+                  <input v-model="currentAppealDetail.areaid" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">地址：</label>
+                  <input v-model="currentAppealDetail.kuAddress" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">等级：</label>
+                  <select v-model="currentAppealDetail.level" class="form-input">
+                    <option value="未定级">未定级</option>
+                    <option value="一级">一级</option>
+                    <option value="二级">二级</option>
+                    <option value="三级">三级</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">等次：</label>
+                  <select v-model="currentAppealDetail.grade" class="form-input">
+                    <option value="未定等">未定等</option>
+                    <option value="甲等">甲等</option>
+                    <option value="乙等">乙等</option>
+                    <option value="丙等">丙等</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">所有制：</label>
+                  <select v-model="currentAppealDetail.publicflag" class="form-input">
+                    <option value="公立">公立</option>
+                    <option value="民营">民营</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">类别：</label>
+                  <input v-model="currentAppealDetail.classify" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">总分院kid：</label>
+                  <input v-model="currentAppealDetail.generalBranchKid" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">总分院名称：</label>
+                  <input v-model="currentAppealDetail.generalBranchName" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">是否军队医院：</label>
+                  <select v-model="currentAppealDetail.militaryHos" class="form-input">
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">登记号：</label>
+                  <input v-model="currentAppealDetail.regcode" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">有效期：</label>
+                  <input v-model="currentAppealDetail.validity" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">诊疗科室：</label>
+                  <input v-model="currentAppealDetail.subjects" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">法人代表：</label>
+                  <input v-model="currentAppealDetail.legalperson" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">统一社会信用代码：</label>
+                  <input v-model="currentAppealDetail.usci" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">经营方式：</label>
+                  <select v-model="currentAppealDetail.operation" class="form-input">
+                    <option value="零售">零售</option>
+                    <option value="批发">批发</option>
+                    <option value="连锁">连锁</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">经营范围：</label>
+                  <input v-model="currentAppealDetail.scope" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">总分店kid：</label>
+                  <input v-model="currentAppealDetail.mainBranchKid" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">总分店名称：</label>
+                  <input v-model="currentAppealDetail.mainBranchName" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">成立日期：</label>
+                  <input v-model="currentAppealDetail.createDate" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">注册资金：</label>
+                  <input v-model="currentAppealDetail.registCapi" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">企业类型：</label>
+                  <input v-model="currentAppealDetail.econKind" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">登记状态：</label>
+                  <input v-model="currentAppealDetail.signStatus" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">所属行业：</label>
+                  <input v-model="currentAppealDetail.industry" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">登记机关：</label>
+                  <input v-model="currentAppealDetail.belong" class="form-input">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button @click="resetForm" class="btn btn-primary">重置匹配</button>
+          &nbsp;
+          <button
+              @click="findDaKuData"
+              class="btn btn-primary"
+              :class="{ 'disabled-btn': isFinding }"
+              :disabled="isFinding"
+          >
+            <span v-if="isFinding">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              匹配中...
+            </span>
+            <span v-else>匹配大库</span>
+          </button>
+          &nbsp;
+          <button
+              @click="saveChanges"
+              class="btn btn-primary"
+              :class="{ 'disabled-btn': isSaving }"
+              :disabled="isSaving"
+          >
+            <span v-if="isSaving">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              推送中...
+            </span>
+            <span v-else>提交推送</span>
+          </button>
+          &nbsp;
+          <button type="button" class="btn btn-secondary" @click="closeUpdateModal">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 信息提示匹配弹窗 -->
+    <div v-if="showResultModal" class="modal-overlay" @click.self="closeModal">
+      <div class="modal-content" :class="{
+        'success': uploadResult.type === 'success',
+        'error': uploadResult.type === 'error',
+        'confirm': uploadResult.type === 'confirm'
+      }">
+        <div class="modal-header">
+          <h3>{{ uploadResult.success || '提示' }}</h3>
+          <button class="modal-close" @click="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>{{ uploadResult.message }}</p>
+          <p v-if="uploadResult.details" class="result-details">{{ uploadResult.details }}</p>
+        </div>
+        <div class="modal-footer">
+          <template v-if="uploadResult.type === 'confirm'">
+            <button class="modal-btn confirm-btn" @click="closeModal">确定</button>
+            <button class="modal-btn cancel-btn" @click="showResultModal = false">取消</button>
+          </template>
+          <template v-else>
+            <button class="modal-btn" @click="closeModal">确定</button>
+          </template>
+        </div>
       </div>
     </div>
   </div>
@@ -486,20 +809,26 @@ export default {
       pageNumber: 0,
       showDetailModal: false,
       currentAppeal: {},
-
-      // 列定义 - 为操作列添加 fixed 属性
+      currentAppealDetail: {},
+      matchedAppeal: {},
+      originalAppeal: {},
+      appealDetailModal: false,
+      showResultModal: false,
+      uploadResult: null,
+      isSaving: false,
+      isFinding: false,
       columns: [
-        {label: 'dataId', width: 100},
-        {label: '原始编码', width: 100},
-        {label: '原始名称', width: 100},
-        {label: 'keyId', width: 100},
-        {label: '标准名称', width: 100},
-        {label: '省份', width: 50},
-        {label: '城市', width: 50},
-        {label: '区县', width: 50},
-        {label: '地址', width: 100},
-        {label: '申诉原因', width: 100},
-        {label: '操作', width: 100, fixed: true}  // 添加 fixed: true
+        { label: 'dataId', width: 100 },
+        { label: '原始编码', width: 100 },
+        { label: '原始名称', width: 100 },
+        { label: 'keyId', width: 100 },
+        { label: '标准名称', width: 100 },
+        { label: '省份', width: 50 },
+        { label: '城市', width: 50 },
+        { label: '区县', width: 50 },
+        { label: '地址', width: 100 },
+        { label: '申诉原因', width: 100 },
+        { label: '操作', width: 100, fixed: true }
       ],
       resizing: false,
       resizeColumnIndex: null,
@@ -511,6 +840,7 @@ export default {
     this.fetchAppealData();
   },
   methods: {
+    // 数据获取相关方法
     async fetchAppealData() {
       this.loading = true;
       try {
@@ -519,43 +849,19 @@ export default {
           size: this.pageSize
         };
 
-        if (this.searchForm.dataCode) {
-          params.dataCode = this.searchForm.dataCode;
-        }
-        if (this.searchForm.name) {
-          params.name = this.searchForm.name;
-        }
-        if (this.searchForm.dataId) {
-          params.dataId = this.searchForm.dataId;
-        }
-        if (this.searchForm.keyid) {
-          params.keyid = this.searchForm.keyid;
-        }
-        if (this.searchForm.hsCode) {
-          params.hsCode = this.searchForm.hsCode;
-        }
-        if (this.searchForm.province) {
-          params.province = this.searchForm.province;
-        }
-        if (this.searchForm.city) {
-          params.city = this.searchForm.city;
-        }
-        if (this.searchForm.area) {
-          params.area = this.searchForm.area;
-        }
-        if (this.searchForm.address) {
-          params.address = this.searchForm.address;
-        }
-        if (this.searchForm.originalName) {
-          params.originalName = this.searchForm.originalName;
-        }
+        if (this.searchForm.dataCode) params.dataCode = this.searchForm.dataCode;
+        if (this.searchForm.name) params.name = this.searchForm.name;
+        if (this.searchForm.dataId) params.dataId = this.searchForm.dataId;
+        if (this.searchForm.keyid) params.keyid = this.searchForm.keyid;
+        if (this.searchForm.hsCode) params.hsCode = this.searchForm.hsCode;
+        if (this.searchForm.province) params.province = this.searchForm.province;
+        if (this.searchForm.city) params.city = this.searchForm.city;
+        if (this.searchForm.area) params.area = this.searchForm.area;
+        if (this.searchForm.address) params.address = this.searchForm.address;
+        if (this.searchForm.originalName) params.originalName = this.searchForm.originalName;
 
-        const response = await axios.get('/api/appealData/getAppealData', {
-          params: params
-        });
-
+        const response = await axios.get('/api/appealData/getAppealData', {params});
         this.AppealData = response.data.data;
-
       } catch (error) {
         console.error('获取申诉数据失败:', error);
         this.$message.error('获取申诉数据失败');
@@ -564,30 +870,37 @@ export default {
       }
     },
 
+    // 导出相关方法
     async toExcel() {
       if (this.exporting) return;
-
       this.exporting = true;
+
       try {
-        const params = {
-          ...this.searchForm
-        };
+        const {data: jsonBlob} = await axios.get('/api/appealData/exportAppealData', {
+          responseType: 'blob'
+        });
 
-        const response = await axios.get('/api/appealData/exportAppealData',
-            {
-              responseType: 'blob'
-            }
-        );
+        const jsonText = await jsonBlob.text();
+        const {data: base64} = JSON.parse(jsonText);
+        const byteChars = atob(base64);
+        const byteNums = new Uint8Array(byteChars.length);
 
-        const url = window.URL.createObjectURL(new Blob([response.data]));
+        for (let i = 0; i < byteChars.length; i++) {
+          byteNums[i] = byteChars.charCodeAt(i);
+        }
+
+        const excelBlob = new Blob([byteNums], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+
+        const url = URL.createObjectURL(excelBlob);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `豪森申诉数据_${new Date().toLocaleDateString()}.xlsx`);
+        link.download = `豪森申诉数据_${new Date().toLocaleDateString()}.xlsx`;
         document.body.appendChild(link);
         link.click();
-
-        window.URL.revokeObjectURL(url);
         document.body.removeChild(link);
+        URL.revokeObjectURL(url);
       } catch (error) {
         console.error('导出失败:', error);
         this.$message.error('导出失败');
@@ -596,10 +909,12 @@ export default {
       }
     },
 
+    // 搜索和分页相关方法
     handleSearch() {
       this.pageNumber = 0;
       this.fetchAppealData();
     },
+
     resetSearch() {
       this.searchForm = {
         dataCode: '',
@@ -616,31 +931,210 @@ export default {
       this.pageNumber = 0;
       this.fetchAppealData();
     },
+
     prevPage() {
       if (this.pageNumber > 0) {
         this.pageNumber--;
         this.fetchAppealData();
       }
     },
+
     nextPage() {
       if (this.pageNumber < this.AppealData.totalPages - 1) {
         this.pageNumber++;
         this.fetchAppealData();
       }
     },
+
     handlePageSizeChange() {
       this.pageNumber = 0;
       this.fetchAppealData();
     },
+
+    // 详情相关方法
     showDetail(Appeal) {
       this.currentAppeal = Appeal;
-      console.log(Appeal);
       this.showDetailModal = true;
     },
+
+    appealDetail(Appeal) {
+      this.originalAppeal = JSON.parse(JSON.stringify(Appeal));
+      this.currentAppealDetail = JSON.parse(JSON.stringify(Appeal));
+      this.appealDetailModal = true;
+    },
+
+    async copyText(text, e) {
+      try {
+        await navigator.clipboard.writeText(text);
+        const target = e.target;
+        const old = target.textContent;
+        target.textContent = '已复制';
+        setTimeout(() => (target.textContent = old), 1200);
+      } catch (err) {
+        this.$message.error('复制失败，请手动复制');
+      }
+    },
+
+    // 申诉处理相关方法
+    async saveChanges() {
+      if (this.isSaving) return;
+      this.isSaving = true;
+
+      try {
+        const response = await axios.post('/api/appealData/handleAppealData', this.currentAppealDetail);
+
+        if (response.data.code === 200) {
+          this.uploadResult = {
+            success: '提交申诉结果',
+            details: `已成功处理${response.data.data.processedCount || 0}条申诉数据`
+          };
+        } else {
+          this.uploadResult = {
+            success: '提交申诉结果',
+            message: '提交申诉失败，请检查输入数据'
+          };
+        }
+        this.showResultModal = true;
+      } catch (error) {
+        this.uploadResult = {
+          success: '提交申诉结果',
+          message: '提交申诉失败，请检查输入数据'
+        };
+        this.showResultModal = true;
+      } finally {
+        this.isSaving = false;
+      }
+    },
+
+    async findDaKuData() {
+      if (this.isFinding) return;
+      this.isFinding = true;
+
+      try {
+        if (!this.currentAppealDetail.keyid) {
+          this.uploadResult = {
+            success: '匹配结果',
+            message: '匹配失败，请先输入keyid'
+          };
+          this.showResultModal = true;
+          return;
+        }
+
+        const response = await axios.get('/api/updateData/findDaKuData', {
+          params: {keyid: this.currentAppealDetail.keyid}
+        });
+        this.matchedAppeal = response.data.data;
+
+        if (!this.matchedAppeal) {
+          this.uploadResult = {
+            success: '匹配结果',
+            message: '匹配失败，请检查keyid是否正确'
+          };
+          this.showResultModal = true;
+          return;
+        }
+
+        this.updateFieldsFromMatch();
+      } catch (error) {
+        this.uploadResult = {
+          success: '匹配结果',
+          message: '匹配失败，请检查网络连接'
+        };
+        this.showResultModal = true;
+      } finally {
+        this.isFinding = false;
+      }
+    },
+
+    updateFieldsFromMatch() {
+      // 医院字段
+      this.currentAppealDetail.keyid = this.matchedAppeal.keyid;
+      this.currentAppealDetail.name = this.matchedAppeal.name;
+      this.currentAppealDetail.nameHistory = this.matchedAppeal.nameHistory;
+      this.currentAppealDetail.province = this.matchedAppeal.province;
+      this.currentAppealDetail.provinceid = this.matchedAppeal.provinceid;
+      this.currentAppealDetail.city = this.matchedAppeal.city;
+      this.currentAppealDetail.cityid = this.matchedAppeal.cityid;
+      this.currentAppealDetail.area = this.matchedAppeal.area;
+      this.currentAppealDetail.areaid = this.matchedAppeal.areaid;
+      this.currentAppealDetail.kuAddress = this.matchedAppeal.kuAddress;
+      this.currentAppealDetail.level = this.matchedAppeal.level;
+      this.currentAppealDetail.grade = this.matchedAppeal.grade;
+      this.currentAppealDetail.publicflag = this.matchedAppeal.publicflag;
+      this.currentAppealDetail.classify = this.matchedAppeal.classify;
+      this.currentAppealDetail.generalBranchKid = this.matchedAppeal.generalBranchKid;
+      this.currentAppealDetail.generalBranchName = this.matchedAppeal.generalBranchName;
+      this.currentAppealDetail.militaryHos = this.matchedAppeal.militaryHos;
+      this.currentAppealDetail.regcode = this.matchedAppeal.regcode;
+      this.currentAppealDetail.validity = this.matchedAppeal.validity;
+      this.currentAppealDetail.subjects = this.matchedAppeal.subjects;
+      this.currentAppealDetail.legalperson = this.matchedAppeal.legalperson;
+      this.currentAppealDetail.usci = this.matchedAppeal.usci;
+
+      // 药店字段
+      this.currentAppealDetail.operation = this.matchedAppeal.operation;
+      this.currentAppealDetail.scope = this.matchedAppeal.scope;
+      this.currentAppealDetail.mainBranchKid = this.matchedAppeal.mainBranchKid;
+      this.currentAppealDetail.mainBranchName = this.matchedAppeal.mainBranchName;
+      this.currentAppealDetail.createDate = this.matchedAppeal.createDate;
+      this.currentAppealDetail.registCapi = this.matchedAppeal.registCapi;
+      this.currentAppealDetail.econKind = this.matchedAppeal.econKind;
+      this.currentAppealDetail.signStatus = this.matchedAppeal.signStatus;
+      this.currentAppealDetail.industry = this.matchedAppeal.industry;
+      this.currentAppealDetail.belong = this.matchedAppeal.belong;
+    },
+
+    resetForm() {
+      if (!this.originalAppeal) {
+        this.uploadResult = {
+          success: '重置结果',
+          message: '没有可重置的原始数据'
+        };
+        this.showResultModal = true;
+        return;
+      }
+
+      this.uploadResult = {
+        success: '确认重置',
+        message: '确定要重置所有修改吗？重置后将恢复为原始数据。',
+        type: 'confirm',
+        onConfirm: () => this.executeReset()
+      };
+      this.showResultModal = true;
+    },
+
+    executeReset() {
+      this.currentAppealDetail = JSON.parse(JSON.stringify(this.originalAppeal));
+      this.matchedAppeal = null;
+      this.uploadResult = {
+        success: '重置结果',
+        message: '表单已重置为原始数据',
+        type: 'success'
+      };
+      this.showResultModal = true;
+    },
+
+    // 弹窗关闭方法
+    closeModal() {
+      if (this.uploadResult && this.uploadResult.type === 'confirm' && this.uploadResult.onConfirm) {
+        this.uploadResult.onConfirm();
+      }
+      this.showResultModal = false;
+    },
+
     closeDetailModal() {
       this.showDetailModal = false;
       this.currentAppeal = {};
     },
+
+    closeUpdateModal() {
+      this.appealDetailModal = false;
+      this.currentAppealDetail = {};
+      this.originalAppeal = {};
+      this.matchedAppeal = {};
+    },
+
+    // 表格列宽调整方法
     startResize(e, index) {
       this.resizing = true;
       this.resizeColumnIndex = index;
@@ -649,9 +1143,9 @@ export default {
 
       document.addEventListener('mousemove', this.handleResize);
       document.addEventListener('mouseup', this.stopResize);
-
       e.preventDefault();
     },
+
     handleResize(e) {
       if (this.resizing) {
         const dx = e.clientX - this.startX;
@@ -662,6 +1156,7 @@ export default {
         }
       }
     },
+
     stopResize() {
       this.resizing = false;
       document.removeEventListener('mousemove', this.handleResize);
@@ -672,6 +1167,7 @@ export default {
 </script>
 
 <style scoped>
+/* 主容器 */
 .Appeal-data-view {
   display: flex;
   flex-direction: column;
@@ -685,21 +1181,20 @@ export default {
   margin: 0 auto;
 }
 
-/* 2K屏幕优化 */
+/* 响应式设计 */
 @media (min-width: 2000px) and (max-width: 2600px) {
   .Appeal-data-view {
-    max-width: min(2200px, 96vw);
+    max-width: min(1860px, 90vw);
   }
 }
 
-/* 超宽屏幕 */
 @media (min-width: 2600px) {
   .Appeal-data-view {
     max-width: min(2400px, 95vw);
   }
 }
 
-
+/* 搜索区域 */
 .search-container {
   flex-shrink: 0;
   margin-bottom: 8px;
@@ -760,6 +1255,7 @@ export default {
   margin-left: auto;
 }
 
+/* 按钮样式 */
 button {
   padding: 5px 10px;
   border-radius: 3px;
@@ -811,6 +1307,17 @@ button {
   background: #85ce61;
 }
 
+.update-btn {
+  background: #3073d7;
+  color: white;
+  padding: 4px 8px;
+}
+
+.update-btn:hover {
+  background: #3073d7;
+}
+
+/* 数据容器 */
 .data-container {
   flex: 1;
   display: flex;
@@ -827,6 +1334,7 @@ button {
   position: relative;
 }
 
+/* 表格样式 */
 .Appeal-table {
   width: 100%;
   height: 80%;
@@ -879,6 +1387,7 @@ button {
   background-color: #f5f7fa;
 }
 
+/* 无数据提示 */
 .no-data {
   display: flex;
   justify-content: center;
@@ -888,6 +1397,7 @@ button {
   font-size: 12px;
 }
 
+/* 分页样式 */
 .pagination {
   display: flex;
   justify-content: center;
@@ -925,7 +1435,34 @@ button {
   font-size: 12px;
 }
 
-/* Modal styles */
+/* 列宽调整 */
+.th-content {
+  position: relative;
+  padding-right: 10px;
+  text-align: center;
+}
+
+.resize-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  cursor: col-resize;
+  background-color: transparent;
+}
+
+.resize-handle:hover {
+  background-color: #409eff;
+}
+
+/* 复制按钮 */
+.copy-btn {
+  cursor: pointer;
+  color: #409eff;
+}
+
+/* 模态框通用样式 */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -952,6 +1489,10 @@ button {
 }
 
 .modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
   padding: 10px 12px;
   border-bottom: 1px solid #ebeef5;
   display: flex;
@@ -960,14 +1501,14 @@ button {
 }
 
 .modal-header h3 {
+  flex: 1;
+  text-align: center;
   margin: 0;
-  font-size: 12px;
-  color: #303133;
-  font-weight: bold;
+  font-size: 13px;
 }
 
 .close-btn {
-  font-size: 12px;
+  font-size: 16px;
   color: #909399;
   cursor: pointer;
 }
@@ -981,6 +1522,19 @@ button {
   flex: 1;
 }
 
+.modal-footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1px solid #ebeef5;
+  padding: 10px 12px;
+  text-align: right;
+  z-index: 10;
+}
+
+/* 详情模态框 */
 .detail-row {
   display: flex;
   margin-bottom: 8px;
@@ -1000,13 +1554,6 @@ button {
   font-size: 12px;
 }
 
-.modal-footer {
-  padding: 8px 12px;
-  border-top: 1px solid #ebeef5;
-  display: flex;
-  justify-content: flex-end;
-}
-
 .modal-close-btn {
   padding: 5px 10px;
   background: #409eff;
@@ -1021,24 +1568,174 @@ button {
   background: #66b1ff;
 }
 
-/* Column resizing */
-.th-content {
-  position: relative;
-  padding-right: 10px;
+/* 申诉表单样式 */
+.hospital-form {
+  padding: 12px;
 }
 
-.resize-handle {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  cursor: col-resize;
-  background-color: transparent;
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.resize-handle:hover {
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #555;
+  font-size: 12px;
+}
+
+.form-input {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 12px;
+  transition: border-color 0.3s;
+  background-color: #fff;
+}
+
+.form-input:focus {
+  border-color: #409eff;
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(64, 158, 255, 0.2);
+}
+
+.form-input[readonly] {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* 表单按钮 */
+.btn {
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
   background-color: #409eff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #66b1ff;
+}
+
+.btn-secondary {
+  background-color: #fff;
+  color: #606266;
+  border-color: #dcdfe6;
+}
+
+.btn-secondary:hover {
+  color: #409eff;
+  border-color: #c6e2ff;
+  background-color: #ecf5ff;
+}
+
+.disabled-btn {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* 结果弹窗 */
+.modal-content {
+  background: white;
+  border-radius: 3px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.modal-content.success {
+  border-top: 3px solid #67c23a;
+}
+
+.modal-content.error {
+  border-top: 3px solid #f56c6c;
+}
+
+.modal-content.confirm {
+  border-top: 3px solid #9478cc;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 17px;
+  cursor: pointer;
+  color: #909399;
+}
+
+.modal-close:hover {
+  color: #606266;
+}
+
+.modal-body p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.result-details {
+  color: #909399;
+  font-size: 12px;
+}
+
+.modal-btn {
+  padding: 5px 10px;
+  background: #9478cc;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s;
+}
+
+.modal-btn:hover {
+  background: #af96e6;
+}
+
+.confirm-btn {
+  background: #9478cc;
+  margin-right: 8px;
+}
+
+.confirm-btn:hover {
+  background: #af96e6;
+}
+
+.cancel-btn {
+  background: white;
+  color: #606266;
+  border: 1px solid #dcdfe6;
+}
+
+.cancel-btn:hover {
+  background: #f5f7fa;
+  color: #409eff;
+  border-color: #c6e2ff;
 }
 
 
