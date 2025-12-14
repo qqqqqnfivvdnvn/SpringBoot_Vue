@@ -26,7 +26,7 @@
             拖拽文件到此处或
             <button class="upload-btn" @click.stop="triggerFileInput">点击上传</button>
           </p>
-          <p class="upload-hint">支持格式：.xlsx, .xls </p>
+          <p class="upload-hint">支持格式：.xlsx </p>
           <div v-if="selectedFile" class="file-info" @click.stop>
             <span class="file-name">{{ selectedFile.name }}</span>
             <span class="file-size">({{ formatFileSize(selectedFile.size) }})</span>
