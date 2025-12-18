@@ -157,7 +157,6 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
         haoSenUpdateDataVO.setIndustry(haoSenOrganization.getIndustry());
         haoSenUpdateDataVO.setBelong(haoSenOrganization.getBelong());
 
-        System.out.println(haoSenUpdateDataVO.toString());
 
         HaoSenFileMessageDTO updateDataMessage = new HaoSenFileMessageDTO();
         ObjectMapper objectMapper = new ObjectMapper();

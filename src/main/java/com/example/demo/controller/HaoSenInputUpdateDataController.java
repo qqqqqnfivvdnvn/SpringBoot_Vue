@@ -39,6 +39,7 @@ public class HaoSenInputUpdateDataController {
     @PostMapping("/inputOneUpdateHospitalData")
     public ResponseEntity<ApiResponseDTO<HaoSenFileMessageDTO>> inputOneAppealData(@RequestBody HaoSenOrganization haoSenOrganization ) {
 
+
         return ResponseEntity.ok(haoSenUpdateDataService.updateHospitalData(haoSenOrganization));
 
     }

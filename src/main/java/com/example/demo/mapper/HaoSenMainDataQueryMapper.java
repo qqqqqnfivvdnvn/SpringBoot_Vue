@@ -17,8 +17,9 @@ import java.util.List;
 @DS("slave_pg")
 
 public interface HaoSenMainDataQueryMapper {
-    public List<HaoSenOrganization> HospitalQueryByCondition(@Param("condition") HaoSenHospitalConditionDTO condition,
-                                                             @Param("page") Pageable pageable);
+    public List<HaoSenOrganization> HospitalQueryByCondition(@Param("condition") HaoSenHospitalConditionDTO condition
+                                                             );
+
     long countHospitalCondition(@Param("condition") HaoSenHospitalConditionDTO condition);
 
     public List<HaoSenOrganization> findAllHospitalCondition(@Param("condition") HaoSenHospitalConditionDTO condition, @Param("_isEmptyCondition") boolean _isEmptyCondition);

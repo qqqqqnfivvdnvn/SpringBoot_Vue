@@ -117,10 +117,9 @@
         origin_data d
         on
         a.data_id=d.data_id
-
         <include refid="conditionHospitalWhere"/>
         ORDER BY addtime desc
-        LIMIT #{page.pageSize} OFFSET #{page.offset}
+
     </select>
 
     <!-- 医疗机构统计总数 -->

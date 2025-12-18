@@ -8,6 +8,7 @@ import com.example.demo.service.impl.HaoSenMainDataQueryService;
 import com.example.demo.dto.HaoSenDrugStoreConditionDTO;
 import com.example.demo.dto.HaoSenHospitalConditionDTO;
 import com.example.demo.dto.HaoSenCompanyConditionDTO;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,13 +32,17 @@ public class HaoSenMainDataQueryController {
 
 
     @GetMapping("/getHospitalData")
-    public ResponseEntity<ApiResponseDTO<Page<HaoSenOrganization>>> getHospital(@RequestParam(defaultValue = "0") int page,
-                                                                                @RequestParam(defaultValue = "10") int size,
-                                                                                @ModelAttribute HaoSenHospitalConditionDTO hospitalCondition) {
-        Pageable pageable = PageRequest.of(page, size);
-        ApiResponseDTO<Page<HaoSenOrganization>> hospitalList = mainDataQueryService.getHospitalList(hospitalCondition, pageable);
-        return  ResponseEntity.ok(hospitalList);
+    public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganization>>> getHospital(
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "20") int pageSize,
+            HaoSenHospitalConditionDTO hospitalCondition) {
+
+        ApiResponseDTO<PageInfo<HaoSenOrganization>> result =
+                mainDataQueryService.getHospitalList(hospitalCondition, pageNum, pageSize);
+
+        return ResponseEntity.ok(result);
     }
+
 
     @GetMapping("/getDrugStoreData")
     public ResponseEntity<ApiResponseDTO<Page<HaoSenDrugStore>>> getDrugStore(@RequestParam(defaultValue = "0") int page,

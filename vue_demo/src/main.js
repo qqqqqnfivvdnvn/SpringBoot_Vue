@@ -4,6 +4,10 @@ import router from './router'; // 引入路由配置
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'   // 中文包
+
 
 // 导入需要的具体图标 fa-sign-out
 import {faHospital, faStore, faUniversity, faSignOutAlt,faAngleDoubleLeft ,faAngleDoubleRight,faUser,faTrash,faClock,
@@ -28,4 +32,5 @@ app.use(router); // 注册路由 times-circle
 
 app.mount('#app'); // 挂载到 #app
 
+app.use(ElementPlus, { locale: zhCn })   // 关键一行
 

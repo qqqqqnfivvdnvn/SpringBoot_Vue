@@ -1,5 +1,6 @@
 package com.example.demo.service;
-
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.entity.HaoSenCompany;
 import com.example.demo.entity.HaoSenDrugStore;
@@ -31,13 +32,23 @@ public class HaoSenMainDataQueryServiceImpl implements HaoSenMainDataQueryServic
     @Autowired
     private HaoSenMainDataQueryMapper mainDataQueryMapper;
 
+
     @Override
-    public ApiResponseDTO<Page<HaoSenOrganization>> getHospitalList(HaoSenHospitalConditionDTO condition, Pageable pageable) {
-        List<HaoSenOrganization> hospitals = mainDataQueryMapper.HospitalQueryByCondition(condition, pageable);
-        long total = mainDataQueryMapper.countHospitalCondition(condition);
-        Page<HaoSenOrganization> page = new PageImpl<>(hospitals, pageable, total);
-        return ApiResponseDTO.success(page);
+    public ApiResponseDTO<PageInfo<HaoSenOrganization>> getHospitalList(
+            HaoSenHospitalConditionDTO condition,
+            int pageNum,
+            int pageSize) {
+
+        PageHelper.startPage(pageNum, pageSize);
+
+        List<HaoSenOrganization> list =
+                mainDataQueryMapper.HospitalQueryByCondition(condition);
+
+        PageInfo<HaoSenOrganization> pageInfo = new PageInfo<>(list);
+
+        return ApiResponseDTO.success(pageInfo);
     }
+
 
     @Override
     public ApiResponseDTO<Page<HaoSenDrugStore>> getDrugStoreList(HaoSenDrugStoreConditionDTO condition, Pageable pageable) {
@@ -61,6 +72,7 @@ public class HaoSenMainDataQueryServiceImpl implements HaoSenMainDataQueryServic
     public ApiResponseDTO<byte[]> exportHospitalList(HaoSenHospitalConditionDTO condition) {
 
         boolean empty = MyBatisUtils.isAllBlank(condition); // 自己写个工具判空
+
 
         List<HaoSenOrganization> allHospitalCondition = mainDataQueryMapper.findAllHospitalCondition(condition,empty);
         // 调用字段映射
