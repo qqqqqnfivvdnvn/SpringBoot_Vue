@@ -1,13 +1,17 @@
 <template>
   <div class="register-page">
     <div class="register-container">
+      <!-- 左侧欢迎区域 -->
       <div class="welcome-section">
         <h1>主数据管理系统</h1>
         <h2>欢迎加入！</h2>
         <p>请填写以下信息完成注册</p>
       </div>
+
+      <!-- 右侧注册表单 -->
       <form @submit.prevent="handleSubmit" class="form-section">
         <h2>注册</h2>
+
         <div class="form-group">
           <label for="username">用户名：</label>
           <input
@@ -16,6 +20,7 @@
               v-model="username"
               placeholder="请输入用户名"
               required
+              autocomplete="username"
           />
         </div>
 
@@ -27,6 +32,7 @@
               v-model="email"
               placeholder="请输入邮箱"
               required
+              autocomplete="email"
           />
         </div>
 
@@ -38,82 +44,73 @@
               v-model="password"
               placeholder="*********"
               required
+              autocomplete="new-password"
           />
         </div>
 
-        <button type="submit">注册</button>
+        <button type="submit" :disabled="isLoading" class="submit-btn">
+          <span v-if="isLoading" class="loading-spinner"></span>
+          {{ isLoading ? '注册中...' : '注册' }}
+        </button>
+
         <div class="links">
           <router-link to="/login">已有账号？登录</router-link>
         </div>
-
       </form>
-      <!-- 悬浮提示框 -->
-      <div v-if="showToast" class="toast">
-        {{ toastMessage }}
-      </div>
-
     </div>
   </div>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
-export default {
-  data() {
-    return {
-      username: '',
-      email: '', // 新增邮箱字段
-      password: '',
-      showToast: false, // 控制提示框显示
-      toastMessage: '' // 提示框内容
-    };
-  },
-  methods: {
-    async handleSubmit() {
-      // 检查用户名、邮箱和密码是否为空
-      if (!this.username || !this.email || !this.password) {
-        this.showToastMessage('用户名、邮箱和密码不能为空');
-        return;
-      }
+const username = ref('')
+const email = ref('')
+const password = ref('')
+const isLoading = ref(false)
 
-      try {
-        const response = await axios.post('/api/user/register', {
-          username: this.username,
-          email: this.email, // 发送邮箱字段
-          password: this.password
-        });
-        // 根据后端返回的 code 判断是否成功
-        if (response.data.code === 200) {
-          this.showToastMessage(response.data.msg || '注册成功!'); // 显示成功提示
-          // 延迟 1 秒后跳转到登录页面
-          setTimeout(() => {
-            this.$router.push('/login');
-          }, 500); // 1000 毫秒 = 1 秒
-        }
-        else {
-          this.showToastMessage(response.data.msg  );
-        }
-      } catch (error) {
-        if (error.response) {
-          // 如果后端返回了错误信息，显示错误信息
-          this.showToastMessage(error.response.data.msg || '注册失败！');
-        } else {
-          // 网络错误或其他异常
-          this.showToastMessage('注册失败，请检查网络连接');
-        }
-      }
-    },
-    showToastMessage(message) {
-      this.toastMessage = message;
-      this.showToast = true;
-      // 3 秒后隐藏提示框
-      setTimeout(() => {
-        this.showToast = false;
-      }, 3000);
-    }
+const router = useRouter()
+
+const handleSubmit = async () => {
+  const trimmedUsername = username.value.trim()
+  if (!trimmedUsername || !email.value || !password.value) {
+    ElMessage.warning('用户名、邮箱和密码不能为空')
+    return
   }
-};
+
+  isLoading.value = true
+
+  try {
+    const response = await axios.post('/api/user/register', {
+      username: trimmedUsername,
+      email: email.value.trim(),
+      password: password.value
+    })
+
+    if (response.data.code === 200) {
+      ElMessage.success(response.data.msg || '注册成功！')
+
+      // 延迟跳转到登录页
+      setTimeout(() => {
+        router.push('/login')
+      }, 500)
+    } else {
+      ElMessage.error(response.data.msg || '注册失败')
+    }
+  } catch (error) {
+    console.error('注册错误:', error)
+    if (error.response?.data?.msg) {
+      ElMessage.error(error.response.data.msg)
+    } else {
+      ElMessage.error('网络错误，请稍后重试')
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
 
 <style scoped>
@@ -182,6 +179,7 @@ export default {
   display: block;
   margin-bottom: 5px;
   color: #333;
+  font-weight: 500;
 }
 
 .form-group input {
@@ -190,9 +188,16 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1rem;
+  box-sizing: border-box;
 }
 
-button {
+.form-group input:focus {
+  outline: none;
+  border-color: #9478cc;
+  box-shadow: 0 0 0 2px rgba(148, 120, 204, 0.2);
+}
+
+.submit-btn {
   width: 100%;
   padding: 10px;
   background-color: #9478cc;
@@ -202,10 +207,35 @@ button {
   font-size: 1rem;
   cursor: pointer;
   margin-top: 20px;
+  position: relative;
+  transition: background-color 0.3s;
 }
 
-button:hover {
+.submit-btn:hover:not(:disabled) {
   background-color: #2575fc;
+}
+
+.submit-btn:disabled {
+  background-color: #a992d1;
+  cursor: not-allowed;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .links {
@@ -221,42 +251,5 @@ button:hover {
 
 .links a:hover {
   text-decoration: underline;
-}
-
-.terms {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.8rem;
-  color: #666;
-}
-
-/* 悬浮提示框样式 */
-.toast {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #9478cc;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  animation: fadeInOut 3s ease-in-out;
-}
-
-@keyframes fadeInOut {
-  0% {
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
 }
 </style>

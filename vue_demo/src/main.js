@@ -51,6 +51,8 @@ import ImportAppealDataView from '@/components/haosenproject/appealdataview/Impo
 import ImportCleanDataView from '@/components/haosenproject/cleandataview/ImportCleanDataView.vue'
 import ImportUpdateDataView from '@/components/haosenproject/updatedataView/ImportUpdateDataView.vue'
 
+
+
 app.component('HomeDashboardView', HomeDashboardView)
 app.component('HospitalDataView', HospitalDataView)
 app.component('DrugStoreDataView', DrugStoreDataView)

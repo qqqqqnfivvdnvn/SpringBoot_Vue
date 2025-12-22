@@ -1,43 +1,36 @@
 <template>
   <div class="dashboard-view">
     <div class="grid-container">
+      <!-- 顶部五个数据卡片（保留原 Font Awesome 图标） -->
       <div class="grid-item-container">
-
-        <!-- 五个数据卡片 -->
-
         <div class="grid-item-small">
-          <font-awesome-icon :icon="['fas', 'hospital']" size="2x" /> &nbsp;
-          <span style="font-weight: bold; font-size: 16px; color: #000000">医院周清洗</span> &nbsp;
-          <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.hospitalCount }}</span>
+          <font-awesome-icon :icon="['fas', 'hospital']" size="2x" />&nbsp;
+          <span class="label">医院周清洗</span>&nbsp;
+          <span class="value">{{ cleanCount.hospitalCount }}</span>
         </div>
-
         <div class="grid-item-small">
-          <font-awesome-icon :icon="['fas', 'store']" size="2x"></font-awesome-icon> &nbsp;
-          <span style="font-weight: bold; font-size: 16px; color: #000000">药店周清洗</span> &nbsp;
-          <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.drugstoreCount }}</span>
+          <font-awesome-icon :icon="['fas', 'store']" size="2x" />&nbsp;
+          <span class="label">药店周清洗</span>&nbsp;
+          <span class="value">{{ cleanCount.drugstoreCount }}</span>
         </div>
-
         <div class="grid-item-small">
-          <font-awesome-icon :icon="['fas', 'university']" size="2x"></font-awesome-icon> &nbsp;
-          <span style="font-weight: bold; font-size: 16px; color: #000000">商业周清洗</span> &nbsp;
-          <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.companyCount }}</span>
+          <font-awesome-icon :icon="['fas', 'university']" size="2x" />&nbsp;
+          <span class="label">商业周清洗</span>&nbsp;
+          <span class="value">{{ cleanCount.companyCount }}</span>
         </div>
-
         <div class="grid-item-small">
-          <font-awesome-icon :icon="['fas', 'trash']" size="2x"></font-awesome-icon> &nbsp;
-          <span style="font-weight: bold; font-size: 16px; color: #000000">申诉待处理</span> &nbsp;
-          <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.unappealingCount }}</span>
+          <font-awesome-icon :icon="['fas', 'trash']" size="2x" />&nbsp;
+          <span class="label">申诉待处理</span>&nbsp;
+          <span class="value">{{ cleanCount.unappealingCount }}</span>
         </div>
-
         <div class="grid-item-small">
-          <font-awesome-icon :icon="['fas', 'clock']" size="2x"></font-awesome-icon> &nbsp;
-          <span style="font-weight: bold; font-size: 16px; color: #000000">待清洗</span> &nbsp;
-          <span style="font-size: 16px; color: #2575fc; font-weight: bold">{{ cleanCount.uncleanedCount }}</span>
+          <font-awesome-icon :icon="['fas', 'clock']" size="2x" />&nbsp;
+          <span class="label">待清洗</span>&nbsp;
+          <span class="value">{{ cleanCount.uncleanedCount }}</span>
         </div>
-
       </div>
 
-      <!-- 图表区域 -->
+      <!-- 第二行：柱状图 + 饼图 -->
       <div class="grid-item grid-item-4-6">
         <div class="sub-grid-item">
           <BarChart />
@@ -47,6 +40,7 @@
         </div>
       </div>
 
+      <!-- 第三行：玫瑰图 + 折线图 -->
       <div class="grid-item grid-item-7-9">
         <div class="sub-grid-item">
           <RosePieChart />
@@ -55,62 +49,54 @@
           <LineChart />
         </div>
       </div>
-
     </div>
   </div>
 </template>
 
-<script>
-import BarChart from '@/components/haosenproject/homechart/CleanBarChart.vue';
-import PieChart from '@/components/haosenproject/homechart/MainDataPieChart.vue';
-import LineChart from '@/components/haosenproject/homechart/AppealUpdateChart.vue';
-import RosePieChart from '@/components/haosenproject/homechart/BranchBarChart.vue';
-import axios from 'axios';
+<script setup>
+import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
-export default {
-  components: {
-    BarChart,
-    PieChart,
-    LineChart,
-    RosePieChart
-  },
 
-  data() {
-    return {
-      cleanCount: {
-        uncleanedCount: 0,
-        unappealingCount: 0,
-        companyCount: 0,
-        hospitalCount: 0,
-        drugstoreCount: 0
-      },
-      loading: false, // 可选：添加加载状态
-      error: null     // 可选：添加错误状态
-    };
-  },
 
-  async created() {
-    await this.fetchHomeData(); // ✅ 现在 this.fetchHomeData 是可用的
-  },
+// 导入四个图表组件（路径根据你的项目调整）
+import BarChart from '@/components/haosenproject/homechart/CleanBarChart.vue'
+import PieChart from '@/components/haosenproject/homechart/MainDataPieChart.vue'
+import RosePieChart from '@/components/haosenproject/homechart/BranchBarChart.vue'
+import LineChart from '@/components/haosenproject/homechart/AppealUpdateChart.vue'
 
-  methods: { // 所有方法必须放在 methods 对象里
-    async fetchHomeData() {
-      try {
-        const response = await axios.post('/api/homeData/getHomeData');
-        if (response.data.code === 200) {
-          this.cleanCount = response.data.data;
-        }
-      } catch (error) {
-        console.error('获取数据失败:', error);
-        this.error = error.message; // 可选：存储错误信息
-      }
+
+// 数据
+const cleanCount = ref({
+  uncleanedCount: 0,
+  unappealingCount: 0,
+  companyCount: 0,
+  hospitalCount: 0,
+  drugstoreCount: 0
+})
+
+// 获取首页数据
+const fetchHomeData = async () => {
+  try {
+    const response = await axios.post('/api/homeData/getHomeData')
+    if (response.data.code === 200) {
+      cleanCount.value = response.data.data
+    } else {
+      ElMessage.error('获取数据失败')
     }
+  } catch (error) {
+    console.error('获取数据失败:', error)
+    ElMessage.error('网络错误，请稍后重试')
   }
-};
+}
+
+onMounted(() => {
+  fetchHomeData()
+})
 </script>
 
 <style scoped>
-
 .dashboard-view {
   display: flex;
   flex-direction: column;
@@ -141,82 +127,78 @@ export default {
 /* 网格布局 */
 .grid-container {
   display: grid;
-  grid-template-rows: 100px 1fr 1fr; /* 第一行高度缩小，第二行和第三行平分剩余空间 */
-  gap: 6px; /* 网格之间的间距 */
+  grid-template-rows: 100px 1fr 1fr;
+  gap: 6px;
   height: 100%;
   width: 100%;
 }
 
-/* 新增样式：五个盒子的容器 */
+/* 顶部五个卡片容器 */
 .grid-item-container {
-  grid-column: 1 / -1; /* 占据整行 */
-  display: flex; /* 使用 Flexbox 布局 */
-  gap: 6px; /* 盒子之间的间距 */
-  height: 100px; /* 高度与原来的 grid-item-1-3 一致 */
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 6px;
+  height: 100px;
 }
 
-/* 新增样式：每个小盒子的样式 */
 .grid-item-small {
-  flex: 1; /* 每个盒子平分宽度 */
-  background-color: #fff; /* 背景色为白色 */
+  flex: 1;
+  background-color: #fff;
   border: 1px solid #ddd;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  color: #333;
   border-radius: 3px;
   transition: box-shadow 0.2s;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* 悬浮效果 */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .grid-item-small:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* 悬浮时阴影加深 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* 第二行和第三行：合并 4、5、6 格和 7、8、9 格，并分为两个格子 */
+.grid-item-small .label {
+  font-weight: bold;
+  font-size: 16px;
+  color: #000000;
+}
+
+.grid-item-small .value {
+  font-size: 16px;
+  color: #2575fc;
+  font-weight: bold;
+}
+
+/* 第二、三行大区域 */
 .grid-item-4-6,
 .grid-item-7-9 {
-  grid-column: 1 / -1; /* 占据整行 */
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 分为两个格子 */
-  gap: 6px; /* 子网格之间的间距 */
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
 }
 
-/* 子网格项样式 */
 .sub-grid-item {
-  background-color: #fff; /* 背景色为白色 */
+  background-color: #fff;
   border: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  color: #333;
   border-radius: 3px;
   transition: box-shadow 0.2s;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* 悬浮效果 */
-}
-
-.sub-grid-item:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* 悬浮时阴影加深 */
-}
-
-/* 确保图表占满容器 */
-.sub-grid-item {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
 }
 
-.sub-grid-item >>> .chart-container {
-  width: 100%;
-  height: 100%;
+.sub-grid-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 图表充满容器 */
+.sub-grid-item :deep(.chart-container),
+.sub-grid-item :deep(canvas) {
+  width: 100% !important;
+  height: 100% !important;
   position: absolute;
   top: 0;
   left: 0;
-}
-
-.sub-grid-item >>> canvas {
-  width: 100% !important;
-  height: 100% !important;
 }
 </style>
