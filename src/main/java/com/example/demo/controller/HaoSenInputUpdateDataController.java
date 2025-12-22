@@ -3,7 +3,6 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.dto.HaoSenFileMessageDTO;
-import com.example.demo.entity.HaoSenHospital;
 import com.example.demo.entity.HaoSenOrganization;
 import com.example.demo.service.impl.HaoSenUpdateDataService;
 import com.example.demo.vo.HaoSenAppealDataVO;
@@ -33,23 +32,19 @@ public class HaoSenInputUpdateDataController {
     }
 
 
-
-
-    //单条页面更新医院数据，推送接口更新数据
-    @PostMapping("/inputOneUpdateHospitalData")
-    public ResponseEntity<ApiResponseDTO<HaoSenFileMessageDTO>> inputOneAppealData(@RequestBody HaoSenOrganization haoSenOrganization ) {
-
-
-        return ResponseEntity.ok(haoSenUpdateDataService.updateHospitalData(haoSenOrganization));
-
-    }
-
-
-
     //    单条页面查询医院、药店大库数据
     @GetMapping ("/findDaKuData")
     public ResponseEntity<ApiResponseDTO<HaoSenAppealDataVO>> findDaKuData(@RequestParam("keyid") String keyid)  {
         return ResponseEntity.ok(haoSenUpdateDataService.findDaKuData(keyid));
+
+    }
+
+
+    //单条页面更新医院数据，推送接口更新数据
+    @PostMapping("/OneUpdateHaoSenData")
+    public ResponseEntity<ApiResponseDTO<HaoSenFileMessageDTO>> OneUpdateHaoSenData(@RequestBody HaoSenOrganization haoSenOrganization ) {
+
+        return ResponseEntity.ok(haoSenUpdateDataService.updateOneUpdateData(haoSenOrganization));
 
     }
 

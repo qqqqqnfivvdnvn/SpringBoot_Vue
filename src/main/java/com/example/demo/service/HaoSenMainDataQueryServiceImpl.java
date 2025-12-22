@@ -1,9 +1,6 @@
 package com.example.demo.service;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+
 import com.example.demo.dto.ApiResponseDTO;
-import com.example.demo.entity.HaoSenCompany;
-import com.example.demo.entity.HaoSenDrugStore;
 import com.example.demo.entity.HaoSenOrganization;
 import com.example.demo.mapper.HaoSenMainDataQueryMapper;
 import com.example.demo.service.impl.HaoSenMainDataQueryService;
@@ -12,10 +9,9 @@ import com.example.demo.dto.HaoSenDrugStoreConditionDTO;
 import com.example.demo.dto.HaoSenHospitalConditionDTO;
 import com.example.demo.utils.MyBatisUtils;
 import com.example.demo.utils.WebToExcel;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,31 +35,56 @@ public class HaoSenMainDataQueryServiceImpl implements HaoSenMainDataQueryServic
             int pageNum,
             int pageSize) {
 
-        PageHelper.startPage(pageNum, pageSize);
+        try {
+            PageHelper.startPage(pageNum, pageSize);
+            List<HaoSenOrganization> list =
+                    mainDataQueryMapper.HospitalQueryByCondition(condition);
+            return ApiResponseDTO.success(new PageInfo<>(list));
 
-        List<HaoSenOrganization> list =
-                mainDataQueryMapper.HospitalQueryByCondition(condition);
+        } finally {
 
-        PageInfo<HaoSenOrganization> pageInfo = new PageInfo<>(list);
+            PageHelper.clearPage();   // 必须清理 ThreadLocal
 
-        return ApiResponseDTO.success(pageInfo);
+        }
+
     }
 
 
+
     @Override
-    public ApiResponseDTO<Page<HaoSenDrugStore>> getDrugStoreList(HaoSenDrugStoreConditionDTO condition, Pageable pageable) {
-        List<HaoSenDrugStore> drugStores = mainDataQueryMapper.DrugStoreQueryByCondition(condition, pageable);
-        long total = mainDataQueryMapper.countDrugStoreCondition(condition);
-        Page<HaoSenDrugStore> page = new PageImpl<>(drugStores, pageable, total);
-        return ApiResponseDTO.success(page);
+    public ApiResponseDTO<PageInfo<HaoSenOrganization>> getDrugStoreList(HaoSenDrugStoreConditionDTO condition ,int pageNum,
+                                                                         int pageSize) {
+        try {
+            PageHelper.startPage(pageNum, pageSize);
+            List<HaoSenOrganization> drugStoreList = mainDataQueryMapper.DrugStoreQueryByCondition(condition);
+            PageInfo<HaoSenOrganization> haoSenOrganizationPageInfo = new PageInfo<>(drugStoreList);
+            return ApiResponseDTO.success(haoSenOrganizationPageInfo);
+
+        } finally {
+
+            PageHelper.clearPage();   // 必须清理 ThreadLocal
+
+        }
+
     }
 
     @Override
-    public ApiResponseDTO<Page<HaoSenCompany>> getCompanyList(HaoSenCompanyConditionDTO condition, Pageable pageable) {
-        List<HaoSenCompany> companies = mainDataQueryMapper.CompanyQueryByCondition(condition,pageable);
-        long total = mainDataQueryMapper.countCompanyCondition(condition);
-        Page<HaoSenCompany> page = new PageImpl<>(companies, pageable, total);
-        return ApiResponseDTO.success(page);
+    public ApiResponseDTO<PageInfo<HaoSenOrganization>> getCompanyList(HaoSenCompanyConditionDTO condition, int pageNum,
+                                                                       int pageSize) {
+
+        try {
+
+            PageHelper.startPage(pageNum, pageSize);
+            List<HaoSenOrganization> CompanyList = mainDataQueryMapper.CompanyQueryByCondition(condition);
+            PageInfo<HaoSenOrganization> haoSenOrganizationPageInfo = new PageInfo<>(CompanyList);
+
+            return ApiResponseDTO.success(haoSenOrganizationPageInfo);
+
+        } finally {
+            PageHelper.clearPage();   // 必须清理 ThreadLocal
+        }
+
+
     }
 
 
@@ -71,13 +92,13 @@ public class HaoSenMainDataQueryServiceImpl implements HaoSenMainDataQueryServic
     @Override
     public ApiResponseDTO<byte[]> exportHospitalList(HaoSenHospitalConditionDTO condition) {
 
-        boolean empty = MyBatisUtils.isAllBlank(condition); // 自己写个工具判空
+        boolean needLimit = MyBatisUtils.isAllBlank(condition); // 自己写个工具判空
 
+        List<HaoSenOrganization> allHospitalCondition = mainDataQueryMapper.findAllHospitalCondition(condition,needLimit);
 
-        List<HaoSenOrganization> allHospitalCondition = mainDataQueryMapper.findAllHospitalCondition(condition,empty);
         // 调用字段映射
         WebToExcel webToExcel = new WebToExcel();
-        byte[] excelBytes = webToExcel.exportHospitalConditionToExcel(allHospitalCondition);
+        byte[] excelBytes = webToExcel.exportConditionToExcel(allHospitalCondition,"医疗机构数据");
 
         // 设置响应头
         HttpHeaders headers = new HttpHeaders();
@@ -91,6 +112,60 @@ public class HaoSenMainDataQueryServiceImpl implements HaoSenMainDataQueryServic
         ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
 
         return ApiResponseDTO.success(responseEntity.getBody());
+
+    }
+
+
+    // 导出药店excel业务逻辑代码
+    @Override
+    public ApiResponseDTO<byte[]> exportDrugStoreList(HaoSenDrugStoreConditionDTO condition) {
+        boolean needLimit = MyBatisUtils.isAllBlank(condition); // 自己写个工具判空
+        List<HaoSenOrganization> allDrugStoreCondition = mainDataQueryMapper.findAllDrugStoreCondition(condition,needLimit);
+
+        // 调用字段映射
+        WebToExcel webToExcel = new WebToExcel();
+        byte[] excelBytes = webToExcel.exportConditionToExcel(allDrugStoreCondition,"药店数据");
+
+        // 设置响应头
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+
+        headers.setContentDispositionFormData("attachment",
+                URLEncoder.encode("药店数据.xlsx", StandardCharsets.UTF_8));
+
+
+        ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+
+        return ApiResponseDTO.success(responseEntity.getBody());
+
+
+
+
+    }
+
+    @Override
+    public ApiResponseDTO<byte[]> exportCompanyData(HaoSenCompanyConditionDTO condition) {
+        boolean needLimit = MyBatisUtils.isAllBlank(condition); // 自己写个工具判空
+        List<HaoSenOrganization> allCompanyCondition = mainDataQueryMapper.findAllCompanyCondition(condition, needLimit);
+        // 调用字段映射
+        WebToExcel webToExcel = new WebToExcel();
+        byte[] excelBytes = webToExcel.exportConditionToExcel(allCompanyCondition,"商业数据");
+
+        // 设置响应头
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+
+        headers.setContentDispositionFormData("attachment",
+                URLEncoder.encode("商业数据.xlsx", StandardCharsets.UTF_8));
+
+
+        ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+
+        return ApiResponseDTO.success(responseEntity.getBody());
+
+
 
     }
 

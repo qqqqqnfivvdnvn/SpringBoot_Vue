@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class HaoSenCompany {
+    private String orgType;
     private String batchCode;
     private String dataId;
     private String dataCode;
@@ -39,4 +40,9 @@ public class HaoSenCompany {
     private String addtime;
     private String appealDataId;
     private String field1;
+
+    private String originalProvince;
+    private String originalAddress;
+    private String companyName;
+
 }

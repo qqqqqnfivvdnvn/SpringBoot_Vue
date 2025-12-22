@@ -11,12 +11,13 @@ public interface HaoSenUpdateDataService {
 
     public ApiResponseDTO<HaoSenFileMessageDTO> uploadUpdateFile(MultipartFile file);
 
-
-
-    public ApiResponseDTO<HaoSenFileMessageDTO> updateHospitalData(HaoSenOrganization haoSenOrganization);
-
-
     public ApiResponseDTO<HaoSenAppealDataVO> findDaKuData(String keyid);
+
+
+
+
+    public ApiResponseDTO<HaoSenFileMessageDTO> updateOneUpdateData(HaoSenOrganization haoSenOrganization);
+
 
 
 

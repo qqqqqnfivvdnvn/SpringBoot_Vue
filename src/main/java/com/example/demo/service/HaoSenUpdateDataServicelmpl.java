@@ -100,11 +100,17 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
 
 
 
+    //获取药店、医疗机构大库的单条数据
+    @Override
+    public ApiResponseDTO<HaoSenAppealDataVO> findDaKuData(String keyid) {
+        return ApiResponseDTO.success(sqlMapper.findDaKuData(keyid));
+    }
+
 
 
     //更新医院信息，并通过接口推送
     @Override
-    public ApiResponseDTO<HaoSenFileMessageDTO> updateHospitalData(HaoSenOrganization haoSenOrganization) {
+    public ApiResponseDTO<HaoSenFileMessageDTO> updateOneUpdateData(HaoSenOrganization haoSenOrganization) {
         //给HaoSenAppealDataVO 赋值 ,将 haoSenOrganization 对应的值赋值给HaoSenAppealDataVO
 
         HaoSenAppealDataVO haoSenUpdateDataVO = new HaoSenAppealDataVO();
@@ -129,11 +135,11 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
         haoSenUpdateDataVO.setCityid(haoSenOrganization.getCityId());
         haoSenUpdateDataVO.setArea(haoSenOrganization.getArea());
         haoSenUpdateDataVO.setAreaid(haoSenOrganization.getAreaId());
-        haoSenUpdateDataVO.setKuAddress(haoSenOrganization.getAddress());
+        haoSenUpdateDataVO.setAddress(haoSenOrganization.getAddress());
         haoSenUpdateDataVO.setLevel(haoSenOrganization.getLevel());
         haoSenUpdateDataVO.setGrade(haoSenOrganization.getGrade());
         haoSenUpdateDataVO.setPublicflag(haoSenOrganization.getPublicflag());
-        haoSenUpdateDataVO.setClassify(haoSenOrganization.getClass5());
+        haoSenUpdateDataVO.setClassify(haoSenOrganization.getClassify());
         haoSenUpdateDataVO.setGeneralBranchKid(haoSenOrganization.getGeneralBranchKid());
         haoSenUpdateDataVO.setGeneralBranchName(haoSenOrganization.getGeneralBranchName());
         haoSenUpdateDataVO.setMilitaryHos(haoSenOrganization.getMilitaryHos());
@@ -157,59 +163,47 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
         haoSenUpdateDataVO.setIndustry(haoSenOrganization.getIndustry());
         haoSenUpdateDataVO.setBelong(haoSenOrganization.getBelong());
 
+        System.out.print(haoSenOrganization);
 
         HaoSenFileMessageDTO updateDataMessage = new HaoSenFileMessageDTO();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        // 1. 数据库操作（事务内）
+        // 1. 数据库操作
         sqlMapper.deleteAllHaoSenData();
         //插入数据
         sqlMapper.inputHaoSenUpdateData(haoSenUpdateDataVO);
 
-        return ApiResponseDTO.success(updateDataMessage);
+//        return ApiResponseDTO.success(updateDataMessage);
+        try {
+//         2. 关键API调用
+            String updateMessage = new ApiHaosen().callExternalUpdateApi();
+            JsonNode rootNode = objectMapper.readTree(updateMessage);
+            if (rootNode.get("code").asInt() == 200){
+                // 5. 全部成功后的响应
+                updateDataMessage.setProcessedCount(1);
+                updateDataMessage.setMessage("success");
+                updateDataMessage.setAppealMessage("更新数据推送成功");
+            } else {
+                updateDataMessage.setMessage(rootNode.get("msg").asText());
+                updateDataMessage.setAppealMessage("更新数据推送失败");
+            }
+            return ApiResponseDTO.success(updateDataMessage);
 
-//        try {
-//
-////         2. 关键API调用
-//        String updateMessage = new ApiHaosen().callExternalUpdateApi();
-//
-//        JsonNode rootNode = objectMapper.readTree(updateMessage);
-//            if (rootNode.get("code").asInt() == 200){
-//                // 5. 全部成功后的响应
-//                updateDataMessage.setProcessedCount(1);
-//                updateDataMessage.setMessage("success");
-//                updateDataMessage.setAppealMessage("更新数据推送成功");
-//            } else {
-//                updateDataMessage.setMessage(rootNode.get("msg").asText());
-//                updateDataMessage.setAppealMessage("更新数据推送失败");
-//            }
-//            return ApiResponseDTO.success(updateDataMessage);
-//
-//        } catch (RuntimeException e) {
-//            // 业务异常（如API调用失败）
-//            updateDataMessage.setMessage("fail");
-//            updateDataMessage.setAppealMessage("更新数据推送失败");
-//            return ApiResponseDTO.success(updateDataMessage);
-//
-//        } catch (Exception e) {
-//            // 系统异常
-//            updateDataMessage.setMessage("系统处理异常");
-//            updateDataMessage.setAppealMessage("更新数据处理失败");
-//            return ApiResponseDTO.success(updateDataMessage);
-//        }
-//
-//
+        } catch (RuntimeException e) {
+            // 业务异常（如API调用失败）
+            updateDataMessage.setMessage("fail");
+            updateDataMessage.setAppealMessage("更新数据推送失败");
+            return ApiResponseDTO.success(updateDataMessage);
 
-    }
+        } catch (Exception e) {
+            // 系统异常
+            updateDataMessage.setMessage("系统处理异常");
+            updateDataMessage.setAppealMessage("更新数据处理失败");
+            return ApiResponseDTO.success(updateDataMessage);
+        }
 
 
 
-
-
-    //获取药店、医疗机构大库的单条数据
-    @Override
-    public ApiResponseDTO<HaoSenAppealDataVO> findDaKuData(String keyid) {
-        return ApiResponseDTO.success(sqlMapper.findDaKuData(keyid));
     }
 
 

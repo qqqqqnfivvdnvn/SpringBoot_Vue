@@ -15,6 +15,7 @@ public class HaoSenAppealDataVO {
     private String appealRemark;       // appeal_remark → appealRemark
     private String solveRemark;        // solve_remark → solveRemark
     private String institutionType;    // institution_type → institutionType
+
     private String keyid;              // keyid → keyId (更符合驼峰规则)
     private String name;
     private String nameHistory;        // name_history → nameHistory
@@ -24,7 +25,7 @@ public class HaoSenAppealDataVO {
     private String cityid;             // cityid → cityId
     private String area;
     private String areaid;             // areaid → areaId
-    private String kuAddress;          // ku_address → kuAddress
+    private String address;
     private String level;
     private String grade;
     private String publicflag;         // publicflag → publicFlag
@@ -37,6 +38,7 @@ public class HaoSenAppealDataVO {
     private String subjects;
     private String legalperson;        // legalperson → legalPerson
     private String usci;               // USCI 是专有名词，可保持原样
+
     private String operation;
     private String scope;
     private String mainBranchKid;      // main_branch_kid → mainBranchKid

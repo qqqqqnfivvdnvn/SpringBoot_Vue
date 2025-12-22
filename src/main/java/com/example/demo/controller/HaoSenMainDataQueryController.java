@@ -1,8 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ApiResponseDTO;
-import com.example.demo.entity.HaoSenDrugStore;
-import com.example.demo.entity.HaoSenHospital;
 import com.example.demo.entity.HaoSenOrganization;
 import com.example.demo.service.impl.HaoSenMainDataQueryService;
 import com.example.demo.dto.HaoSenDrugStoreConditionDTO;
@@ -10,9 +8,6 @@ import com.example.demo.dto.HaoSenHospitalConditionDTO;
 import com.example.demo.dto.HaoSenCompanyConditionDTO;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,25 +36,6 @@ public class HaoSenMainDataQueryController {
                 mainDataQueryService.getHospitalList(hospitalCondition, pageNum, pageSize);
 
         return ResponseEntity.ok(result);
-    }
-
-
-    @GetMapping("/getDrugStoreData")
-    public ResponseEntity<ApiResponseDTO<Page<HaoSenDrugStore>>> getDrugStore(@RequestParam(defaultValue = "0") int page,
-                                                                              @RequestParam(defaultValue = "10") int size,
-                                                                              @ModelAttribute HaoSenDrugStoreConditionDTO drugStoreCondition) {
-        Pageable pageable = PageRequest.of(page, size);
-        ApiResponseDTO<Page<HaoSenDrugStore>> drugStoreList = mainDataQueryService.getDrugStoreList(drugStoreCondition, pageable);
-        return ResponseEntity.ok(drugStoreList);
-    }
-
-    @GetMapping("/getCompanyData")
-    public ResponseEntity<ApiResponseDTO<Page<HaoSenCompany>>> getCompany(@RequestParam(defaultValue = "0") int page,
-                                                                          @RequestParam(defaultValue = "10") int size,
-                                                                          @ModelAttribute HaoSenCompanyConditionDTO companyCondition) {
-        Pageable pageable = PageRequest.of(page, size);
-        ApiResponseDTO<Page<HaoSenCompany>> companyList = mainDataQueryService.getCompanyList(companyCondition, pageable);
-        return ResponseEntity.ok(companyList);
 
     }
 
@@ -69,6 +45,53 @@ public class HaoSenMainDataQueryController {
 
 
         return ResponseEntity.ok(mainDataQueryService.exportHospitalList(hospitalCondition));
+
     }
+
+
+    @GetMapping("/getDrugStoreData")
+    public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganization>>> getDrugStore( @RequestParam(defaultValue = "1") int pageNum,
+                                                                                      @RequestParam(defaultValue = "20") int pageSize,
+                                                                                      @ModelAttribute HaoSenDrugStoreConditionDTO drugStoreCondition) {
+        ApiResponseDTO<PageInfo<HaoSenOrganization>> drugStoreList = mainDataQueryService.getDrugStoreList(drugStoreCondition, pageNum,pageSize);
+        return ResponseEntity.ok(drugStoreList);
+
+    }
+
+
+    @GetMapping("/exportDrugStoreData")
+    public ResponseEntity<ApiResponseDTO<byte[]>> exportDrugStoreData(@ModelAttribute  HaoSenDrugStoreConditionDTO drugStoreCondition) {
+
+        return ResponseEntity.ok(mainDataQueryService.exportDrugStoreList(drugStoreCondition));
+
+
+    }
+
+
+    @GetMapping("/getCompanyData")
+    public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganization>>> getCompany(@RequestParam(defaultValue = "1") int pageNum,
+                                                                                   @RequestParam(defaultValue = "20") int pageSize,
+                                                                                   @ModelAttribute HaoSenCompanyConditionDTO companyCondition) {
+
+
+        return ResponseEntity.ok(mainDataQueryService.getCompanyList(companyCondition, pageNum, pageSize));
+
+
+    }
+
+
+    @GetMapping("/exportCompanyData")
+    public ResponseEntity<ApiResponseDTO<byte[]>> exportCompanyData(@ModelAttribute  HaoSenCompanyConditionDTO companyCondition) {
+
+        return ResponseEntity.ok(mainDataQueryService.exportCompanyData(companyCondition));
+
+
+    }
+
+
+
+
+
+
 
 }

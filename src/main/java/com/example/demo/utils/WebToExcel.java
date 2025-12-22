@@ -67,7 +67,7 @@ public class WebToExcel {
                 row.createCell(colNum++).setCellValue(data.getCityid() != null ? data.getCityid() : "");
                 row.createCell(colNum++).setCellValue(data.getArea() != null ? data.getArea() : "");
                 row.createCell(colNum++).setCellValue(data.getAreaid() != null ? data.getAreaid() : "");
-                row.createCell(colNum++).setCellValue(data.getKuAddress() != null ? data.getKuAddress() : "");
+                row.createCell(colNum++).setCellValue(data.getAddress() != null ? data.getAddress() : "");
                 row.createCell(colNum++).setCellValue(data.getLevel() != null ? data.getLevel() : "");
                 row.createCell(colNum++).setCellValue(data.getGrade() != null ? data.getGrade() : "");
                 row.createCell(colNum++).setCellValue(data.getPublicflag() != null ? data.getPublicflag() : "");
@@ -107,13 +107,13 @@ public class WebToExcel {
     }
 
 
-    public  byte[] exportHospitalConditionToExcel(List<HaoSenOrganization> allHospitalCondition){
+    public  byte[] exportConditionToExcel(List<HaoSenOrganization> allHospitalCondition,String sheetName){
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              XSSFWorkbook workbook = new XSSFWorkbook()) {
 
             // 创建工作表
-            XSSFSheet sheet = workbook.createSheet("医疗机构数据");
+            XSSFSheet sheet = workbook.createSheet(sheetName);
 
             // 创建表头
             String[] headers = {
@@ -153,7 +153,7 @@ public class WebToExcel {
                 row.createCell(colNum++).setCellValue(data.getCompanyName() != null ? data.getCompanyName() : "");
                 row.createCell(colNum++).setCellValue(data.getAppealRemark() != null ? data.getAppealRemark() : "");
                 row.createCell(colNum++).setCellValue(data.getSolveRemark() != null ? data.getSolveRemark() : "");
-                row.createCell(colNum++).setCellValue("医院");
+                row.createCell(colNum++).setCellValue(data.getOrgType() != null ? data.getOrgType() : "");
                 row.createCell(colNum++).setCellValue(data.getKeyid() != null ? data.getKeyid() : "");
                 row.createCell(colNum++).setCellValue(data.getName() != null ? data.getName() : "");
                 row.createCell(colNum++).setCellValue(data.getNameHistory() != null ? data.getNameHistory() : "");
@@ -163,7 +163,7 @@ public class WebToExcel {
                 row.createCell(colNum++).setCellValue(data.getCityId() != null ? data.getCityId() : "");
                 row.createCell(colNum++).setCellValue(data.getArea() != null ? data.getArea() : "");
                 row.createCell(colNum++).setCellValue(data.getAreaId() != null ? data.getAreaId() : "");
-                row.createCell(colNum++).setCellValue(data.getKuAddress() != null ? data.getKuAddress() : "");
+                row.createCell(colNum++).setCellValue(data.getAddress() != null ? data.getAddress() : "");
                 row.createCell(colNum++).setCellValue(data.getLevel() != null ? data.getLevel() : "");
                 row.createCell(colNum++).setCellValue(data.getGrade() != null ? data.getGrade() : "");
                 row.createCell(colNum++).setCellValue(data.getPublicflag() != null ? data.getPublicflag() : "");
@@ -212,5 +212,8 @@ public class WebToExcel {
         }
 
     }
+
+
+
 
 }

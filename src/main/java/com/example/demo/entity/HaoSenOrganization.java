@@ -33,6 +33,7 @@ public class HaoSenOrganization {
     private String field1;
     private String appealRemark;
     private String solveRemark;
+    private String classify;
 
     // ========== 医院和药店共有的字段 ==========
     private String usci;
@@ -51,7 +52,6 @@ public class HaoSenOrganization {
     private String class2;
     private String class3;
     private String class4;
-    private String class5;
     private String generalBranch;
     private String militaryHos;
     private String internetHos;
@@ -70,9 +70,9 @@ public class HaoSenOrganization {
     private String originalAddress;
     private String companyName;
 
+
     // ========== 药店特有字段 ==========
-    private String historyName;
-    private String pharmacyAture;
+    private String licenseValidity;
     private String operation;
     private String scope;
     private String location;
@@ -84,7 +84,6 @@ public class HaoSenOrganization {
     private String mztc;
     private String createDate;
     private String registCapi;
-    private String operName;
     private String isYb;
     private String mainBranchKid;
     private String mainBranchName;
@@ -93,11 +92,10 @@ public class HaoSenOrganization {
     private String hosOutside;
 
     // ========== 公司特有字段 ==========
-    private String creditCode;
     private String econKind;
     private String industry;
     private String belong;
-    private String classify;
+
 
 
 }

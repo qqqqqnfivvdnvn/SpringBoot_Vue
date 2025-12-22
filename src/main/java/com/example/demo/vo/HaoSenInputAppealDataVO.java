@@ -35,10 +35,17 @@ public class HaoSenInputAppealDataVO {
 
     @ExcelColumn(name = "申诉解决")
     private String solveRemark;
+
+    @ExcelColumn(name = "备注")
+    private String remark;
+
+
     @ExcelColumn(name = "机构类型")
     private String institutionType;
+
     @ExcelColumn(name = "keyid")
     private String keyid;
+
     @ExcelColumn(name = "医院名称")
     private String name;
     @ExcelColumn(name = "历史名称")
@@ -56,7 +63,8 @@ public class HaoSenInputAppealDataVO {
     @ExcelColumn(name = "区县ID")
     private String areaid;
     @ExcelColumn(name = "地址")
-    private String kuAddress;
+    private String address;
+
     @ExcelColumn(name = "等级")
     private String level;
     @ExcelColumn(name = "等次")
@@ -101,5 +109,6 @@ public class HaoSenInputAppealDataVO {
     private String industry;
     @ExcelColumn(name = "登记机关")
     private String belong;
+
 
 }

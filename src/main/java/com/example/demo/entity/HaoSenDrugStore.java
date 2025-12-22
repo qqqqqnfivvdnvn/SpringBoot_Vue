@@ -4,9 +4,10 @@ import lombok.Data;
 
 @Data
 public class HaoSenDrugStore {
+    private String orgType;
     private String dataCode;
     private String name;
-    private String historyName;
+    private String nameHistory;
     private String province;
     private String provinceId;
     private String city;
@@ -14,7 +15,7 @@ public class HaoSenDrugStore {
     private String area;
     private String areaId;
     private String usci;
-    private String pharmacyAture;
+    private String classify;
     private String operation;
     private String scope;
     private String location;
@@ -52,5 +53,9 @@ public class HaoSenDrugStore {
     private String hosInside;
     private String hosOutside;
     private String field1;
+
+    private String originalProvince;
+    private String originalAddress;
+    private String companyName;
 
 }

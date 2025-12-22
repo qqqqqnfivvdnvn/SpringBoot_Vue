@@ -4,198 +4,172 @@
     <div class="upload-container">
       <div class="upload-card">
         <h1 class="upload-title">上传清洗数据</h1>
-        <div
-            class="upload-area"
-            @dragover.prevent="dragOver"
-            @dragleave="dragLeave"
-            @drop.prevent="handleDrop"
-            @click="handleAreaClick"
+
+        <el-upload
+            class="custom-upload"
+            drag
+            :limit="1"
+            :file-list="fileList"
+            :auto-upload="false"
+            :on-change="handleFileChange"
+            :on-remove="handleRemove"
+            accept=".xlsx,.xls"
+            :http-request="() => {}"
         >
-          <input
-              type="file"
-              id="file-upload"
-              ref="fileInput"
-              @change="handleFileSelect"
-              accept=".xlsx,.xls"
-              style="display: none;"
-          >
-          <div class="upload-icon" :class="{ 'drag-active': isDragActive }">
-            <font-awesome-icon :icon="['fas', 'file-upload']" />
-          </div>
-          <p class="upload-text">
+          <el-icon class="upload-icon">
+            <UploadFilled/>
+          </el-icon>
+          <div class="upload-text">
             拖拽文件到此处或
-            <button class="upload-btn" @click.stop="triggerFileInput">点击上传</button>
-          </p>
-          <p class="upload-hint">支持格式：.xlsx </p>
-          <div v-if="selectedFile" class="file-info" @click.stop>
-            <span class="file-name">{{ selectedFile.name }}</span>
-            <span class="file-size">({{ formatFileSize(selectedFile.size) }})</span>
-            <button class="file-remove" @click="removeFile">&times;</button>
+            <span class="upload-btn">点击上传</span>
           </div>
-        </div>
+          <div class="upload-hint">支持格式：.xlsx</div>
+
+          <!-- 自定义文件显示 -->
+          <template #file="{ file }">
+            <div class="file-info">
+              <span class="file-name">{{ file.name }}</span>
+              <span class="file-size">({{ formatFileSize(file.size) }})</span>
+              <el-icon class="file-remove" @click.stop="handleRemove">
+                <CircleCloseFilled/>
+              </el-icon>
+            </div>
+          </template>
+        </el-upload>
+
         <div class="upload-actions">
-          <button
-              class="submit-btn"
-              @click="submitFile"
+          <el-button
+              type="primary"
+              :loading="uploading"
               :disabled="!selectedFile || uploading"
-              :class="{ 'disabled': !selectedFile || uploading }"
+              @click="submitFile"
           >
             {{ uploading ? '上传中...' : '提交清洗' }}
-          </button>
+          </el-button>
         </div>
       </div>
     </div>
 
     <!-- 上传结果弹窗 -->
-    <div v-if="showResultModal" class="modal-overlay" @click.self="closeModal">
-      <div class="modal-content" :class="uploadResult.success ? 'success' : 'error'">
-        <div class="modal-header">
-          <h3>{{ uploadResult.success ? '推送成功' : '推送失败' }}</h3>
-          <button class="modal-close" @click="closeModal">&times;</button>
-        </div>
-        <div class="modal-body">
-          <p>{{ uploadResult.message }}</p>
-          <p v-if="uploadResult.details" class="result-details">{{ uploadResult.details }}</p>
-        </div>
-        <div class="modal-footer">
-          <button class="modal-btn" @click="closeModal">确定</button>
-        </div>
+    <el-dialog
+        v-model="showResultModal"
+        :title="uploadResult?.success ? '推送成功' : '推送失败'"
+        width="400px"
+        custom-class="custom-result-dialog"
+        :close-on-click-modal="false"
+        :show-close="true"
+    >
+      <div class="modal-body">
+        <p>{{ uploadResult?.message }}</p>
+        <p v-if="uploadResult?.details" class="result-details">
+          {{ uploadResult?.details }}
+        </p>
       </div>
-    </div>
-
-
+      <template #footer>
+        <el-button type="primary" @click="closeModal">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+import { ref } from 'vue'
+import axios from 'axios'
+import { ElMessage } from 'element-plus'
+import { UploadFilled, CircleCloseFilled } from '@element-plus/icons-vue'
 
-export default {
-  data() {
-    return {
-      pendingCount: 1245,
-      isDragActive: false,
-      selectedFile: null,
-      uploading: false,
-      uploadResult: null,
-      showResultModal: false
-    }
-  },
-  methods: {
-    handleAreaClick(e) {
-      if (e.target.closest('.file-info') || e.target.classList.contains('upload-btn')) {
-        return;
-      }
-      this.triggerFileInput();
-    },
+const pendingCount = ref(1245)
+const fileList = ref([])
+const selectedFile = ref(null)
+const uploading = ref(false)
+const uploadResult = ref(null)
+const showResultModal = ref(false)
 
-    triggerFileInput() {
-      this.$refs.fileInput.click();
-    },
-
-    handleFileSelect(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.validateAndSetFile(file);
-      }
-    },
-
-    handleDrop(event) {
-      this.isDragActive = false;
-      const file = event.dataTransfer.files[0];
-      if (file) {
-        this.validateAndSetFile(file);
-      }
-    },
-
-    dragOver() {
-      this.isDragActive = true;
-    },
-
-    dragLeave() {
-      this.isDragActive = false;
-    },
-
-    validateAndSetFile(file) {
-      const validTypes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv'];
-      const extension = file.name.split('.').pop().toLowerCase();
-
-      if (validTypes.includes(file.type) || ['xls', 'xlsx', 'csv'].includes(extension)) {
-        this.selectedFile = file;
-      } else {
-        this.uploadResult = {
-          success: false,
-          message: '文件格式不支持，请上传Excel或CSV文件'
-        };
-        this.showResultModal = true;
-      }
-    },
-
-    removeFile() {
-      this.selectedFile = null;
-      this.$refs.fileInput.value = '';
-    },
-
-    formatFileSize(bytes) {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    },
-
-    closeModal() {
-      this.showResultModal = false;
-    },
-
-    async submitFile() {
-      if (!this.selectedFile || this.uploading) return;
-
-      this.uploading = true;
-
-      try {
-        // 创建FormData对象
-        const formData = new FormData();
-        formData.append('file', this.selectedFile);
-
-        // 调用API接口
-        const response = await axios.post('/api/cleanData/importCleanData', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-        });
-
-        if (response.data.data.message === 'success') {
-          this.uploadResult = {
-            success: true,
-            message: response.data.data.appealMessage || '清洗数据推送失败',
-            details: `已成功处理${response.data.data.processedCount || 0}条清洗数据`
-          };
-
-          // 更新待处理计数
-          this.pendingCount += response.data.data.processedCount || 0;
-
-          // 清空已选文件
-          this.selectedFile = null;
-          this.$refs.fileInput.value = '';
-        } else {
-          throw new Error(response.data.data.message || '清洗数据推送失败');
-        }
-
-      } catch (error) {
-        console.error(error);
-        this.uploadResult = {
-          success: false,
-          // message: '清洗数据推送失败',
-          details: error.response?.data?.message || error.message || '请检查文件格式并重试'
-        };
-      } finally {
-        this.showResultModal = true;
-        this.uploading = false;
-      }
-    }
+// 文件选择/拖拽处理
+const handleFileChange = (file, files) => {
+  // 只保留最新一个文件
+  if (files.length > 1) {
+    files.splice(0, files.length - 1)
   }
 
+  const validTypes = [
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  ]
+  const ext = file.name.split('.').pop()?.toLowerCase()
+
+  if (validTypes.includes(file.raw.type) || ['xls', 'xlsx'].includes(ext)) {
+    selectedFile.value = file.raw
+    fileList.value = [file]
+  } else {
+    ElMessage.error('文件格式不支持，请上传Excel文件')
+    fileList.value = []
+    selectedFile.value = null
+  }
+}
+
+// 删除文件
+const handleRemove = () => {
+  selectedFile.value = null
+  fileList.value = []
+}
+
+// 文件大小格式化
+const formatFileSize = (bytes) => {
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
+// 关闭弹窗
+const closeModal = () => {
+  showResultModal.value = false
+  uploadResult.value = null
+}
+
+// 提交上传
+const submitFile = async () => {
+  if (!selectedFile.value) {
+    ElMessage.warning('请选择要上传的文件')
+    return
+  }
+
+  if (uploading.value) return
+
+  uploading.value = true
+
+  try {
+    const formData = new FormData()
+    formData.append('file', selectedFile.value)
+
+    const response = await axios.post('/api/cleanData/importCleanData', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+
+    if (response.data.data.message === 'success') {
+      uploadResult.value = {
+        success: true,
+        message: response.data.data.appealMessage || '清洗数据推送成功',
+        details: `已成功处理${response.data.data.processedCount || 0}条清洗数据`,
+      }
+      pendingCount.value += response.data.data.processedCount || 0
+      handleRemove()
+    } else {
+      throw new Error(response.data.data.message || '清洗数据推送失败')
+    }
+  } catch (error) {
+    console.error(error)
+    uploadResult.value = {
+      success: false,
+      message: '清洗数据推送失败',
+      details: error.response?.data?.message || error.message || '请检查文件格式并重试',
+    }
+  } finally {
+    showResultModal.value = true
+    uploading.value = false
+  }
 }
 </script>
 
@@ -206,7 +180,6 @@ export default {
   font-size: 13px;
 }
 
-/* 上传区域样式 */
 .upload-container {
   margin-bottom: 15px;
 }
@@ -220,29 +193,30 @@ export default {
 }
 
 .upload-title {
-  margin-top: 0;
-  margin-bottom: 12px;
+  margin: 0 0 12px;
   color: #333;
   font-size: 17px;
   font-weight: bold;
+  text-align: center;
 }
 
-.upload-area {
+.custom-upload :deep(.el-upload-dragger) {
   border: 1px dashed #dcdfe6;
   border-radius: 3px;
   padding: 20px 12px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s;
-  margin-bottom: 12px;
   background: white;
+  width: 100%;
+  height: auto;
 }
 
-.upload-area:hover {
+.custom-upload :deep(.el-upload-dragger:hover) {
   border-color: #c0c4cc;
 }
 
-.drag-active {
+.custom-upload :deep(.el-upload-dragger.is-dragover) {
   border-color: #9478cc;
   background-color: rgba(148, 120, 204, 0.05);
 }
@@ -251,7 +225,6 @@ export default {
   font-size: 29px;
   color: #9478cc;
   margin-bottom: 8px;
-  transition: all 0.3s;
 }
 
 .upload-text {
@@ -260,20 +233,10 @@ export default {
   font-size: 15px;
 }
 
-.upload-hint {
-  margin: 0;
-  color: #909399;
-  font-size: 12px;
-}
-
 .upload-btn {
-  background: none;
-  border: none;
   color: #9478cc;
   cursor: pointer;
-  padding: 0;
   margin-left: 4px;
-  font-size: inherit;
   font-weight: 500;
 }
 
@@ -281,7 +244,15 @@ export default {
   text-decoration: underline;
 }
 
+.upload-hint {
+  margin: 0;
+  color: #909399;
+  font-size: 12px;
+}
 
+.custom-upload :deep(.el-upload-list) {
+  display: none;
+}
 
 .file-info {
   margin-top: 12px;
@@ -305,13 +276,9 @@ export default {
 }
 
 .file-remove {
-  background: none;
-  border: none;
   color: #f56c6c;
   cursor: pointer;
   font-size: 15px;
-  line-height: 1;
-  padding: 0 4px;
 }
 
 .file-remove:hover {
@@ -320,84 +287,27 @@ export default {
 
 .upload-actions {
   text-align: right;
+  margin-top: 12px;
 }
 
-.submit-btn {
-  padding: 5px 10px;
-  background: #9478cc;
-  color: white;
-  border: none;
+:deep(.custom-result-dialog) {
   border-radius: 3px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.3s;
-}
-
-.submit-btn:hover {
-  background: #af96e6;
-}
-
-.submit-btn.disabled {
-  background: #c0c4cc;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-/* 弹窗样式 */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 3px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
-.modal-content.success {
-  border-top: 3px solid #67c23a;
-}
-
-.modal-content.error {
-  border-top: 3px solid #f56c6c;
-}
-
-.modal-header {
+:deep(.custom-result-dialog .el-dialog__header) {
   padding: 10px 12px;
   border-bottom: 1px solid #ebeef5;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  position: relative;
 }
 
-.modal-header h3 {
-  margin: 0;
+:deep(.custom-result-dialog .el-dialog__title) {
   font-size: 15px;
   font-weight: bold;
 }
 
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 17px;
-  cursor: pointer;
-  color: #909399;
-}
-
-.modal-close:hover {
-  color: #606266;
+:deep(.custom-result-dialog .el-dialog__body) {
+  padding: 0;
 }
 
 .modal-body {
@@ -414,40 +324,14 @@ export default {
   font-size: 12px;
 }
 
-.modal-footer {
-  padding: 8px 12px;
-  border-top: 1px solid #ebeef5;
-  text-align: right;
-}
-
-.modal-btn {
-  padding: 5px 10px;
-  background: #9478cc;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.3s;
-}
-
-.modal-btn:hover {
-  background: #af96e6;
-}
-
-
-/* 响应式调整 */
 @media (max-width: 768px) {
-  .upload-area {
+  .custom-upload :deep(.el-upload-dragger) {
     padding: 15px 10px;
   }
 
-  .upload-text, .upload-hint {
+  .upload-text,
+  .upload-hint {
     font-size: 12px;
   }
 }
 </style>
-
-
-
-

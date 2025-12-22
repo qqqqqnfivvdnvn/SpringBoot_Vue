@@ -1,1082 +1,835 @@
 <template>
-  <div class="DrugStore-data-view">
-    <div class="search-container">
-      <div class="search-form">
-        <div class="form-item">
-          <label>原始编码：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.dataCode"
-                placeholder="请输入原始编码"
-                @keyup.enter="handleSearch"
+  <div class="drugstore-data-view">
+    <!-- 搜索区域 -->
+    <div class="fixed-search">
+      <el-form :inline="true" :model="searchForm" class="search-form" @submit.prevent="handleSearch">
+        <el-form-item label="原始编码">
+          <el-input v-model="searchForm.dataCode" placeholder="请输入原始编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="原始名称">
+          <el-input v-model="searchForm.originalName" placeholder="请输入原始名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="DataId">
+          <el-input v-model="searchForm.dataId" placeholder="请输入DataId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="KeyId">
+          <el-input v-model="searchForm.keyid" placeholder="请输入KeyId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="豪森编码">
+          <el-input v-model="searchForm.hsCode" placeholder="请输入清洗后的编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="省份">
+          <el-input v-model="searchForm.province" placeholder="请输入省份" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="市">
+          <el-input v-model="searchForm.city" placeholder="请输入市" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="区县">
+          <el-input v-model="searchForm.area" placeholder="请输入区县" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="药店名称">
+          <el-input v-model="searchForm.name" placeholder="请输入药店名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="药店地址">
+          <el-input v-model="searchForm.address" placeholder="请输入药店地址" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item class="form-actions">
+          <el-button type="primary" @click="handleSearch" :loading="loading">查询</el-button>
+          <el-button @click="resetSearch">重置</el-button>
+          <el-button type="success" @click="toExcel" :loading="exporting">
+            {{ exporting ? '导出中...' : '导出' }}
+          </el-button>
+          <!-- 视图切换按钮 -->
+          <el-button-group class="view-toggle">
+            <el-button
+                :type="viewMode === 'table' ? 'primary' : 'default'"
+                size="small"
+                @click="viewMode = 'table'"
+                title="表格视图"
             >
-            <i v-if="searchForm.dataCode"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.dataCode = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>原始名称：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.originalName"
-                placeholder="请输入原始名称"
-                @keyup.enter="handleSearch"
+              <el-icon><Grid /></el-icon>
+            </el-button>
+            <el-button
+                :type="viewMode === 'card' ? 'primary' : 'default'"
+                size="small"
+                @click="viewMode = 'card'"
+                title="卡片视图"
             >
-            <i v-if="searchForm.originalName"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.originalName = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>DataId：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.dataId"
-                placeholder="请输入DataId"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.dataId"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.dataId = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>KeyId：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.keyid"
-                placeholder="请输入KeyId"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.keyid"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.keyid = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>豪森编码：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.hsCode"
-                placeholder="请输入清洗后的编码"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.hsCode"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.hsCode = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>省份：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.province"
-                placeholder="请输入省份"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.province"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.province = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>市：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.city"
-                placeholder="请输入市"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.city"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.city = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>区县：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.area"
-                placeholder="请输入区县"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.area"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.area = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>药店名称：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.name"
-                placeholder="请输入药店名称"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.name"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.name = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-item">
-          <label>药店地址：</label>
-          <div class="input-wrapper">
-            <input
-                v-model="searchForm.address"
-                placeholder="请输入药店地址"
-                @keyup.enter="handleSearch"
-            >
-            <i v-if="searchForm.address"
-               class="fas fa-times-circle clear-icon"
-               @click="searchForm.address = ''; handleSearch()">
-              <font-awesome-icon :icon="['fas', 'times-circle']" size="1x" />
-            </i>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button class="search-btn" @click="handleSearch">查询</button>
-          <button class="reset-btn" @click="resetSearch">重置</button>
-        </div>
-      </div>
+              <el-icon><CopyDocument /></el-icon>
+            </el-button>
+          </el-button-group>
+        </el-form-item>
+      </el-form>
     </div>
 
+    <!-- 数据区域 -->
     <div class="data-container">
-      <div class="table-wrapper">
-        <table class="DrugStore-table" v-if="DrugStoreData.content && DrugStoreData.content.length > 0">
-          <thead>
-          <tr>
-            <th v-for="(column, index) in columns" :key="index"
-                :style="{ width: column.width + 'px' }"
-                :class="{ 'fixed-column': column.fixed }"
-                @mousedown="startResize($event, index)">
-              <div class="th-content">
-                {{ column.label }}
-                <div class="resize-handle"
-                     @mousedown.stop="startResize($event, index)"></div>
-              </div>
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="DrugStore in DrugStoreData.content" :key="DrugStore.dataId">
-            <td v-for="(column, index) in columns" :key="index"
-                :style="{ width: column.width + 'px' }"
-                :class="{ 'fixed-column': column.fixed }">
-              <template v-if="index === 0">{{ DrugStore.dataId }}</template>
-              <template v-else-if="index === 1">{{ DrugStore.dataCode }}</template>
-              <template v-else-if="index === 2">{{ DrugStore.originalName }}</template>
-              <template v-else-if="index === 3">{{ DrugStore.keyid }}</template>
-              <template v-else-if="index === 4">{{ DrugStore.name }}</template>
-              <template v-else-if="index === 5">{{ DrugStore.province }}</template>
-              <template v-else-if="index === 6">{{ DrugStore.city }}</template>
-              <template v-else-if="index === 7">{{ DrugStore.area }}</template>
-              <template v-else-if="index === 8">{{ DrugStore.address }}</template>
-              <template v-else-if="index === 9">
-                <span :class="{
-                  'status-active': DrugStore.status === '1',
-                  'status-uninactive': DrugStore.status === '3',
-                  'status-inactive': DrugStore.status === '4',
-                  'status-invalid': DrugStore.status === '2',
-                  'status-repeat': DrugStore.status === '5'
-                }">
-                  {{ DrugStore.status === '1' ? '清洗成功' :
-                    DrugStore.status === '3' ? '无法清洗' :
-                        DrugStore.status === '4' ? '禁用客户':
-                            DrugStore.status === '2' ? '作废数据':
-                                DrugStore.status === '5' ? '重复数据': '其他状态' }}
-                </span>
+      <div class="content-wrapper" v-loading="loading">
+        <!-- 表格视图 -->
+        <div v-if="viewMode === 'table'" class="table-view">
+          <el-table
+              v-if="drugstoreData.list?.length"
+              :data="drugstoreData.list"
+              height="100%"
+              stripe
+              border
+              fit
+          >
+            <el-table-column
+                v-for="(col, index) in columns"
+                :key="index"
+                :prop="col.prop"
+                :label="col.label"
+                :width="col.width"
+                :fixed="col.fixed"
+                show-overflow-tooltip
+            >
+              <template #header>
+                <div class="th-content">
+                  {{ col.label }}
+                  <div class="resize-handle" @mousedown.stop="startResize($event, index)"></div>
+                </div>
               </template>
-              <template v-else-if="index === 10">
-                <button class="detail-btn" @click="showDetail(DrugStore)">详情</button>
+              <template #default="{ row }">
+                <template v-if="index === 0">
+                  <el-link type="primary" :underline="false" @click="copyText(row.dataId)" :disabled="!row.dataId">
+                    {{ row.dataId }}
+                  </el-link>
+                </template>
+                <template v-else-if="index === 1">
+                  <el-link type="primary" :underline="false" @click="copyText(row.dataCode)">
+                    {{ row.dataCode }}
+                  </el-link>
+                </template>
+                <template v-else-if="index === 2">
+                  <el-link type="primary" :underline="false" @click="copyText(row.originalName)">
+                    {{ row.originalName }}
+                  </el-link>
+                </template>
+                <template v-else-if="index === 3">
+                  <el-link type="primary" :underline="false" @click="copyText(row.keyid)">
+                    {{ row.keyid }}
+                  </el-link>
+                </template>
+                <template v-else-if="index === 4">
+                  <el-link type="primary" :underline="false" @click="copyText(row.name)">
+                    {{ row.name }}
+                  </el-link>
+                </template>
+                <template v-else-if="index === 5">{{ row.province }}</template>
+                <template v-else-if="index === 6">{{ row.city }}</template>
+                <template v-else-if="index === 7">{{ row.area }}</template>
+                <template v-else-if="index === 8">{{ row.address }}</template>
+                <template v-else-if="index === 9">
+                  <el-tag :type="getStatusType(row.status)" effect="dark" size="small">
+                    {{ getStatusText(row.status) }}
+                  </el-tag>
+                </template>
+                <template v-else-if="index === 10">
+                  <el-button type="success" size="small" @click="showDetail(row)">详情</el-button>
+                  <el-button type="primary" size="small" :disabled="!row.hsCode" @click="updateDetail(row)">更新</el-button>
+                </template>
               </template>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-        <div v-else class="no-data">
-          {{ loading ? '数据加载中...' : '没有找到匹配的药店数据' }}
+            </el-table-column>
+          </el-table>
+          <div v-else class="no-data">没有找到匹配的药店数据</div>
         </div>
-        <div class="pagination" v-if="DrugStoreData.content && DrugStoreData.content.length > 0">
-          <button
-              :disabled="DrugStoreData.first"
-              @click="prevPage"
-              class="page-btn"
-          >
+
+        <!-- 卡片视图 -->
+        <div v-else class="card-view">
+          <el-empty v-if="!drugstoreData.list?.length" description="没有找到匹配的药店数据" />
+          <el-row :gutter="20" v-else>
+            <el-col v-for="drugstore in drugstoreData.list" :key="drugstore.dataId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+              <el-card class="drugstore-card" shadow="hover">
+                <template #header>
+                  <div class="card-header">
+                    <div class="card-title">
+                      <el-link type="primary" :underline="false" @click="copyText(drugstore.name)">
+                        {{ drugstore.name }}
+                      </el-link>
+                    </div>
+                    <el-tag :type="getStatusType(drugstore.status)" size="small" effect="dark">
+                      {{ getStatusText(drugstore.status) }}
+                    </el-tag>
+                  </div>
+                </template>
+                <div class="card-body">
+                  <div class="card-item"><span class="label">dataId：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.dataId)">{{ drugstore.dataId }}</el-link></div>
+                  <div class="card-item"><span class="label">原始编码：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.dataCode)">{{ drugstore.dataCode }}</el-link></div>
+                  <div class="card-item"><span class="label">原始名称：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.originalName)">{{ drugstore.originalName }}</el-link></div>
+                  <div class="card-item"><span class="label">keyId：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.keyid)">{{ drugstore.keyid }}</el-link></div>
+                  <div class="card-item"><span class="label">省份：</span>{{ drugstore.province }}</div>
+                  <div class="card-item"><span class="label">城市：</span>{{ drugstore.city }}</div>
+                  <div class="card-item"><span class="label">区县：</span>{{ drugstore.area }}</div>
+                  <div class="card-item"><span class="label">地址：</span>{{ drugstore.address }}</div>
+                </div>
+                <div class="card-footer">
+                  <el-button type="success" size="small" @click="showDetail(drugstore)">详情</el-button>
+                  <el-button type="primary" size="small" :disabled="!drugstore.hsCode" @click="updateDetail(drugstore)">更新</el-button>
+                </div>
+              </el-card>
+            </el-col>
+          </el-row>
+        </div>
+      </div>
+
+      <!-- 分页 -->
+      <div class="fixed-pagination" v-if="drugstoreData.list?.length">
+        <div class="pagination-content">
+          <el-button size="small" plain :disabled="!drugstoreData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchDrugStoreData())">
             上一页
-          </button>
+          </el-button>
           <span class="page-info">
-            第 {{ DrugStoreData.number + 1 }} 页 / 共 {{ DrugStoreData.totalPages }} 页 (共 {{ DrugStoreData.totalElements }} 条)
+            第 {{ drugstoreData.pageNum }} 页 / 共 {{ drugstoreData.pages }} 页 (共 {{ drugstoreData.total }} 条)
           </span>
-          <button
-              :disabled="DrugStoreData.last"
-              @click="nextPage"
-              class="page-btn"
-          >
+          <el-button size="small" plain :disabled="!drugstoreData.hasNextPage" @click="pageNumber < drugstoreData.pages && (pageNumber++, fetchDrugStoreData())">
             下一页
-          </button>
-          <select v-model="pageSize" @change="handlePageSizeChange">
-            <option value="10">每页10条</option>
-            <option value="20">每页20条</option>
-            <option value="50">每页50条</option>
-          </select>
+          </el-button>
+          <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
+            <el-option :value="20" label="每页20条" />
+            <el-option :value="40" label="每页40条" />
+            <el-option :value="60" label="每页60条" />
+          </el-select>
         </div>
       </div>
     </div>
 
     <!-- 详情弹窗 -->
-    <div v-if="showDetailModal" class="modal-overlay" @click.self="closeDetailModal">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3>药店数据详情</h3>
-          <span class="close-btn" @click="closeDetailModal">&times;</span>
-        </div>
+    <el-dialog v-model="showDetailModal" title="药店详情" width="500px" destroy-on-close>
+      <template #title>
+        <div class="custom-dialog-title">药店详情</div>
+      </template>
 
-        <div class="modal-body">
-
-
-
-          <div class="detail-row">
-            <label>dataId：</label>
-            <span class="copy-btn"
-                  @click="copyText(currentDrugStore.dataId, $event)">
-              {{ currentDrugStore.dataId }}
-            </span>
-
-          </div>
-
-          <div class="detail-row">
-            <label>原始编码：</label>
-            <span class="copy-btn"
-                  @click="copyText(currentDrugStore.dataCode, $event)">
-              {{ currentDrugStore.dataCode }}
-            </span>
-          </div>
-
-          <div class="detail-row">
-            <label>原始名称：</label>
-            <span class="copy-btn"
-                  @click="copyText(currentDrugStore.originalName, $event)">
-              {{ currentDrugStore.originalName }}
-            </span>
-          </div>
-
-          <div class="detail-row">
-            <label>keyId：</label>
-            <span class="copy-btn"
-                  @click="copyText(currentDrugStore.keyid, $event)">
-              {{ currentDrugStore.keyid }}
-            </span>
-          </div>
-
-          <div class="detail-row">
-            <label>数据类型：</label>
-            <span>{{ currentDrugStore.dataType }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>豪森清洗后编码：</label>
-            <span class="copy-btn"
-                  @click="copyText(currentDrugStore.hsCode, $event)">
-              {{ currentDrugStore.hsCode }}
-            </span>
-          </div>
-
-          <div class="detail-row">
-            <label>标准名称：</label>
-
-            <span class="copy-btn"
-                  @click="copyText(currentDrugStore.name, $event)">
-              {{ currentDrugStore.name }}
-            </span>
-
-          </div>
-
-          <div class="detail-row">
-            <label>历史名称：</label>
-            <span>{{ currentDrugStore.historyName }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>省份：</label>
-            <span>{{ currentDrugStore.province }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>省份ID：</label>
-            <span>{{ currentDrugStore.provinceId }}</span>
-          </div>
-          <div class="detail-row">
-            <label>市：</label>
-            <span>{{ currentDrugStore.city }}</span>
-          </div>
-          <div class="detail-row">
-            <label>市ID：</label>
-            <span>{{ currentDrugStore.cityId }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>区县：</label>
-            <span>{{ currentDrugStore.area }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>区县ID：</label>
-            <span>{{ currentDrugStore.areaId }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否市区：</label>
-            <span>{{ currentDrugStore.isCity }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>地址：</label>
-            <span>{{ currentDrugStore.address }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>统一社会信用代码：</label>
-            <span>{{ currentDrugStore.usci }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>药店类型：</label>
-            <span>{{ currentDrugStore.pharmacyAture }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>经营方式：</label>
-            <span>{{ currentDrugStore.operation }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>药店位置：</label>
-            <span>{{ currentDrugStore.location }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否双通道：</label>
-            <span>{{ currentDrugStore.twoChannels }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否双互联网：</label>
-            <span>{{ currentDrugStore.isInternet }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否DTP药房：</label>
-            <span>{{ currentDrugStore.dtp }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>药品经营许可证：</label>
-            <span>{{ currentDrugStore.licenseNumber }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>药品经营许可证有效期：</label>
-            <span>{{ currentDrugStore.validity }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否门诊统筹：</label>
-            <span>{{ currentDrugStore.mztc }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>成立日期：</label>
-            <span>{{ currentDrugStore.createDate }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>注册资金：</label>
-            <span>{{ currentDrugStore.registCapi }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>法人：</label>
-            <span>{{ currentDrugStore.operName }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>医保编码：</label>
-            <span>{{ currentDrugStore.ybcode }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否医保药店：</label>
-            <span>{{ currentDrugStore.isYb }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>豪森重复数据ID：</label>
-            <span>{{ currentDrugStore.repeatId }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>经营范围：</label>
-            <span>{{ currentDrugStore.scope }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>是否新增：</label>
-            <span>{{ currentDrugStore.isInsert }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>上级单位豪森编码：</label>
-            <span>{{ currentDrugStore.mainBranch }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>上级单位编码：</label>
-            <span>{{ currentDrugStore.mainBranchKid }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>上级单位名称：</label>
-            <span>{{ currentDrugStore.mainBranchName }}</span>
-          </div>
-
-
-          <div class="detail-row">
-            <label>登记状态：</label>
-            <span>{{ currentDrugStore.signStatus }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>院内店：</label>
-            <span>{{ currentDrugStore.hosInside }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>院边店：</label>
-            <span>{{ currentDrugStore.hosOutside }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>经纬度：</label>
-            <span>{{ currentDrugStore.field1 }}</span>
-          </div>
-
-
-          <div class="detail-row">
-            <label>添加日期：</label>
-            <span>{{ currentDrugStore.addtime }}</span>
-          </div>
-
-          <div class="detail-row">
-            <label>更新日期：</label>
-            <span>{{ currentDrugStore.updatetime }}</span>
-          </div>
-
-
-          <div class="detail-row">
-            <label>状态：</label>
-            <span :class="{
-                'status-active': currentDrugStore.status === '1',
-                'status-uninactive': currentDrugStore.status === '3',
-                'status-inactive': currentDrugStore.status === '4',
-                'status-invalid': currentDrugStore.status === '2',
-                'status-repeat': currentDrugStore.status === '5'
-              }">
-              {{
-                currentDrugStore.status === '1' ? '清洗成功' :
-                    currentDrugStore.status === '3' ? '无法清洗' :
-                        currentDrugStore.status === '4' ? '禁用客户':
-                            currentDrugStore.status === '2' ? '作废数据':
-                                currentDrugStore.status === '5' ? '重复数据' : '其他状态'
-              }}
-            </span>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="modal-close-btn" @click="closeDetailModal">关闭</button>
+      <div class="detail-container">
+        <div class="detail-row" v-for="(item, key) in detailFields" :key="key">
+          <label>{{ item.label }}：</label>
+          <span>
+            <template v-if="item.copy">
+              <el-link type="primary" :underline="false" @click="copyText(item.value(currentDrugStore))">
+                {{ item.value(currentDrugStore) }}
+              </el-link>
+            </template>
+            <template v-else-if="key === 'status'">
+              <el-tag :type="item.type(currentDrugStore)" size="small">
+                {{ item.value(currentDrugStore) }}
+              </el-tag>
+            </template>
+            <template v-else>
+              {{ item.value(currentDrugStore) }}
+            </template>
+          </span>
         </div>
       </div>
-    </div>
+
+      <template #footer>
+        <el-button @click="showDetailModal = false">关闭</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 更新弹窗 -->
+    <el-dialog
+        v-model="updateDetailModal"
+        width="70%"
+        :max-width="1400"
+        :close-on-click-modal="false"
+        destroy-on-close
+        class="update-dialog"
+    >
+      <template #title>
+        <div class="custom-dialog-title">数据更新</div>
+      </template>
+
+      <!-- 顶部固定操作栏 -->
+      <div class="dialog-fixed-header">
+        <div class="header-actions">
+          <el-button @click="resetForm">重置匹配</el-button>
+          <el-button type="primary" :loading="isFinding" @click="findDaKuData">
+            {{ isFinding ? '匹配中...' : '匹配大库' }}
+          </el-button>
+          <el-button type="primary" :loading="isSaving" @click="saveChanges">
+            {{ isSaving ? '推送中...' : '提交推送' }}
+          </el-button>
+          <el-button @click="closeUpdateModal">取消</el-button>
+        </div>
+      </div>
+
+      <!-- 可上下滚动的表单内容区 -->
+      <div class="dialog-scroll-body">
+        <el-form :model="currentUpdateDrugStore" label-width="140px">
+          <el-row :gutter="30">
+            <el-col :span="12">
+              <el-form-item label="批次编号"><el-input v-model="currentUpdateDrugStore.batchCode" readonly /></el-form-item>
+              <el-form-item label="dataId"><el-input v-model="currentUpdateDrugStore.dataId" readonly /></el-form-item>
+              <el-form-item label="原始名称"><el-input v-model="currentUpdateDrugStore.originalName" readonly /></el-form-item>
+              <el-form-item label="数据类型">
+                <el-input :value="currentUpdateDrugStore.dataType === '1' ? '存量' : currentUpdateDrugStore.dataType === '2' ? '增量' : '未知'" readonly />
+              </el-form-item>
+              <el-form-item label="原始编码"><el-input v-model="currentUpdateDrugStore.dataCode" readonly /></el-form-item>
+              <el-form-item label="原始省份"><el-input v-model="currentUpdateDrugStore.originalProvince" readonly /></el-form-item>
+              <el-form-item label="经销商"><el-input v-model="currentUpdateDrugStore.companyName" readonly /></el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="机构类型">
+                <el-select v-model="currentUpdateDrugStore.orgType">
+                  <el-option label="医院" value="医院" />
+                  <el-option label="药店" value="药店" />
+                  <el-option label="商业" value="商业" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="keyId"><el-input v-model="currentUpdateDrugStore.keyid" /></el-form-item>
+              <el-form-item label="标准名称"><el-input v-model="currentUpdateDrugStore.name" /></el-form-item>
+              <el-form-item label="历史名称"><el-input v-model="currentUpdateDrugStore.nameHistory" /></el-form-item>
+              <el-form-item label="省"><el-input v-model="currentUpdateDrugStore.province" /></el-form-item>
+              <el-form-item label="省ID"><el-input v-model="currentUpdateDrugStore.provinceId" /></el-form-item>
+              <el-form-item label="市"><el-input v-model="currentUpdateDrugStore.city" /></el-form-item>
+              <el-form-item label="市ID"><el-input v-model="currentUpdateDrugStore.cityId" /></el-form-item>
+              <el-form-item label="区县"><el-input v-model="currentUpdateDrugStore.area" /></el-form-item>
+              <el-form-item label="区县ID"><el-input v-model="currentUpdateDrugStore.areaId" /></el-form-item>
+              <el-form-item label="是否市区"><el-input v-model="currentUpdateDrugStore.isCity" /></el-form-item>
+              <el-form-item label="地址"><el-input v-model="currentUpdateDrugStore.address" /></el-form-item>
+              <el-form-item label="等级">
+                <el-select v-model="currentUpdateDrugStore.level">
+                  <el-option label="未定级" value="未定级" />
+                  <el-option label="一级" value="一级" />
+                  <el-option label="二级" value="二级" />
+                  <el-option label="三级" value="三级" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="等次">
+                <el-select v-model="currentUpdateDrugStore.grade">
+                  <el-option label="未定等" value="未定等" />
+                  <el-option label="甲等" value="甲等" />
+                  <el-option label="乙等" value="乙等" />
+                  <el-option label="丙等" value="丙等" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="所有制">
+                <el-select v-model="currentUpdateDrugStore.publicflag">
+                  <el-option label="公立" value="公立" />
+                  <el-option label="民营" value="民营" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="药店类型"><el-input v-model="currentUpdateDrugStore.classify" /></el-form-item>
+              <el-form-item label="总分院kid"><el-input v-model="currentUpdateDrugStore.generalBranchKid" /></el-form-item>
+              <el-form-item label="总分院名称"><el-input v-model="currentUpdateDrugStore.generalBranchName" /></el-form-item>
+              <el-form-item label="是否军队医院">
+                <el-select v-model="currentUpdateDrugStore.militaryHos">
+                  <el-option label="是" value="1" />
+                  <el-option label="否" value="0" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="登记号"><el-input v-model="currentUpdateDrugStore.regcode" /></el-form-item>
+              <el-form-item label="有效期"><el-input v-model="currentUpdateDrugStore.licenseValidity" /></el-form-item>
+              <el-form-item label="诊疗科室"><el-input v-model="currentUpdateDrugStore.subjects" /></el-form-item>
+              <el-form-item label="法人代表"><el-input v-model="currentUpdateDrugStore.legalperson" /></el-form-item>
+              <el-form-item label="统一社会信用代码"><el-input v-model="currentUpdateDrugStore.usci" /></el-form-item>
+              <el-form-item label="经营方式">
+                <el-select v-model="currentUpdateDrugStore.operation">
+                  <el-option label="零售" value="零售" />
+                  <el-option label="批发" value="批发" />
+                  <el-option label="连锁" value="连锁" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="经营范围"><el-input v-model="currentUpdateDrugStore.scope" /></el-form-item>
+              <el-form-item label="总分店kid"><el-input v-model="currentUpdateDrugStore.mainBranchKid" /></el-form-item>
+              <el-form-item label="总分店名称"><el-input v-model="currentUpdateDrugStore.mainBranchName" /></el-form-item>
+              <el-form-item label="成立日期"><el-input v-model="currentUpdateDrugStore.createDate" /></el-form-item>
+              <el-form-item label="注册资金"><el-input v-model="currentUpdateDrugStore.registCapi" /></el-form-item>
+              <el-form-item label="企业类型"><el-input v-model="currentUpdateDrugStore.econKind" /></el-form-item>
+              <el-form-item label="登记状态"><el-input v-model="currentUpdateDrugStore.signStatus" /></el-form-item>
+              <el-form-item label="所属行业"><el-input v-model="currentUpdateDrugStore.industry" /></el-form-item>
+              <el-form-item label="登记机关"><el-input v-model="currentUpdateDrugStore.belong" /></el-form-item>
+              <el-form-item label="药店位置"><el-input v-model="currentUpdateDrugStore.location" /></el-form-item>
+              <el-form-item label="是否双通道"><el-input v-model="currentUpdateDrugStore.twoChannels" /></el-form-item>
+              <el-form-item label="是否双互联网"><el-input v-model="currentUpdateDrugStore.isInternet" /></el-form-item>
+              <el-form-item label="是否DTP药房"><el-input v-model="currentUpdateDrugStore.dtp" /></el-form-item>
+              <el-form-item label="药品经营许可证"><el-input v-model="currentUpdateDrugStore.licenseNumber" /></el-form-item>
+              <el-form-item label="是否门诊统筹"><el-input v-model="currentUpdateDrugStore.mztc" /></el-form-item>
+              <el-form-item label="医保编码"><el-input v-model="currentUpdateDrugStore.ybcode" /></el-form-item>
+              <el-form-item label="是否医保药店"><el-input v-model="currentUpdateDrugStore.isYb" /></el-form-item>
+              <el-form-item label="院内店"><el-input v-model="currentUpdateDrugStore.hosInside" /></el-form-item>
+              <el-form-item label="院边店"><el-input v-model="currentUpdateDrugStore.hosOutside" /></el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+import { ref, reactive, onMounted } from 'vue'
+import { Grid, CopyDocument } from '@element-plus/icons-vue'
+import axios from 'axios'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
-export default {
-  data() {
-    return {
-      DrugStoreData: {
-        content: [],
-        totalElements: 0,
-        totalPages: 0,
-        first: true,
-        last: false,
-        number: 0
-      },
-      loading: false,
-      searchForm: {
-        dataCode: '',
-        name: '',
-        dataId: '',
-        keyid: '',
-        hsCode: '',
-        province: '',
-        city: '',
-        area: '',
-        address: '',
-        originalName: ''
-      },
-      pageSize: 10,
-      pageNumber: 0,
-      showDetailModal: false,
-      currentDrugStore: {},
+// 视图模式：table 或 card
+const viewMode = ref('table')
 
-      // 列定义 - 为操作列添加 fixed 属性
-      columns: [
-        {label: 'dataId', width: 100},
-        {label: '原始编码', width: 100},
-        {label: '原始名称', width: 100},
-        {label: 'keyId', width: 100},
-        {label: '标准名称', width: 100},
-        {label: '省份', width: 50},
-        {label: '城市', width: 50},
-        {label: '区县', width: 50},
-        {label: '地址', width: 100},
-        {label: '状态', width: 50},
-        {label: '操作', width: 100, fixed: true}  // 添加 fixed: true
-      ],
-      resizing: false,
-      resizeColumnIndex: null,
-      startX: 0,
-      startWidth: 0
-    }
-  },
-  mounted() {
-    this.fetchDrugStoreData();
-  },
-  methods: {
-    async fetchDrugStoreData() {
-      this.loading = true;
-      try {
-        const params = {
-          page: this.pageNumber,
-          size: this.pageSize
-        };
+const drugstoreData = reactive({
+  list: [],
+  total: 0,
+  pages: 0,
+  pageNum: 1,
+  hasNextPage: false,
+  hasPreviousPage: false
+})
 
-        // 添加搜索条件
-        if (this.searchForm.dataCode) {
-          params.dataCode = this.searchForm.dataCode;
-        }
-        if (this.searchForm.name) {
-          params.name = this.searchForm.name;
-        }
-        if (this.searchForm.dataId) {
-          params.dataId = this.searchForm.dataId;
-        }
-        if (this.searchForm.keyid) {
-          params.keyid = this.searchForm.keyid;
-        }
-        if (this.searchForm.hsCode) {
-          params.hsCode = this.searchForm.hsCode;
-        }
-        if (this.searchForm.province) {
-          params.province = this.searchForm.province;
-        }
-        if (this.searchForm.city) {
-          params.city = this.searchForm.city;
-        }
-        if (this.searchForm.area) {
-          params.area = this.searchForm.area;
-        }
-        if (this.searchForm.address) {
-          params.address = this.searchForm.address;
-        }
-        if (this.searchForm.originalName) {
-          params.originalName = this.searchForm.originalName;
-        }
+const loading = ref(false)
+const exporting = ref(false)
+const pageSize = ref(20)
+const pageNumber = ref(1)
 
-        const response = await axios.get('/api/mainData/getDrugStoreData', {
-          params: params
-        });
+const searchForm = reactive({
+  dataCode: '',
+  originalName: '',
+  dataId: '',
+  keyid: '',
+  hsCode: '',
+  province: '',
+  city: '',
+  area: '',
+  name: '',
+  address: ''
+})
 
-        this.DrugStoreData = response.data.data;
+const columns = ref([
+  { label: 'dataId', prop: 'dataId' },
+  { label: '原始编码', prop: 'dataCode' },
+  { label: '原始名称', prop: 'originalName'},
+  { label: 'keyId', prop: 'keyid' },
+  { label: '标准名称', prop: 'name'},
+  { label: '省份', prop: 'province'},
+  { label: '城市', prop: 'city' },
+  { label: '区县', prop: 'area' },
+  { label: '地址', prop: 'address' },
+  { label: '状态', prop: 'status' },
+  { label: '操作', fixed: 'right' , width: 140}
+])
 
-      } catch (error) {
-        console.error('获取药店数据失败:', error);
-        this.$message.error('获取药店数据失败');
-      } finally {
-        this.loading = false;
-      }
-    },
+const showDetailModal = ref(false)
+const updateDetailModal = ref(false)
+const currentDrugStore = ref({})
+const originalDrugStore = ref({})
+const currentUpdateDrugStore = ref({})
+const isSaving = ref(false)
+const isFinding = ref(false)
 
-    async copyText(text, e) {
-      try {
-        await navigator.clipboard.writeText(text);
-        // 轻提示：把按钮文字临时换成“已复制”
-        const target = e.target;
-        const old = target.textContent;
-        target.textContent = '已复制';
-        setTimeout(() => (target.textContent = old), 1200);
-      } catch (err) {
-        this.$message.error('复制失败，请手动复制');
-      }
-    },
-
-    handleSearch() {
-      this.pageNumber = 0;
-      this.fetchDrugStoreData();
-    },
-    resetSearch() {
-      this.searchForm = {
-        dataCode: '',
-        name: '',
-        dataId: '',
-        keyid: '',
-        hsCode: '',
-        province: '',
-        city: '',
-        area: '',
-        address: '',
-        originalName: ''
-      };
-      this.pageNumber = 0;
-      this.fetchDrugStoreData();
-    },
-    prevPage() {
-      if (this.pageNumber > 0) {
-        this.pageNumber--;
-        this.fetchDrugStoreData();
-      }
-    },
-    nextPage() {
-      if (this.pageNumber < this.DrugStoreData.totalPages - 1) {
-        this.pageNumber++;
-        this.fetchDrugStoreData();
-      }
-    },
-    handlePageSizeChange() {
-      this.pageNumber = 0;
-      this.fetchDrugStoreData();
-    },
-    showDetail(DrugStore) {
-      this.currentDrugStore = DrugStore;
-      this.showDetailModal = true;
-    },
-    closeDetailModal() {
-      this.showDetailModal = false;
-      this.currentDrugStore = {};
-    },
-    // 列宽调整方法
-    startResize(e, index) {
-      this.resizing = true;
-      this.resizeColumnIndex = index;
-      this.startX = e.clientX;
-      this.startWidth = this.columns[index].width;
-
-      document.addEventListener('mousemove', this.handleResize);
-      document.addEventListener('mouseup', this.stopResize);
-
-      e.preventDefault();
-    },
-    handleResize(e) {
-      if (this.resizing) {
-        const dx = e.clientX - this.startX;
-        const newWidth = this.startWidth + dx;
-
-        if (newWidth > 50 && newWidth < 500) { // 最小宽度限制
-          this.columns[this.resizeColumnIndex].width = newWidth;
-        }
-      }
-    },
-    stopResize() {
-      this.resizing = false;
-      document.removeEventListener('mousemove', this.handleResize);
-      document.removeEventListener('mouseup', this.stopResize);
-    }
+const detailFields = {
+  batchCode: { label: '批次编码', value: d => d.batchCode, copy: true },
+  dataId: { label: 'dataId', value: d => d.dataId, copy: true },
+  dataCode: { label: '原始编码', value: d => d.dataCode, copy: true },
+  originalName: { label: '原始名称', value: d => d.originalName, copy: true },
+  originalProvince: { label: '原始省份', value: d => d.originalProvince },
+  companyName: { label: '经销商', value: d => d.companyName },
+  keyid: { label: 'keyId', value: d => d.keyid, copy: true },
+  dataType: { label: '数据类型', value: d => d.dataType === '1' ? '存量' : d.dataType === '2' ? '增量' : '未知' },
+  hsCode: { label: '豪森清洗后编码', value: d => d.hsCode, copy: true },
+  name: { label: '标准名称', value: d => d.name, copy: true },
+  nameHistory: { label: '历史名称', value: d => d.nameHistory },
+  province: { label: '省份', value: d => d.province },
+  provinceId: { label: '省份ID', value: d => d.provinceId },
+  city: { label: '市', value: d => d.city },
+  cityId: { label: '市ID', value: d => d.cityId },
+  area: { label: '区县', value: d => d.area },
+  areaId: { label: '区县ID', value: d => d.areaId },
+  isCity: { label: '是否市区', value: d => d.isCity },
+  address: { label: '地址', value: d => d.address },
+  usci: { label: '统一社会信用代码', value: d => d.usci },
+  classify: { label: '药店类型', value: d => d.classify },
+  operation: { label: '经营方式', value: d => d.operation },
+  location: { label: '药店位置', value: d => d.location },
+  twoChannels: { label: '是否双通道', value: d => d.twoChannels },
+  isInternet: { label: '是否双互联网', value: d => d.isInternet },
+  dtp: { label: '是否DTP药房', value: d => d.dtp },
+  licenseNumber: { label: '药品经营许可证', value: d => d.licenseNumber },
+  licenseValidity: { label: '药品经营许可证有效期', value: d => d.licenseValidity },
+  mztc: { label: '是否门诊统筹', value: d => d.mztc },
+  createDate: { label: '成立日期', value: d => d.createDate },
+  registCapi: { label: '注册资金', value: d => d.registCapi },
+  legalperson: { label: '法人', value: d => d.legalperson },
+  ybcode: { label: '医保编码', value: d => d.ybcode },
+  isYb: { label: '是否医保药店', value: d => d.isYb },
+  repeatId: { label: '豪森重复数据ID', value: d => d.repeatId },
+  scope: { label: '经营范围', value: d => d.scope },
+  isInsert: { label: '是否新增', value: d => d.isInsert },
+  mainBranch: { label: '上级单位豪森编码', value: d => d.mainBranch },
+  mainBranchKid: { label: '上级单位编码', value: d => d.mainBranchKid },
+  mainBranchName: { label: '上级单位名称', value: d => d.mainBranchName },
+  signStatus: { label: '登记状态', value: d => d.signStatus },
+  hosInside: { label: '院内店', value: d => d.hosInside },
+  hosOutside: { label: '院边店', value: d => d.hosOutside },
+  field1: { label: '经纬度', value: d => d.field1 },
+  addtime: { label: '添加日期', value: d => d.addtime },
+  updatetime: { label: '更新日期', value: d => d.updatetime },
+  status: {
+    label: '状态',
+    value: d => getStatusText(d.status),
+    type: d => getStatusType(d.status)
   }
 }
+
+const getStatusText = (status) => {
+  const map = { '1': '清洗成功', '2': '数据作废', '3': '无法清洗', '4': '禁用客户', '5': '数据重复' }
+  return map[status] || '其他状态'
+}
+
+const getStatusType = (status) => {
+  const map = { '1': 'success', '2': 'warning', '3': 'info', '4': 'danger', '5': 'warning' }
+  return map[status] || 'info'
+}
+
+const fetchDrugStoreData = async () => {
+  loading.value = true
+  try {
+    const params = { pageNum: pageNumber.value, pageSize: pageSize.value, ...searchForm }
+    const { data } = await axios.get('/api/mainData/getDrugStoreData', { params })
+    if (data.code === 200) {
+      Object.assign(drugstoreData, data.data)
+      pageNumber.value = data.data.pageNum
+    } else {
+      ElMessage.error(data.msg || '获取数据失败')
+    }
+  } catch {
+    ElMessage.error('网络请求异常')
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleSearch = () => {
+  pageNumber.value = 1
+  fetchDrugStoreData()
+}
+
+const resetSearch = () => {
+  Object.keys(searchForm).forEach(key => (searchForm[key] = ''))
+  pageNumber.value = 1
+  fetchDrugStoreData()
+}
+
+const handlePageSizeChange = () => {
+  pageNumber.value = 1
+  fetchDrugStoreData()
+}
+
+const copyText = async (text) => {
+  if (!text) return
+  try {
+    await navigator.clipboard.writeText(text)
+    ElMessage.success('已复制')
+  } catch {
+    ElMessage.error('复制失败')
+  }
+}
+
+const toExcel = async () => {
+  if (exporting.value) return
+  exporting.value = true
+  try {
+    const params = { ...searchForm }
+    const { data: jsonBlob } = await axios.get('/api/mainData/exportDrugStoreData', { params, responseType: 'blob' })
+    const jsonText = await jsonBlob.text()
+    const { data: base64 } = JSON.parse(jsonText)
+    const byteChars = atob(base64)
+    const byteNums = new Uint8Array(byteChars.length)
+    for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i)
+    const excelBlob = new Blob([byteNums], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const url = URL.createObjectURL(excelBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `豪森药店数据导出_${new Date().toLocaleDateString()}.xlsx`
+    link.click()
+    URL.revokeObjectURL(url)
+  } catch {
+    ElMessage.error('导出失败')
+  } finally {
+    exporting.value = false
+  }
+}
+
+const showDetail = (row) => {
+  currentDrugStore.value = { ...row }
+  showDetailModal.value = true
+}
+
+const updateDetail = (row) => {
+  originalDrugStore.value = JSON.parse(JSON.stringify(row))
+  currentUpdateDrugStore.value = JSON.parse(JSON.stringify(row))
+  updateDetailModal.value = true
+}
+
+const closeUpdateModal = () => {
+  updateDetailModal.value = false
+  currentUpdateDrugStore.value = {}
+  originalDrugStore.value = {}
+}
+
+const saveChanges = async () => {
+  if (isSaving.value) return
+  isSaving.value = true
+  try {
+    const { data } = await axios.post('/api/updateData/inputOneUpdateDrugStoreData', currentUpdateDrugStore.value)
+    if (data.code === 200) {
+      ElMessage.success('提交更新成功')
+      closeUpdateModal()
+      fetchDrugStoreData()
+    } else {
+      ElMessage.error(data.msg || '提交失败')
+    }
+  } catch {
+    ElMessage.error('网络异常')
+  } finally {
+    isSaving.value = false
+  }
+}
+
+const findDaKuData = async () => {
+  if (isFinding.value) return
+  if (!currentUpdateDrugStore.value.keyid) {
+    ElMessage.warning('请先输入keyid')
+    return
+  }
+  isFinding.value = true
+  try {
+    const { data } = await axios.get('/api/updateData/findDaKuData', { params: { keyid: currentUpdateDrugStore.value.keyid } })
+    if (data.code === 200 && data.data) {
+      // 先保存原始不可编辑字段
+      const protectedFields = {
+        batchCode: currentUpdateDrugStore.value.batchCode,
+        dataId: currentUpdateDrugStore.value.dataId,
+        dataType: currentUpdateDrugStore.value.dataType,
+        dataCode: currentUpdateDrugStore.value.dataCode,
+        originalName: currentUpdateDrugStore.value.originalName,
+        originalProvince: currentUpdateDrugStore.value.originalProvince,
+        companyName: currentUpdateDrugStore.value.companyName,
+      }
+
+      // 更新其他字段
+      Object.assign(currentUpdateDrugStore.value, data.data)
+
+      // 强制恢复原始字段
+      Object.assign(currentUpdateDrugStore.value, protectedFields)
+
+      ElMessage.success('匹配成功，已填充')
+    } else {
+      // data.msg ||
+      ElMessage.error( '未找到匹配数据')
+    }
+  } catch {
+    ElMessage.error('匹配失败')
+  } finally {
+    isFinding.value = false
+  }
+}
+
+const resetForm = () => {
+  ElMessageBox.confirm('确定要重置所有修改吗？重置后将恢复为原始数据。', '确认重置', { type: 'warning' })
+      .then(() => {
+        currentUpdateDrugStore.value = JSON.parse(JSON.stringify(originalDrugStore.value))
+        ElMessage.success('已重置为原始数据')
+      })
+}
+
+// 列宽拖拽
+const resizing = ref(false)
+const resizeColumnIndex = ref(null)
+const startX = ref(0)
+const startWidth = ref(0)
+
+const startResize = (e, index) => {
+  resizing.value = true
+  resizeColumnIndex.value = index
+  startX.value = e.clientX
+  startWidth.value = columns.value[index].width
+  document.addEventListener('mousemove', handleResize)
+  document.addEventListener('mouseup', stopResize)
+}
+
+const handleResize = (e) => {
+  if (!resizing.value) return
+  const dx = e.clientX - startX.value
+  const newWidth = Math.max(80, Math.min(600, startWidth.value + dx))
+  columns.value[resizeColumnIndex.value].width = newWidth
+}
+
+const stopResize = () => {
+  resizing.value = false
+  document.removeEventListener('mousemove', handleResize)
+  document.removeEventListener('mouseup', stopResize)
+}
+
+onMounted(() => {
+  fetchDrugStoreData()
+})
 </script>
 
 <style scoped>
-.DrugStore-data-view {
+.drugstore-data-view {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
+  height: 100vh;
   max-width: min(1250px, 95vw);
-  padding: 12px;
-  box-sizing: border-box;
-  background: white;
-  font-size: 12px;
   margin: 0 auto;
+  background: white;
+  overflow: hidden;
+  font-size: 12px;
 }
 
 /* 2K屏幕优化 */
 @media (min-width: 2000px) and (max-width: 2600px) {
-  .DrugStore-data-view {
+  .drugstore-data-view {
     max-width: min(1860px, 90vw);
   }
 }
 
 /* 超宽屏幕 */
 @media (min-width: 2600px) {
-  .DrugStore-data-view {
+  .drugstore-data-view {
     max-width: min(2400px, 95vw);
   }
 }
 
-.search-container {
-  flex-shrink: 0;
-  margin-bottom: 8px;
-  padding: 12px;
+.fixed-search {
+  position: sticky;
+  top: 1px;
+  z-index: 100;
+  padding: 10px 16px;
   background: #f5f7fa;
-  border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 8px;
+  border-radius: 6px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .search-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
+  gap: 12px 8px;
+  align-items: end;
 }
 
-.form-item {
-  display: flex;
-  align-items: center;
-}
-
-.form-item label {
-  margin-right: 4px;
-  font-weight: bold;
-  white-space: nowrap;
-  font-size: 12px;
-}
-
-.form-item input {
-  padding: 5px 8px;
-  border: 1px solid #dcdfe6;
-  border-radius: 3px;
-  min-width: 120px;
-  font-size: 12px;
+.search-form :deep(.el-form-item) {
+  margin-bottom: 0 !important;
+  flex: 1 1 180px;
 }
 
 .form-actions {
+  margin-left: 0;
   display: flex;
-  gap: 8px;
-  margin-left: auto;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
 }
 
-button {
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  border: none;
-  font-size: 12px;
-}
-
-.search-btn {
-  background: #409eff;
-  color: white;
-}
-
-.search-btn:hover {
-  background: #66b1ff;
-}
-
-.reset-btn {
-  background: #f5f7fa;
-  border: 1px solid #dcdfe6;
-}
-
-.reset-btn:hover {
-  background: #e6e9ed;
-}
-
-.detail-btn {
-  background: #67c23a;
-  color: white;
-  padding: 4px 8px;
-}
-
-.detail-btn:hover {
-  background: #85ce61;
+.view-toggle {
+  margin-left: 16px;
 }
 
 .data-container {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
   overflow: hidden;
 }
 
-.table-wrapper {
+.content-wrapper {
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
+  margin: 8px;
   border: 1px solid #ebeef5;
   border-radius: 3px;
-  position: relative;
+  background: #fff;
 }
 
-.DrugStore-table {
-  width: 100%;
-  height: 80%;
-  border-collapse: collapse;
-  font-size: 12px;
-  table-layout: fixed;
+.table-view {
+  height: 100%;
 }
 
-.DrugStore-table th,
-.DrugStore-table td {
-  border: 1px solid #ebeef5;
-  padding: 6px 8px;
-  text-align: left;
+.card-view {
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.drugstore-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: bold;
+  max-width: 70%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.DrugStore-table th {
-  background-color: #f5f7fa;
-  font-weight: bold;
-  position: sticky;
-  top: 0;
-  user-select: none;
-  -webkit-user-select: none;
+.card-body {
+  flex: 1;
+  margin: 12px 0;
 }
 
-/* 固定列样式 */
-.fixed-column {
-  position: sticky;
-  right: 0;
-  background-color: #f5f7fa;
-  z-index: 10;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+.card-item {
+  margin-bottom: 8px;
+  line-height: 1.5;
 }
 
-.DrugStore-table tr:nth-child(even) .fixed-column {
-  background-color: #fafafa;
-}
-
-.DrugStore-table tr:hover .fixed-column {
-  background-color: #f5f7fa;
-}
-
-.DrugStore-table tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-.DrugStore-table tr:hover {
-  background-color: #f5f7fa;
-}
-
-.status-active {
-  color: #78a2cc;
-  font-weight: bold;
-}
-
-.status-uninactive {
-  color: #9478cc;
-  font-weight: bold;
-}
-
-.status-inactive {
-  color: #f56c6c;
-  font-weight: bold;
-}
-
-.status-repeat {
-  color: rgba(228, 109, 186, 0.5);
-  font-weight: bold;
-}
-
-.status-invalid {
-  color: #d77030;
-  font-weight: bold;
-}
-
-.no-data {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+.card-item .label {
   color: #909399;
-  font-size: 12px;
+  font-weight: bold;
+  margin-right: 6px;
 }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 12px;
-  gap: 8px;
-  padding: 6px;
+.card-footer {
+  margin-top: auto;
+  text-align: right;
+}
+
+.fixed-pagination {
+  position: sticky;
+  bottom: 0;
   background: #f5f7fa;
-  border-radius: 3px;
+  padding: 8px;
+  border-top: 1px solid #dcdfe6;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  text-align: center;
 }
 
-.page-btn {
-  padding: 4px 8px;
-  background: #ffffff;
-  border: 1px solid #dcdfe6;
-  cursor: pointer;
-  border-radius: 3px;
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.pagination-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .page-info {
   font-size: 12px;
   color: #606266;
+  min-width: 220px;
+  text-align: center;
 }
 
-.pagination select {
-  padding: 4px;
-  border-radius: 3px;
-  border: 1px solid #dcdfe6;
-  background: white;
-  font-size: 12px;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+.no-data {
+  height: 100%;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-container {
-  background: white;
-  border-radius: 6px;
-  width: 400px;
-  max-width: 80%;
-  max-height: 60vh;
-  overflow-y: auto;
-  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-header {
-  position: sticky;   /* 关键：粘滞定位 */
-  top: 0;             /* 粘到顶部 */
-  z-index: 10;        /* 保证盖住下方内容 */
-  background: #fff;        /* 或任何你想要的纯色 */
-
-  padding: 10px 12px;
-  border-bottom: 1px solid #ebeef5;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  flex: 1;                   /* 中间列 */
-  text-align: center;        /* 文字居中 */
-  margin: 0;
-  font-size: 13px;           /* 按需调整 */
-}
-.close-btn {
-  font-size: 12px;
   color: #909399;
-  cursor: pointer;
-}
-
-.close-btn:hover {
-  color: #606266;
-}
-
-.modal-body {
-  padding: 12px;
-  flex: 1;
-}
-
-.detail-row {
-  display: flex;
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-.detail-row label {
-  font-weight: bold;
-  min-width: 70px;
-  color: #606266;
-  font-size: 12px;
-}
-
-.detail-row span {
-  flex: 1;
-  word-break: break-word;
-  font-size: 12px;
-}
-
-.modal-footer {
-  position: sticky;      /* 如果兼容性要求高，可用 position:fixed 内部方案 */
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #fff;
-  border-top: 1px solid #ebeef5;
-  padding: 10px 12px;
-  text-align: right;
-  z-index: 10;
-}
-
-.modal-close-btn {
-  padding: 5px 10px;
-  background: #409eff;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.modal-close-btn:hover {
-  background: #66b1ff;
 }
 
 .th-content {
   position: relative;
-  padding-right: 10px;
   text-align: center;
 }
 
@@ -1085,46 +838,95 @@ button {
   right: 0;
   top: 0;
   bottom: 0;
-  width: 3px;
+  width: 4px;
   cursor: col-resize;
-  background-color: transparent;
 }
 
 .resize-handle:hover {
-  background-color: #409eff;
+  background: #409eff;
 }
 
-.input-wrapper {
-  position: relative;
-  display: inline-block;
+.detail-container {
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
-.input-wrapper input {
-  border: 1px solid #dcdfe6;
-  border-radius: 3px;
-  min-width: 120px;
-  padding: 5px 20px 5px 8px;
-  font-size: 11px;
+.detail-row {
+  display: flex;
+  margin-bottom: 10px;
 }
 
-.clear-icon {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #c0c4cc;
-  cursor: pointer;
-  font-size: 12px;
+.detail-row label {
+  min-width: 140px;
+  font-weight: bold;
+  color: #606266;
 }
 
-.clear-icon:hover {
-  color: #909399;
+.detail-row span {
+  flex: 1;
+  word-break: break-all;
 }
 
-/* 让鼠标看上去可点 */
-.copy-btn {
-  cursor: pointer;
-  color: #409eff;
-  /*text-decoration: underline;*/
+/* 更新弹窗整体 */
+.update-dialog :deep(.el-dialog) {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  margin: 5vh auto;
+}
+
+.custom-dialog-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  width: 100%;
+}
+
+.update-dialog :deep(.el-dialog__header) {
+  padding: 16px 24px;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.dialog-fixed-header {
+  flex-shrink: 0;
+  padding: 12px 24px;
+  background: #fafafa;
+  border-bottom: 1px solid #ebeef5;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.dialog-scroll-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 24px;
+  box-sizing: border-box;
+}
+
+.dialog-scroll-body::-webkit-scrollbar {
+  width: 8px;
+}
+.dialog-scroll-body::-webkit-scrollbar-thumb {
+  background: #c0c4cc;
+  border-radius: 4px;
+}
+.dialog-scroll-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.update-dialog :deep(.el-dialog__body) {
+  flex: 1;
+  padding: 0;
+  overflow: hidden;
 }
 </style>
