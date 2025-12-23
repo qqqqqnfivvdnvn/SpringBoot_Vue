@@ -61,6 +61,7 @@ public class HaoSenInputCleanDataServiceImpl implements HaoSenInputCleanDataServ
             // 3. 数据库操作（事务内）
             sqlMapper.deleteAllHaoSenData();
             // 3. 清空并导入数据（事务操作）
+
             for (HaoSenInputAppealDataVO appeal : cleanData) {
 
                 sqlMapper.inputHaoSenData(appeal);

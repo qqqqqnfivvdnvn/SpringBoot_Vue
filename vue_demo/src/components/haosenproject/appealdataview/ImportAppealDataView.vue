@@ -13,7 +13,7 @@
             :auto-upload="false"
             :on-change="handleFileChange"
             :on-remove="handleRemove"
-            accept=".xlsx,.xls"
+            accept=".xlsx"
             :http-request="() => {}"
         >
           <el-icon class="upload-icon">
@@ -50,33 +50,37 @@
       </div>
     </div>
 
-    <!-- 上传结果弹窗 -->
+    <!-- 上传结果弹窗（紧凑版，使用 ElResult） -->
     <el-dialog
         v-model="showResultModal"
-        :title="uploadResult?.success ? '推送成功' : '推送失败'"
-        width="400px"
+        width="360px"
         custom-class="custom-result-dialog"
         :close-on-click-modal="false"
         :show-close="true"
+        :show-header="false"
+        center
+        :destroy-on-close="true"
     >
-      <div class="modal-body">
-        <p>{{ uploadResult?.message }}</p>
-        <p v-if="uploadResult?.details" class="result-details">
-          {{ uploadResult?.details }}
-        </p>
-      </div>
-      <template #footer>
-        <el-button type="primary" @click="closeModal">确定</el-button>
-      </template>
+      <el-result
+          :icon="uploadResult?.success ? 'success' : 'error'"
+          :title="uploadResult?.message"
+          :sub-title="uploadResult?.details"
+      >
+        <template #extra>
+          <el-button type="primary" @click="closeModal">
+            确定
+          </el-button>
+        </template>
+      </el-result>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
-import { UploadFilled, CircleCloseFilled } from '@element-plus/icons-vue'
+import {ElMessage} from 'element-plus'
+import {UploadFilled, CircleCloseFilled} from '@element-plus/icons-vue'
 
 const pendingCount = ref(1245)
 const fileList = ref([])
@@ -98,7 +102,7 @@ const handleFileChange = (file, files) => {
   ]
   const ext = file.name.split('.').pop()?.toLowerCase()
 
-  if (validTypes.includes(file.raw.type) || ['xls', 'xlsx'].includes(ext)) {
+  if (validTypes.includes(file.raw.type) || [ 'xlsx'].includes(ext)) {
     selectedFile.value = file.raw
     fileList.value = [file]
   } else {
@@ -145,7 +149,7 @@ const submitFile = async () => {
     formData.append('file', selectedFile.value)
 
     const response = await axios.post('/api/appealData/importAppealData', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: {'Content-Type': 'multipart/form-data'},
     })
 
     if (response.data.data.message === 'success') {
@@ -250,8 +254,22 @@ const submitFile = async () => {
   font-size: 12px;
 }
 
+/*
 .custom-upload :deep(.el-upload-list) {
   display: none;
+} */
+
+.custom-upload :deep(.el-upload-list) {
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
+.custom-upload :deep(.el-upload-list__item) {
+  transition: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
 }
 
 .file-info {
@@ -290,40 +308,36 @@ const submitFile = async () => {
   margin-top: 12px;
 }
 
+/* 结果弹窗紧凑样式 */
 :deep(.custom-result-dialog) {
-  border-radius: 3px;
+  border-radius: 8px;
   overflow: hidden;
-}
-
-:deep(.custom-result-dialog .el-dialog__header) {
-  padding: 10px 12px;
-  border-bottom: 1px solid #ebeef5;
-  position: relative;
-}
-
-:deep(.custom-result-dialog .el-dialog__title) {
-  font-size: 15px;
-  font-weight: bold;
+  max-width: 90vw;
 }
 
 :deep(.custom-result-dialog .el-dialog__body) {
-  padding: 0;
+  padding: 20px 24px 30px;
+  text-align: center;
 }
 
-.modal-body {
-  padding: 12px;
+/* 微调 ElResult 内部间距 */
+:deep(.el-result__icon) {
+  margin-bottom: 12px;
 }
 
-.modal-body p {
-  margin: 0 0 8px;
+:deep(.el-result__title) {
+  margin-bottom: 8px !important;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+:deep(.el-result__subtitle) {
   font-size: 13px;
-}
-
-.result-details {
   color: #909399;
-  font-size: 12px;
+  margin-bottom: 20px;
 }
 
+/* 移动端适配 */
 @media (max-width: 768px) {
   .custom-upload :deep(.el-upload-dragger) {
     padding: 15px 10px;
@@ -332,6 +346,14 @@ const submitFile = async () => {
   .upload-text,
   .upload-hint {
     font-size: 12px;
+  }
+
+  :deep(.custom-result-dialog) {
+    width: 90% !important;
+  }
+
+  :deep(.custom-result-dialog .el-dialog__body) {
+    padding: 16px 20px 24px;
   }
 }
 </style>
