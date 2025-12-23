@@ -104,7 +104,7 @@
                 END med_union_community,
             a.ybcode,
             a.regcode,
-            a.validity license_validity,
+            a.validity ,
             a.menzhen,
             a.bed_count,
             a.medical_count,
