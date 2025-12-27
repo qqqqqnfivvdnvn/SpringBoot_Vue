@@ -17,7 +17,7 @@
             :http-request="() => {}"
         >
           <el-icon class="upload-icon">
-            <UploadFilled/>
+            <UploadFilled />
           </el-icon>
           <div class="upload-text">
             拖拽文件到此处或
@@ -31,7 +31,7 @@
               <span class="file-name">{{ file.name }}</span>
               <span class="file-size">({{ formatFileSize(file.size) }})</span>
               <el-icon class="file-remove" @click.stop="handleRemove">
-                <CircleCloseFilled/>
+                <CircleCloseFilled />
               </el-icon>
             </div>
           </template>
@@ -62,6 +62,7 @@
         :destroy-on-close="true"
     >
       <el-result
+          :key="resultKey"
           :icon="uploadResult?.success ? 'success' : 'error'"
           :title="uploadResult?.message"
           :sub-title="uploadResult?.details"
@@ -88,6 +89,7 @@ const selectedFile = ref(null)
 const uploading = ref(false)
 const uploadResult = ref(null)
 const showResultModal = ref(false)
+const resultKey = ref(0) // 用于强制 el-result 重新创建实例
 
 // 文件选择/拖拽处理
 const handleFileChange = (file, files) => {
@@ -102,7 +104,7 @@ const handleFileChange = (file, files) => {
   ]
   const ext = file.name.split('.').pop()?.toLowerCase()
 
-  if (validTypes.includes(file.raw.type) || [ 'xlsx'].includes(ext)) {
+  if (validTypes.includes(file.raw.type) || ['xlsx'].includes(ext)) {
     selectedFile.value = file.raw
     fileList.value = [file]
   } else {
@@ -127,10 +129,16 @@ const formatFileSize = (bytes) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
-// 关闭弹窗
+// 关闭弹窗（关键修复：防止图标闪烁）
 const closeModal = () => {
   showResultModal.value = false
-  uploadResult.value = null
+
+  // 延迟清空状态，确保 dialog 完全关闭并销毁后再重置
+  // 同时更新 key，保证下次打开时 el-result 是全新实例
+  setTimeout(() => {
+    uploadResult.value = null
+    resultKey.value += 1
+  }, 300) // 300ms 足够覆盖关闭动画
 }
 
 // 提交上传
@@ -253,11 +261,6 @@ const submitFile = async () => {
   color: #909399;
   font-size: 12px;
 }
-
-/*
-.custom-upload :deep(.el-upload-list) {
-  display: none;
-} */
 
 .custom-upload :deep(.el-upload-list) {
   margin-top: 12px;

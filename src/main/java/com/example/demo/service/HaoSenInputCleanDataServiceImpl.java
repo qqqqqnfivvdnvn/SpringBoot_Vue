@@ -95,6 +95,13 @@ public class HaoSenInputCleanDataServiceImpl implements HaoSenInputCleanDataServ
             return ApiResponseDTO.success(fileMessage);
         }
 
+        ////       测试数据
+//
+//        fileMessage.setProcessedCount(10);
+//        fileMessage.setMessage("success");
+//        fileMessage.setAppealMessage("清洗数据推送成功");
+//        return ApiResponseDTO.success(fileMessage);
+
     }
 
 

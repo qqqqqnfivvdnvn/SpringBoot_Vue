@@ -17,7 +17,7 @@
             :http-request="() => {}"
         >
           <el-icon class="upload-icon">
-            <UploadFilled/>
+            <UploadFilled />
           </el-icon>
           <div class="upload-text">
             拖拽文件到此处或
@@ -31,7 +31,7 @@
               <span class="file-name">{{ file.name }}</span>
               <span class="file-size">({{ formatFileSize(file.size) }})</span>
               <el-icon class="file-remove" @click.stop="handleRemove">
-                <CircleCloseFilled/>
+                <CircleCloseFilled />
               </el-icon>
             </div>
           </template>
@@ -62,22 +62,23 @@
         :destroy-on-close="true"
     >
       <el-result
-          :icon="uploadResult?.success ? 'success' : 'error'"
-          :title="uploadResult?.message"
-          :sub-title="uploadResult?.details"
+          :key="resultKey"
+      :icon="uploadResult?.success ? 'success' : 'error'"
+      :title="uploadResult?.message"
+      :sub-title="uploadResult?.details"
       >
-        <template #extra>
-          <el-button type="primary" @click="closeModal">
-            确定
-          </el-button>
-        </template>
+      <template #extra>
+        <el-button type="primary" @click="closeModal">
+          确定
+        </el-button>
+      </template>
       </el-result>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { UploadFilled, CircleCloseFilled } from '@element-plus/icons-vue'
@@ -88,6 +89,7 @@ const selectedFile = ref(null)
 const uploading = ref(false)
 const uploadResult = ref(null)
 const showResultModal = ref(false)
+const resultKey = ref(0)  // 用于强制 el-result 重新渲染
 
 // 文件选择/拖拽处理
 const handleFileChange = (file, files) => {
@@ -102,7 +104,7 @@ const handleFileChange = (file, files) => {
   ]
   const ext = file.name.split('.').pop()?.toLowerCase()
 
-  if (validTypes.includes(file.raw.type) || [ 'xlsx'].includes(ext)) {
+  if (validTypes.includes(file.raw.type) || ['xlsx'].includes(ext)) {
     selectedFile.value = file.raw
     fileList.value = [file]
   } else {
@@ -127,10 +129,16 @@ const formatFileSize = (bytes) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
-// 关闭弹窗
+// 关闭弹窗（关键修复）
 const closeModal = () => {
   showResultModal.value = false
-  uploadResult.value = null
+
+  // 延迟清空 uploadResult，确保 dialog 完全关闭并销毁后再重置
+  // 同时更新 key 强制下次渲染全新 el-result
+  setTimeout(() => {
+    uploadResult.value = null
+    resultKey.value += 1
+  }, 300)  // 300ms 足够覆盖 Element Plus 的关闭过渡动画
 }
 
 // 提交上传
@@ -254,11 +262,6 @@ const submitFile = async () => {
   font-size: 12px;
 }
 
-/*
-.custom-upload :deep(.el-upload-list) {
-  display: none;
-} */
-
 .custom-upload :deep(.el-upload-list) {
   margin-top: 12px;
   margin-bottom: 0;
@@ -271,7 +274,6 @@ const submitFile = async () => {
   border: none;
   background: transparent;
 }
-
 
 .file-info {
   margin-top: 12px;
