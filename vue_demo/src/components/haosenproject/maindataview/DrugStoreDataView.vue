@@ -460,6 +460,7 @@ const detailFields = {
   hosInside: { label: '院内店', value: d => d.hosInside },
   hosOutside: { label: '院边店', value: d => d.hosOutside },
   field1: { label: '经纬度', value: d => d.field1 },
+  remarks: { label: '备注', value: d => d.remarks },
   addtime: { label: '添加日期', value: d => d.addtime },
   updatetime: { label: '更新日期', value: d => d.updatetime },
   status: {
