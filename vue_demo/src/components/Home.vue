@@ -118,18 +118,25 @@
       </div>
     </div>
   </div>
+
+
+
 </template>
 
 <script setup>
+
+
+import ThemeToggle from './ui/ThemeToggle.vue';
+
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
-// 响应式数据
-const homePageStyle = ref({
-  background: 'linear-gradient(135deg, #e3d2ff, #e3d2ff)'
-})
+// // 响应式数据
+// const homePageStyle = ref({
+//   background: 'linear-gradient(135deg, #e3d2ff, #e3d2ff)'
+// })
 
 const userData = ref({})
 const searchQuery = ref('')
@@ -665,4 +672,7 @@ const clearAuthData = () => {
     display: none;
   }
 }
+
+
+
 </style>

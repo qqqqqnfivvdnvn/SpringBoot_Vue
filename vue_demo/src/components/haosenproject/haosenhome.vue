@@ -6,6 +6,10 @@
       <div class="navbar-links">
         <router-link to="/project/HaosenHome" @click="resetToDashboard">仪表盘</router-link>
         <router-link to="/home">返回项目管理</router-link>
+
+        <!-- 主题切换按钮 -->
+        <ThemeToggle />
+
         <div class="avatar">
           <img src="@/assets/images/avatar-modified.png" alt="用户头像" />
         </div>
@@ -15,6 +19,7 @@
         </button>
       </div>
     </nav>
+
     <!-- 主要内容区域 -->
     <div class="main-content">
       <!-- 左侧功能栏 -->
@@ -55,6 +60,7 @@
               </li>
             </ul>
           </li>
+
           <!-- 数据清洗 -->
           <li>
             <div class="menu-item" @click="toggleMenu('cleanManagement')">
@@ -73,6 +79,7 @@
               </li>
             </ul>
           </li>
+
           <!-- 数据申诉 -->
           <li>
             <div class="menu-item" @click="toggleMenu('appealManagement')">
@@ -95,6 +102,7 @@
               </li>
             </ul>
           </li>
+
           <!-- 数据更新 -->
           <li>
             <div class="menu-item" @click="toggleMenu('updateManagement')">
@@ -115,9 +123,9 @@
           </li>
         </ul>
       </div>
+
       <!-- 右侧内容区域 -->
       <div class="content" :class="{ expanded: isSidebarCollapsed }">
-        <!-- 标签页头部 -->
         <div class="content-header">
           <div class="tabs-container">
             <div class="tabs">
@@ -140,11 +148,13 @@
             </div>
           </div>
         </div>
+
         <transition name="fade" mode="out-in">
           <component :is="currentViewComponent" :key="currentView" />
         </transition>
       </div>
     </div>
+
     <!-- 悬浮提示框 -->
     <div v-if="showToast" class="toast">
       {{ toastMessage }}
@@ -153,168 +163,163 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import ThemeToggle from '@/components/ui/ThemeToggle.vue'  // 引入主题切换组件
 
-const router = useRouter();
+const router = useRouter()
 
-// 响应式状态
 const openMenus = ref({
   mainDataManagement: false,
-  updateManagement: false,
   cleanManagement: false,
   appealManagement: false,
-});
+  updateManagement: false,
+})
 
-const showToast = ref(false);
-const toastMessage = ref('');
-const isSidebarCollapsed = ref(false);
+const showToast = ref(false)
+const toastMessage = ref('')
+const isSidebarCollapsed = ref(false)
+
 const homePageStyle = ref({
   background: 'linear-gradient(135deg, #e3d2ff, #e3d2ff)',
-});
+})
 
-const tabs = ref([]);
-const currentView = ref('HomeDashboardView');  // 默认渲染仪表盘内容，但不添加标签
+const tabs = ref([])
+const currentView = ref('HomeDashboardView')
 
-// 计算属性
-const currentViewComponent = computed(() => currentView.value);
+const currentViewComponent = computed(() => currentView.value)
 
-// 方法
 const toggleMenu = (menu) => {
-  openMenus.value[menu] = !openMenus.value[menu];
-};
+  openMenus.value[menu] = !openMenus.value[menu]
+}
 
 const addTab = (title, component) => {
-  const existingTab = tabs.value.find((tab) => tab.component === component);
+  const existingTab = tabs.value.find((tab) => tab.component === component)
   if (existingTab) {
-    switchTab(existingTab.id);
-    return;
+    switchTab(existingTab.id)
+    return
   }
 
-  const tabId = 'tab-' + Date.now();
-  tabs.value.forEach((tab) => (tab.active = false));
+  const tabId = 'tab-' + Date.now()
+  tabs.value.forEach((tab) => (tab.active = false))
   tabs.value.push({
     id: tabId,
     title,
     component,
     active: true,
-  });
-  currentView.value = component;
-};
+  })
+  currentView.value = component
+}
 
 const switchTab = (tabId) => {
   tabs.value.forEach((tab) => {
-    tab.active = tab.id === tabId;
+    tab.active = tab.id === tabId
     if (tab.active) {
-      currentView.value = tab.component;
+      currentView.value = tab.component
     }
-  });
-};
+  })
+}
 
 const closeTab = (tabId) => {
   if (tabs.value.length <= 1) {
-    // 关闭最后一个标签时，切换回仪表盘（不显示标签）
-    currentView.value = 'HomeDashboardView';
+    currentView.value = 'HomeDashboardView'
   }
-  const index = tabs.value.findIndex((tab) => tab.id === tabId);
+  const index = tabs.value.findIndex((tab) => tab.id === tabId)
   if (tabs.value[index].active) {
-    let newActiveTab;
+    let newActiveTab
     if (index > 0) {
-      newActiveTab = tabs.value[index - 1];
+      newActiveTab = tabs.value[index - 1]
     } else if (tabs.value.length > 1) {
-      newActiveTab = tabs.value[index + 1];
-    } else {
-      newActiveTab = null;  // 最后一个，切换到仪表盘
+      newActiveTab = tabs.value[index + 1]
     }
     if (newActiveTab) {
-      newActiveTab.active = true;
-      currentView.value = newActiveTab.component;
+      newActiveTab.active = true
+      currentView.value = newActiveTab.component
     } else {
-      currentView.value = 'HomeDashboardView';
+      currentView.value = 'HomeDashboardView'
     }
   }
-  tabs.value.splice(index, 1);
-};
+  tabs.value.splice(index, 1)
+}
 
 const showHospitalData = () => {
-  addTab('医院主数据', 'HospitalDataView');
-  window.location.hash = '/dataBase/hospital';
-};
+  addTab('医院主数据', 'HospitalDataView')
+  window.location.hash = '/dataBase/hospital'
+}
 
 const showDrugStoreData = () => {
-  addTab('药店主数据', 'DrugStoreDataView');
-  window.location.hash = '/dataBase/drugstore';
-};
+  addTab('药店主数据', 'DrugStoreDataView')
+  window.location.hash = '/dataBase/drugstore'
+}
 
 const companyDataView = () => {
-  addTab('商业主数据', 'CompanyDataView');
-  window.location.hash = '/dataBase/company';
-};
+  addTab('商业主数据', 'CompanyDataView')
+  window.location.hash = '/dataBase/company'
+}
 
 const showAppealData = () => {
-  addTab('申诉数据', 'AppealDataView');
-  window.location.hash = '/appealData/showAppealData';
-};
+  addTab('申诉数据', 'AppealDataView')
+  window.location.hash = '/appealData/showAppealData'
+}
 
 const importAppealData = () => {
-  addTab('申诉提交', 'ImportAppealDataView');
-  window.location.hash = '/appealData/importCleanData';
-};
+  addTab('申诉提交', 'ImportAppealDataView')
+  window.location.hash = '/appealData/importCleanData'
+}
 
 const importCleanData = () => {
-  addTab('清洗提交', 'ImportCleanDataView');
-  window.location.hash = '/cleanData/ImportCleanDataView';
-};
+  addTab('清洗提交', 'ImportCleanDataView')
+  window.location.hash = '/cleanData/ImportCleanDataView'
+}
 
 const importUpdateData = () => {
-  addTab('更新提交', 'ImportUpdateDataView');
-  window.location.hash = '/updateData/ImportCleanDataView';
-};
+  addTab('更新提交', 'ImportUpdateDataView')
+  window.location.hash = '/updateData/ImportCleanDataView'
+}
 
 const resetToDashboard = () => {
-  // 点击“仪表盘”链接时，关闭所有标签，显示仪表盘内容
-  tabs.value = [];
-  currentView.value = 'HomeDashboardView';
-  window.location.hash = '';
-};
+  tabs.value = []
+  currentView.value = 'HomeDashboardView'
+  window.location.hash = ''
+}
 
 const handleLogout = async () => {
   try {
-    await axios.post('/api/user/logout');
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
-    showToastMessage('退出登录成功');
+    await axios.post('/api/user/logout')
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    delete axios.defaults.headers.common['Authorization']
+    showToastMessage('退出登录成功')
     setTimeout(() => {
-      router.replace('/login');
-    }, 400);
+      router.replace('/login')
+    }, 400)
   } catch (error) {
-    console.error('退出失败:', error);
+    console.error('退出失败:', error)
   }
-};
+}
 
 const showToastMessage = (message) => {
-  toastMessage.value = message;
-  showToast.value = true;
+  toastMessage.value = message
+  showToast.value = true
   setTimeout(() => {
-    showToast.value = false;
-  }, 3000);
-};
+    showToast.value = false
+  }, 3000)
+}
 
 const toggleSidebar = () => {
-  isSidebarCollapsed.value = !isSidebarCollapsed.value;
-};
+  isSidebarCollapsed.value = !isSidebarCollapsed.value
+}
 </script>
 
 <style scoped>
-/* 样式完全保持不变 */
 .home-page {
   display: flex;
   flex-direction: column;
   height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -329,29 +334,35 @@ const toggleSidebar = () => {
   right: 0;
   z-index: 1000;
 }
+
 .navbar-brand {
   font-size: 1.3rem;
   font-weight: bold;
 }
+
 .navbar-links {
   display: flex;
   align-items: center;
   gap: 15px;
 }
+
 .navbar-links a {
   color: #fff;
   text-decoration: none;
   font-size: 0.9rem;
 }
+
 .navbar-links a:hover {
   text-decoration: underline;
 }
+
 .avatar img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   cursor: pointer;
 }
+
 .logout-button {
   background-color: #fff;
   color: #9478cc;
@@ -364,15 +375,18 @@ const toggleSidebar = () => {
   align-items: center;
   gap: 6px;
 }
+
 .logout-button:hover {
   background-color: #f0f0f0;
 }
+
 .main-content {
   display: flex;
   flex: 1;
   background-color: #f9f9f9;
   margin-top: 60px;
 }
+
 .sidebar {
   width: 200px;
   background-color: #fff;
@@ -384,10 +398,11 @@ const toggleSidebar = () => {
   bottom: 0;
   z-index: 999;
 }
+
 .sidebar.collapsed {
   width: 50px;
-  background-color: #fff;
 }
+
 .sidebar-header {
   display: flex;
   justify-content: space-between;
@@ -397,13 +412,16 @@ const toggleSidebar = () => {
   margin-bottom: 15px;
   color: #333;
 }
+
 .sidebar-menu {
   list-style: none;
   padding: 0;
 }
+
 .sidebar-menu li {
   margin-bottom: 10px;
 }
+
 .menu-item {
   display: flex;
   justify-content: space-between;
@@ -414,34 +432,41 @@ const toggleSidebar = () => {
   border-radius: 4px;
   transition: background-color 0.2s;
 }
+
 .menu-item:hover {
   background-color: #f0f0f0;
 }
+
 .menu-item span {
   display: flex;
   align-items: center;
   gap: 6px;
 }
+
 .arrow {
   margin-left: 6px;
   font-size: 0.7rem;
   color: #9478cc;
 }
+
 .sub-menu {
   list-style: none;
   padding-left: 15px;
   margin-top: 5px;
   font-size: 0.83rem;
 }
+
 .sub-menu li {
   padding: 6px;
   cursor: pointer;
   border-radius: 4px;
   transition: background-color 0.2s;
 }
+
 .sub-menu li:hover {
   background-color: #f0f0f0;
 }
+
 .content {
   flex: 1;
   padding: 5px;
@@ -449,38 +474,11 @@ const toggleSidebar = () => {
   transition: margin-left 0.3s ease;
   margin-left: 230px;
 }
+
 .content.expanded {
   margin-left: 80px;
 }
-.toast {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #9478cc;
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  animation: fadeInOut 3s ease-in-out;
-}
-@keyframes fadeInOut {
-  0% { opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { opacity: 0; }
-}
-.collapse-button {
-  background: none;
-  border: none;
-  color: #9478cc;
-  cursor: pointer;
-  font-size: 1rem;
-}
-.collapse-button:hover {
-  color: #af96e6;
-}
+
 .content-header {
   background-color: white;
   padding: 0;
@@ -488,14 +486,17 @@ const toggleSidebar = () => {
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
+
 .tabs-container {
   overflow-x: auto;
   padding: 0 10px;
 }
+
 .tabs {
   display: flex;
   min-width: fit-content;
 }
+
 .tab {
   padding: 8px 16px;
   cursor: pointer;
@@ -510,6 +511,7 @@ const toggleSidebar = () => {
   white-space: nowrap;
   font-size: 0.75rem;
 }
+
 .tab.active {
   background-color: #fff;
   border-bottom: 1px solid #fff;
@@ -517,13 +519,183 @@ const toggleSidebar = () => {
   color: #9478cc;
   font-weight: bold;
 }
+
 .close-tab {
   margin-left: 6px;
   font-size: 1rem;
   color: #999;
   line-height: 1;
 }
+
 .close-tab:hover {
   color: #666;
 }
+
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #9478cc;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.collapse-button {
+  background: none;
+  border: none;
+  color: #9478cc;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.collapse-button:hover {
+  color: #af96e6;
+}
+</style>
+
+<!-- 优化后的统一暗黑模式全局样式（必须无 scoped） -->
+<style>
+html.dark {
+  background-color: #0e0b1a;
+  color: #e0e0e0;
+}
+
+html.dark .home-page {
+  background: linear-gradient(135deg, #1a1625, #0e0b1a);
+}
+
+html.dark .navbar {
+  background-color: #1f1b2e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .navbar-links a {
+  color: #e0e0e0;
+}
+
+html.dark .navbar-links a:hover {
+  color: #bb86fc;
+}
+
+html.dark .sidebar {
+  background-color: #1f1b2e;
+  color: #e0e0e0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+html.dark .sidebar-header {
+  color: #bb86fc;
+}
+
+html.dark .menu-item:hover,
+html.dark .sub-menu li:hover {
+  background-color: #2d2640;
+}
+
+html.dark .arrow {
+  color: #bb86fc;
+}
+
+html.dark .content {
+  background-color: #1a1625;
+  color: #e0e0e0;
+}
+
+html.dark .content-header {
+  background-color: #1f1b2e;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .tab {
+  background-color: #2d2640;
+  border-color: #3d3550;
+  color: #e0e0e0;
+}
+
+html.dark .tab.active {
+  background-color: #1a1625;
+  color: #bb86fc;
+  border-bottom-color: #1a1625;
+  font-weight: bold;
+}
+
+html.dark .close-tab {
+  color: #777;
+}
+
+html.dark .close-tab:hover {
+  color: #bbb;
+}
+
+html.dark .toast {
+  background-color: #bb86fc;
+  color: #000;
+  font-weight: 500;
+}
+
+html.dark .logout-button {
+  background-color: #bb86fc;
+  color: #000;
+}
+
+html.dark .logout-button:hover {
+  background-color: #cf9eff;
+}
+
+html.dark .collapse-button {
+  color: #bb86fc;
+}
+
+html.dark .collapse-button:hover {
+  color: #e0b3ff;
+}
+
+/* 修复：图标颜色统一，不被意外覆盖 */
+font-awesome-icon {
+  color: inherit; /* 跟随父元素文字颜色 */
+}
+
+/* 亮模式菜单文字和图标颜色 */
+.menu-item,
+.sub-menu li {
+  color: #333;
+}
+
+/* 暗模式菜单文字和图标颜色 */
+html.dark .menu-item,
+html.dark .sub-menu li {
+  color: #e0e0e0;
+}
+
+/* 悬停高亮（亮/暗统一） */
+.menu-item:hover,
+.sub-menu li:hover {
+  color: #9478cc;
+}
+
+html.dark .menu-item:hover,
+html.dark .sub-menu li:hover {
+  color: #bb86fc;
+}
+
 </style>

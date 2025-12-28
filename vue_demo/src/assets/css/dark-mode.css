@@ -1,0 +1,43 @@
+/* 全局暗模式样式 */
+html.dark {
+    /* 整体背景 */
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+html.dark .home-page {
+    background: #121212;
+}
+
+html.dark .navbar {
+    background-color: #2d1b69; /* 深紫色，与原色调呼应 */
+}
+
+html.dark .sidebar {
+    background-color: #1f1b2e;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .content {
+    background-color: #121212;
+}
+
+html.dark .tab {
+    background-color: #2a2a2a;
+    border-color: #444;
+}
+
+html.dark .tab.active {
+    background-color: #121212;
+    color: #bb86fc;
+}
+
+html.dark .menu-item:hover,
+html.dark .sub-menu li:hover {
+    background-color: #333;
+}
+
+html.dark .toast {
+    background-color: #bb86fc;
+    color: #000;
+}
