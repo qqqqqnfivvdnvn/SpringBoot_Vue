@@ -394,7 +394,7 @@ const toggleSidebar = () => {
   padding: 15px;
   transition: width 0.3s ease;
   position: fixed;
-  top: 75px;
+  top: 73px;
   bottom: 0;
   z-index: 999;
 }
