@@ -1,43 +1,122 @@
-/* 全局暗模式样式 */
 html.dark {
-    /* 整体背景 */
-    background-color: #1a1a1a;
+    background-color: #0e0b1a;
     color: #e0e0e0;
 }
 
 html.dark .home-page {
-    background: #121212;
+    background: linear-gradient(135deg, #1a1625, #0e0b1a);
 }
 
 html.dark .navbar {
-    background-color: #2d1b69; /* 深紫色，与原色调呼应 */
+    background-color: #1f1b2e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .navbar-links a {
+    color: #e0e0e0;
+}
+
+html.dark .navbar-links a:hover {
+    color: #bb86fc;
 }
 
 html.dark .sidebar {
     background-color: #1f1b2e;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.4);
+    color: #e0e0e0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
 }
 
-html.dark .content {
-    background-color: #121212;
-}
-
-html.dark .tab {
-    background-color: #2a2a2a;
-    border-color: #444;
-}
-
-html.dark .tab.active {
-    background-color: #121212;
+html.dark .sidebar-header {
     color: #bb86fc;
 }
 
 html.dark .menu-item:hover,
 html.dark .sub-menu li:hover {
-    background-color: #333;
+    background-color: #2d2640;
+}
+
+html.dark .arrow {
+    color: #bb86fc;
+}
+
+html.dark .content {
+    background-color: #1a1625;
+    color: #e0e0e0;
+}
+
+html.dark .content-header {
+    background-color: #1f1b2e;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .tab {
+    background-color: #2d2640;
+    border-color: #3d3550;
+    color: #e0e0e0;
+}
+
+html.dark .tab.active {
+    background-color: #1a1625;
+    color: #bb86fc;
+    border-bottom-color: #1a1625;
+    font-weight: bold;
+}
+
+html.dark .close-tab {
+    color: #777;
+}
+
+html.dark .close-tab:hover {
+    color: #bbb;
 }
 
 html.dark .toast {
     background-color: #bb86fc;
     color: #000;
+    font-weight: 500;
+}
+
+html.dark .logout-button {
+    background-color: #bb86fc;
+    color: #000;
+}
+
+html.dark .logout-button:hover {
+    background-color: #cf9eff;
+}
+
+html.dark .collapse-button {
+    color: #bb86fc;
+}
+
+html.dark .collapse-button:hover {
+    color: #e0b3ff;
+}
+
+/* 修复：图标颜色统一，不被意外覆盖 */
+font-awesome-icon {
+    color: inherit; /* 跟随父元素文字颜色 */
+}
+
+/* 亮模式菜单文字和图标颜色 */
+.menu-item,
+.sub-menu li {
+    color: #333;
+}
+
+/* 暗模式菜单文字和图标颜色 */
+html.dark .menu-item,
+html.dark .sub-menu li {
+    color: #e0e0e0;
+}
+
+/* 悬停高亮（亮/暗统一） */
+.menu-item:hover,
+.sub-menu li:hover {
+    color: #9478cc;
+}
+
+html.dark .menu-item:hover,
+html.dark .sub-menu li:hover {
+    color: #bb86fc;
 }
