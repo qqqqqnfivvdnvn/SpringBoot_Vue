@@ -1,15 +1,12 @@
 package com.example.demo.mapper;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
-import com.example.demo.entity.HaoSenCompany;
-import com.example.demo.entity.HaoSenDrugStore;
 import com.example.demo.dto.HaoSenCompanyConditionDTO;
 import com.example.demo.dto.HaoSenDrugStoreConditionDTO;
 import com.example.demo.dto.HaoSenHospitalConditionDTO;
 import com.example.demo.entity.HaoSenOrganization;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 

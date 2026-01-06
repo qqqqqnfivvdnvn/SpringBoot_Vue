@@ -51,7 +51,7 @@ onMounted(async () => {
     tooltip: {
       trigger: 'axis',
       axisPointer: {
-        type: 'cross',
+        type: 'line',
         label: {
           backgroundColor: '#6a7985'
         }

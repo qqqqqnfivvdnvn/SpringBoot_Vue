@@ -42,8 +42,8 @@ public class ApiHaosen {
 
             // 设置合理超时（10秒）
             RequestConfig config = RequestConfig.custom()
-                    .setConnectTimeout(1800000)
-                    .setSocketTimeout(1800000)
+                    .setConnectTimeout(10)
+                    .setSocketTimeout(10)
                     .build();
             request.setConfig(config);
 

@@ -1,192 +1,199 @@
 <template>
   <div class="appeal-data-view">
-    <!-- 搜索区域 -->
-    <div class="fixed-search">
-      <el-form :inline="true" :model="searchForm" class="search-form" @submit.prevent="handleSearch">
-        <el-form-item label="原始编码">
-          <el-input v-model="searchForm.dataCode" placeholder="请输入原始编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="原始名称">
-          <el-input v-model="searchForm.originalName" placeholder="请输入原始名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="DataId">
-          <el-input v-model="searchForm.dataId" placeholder="请输入DataId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="KeyId">
-          <el-input v-model="searchForm.keyid" placeholder="请输入KeyId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="清洗后的编码">
-          <el-input v-model="searchForm.hsCode" placeholder="请输入清洗后的编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="省份">
-          <el-input v-model="searchForm.province" placeholder="请输入省份" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="市">
-          <el-input v-model="searchForm.city" placeholder="请输入市" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="区县">
-          <el-input v-model="searchForm.area" placeholder="请输入区县" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="输入名称">
-          <el-input v-model="searchForm.name" placeholder="请输入名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="输入地址">
-          <el-input v-model="searchForm.address" placeholder="请输入地址" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item class="form-actions">
-          <el-button type="primary" @click="handleSearch" :loading="loading">查询</el-button>
-          <el-button @click="resetSearch">重置</el-button>
-          <el-button type="success" @click="toExcel" :loading="exporting">
-            {{ exporting ? '导出中...' : '导出' }}
-          </el-button>
-          <!-- 视图切换按钮 -->
-          <el-button-group class="view-toggle">
-            <el-button
-                :type="viewMode === 'table' ? 'primary' : 'default'"
-                size="small"
-                @click="viewMode = 'table'"
-                title="表格视图"
-            >
-              <el-icon><Grid /></el-icon>
+    <!-- 整合的搜索和数据区域 -->
+    <div class="integrated-container">
+      <!-- 搜索区域 -->
+      <div class="fixed-search">
+        <el-form :inline="true" :model="searchForm" class="search-form" @submit.prevent="handleSearch">
+          <el-form-item label="原始编码">
+            <el-input v-model="searchForm.dataCode" placeholder="请输入原始编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="原始名称">
+            <el-input v-model="searchForm.originalName" placeholder="请输入原始名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="DataId">
+            <el-input v-model="searchForm.dataId" placeholder="请输入DataId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="KeyId">
+            <el-input v-model="searchForm.keyid" placeholder="请输入KeyId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="清洗后的编码">
+            <el-input v-model="searchForm.hsCode" placeholder="请输入清洗后的编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="省份">
+            <el-input v-model="searchForm.province" placeholder="请输入省份" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="市">
+            <el-input v-model="searchForm.city" placeholder="请输入市" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="区县">
+            <el-input v-model="searchForm.area" placeholder="请输入区县" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="输入名称">
+            <el-input v-model="searchForm.name" placeholder="请输入名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="输入地址">
+            <el-input v-model="searchForm.address" placeholder="请输入地址" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item class="form-actions">
+            <el-button type="primary" @click="handleSearch" :loading="loading">查询</el-button>
+            <el-button @click="resetSearch">重置</el-button>
+            <el-button type="success" @click="toExcel" :loading="exporting">
+              {{ exporting ? '导出中...' : '导出' }}
             </el-button>
-            <el-button
-                :type="viewMode === 'card' ? 'primary' : 'default'"
-                size="small"
-                @click="viewMode = 'card'"
-                title="卡片视图"
-            >
-              <el-icon><CopyDocument /></el-icon>
-            </el-button>
-          </el-button-group>
-        </el-form-item>
-      </el-form>
-    </div>
-
-    <!-- 数据区域 -->
-    <div class="data-container">
-      <div class="content-wrapper" v-loading="loading">
-        <!-- 表格视图 -->
-        <div v-if="viewMode === 'table'" class="table-view">
-          <el-table
-              v-if="appealData.list?.length"
-              :data="appealData.list"
-              height="100%"
-              stripe
-              border
-              fit
-          >
-            <el-table-column
-                v-for="(col, index) in columns"
-                :key="index"
-                :prop="col.prop"
-                :label="col.label"
-                :width="col.width"
-                :fixed="col.fixed"
-                show-overflow-tooltip
-            >
-              <template #header>
-                <div class="th-content">
-                  {{ col.label }}
-                  <div class="resize-handle" @mousedown.stop="startResize($event, index)"></div>
-                </div>
-              </template>
-              <template #default="{ row }">
-                <template v-if="index === 0">
-                  <el-link type="primary" :underline="false" @click="copyText(row.dataId)" :disabled="!row.dataId">
-                    {{ row.dataId }}
-                  </el-link>
-                </template>
-                <template v-else-if="index === 1">
-                  <el-link type="primary" :underline="false" @click="copyText(row.dataCode)">
-                    {{ row.dataCode }}
-                  </el-link>
-                </template>
-                <template v-else-if="index === 2">
-                  <el-link type="primary" :underline="false" @click="copyText(row.originalName)">
-                    {{ row.originalName }}
-                  </el-link>
-                </template>
-                <template v-else-if="index === 3">
-                  <el-link type="primary" :underline="false" @click="copyText(row.keyid)">
-                    {{ row.keyid }}
-                  </el-link>
-                </template>
-                <template v-else-if="index === 4">
-                  <el-link type="primary" :underline="false" @click="copyText(row.name)">
-                    {{ row.name }}
-                  </el-link>
-                </template>
-                <template v-else-if="index === 5">{{ row.province }}</template>
-                <template v-else-if="index === 6">{{ row.city }}</template>
-                <template v-else-if="index === 7">{{ row.area }}</template>
-                <template v-else-if="index === 8">{{ row.address }}</template>
-                <template v-else-if="index === 9">{{ row.appealRemark }}</template>
-                <template v-else-if="index === 10">
-                  <el-button type="success" size="small" @click="showDetail(row)">详情</el-button>
-                  <el-button type="primary" size="small" @click="appealDetail(row)">申诉</el-button>
-                </template>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div v-else class="no-data">没有找到匹配的数据</div>
-        </div>
-
-        <!-- 卡片视图 -->
-        <div v-else class="card-view">
-          <el-empty v-if="!appealData.list?.length" description="没有找到匹配的数据" />
-          <el-row :gutter="20" v-else>
-            <el-col v-for="appeal in appealData.list" :key="appeal.dataId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-              <el-card class="appeal-card" shadow="hover">
-                <template #header>
-                  <div class="card-header">
-                    <div class="card-title">
-                      <el-link type="primary" :underline="false" @click="copyText(appeal.name)">
-                        {{ appeal.name }}
-                      </el-link>
-                    </div>
-                    <div class="appeal-remark" v-if="appeal.appealRemark">
-                      <el-tag type="warning" size="small">申诉</el-tag>
-                    </div>
-                  </div>
-                </template>
-                <div class="card-body">
-                  <div class="card-item"><span class="label">dataId：</span><el-link type="primary" :underline="false" @click="copyText(appeal.dataId)">{{ appeal.dataId }}</el-link></div>
-                  <div class="card-item"><span class="label">原始编码：</span><el-link type="primary" :underline="false" @click="copyText(appeal.dataCode)">{{ appeal.dataCode }}</el-link></div>
-                  <div class="card-item"><span class="label">原始名称：</span><el-link type="primary" :underline="false" @click="copyText(appeal.originalName)">{{ appeal.originalName }}</el-link></div>
-                  <div class="card-item"><span class="label">keyId：</span><el-link type="primary" :underline="false" @click="copyText(appeal.keyid)">{{ appeal.keyid }}</el-link></div>
-                  <div class="card-item"><span class="label">省份：</span>{{ appeal.province }}</div>
-                  <div class="card-item"><span class="label">城市：</span>{{ appeal.city }}</div>
-                  <div class="card-item"><span class="label">区县：</span>{{ appeal.area }}</div>
-                  <div class="card-item"><span class="label">地址：</span>{{ appeal.address }}</div>
-                  <div class="card-item" v-if="appeal.appealRemark"><span class="label">申诉原因：</span>{{ appeal.appealRemark }}</div>
-                </div>
-                <div class="card-footer">
-                  <el-button type="success" size="small" @click="showDetail(appeal)">详情</el-button>
-                  <el-button type="primary" size="small" @click="appealDetail(appeal)">申诉</el-button>
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-        </div>
+            <!-- 视图切换按钮 -->
+            <el-button-group class="view-toggle">
+              <el-button
+                  :type="viewMode === 'table' ? 'primary' : 'default'"
+                  size="small"
+                  @click="viewMode = 'table'"
+                  title="表格视图"
+              >
+                <el-icon><Grid /></el-icon>
+              </el-button>
+              <el-button
+                  :type="viewMode === 'card' ? 'primary' : 'default'"
+                  size="small"
+                  @click="viewMode = 'card'"
+                  title="卡片视图"
+              >
+                <el-icon><CopyDocument /></el-icon>
+              </el-button>
+            </el-button-group>
+          </el-form-item>
+        </el-form>
       </div>
 
-      <!-- 分页 -->
-      <div class="fixed-pagination" v-if="appealData.list?.length">
-        <div class="pagination-content">
-          <el-button size="small" plain :disabled="!appealData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchAppealData())">
-            上一页
-          </el-button>
-          <span class="page-info">
-            第 {{ appealData.pageNum }} 页 / 共 {{ appealData.pages }} 页 (共 {{ appealData.total }} 条)
-          </span>
-          <el-button size="small" plain :disabled="!appealData.hasNextPage" @click="pageNumber < appealData.pages && (pageNumber++, fetchAppealData())">
-            下一页
-          </el-button>
-          <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
-            <el-option :value="20" label="每页20条" />
-            <el-option :value="40" label="每页40条" />
-            <el-option :value="60" label="每页60条" />
-          </el-select>
+      <!-- 数据区域 -->
+      <div class="data-content">
+        <div class="content-wrapper" v-loading="loading">
+          <!-- 表格视图 -->
+          <div v-if="viewMode === 'table'" class="table-view">
+            <el-table
+                v-if="appealData.list?.length"
+                :data="appealData.list"
+                height="100%"
+                stripe
+                border
+                fit
+            >
+              <el-table-column
+                  v-for="(col, index) in columns"
+                  :key="index"
+                  :prop="col.prop"
+                  :label="col.label"
+                  :width="col.width"
+                  :fixed="col.fixed"
+                  show-overflow-tooltip
+              >
+                <template #header>
+                  <div class="th-content">
+                    {{ col.label }}
+                    <div class="resize-handle" @mousedown.stop="startResize($event, index)"></div>
+                  </div>
+                </template>
+                <template #default="{ row }">
+                  <template v-if="index === 0">
+                    <el-link type="primary" :underline="false" @click="copyText(row.dataId)" :disabled="!row.dataId">
+                      {{ row.dataId }}
+                    </el-link>
+                  </template>
+                  <template v-else-if="index === 1">
+                    <el-link type="primary" :underline="false" @click="copyText(row.dataCode)">
+                      {{ row.dataCode }}
+                    </el-link>
+                  </template>
+                  <template v-else-if="index === 2">
+                    <el-link type="primary" :underline="false" @click="copyText(row.originalName)">
+                      {{ row.originalName }}
+                    </el-link>
+                  </template>
+                  <template v-else-if="index === 3">
+                    <el-link type="primary" :underline="false" @click="copyText(row.keyid)">
+                      {{ row.keyid }}
+                    </el-link>
+                  </template>
+                  <template v-else-if="index === 4">
+                    <el-link type="primary" :underline="false" @click="copyText(row.name)">
+                      {{ row.name }}
+                    </el-link>
+                  </template>
+                  <template v-else-if="index === 5">{{ row.province }}</template>
+                  <template v-else-if="index === 6">{{ row.city }}</template>
+                  <template v-else-if="index === 7">{{ row.area }}</template>
+                  <template v-else-if="index === 8">{{ row.address }}</template>
+                  <template v-else-if="index === 9">{{ row.appealRemark }}</template>
+                  <template v-else-if="index === 10">
+                    <el-button type="success" size="small" @click="showDetail(row)">详情</el-button>
+                    <el-button type="primary" size="small" @click="appealDetail(row)">申诉</el-button>
+                  </template>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div v-else class="no-data-container">
+              <el-empty description="没有找到匹配的数据" :image-size="120" />
+            </div>
+
+          </div>
+
+          <!-- 卡片视图 -->
+          <div v-else class="card-view">
+            <el-empty v-if="!appealData.list?.length" description="没有找到匹配的数据" :image-size="120" class="no-data-container" />
+            <el-row :gutter="20" v-else>
+              <el-col v-for="appeal in appealData.list" :key="appeal.dataId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+                <el-card class="appeal-card" shadow="hover">
+                  <template #header>
+                    <div class="card-header">
+                      <div class="card-title">
+                        <el-link type="primary" :underline="false" @click="copyText(appeal.name)">
+                          {{ appeal.name }}
+                        </el-link>
+                      </div>
+                      <div class="appeal-remark" v-if="appeal.appealRemark"  >
+                        <el-tag type="warning" size="small" effect="dark">申诉</el-tag>
+                      </div>
+                    </div>
+                  </template>
+                  <div class="card-body">
+                    <div class="card-item"><span class="label">dataId：</span><el-link type="primary" :underline="false" @click="copyText(appeal.dataId)">{{ appeal.dataId }}</el-link></div>
+                    <div class="card-item"><span class="label">原始编码：</span><el-link type="primary" :underline="false" @click="copyText(appeal.dataCode)">{{ appeal.dataCode }}</el-link></div>
+                    <div class="card-item"><span class="label">原始名称：</span><el-link type="primary" :underline="false" @click="copyText(appeal.originalName)">{{ appeal.originalName }}</el-link></div>
+                    <div class="card-item"><span class="label">keyId：</span><el-link type="primary" :underline="false" @click="copyText(appeal.keyid)">{{ appeal.keyid }}</el-link></div>
+                    <div class="card-item"><span class="label">省份：</span>{{ appeal.province }}</div>
+                    <div class="card-item"><span class="label">城市：</span>{{ appeal.city }}</div>
+                    <div class="card-item"><span class="label">区县：</span>{{ appeal.area }}</div>
+                    <div class="card-item"><span class="label">地址：</span>{{ appeal.address }}</div>
+                    <div class="card-item" v-if="appeal.appealRemark"><span class="label">申诉原因：</span>{{ appeal.appealRemark }}</div>
+                  </div>
+                  <div class="card-footer">
+                    <el-button type="success" size="small" @click="showDetail(appeal)">详情</el-button>
+                    <el-button type="primary" size="small" @click="appealDetail(appeal)">申诉</el-button>
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="fixed-pagination" v-if="appealData.list?.length">
+          <div class="pagination-content">
+            <el-button size="small" plain :disabled="!appealData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchAppealData())">
+              上一页
+            </el-button>
+            <span class="page-info">
+              第 {{ appealData.pageNum }} 页 / 共 {{ appealData.pages }} 页 (共 {{ appealData.total }} 条)
+            </span>
+            <el-button size="small" plain :disabled="!appealData.hasNextPage" @click="pageNumber < appealData.pages && (pageNumber++, fetchAppealData())">
+              下一页
+            </el-button>
+            <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
+              <el-option :value="20" label="每页20条" />
+              <el-option :value="40" label="每页40条" />
+              <el-option :value="60" label="每页60条" />
+            </el-select>
+          </div>
         </div>
       </div>
     </div>
@@ -341,10 +348,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { Grid, CopyDocument } from '@element-plus/icons-vue'
+import {ref, reactive, onMounted} from 'vue'
+import {Grid, CopyDocument} from '@element-plus/icons-vue'
 import axios from 'axios'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import {ElMessage, ElMessageBox} from 'element-plus'
 
 // 视图模式：table 或 card
 const viewMode = ref('table')
@@ -377,17 +384,17 @@ const searchForm = reactive({
 })
 
 const columns = ref([
-  { label: 'dataId', prop: 'dataId' },
-  { label: '原始编码', prop: 'dataCode' },
-  { label: '原始名称', prop: 'originalName'},
-  { label: 'keyId', prop: 'keyid' },
-  { label: '标准名称', prop: 'name'},
-  { label: '省份', prop: 'province'},
-  { label: '城市', prop: 'city' },
-  { label: '区县', prop: 'area' },
-  { label: '地址', prop: 'address' },
-  { label: '申诉原因', prop: 'appealRemark' },
-  { label: '操作', fixed: 'right' , width: 140}
+  {label: 'dataId', prop: 'dataId'},
+  {label: '原始编码', prop: 'dataCode'},
+  {label: '原始名称', prop: 'originalName'},
+  {label: 'keyId', prop: 'keyid'},
+  {label: '标准名称', prop: 'name'},
+  {label: '省份', prop: 'province'},
+  {label: '城市', prop: 'city'},
+  {label: '区县', prop: 'area'},
+  {label: '地址', prop: 'address'},
+  {label: '申诉原因', prop: 'appealRemark'},
+  {label: '操作', fixed: 'right', width: 140}
 ])
 
 const showDetailModal = ref(false)
@@ -399,59 +406,59 @@ const isSaving = ref(false)
 const isFinding = ref(false)
 
 const detailFields = {
-  batchCode: { label: '批次编号', value: a => a.batchCode, copy: true },
-  dataId: { label: 'dataId', value: a => a.dataId, copy: true },
-  dataType: { label: '数据类型', value: a => a.dataType === '1' ? '存量' : a.dataType === '2' ? '增量' : '未知' },
-  dataCode: { label: '原始数据编码', value: a => a.dataCode, copy: true },
-  originalName: { label: '原始数据名称', value: a => a.originalName, copy: true },
-  originalProvince: { label: '省份', value: a => a.originalProvince || a.province },
-  originalAddress: { label: '原始地址', value: a => a.originalAddress },
-  companyName: { label: '经销商', value: a => a.companyName },
-  appealRemark: { label: '申诉原因', value: a => a.appealRemark },
-  solveRemark: { label: '申诉解决', value: a => a.solveRemark },
-  institutionType: { label: '机构类型', value: a => a.institutionType || a.orgType },
-  keyid: { label: 'keyId', value: a => a.keyid, copy: true },
-  name: { label: '医院名称', value: a => a.name, copy: true },
-  nameHistory: { label: '历史名称', value: a => a.nameHistory },
-  province: { label: '省', value: a => a.province },
-  provinceId: { label: '省份ID', value: a => a.provinceid || a.provinceId },
-  city: { label: '市', value: a => a.city },
-  cityId: { label: '市ID', value: a => a.cityid || a.cityId },
-  area: { label: '区县', value: a => a.area },
-  areaId: { label: '区县ID', value: a => a.areaid || a.areaId },
-  address: { label: '地址', value: a => a.address },
-  level: { label: '等级', value: a => a.level },
-  grade: { label: '等次', value: a => a.grade },
-  publicflag: { label: '所有制', value: a => a.publicflag },
-  classify: { label: '类别', value: a => a.classify || a.class5 },
-  generalBranchKid: { label: '总分院kid', value: a => a.generalBranchKid },
-  generalBranchName: { label: '总分院名称', value: a => a.generalBranchName },
+  batchCode: {label: '批次编号', value: a => a.batchCode, copy: true},
+  dataId: {label: 'dataId', value: a => a.dataId, copy: true},
+  dataType: {label: '数据类型', value: a => a.dataType === '1' ? '存量' : a.dataType === '2' ? '增量' : '未知'},
+  dataCode: {label: '原始数据编码', value: a => a.dataCode, copy: true},
+  originalName: {label: '原始数据名称', value: a => a.originalName, copy: true},
+  originalProvince: {label: '省份', value: a => a.originalProvince || a.province},
+  originalAddress: {label: '原始地址', value: a => a.originalAddress},
+  companyName: {label: '经销商', value: a => a.companyName},
+  appealRemark: {label: '申诉原因', value: a => a.appealRemark},
+  solveRemark: {label: '申诉解决', value: a => a.solveRemark},
+  institutionType: {label: '机构类型', value: a => a.institutionType || a.orgType},
+  keyid: {label: 'keyId', value: a => a.keyid, copy: true},
+  name: {label: '医院名称', value: a => a.name, copy: true},
+  nameHistory: {label: '历史名称', value: a => a.nameHistory},
+  province: {label: '省', value: a => a.province},
+  provinceId: {label: '省份ID', value: a => a.provinceid || a.provinceId},
+  city: {label: '市', value: a => a.city},
+  cityId: {label: '市ID', value: a => a.cityid || a.cityId},
+  area: {label: '区县', value: a => a.area},
+  areaId: {label: '区县ID', value: a => a.areaid || a.areaId},
+  address: {label: '地址', value: a => a.address},
+  level: {label: '等级', value: a => a.level},
+  grade: {label: '等次', value: a => a.grade},
+  publicflag: {label: '所有制', value: a => a.publicflag},
+  classify: {label: '类别', value: a => a.classify || a.class5},
+  generalBranchKid: {label: '总分院kid', value: a => a.generalBranchKid},
+  generalBranchName: {label: '总分院名称', value: a => a.generalBranchName},
   militaryHos: {
     label: '军队医院',
-    value: a => a.militaryHos === '1' ? '是' : a.militaryHos === '0' ? '否' : '未知'
+    value: a => a.militaryHos === '1' ? '是' : a.militaryHos === '0' ? '否' : ''
   },
-  regcode: { label: '登记号', value: a => a.regcode },
-  validity: { label: '有效期', value: a => a.validity },
-  subjects: { label: '诊疗科室', value: a => a.subjects },
-  legalperson: { label: '法人代表', value: a => a.legalperson },
-  usci: { label: '统一社会信用代码', value: a => a.usci },
-  operation: { label: '经营方式', value: a => a.operation },
-  scope: { label: '经营范围', value: a => a.scope },
-  mainBranchKid: { label: '总分店kid', value: a => a.mainBranchKid },
-  mainBranchName: { label: '总分店名称', value: a => a.mainBranchName },
-  createDate: { label: '成立时间', value: a => a.createDate },
-  registCapi: { label: '注册资金', value: a => a.registCapi },
-  econKind: { label: '企业类型', value: a => a.econKind },
-  signStatus: { label: '登记状态', value: a => a.signStatus },
-  industry: { label: '所属行业', value: a => a.industry },
-  belong: { label: '登记机关', value: a => a.belong }
+  regcode: {label: '登记号', value: a => a.regcode},
+  validity: {label: '有效期', value: a => a.validity},
+  subjects: {label: '诊疗科室', value: a => a.subjects},
+  legalperson: {label: '法人代表', value: a => a.legalperson},
+  usci: {label: '统一社会信用代码', value: a => a.usci},
+  operation: {label: '经营方式', value: a => a.operation},
+  scope: {label: '经营范围', value: a => a.scope},
+  mainBranchKid: {label: '总分店kid', value: a => a.mainBranchKid},
+  mainBranchName: {label: '总分店名称', value: a => a.mainBranchName},
+  createDate: {label: '成立时间', value: a => a.createDate},
+  registCapi: {label: '注册资金', value: a => a.registCapi},
+  econKind: {label: '企业类型', value: a => a.econKind},
+  signStatus: {label: '登记状态', value: a => a.signStatus},
+  industry: {label: '所属行业', value: a => a.industry},
+  belong: {label: '登记机关', value: a => a.belong}
 }
 
 const fetchAppealData = async () => {
   loading.value = true
   try {
-    const params = { pageNum: pageNumber.value, pageSize: pageSize.value, ...searchForm }
-    const { data } = await axios.get('/api/appealData/getAppealData', { params })
+    const params = {pageNum: pageNumber.value, pageSize: pageSize.value, ...searchForm}
+    const {data} = await axios.get('/api/appealData/getAppealData', {params})
     if (data.code === 200) {
       Object.assign(appealData, data.data)
       pageNumber.value = data.data.pageNum
@@ -495,14 +502,14 @@ const toExcel = async () => {
   if (exporting.value) return
   exporting.value = true
   try {
-    const params = { ...searchForm }
-    const { data: jsonBlob } = await axios.get('/api/appealData/exportAppealData', { params, responseType: 'blob' })
+    const params = {...searchForm}
+    const {data: jsonBlob} = await axios.get('/api/appealData/exportAppealData', {params, responseType: 'blob'})
     const jsonText = await jsonBlob.text()
-    const { data: base64 } = JSON.parse(jsonText)
+    const {data: base64} = JSON.parse(jsonText)
     const byteChars = atob(base64)
     const byteNums = new Uint8Array(byteChars.length)
     for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i)
-    const excelBlob = new Blob([byteNums], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const excelBlob = new Blob([byteNums], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
     const url = URL.createObjectURL(excelBlob)
     const link = document.createElement('a')
     link.href = url
@@ -517,7 +524,7 @@ const toExcel = async () => {
 }
 
 const showDetail = (row) => {
-  currentAppeal.value = { ...row }
+  currentAppeal.value = {...row}
   showDetailModal.value = true
 }
 
@@ -537,7 +544,7 @@ const saveChanges = async () => {
   if (isSaving.value) return
   isSaving.value = true
   try {
-    const { data } = await axios.post('/api/appealData/handleAppealData', currentAppealDetail.value)
+    const {data} = await axios.post('/api/appealData/handleAppealData', currentAppealDetail.value)
     if (data.code === 200) {
       ElMessage.success('提交申诉成功')
       closeAppealModal()
@@ -560,8 +567,8 @@ const findDaKuData = async () => {
   }
   isFinding.value = true
   try {
-    const { data } = await axios.get('/api/updateData/findDaKuData', { params: { keyid: currentAppealDetail.value.keyid } })
-    if (data.code === 200 && data.data!=null ) {
+    const {data} = await axios.get('/api/updateData/findDaKuData', {params: {keyid: currentAppealDetail.value.keyid}})
+    if (data.code === 200 && data.data != null) {
       // 先保存原始不可编辑字段
       const protectedFields = {
         batchCode: currentAppealDetail.value.batchCode,
@@ -572,7 +579,8 @@ const findDaKuData = async () => {
         originalProvince: currentAppealDetail.value.originalProvince,
         companyName: currentAppealDetail.value.companyName,
         appealRemark: currentAppealDetail.value.appealRemark,
-        solveRemark: currentAppealDetail.value.solveRemark
+        solveRemark: currentAppealDetail.value.solveRemark,
+        institutionType: currentAppealDetail.value.institutionType
       }
 
       // 更新其他字段
@@ -583,7 +591,7 @@ const findDaKuData = async () => {
 
       ElMessage.success('匹配成功，已填充')
     } else {
-      ElMessage.error( '未找到匹配数据')
+      ElMessage.error('未找到匹配数据')
     }
   } catch {
     ElMessage.error('匹配失败')
@@ -593,7 +601,7 @@ const findDaKuData = async () => {
 }
 
 const resetForm = () => {
-  ElMessageBox.confirm('确定要重置所有修改吗？重置后将恢复为原始数据。', '确认重置', { type: 'warning' })
+  ElMessageBox.confirm('确定要重置所有修改吗？重置后将恢复为原始数据。', '确认重置', {type: 'warning'})
       .then(() => {
         currentAppealDetail.value = JSON.parse(JSON.stringify(originalAppeal.value))
         ElMessage.success('已重置为原始数据')
@@ -645,6 +653,20 @@ onMounted(() => {
   font-size: 12px;
 }
 
+/* 整合的整体容器 */
+.integrated-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  margin: 8px;
+  border: 1px solid #ebeef5;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
 /* 2K屏幕优化 */
 @media (min-width: 2000px) and (max-width: 2600px) {
   .appeal-data-view {
@@ -659,15 +681,14 @@ onMounted(() => {
   }
 }
 
+/* 搜索区域 - 现在在整合容器内 */
 .fixed-search {
-  position: sticky;
-  top: 1px;
-  z-index: 100;
-  padding: 10px 16px;
-  background: #f5f7fa;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-bottom: 8px;
-  border-radius: 6px;
+  flex-shrink: 0;
+  padding: 14px 18px;
+  background: #ffffff;
+  border-bottom: 1px solid #ebeef5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 6px 6px 0 0;
   max-width: 100%;
   box-sizing: border-box;
 }
@@ -696,7 +717,8 @@ onMounted(() => {
   margin-left: 16px;
 }
 
-.data-container {
+/* 数据内容区域 */
+.data-content {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -706,10 +728,6 @@ onMounted(() => {
 .content-wrapper {
   flex: 1;
   overflow: hidden;
-  margin: 8px;
-  border: 1px solid #ebeef5;
-  border-radius: 3px;
-  background: #fff;
 }
 
 .table-view {
@@ -726,6 +744,12 @@ onMounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.appeal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
@@ -760,30 +784,34 @@ onMounted(() => {
 }
 
 .card-item .label {
-  color: #909399;
-  font-weight: bold;
+  color: #606266;
+  font-weight: 500;
   margin-right: 6px;
+  min-width: 60px;
+  display: inline-block;
 }
 
 .card-footer {
   margin-top: auto;
   text-align: right;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
 }
 
+/* 分页区域 */
 .fixed-pagination {
-  position: sticky;
-  bottom: 0;
-  background: #f5f7fa;
-  padding: 8px;
-  border-top: 1px solid #dcdfe6;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  flex-shrink: 0;
+  background: #fafbfc;
+  padding: 12px;
+  border-top: 1px solid #ebeef5;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
 
 .pagination-content {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .page-info {
@@ -793,17 +821,18 @@ onMounted(() => {
   text-align: center;
 }
 
-.no-data {
+
+.no-data-container {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #909399;
 }
 
 .th-content {
   position: relative;
   text-align: center;
+  font-weight: 600;
 }
 
 .resize-handle {
@@ -813,34 +842,43 @@ onMounted(() => {
   bottom: 0;
   width: 4px;
   cursor: col-resize;
+  opacity: 0;
+  transition: opacity 0.2s;
 }
 
-.resize-handle:hover {
+.th-content:hover .resize-handle {
+  opacity: 1;
   background: #409eff;
 }
 
+/* 详情弹窗样式 */
 .detail-container {
   max-height: 60vh;
   overflow-y: auto;
+  padding-right: 8px;
 }
 
 .detail-row {
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
+  align-items: flex-start;
 }
 
 .detail-row label {
-  min-width: 140px;
-  font-weight: bold;
-  color: #606266;
+  min-width: 160px;
+  font-weight: 600;
+  color: #303133;
+  line-height: 1.5;
 }
 
 .detail-row span {
   flex: 1;
-  word-break: break-all;
+  word-break: break-word;
+  line-height: 1.5;
+  color: #606266;
 }
 
-/* 更新弹窗整体 */
+/* 申诉弹窗整体 */
 .update-dialog :deep(.el-dialog) {
   display: flex;
   flex-direction: column;
@@ -853,6 +891,7 @@ onMounted(() => {
   font-size: 18px;
   font-weight: 600;
   width: 100%;
+  color: #303133;
 }
 
 .update-dialog :deep(.el-dialog__header) {
@@ -862,8 +901,8 @@ onMounted(() => {
 
 .dialog-fixed-header {
   flex-shrink: 0;
-  padding: 12px 24px;
-  background: #fafafa;
+  padding: 14px 24px;
+  background: #fff;
   border-bottom: 1px solid #ebeef5;
   position: sticky;
   top: 0;
@@ -889,10 +928,12 @@ onMounted(() => {
 .dialog-scroll-body::-webkit-scrollbar {
   width: 8px;
 }
+
 .dialog-scroll-body::-webkit-scrollbar-thumb {
   background: #c0c4cc;
   border-radius: 4px;
 }
+
 .dialog-scroll-body::-webkit-scrollbar-track {
   background: transparent;
 }

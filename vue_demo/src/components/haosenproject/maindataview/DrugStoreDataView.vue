@@ -1,195 +1,200 @@
 <template>
   <div class="drugstore-data-view">
-    <!-- 搜索区域 -->
-    <div class="fixed-search">
-      <el-form :inline="true" :model="searchForm" class="search-form" @submit.prevent="handleSearch">
-        <el-form-item label="原始编码">
-          <el-input v-model="searchForm.dataCode" placeholder="请输入原始编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="原始名称">
-          <el-input v-model="searchForm.originalName" placeholder="请输入原始名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="DataId">
-          <el-input v-model="searchForm.dataId" placeholder="请输入DataId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="KeyId">
-          <el-input v-model="searchForm.keyid" placeholder="请输入KeyId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="豪森编码">
-          <el-input v-model="searchForm.hsCode" placeholder="请输入清洗后的编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="省份">
-          <el-input v-model="searchForm.province" placeholder="请输入省份" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="市">
-          <el-input v-model="searchForm.city" placeholder="请输入市" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="区县">
-          <el-input v-model="searchForm.area" placeholder="请输入区县" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="药店名称">
-          <el-input v-model="searchForm.name" placeholder="请输入药店名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="药店地址">
-          <el-input v-model="searchForm.address" placeholder="请输入药店地址" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item class="form-actions">
-          <el-button type="primary" @click="handleSearch" :loading="loading">查询</el-button>
-          <el-button @click="resetSearch">重置</el-button>
-          <el-button type="success" @click="toExcel" :loading="exporting">
-            {{ exporting ? '导出中...' : '导出' }}
-          </el-button>
-          <!-- 视图切换按钮 -->
-          <el-button-group class="view-toggle">
-            <el-button
-                :type="viewMode === 'table' ? 'primary' : 'default'"
-                size="small"
-                @click="viewMode = 'table'"
-                title="表格视图"
-            >
-              <el-icon><Grid /></el-icon>
+    <!-- 整合的搜索和数据区域 -->
+    <div class="integrated-container">
+      <!-- 搜索区域 -->
+      <div class="fixed-search">
+        <el-form :inline="true" :model="searchForm" class="search-form" @submit.prevent="handleSearch">
+          <el-form-item label="原始编码">
+            <el-input v-model="searchForm.dataCode" placeholder="请输入原始编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="原始名称">
+            <el-input v-model="searchForm.originalName" placeholder="请输入原始名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="DataId">
+            <el-input v-model="searchForm.dataId" placeholder="请输入DataId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="KeyId">
+            <el-input v-model="searchForm.keyid" placeholder="请输入KeyId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="豪森编码">
+            <el-input v-model="searchForm.hsCode" placeholder="请输入清洗后的编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="省份">
+            <el-input v-model="searchForm.province" placeholder="请输入省份" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="市">
+            <el-input v-model="searchForm.city" placeholder="请输入市" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="区县">
+            <el-input v-model="searchForm.area" placeholder="请输入区县" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="药店名称">
+            <el-input v-model="searchForm.name" placeholder="请输入药店名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item label="药店地址">
+            <el-input v-model="searchForm.address" placeholder="请输入药店地址" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+          </el-form-item>
+          <el-form-item class="form-actions">
+            <el-button type="primary" @click="handleSearch" :loading="loading">查询</el-button>
+            <el-button @click="resetSearch">重置</el-button>
+            <el-button type="success" @click="toExcel" :loading="exporting">
+              {{ exporting ? '导出中...' : '导出' }}
             </el-button>
-            <el-button
-                :type="viewMode === 'card' ? 'primary' : 'default'"
-                size="small"
-                @click="viewMode = 'card'"
-                title="卡片视图"
-            >
-              <el-icon><CopyDocument /></el-icon>
-            </el-button>
-          </el-button-group>
-        </el-form-item>
-      </el-form>
-    </div>
-
-    <!-- 数据区域 -->
-    <div class="data-container">
-      <div class="content-wrapper" v-loading="loading">
-        <!-- 表格视图 -->
-        <div v-if="viewMode === 'table'" class="table-view">
-          <el-table
-              v-if="drugstoreData.list?.length"
-              :data="drugstoreData.list"
-              height="100%"
-              stripe
-              border
-              fit
-          >
-            <el-table-column
-                v-for="(col, index) in columns"
-                :key="index"
-                :prop="col.prop"
-                :label="col.label"
-                :width="col.width"
-                :fixed="col.fixed"
-                show-overflow-tooltip
-            >
-              <template #header>
-                <div class="th-content">
-                  {{ col.label }}
-                  <div class="resize-handle" @mousedown.stop="startResize($event, index)"></div>
-                </div>
-              </template>
-              <template #default="{ row }">
-                <template v-if="index === 0">
-                  <el-link type="primary" :underline="false" @click="copyText(row.dataId)" :disabled="!row.dataId">
-                    {{ row.dataId }}
-                  </el-link>
-                </template>
-                <template v-else-if="index === 1">
-                  <el-link type="primary" :underline="false" @click="copyText(row.dataCode)">
-                    {{ row.dataCode }}
-                  </el-link>
-                </template>
-                <template v-else-if="index === 2">
-                  <el-link type="primary" :underline="false" @click="copyText(row.originalName)">
-                    {{ row.originalName }}
-                  </el-link>
-                </template>
-                <template v-else-if="index === 3">
-                  <el-link type="primary" :underline="false" @click="copyText(row.keyid)">
-                    {{ row.keyid }}
-                  </el-link>
-                </template>
-                <template v-else-if="index === 4">
-                  <el-link type="primary" :underline="false" @click="copyText(row.name)">
-                    {{ row.name }}
-                  </el-link>
-                </template>
-                <template v-else-if="index === 5">{{ row.province }}</template>
-                <template v-else-if="index === 6">{{ row.city }}</template>
-                <template v-else-if="index === 7">{{ row.area }}</template>
-                <template v-else-if="index === 8">{{ row.address }}</template>
-                <template v-else-if="index === 9">
-                  <el-tag :type="getStatusType(row.status)" effect="dark" size="small">
-                    {{ getStatusText(row.status) }}
-                  </el-tag>
-                </template>
-                <template v-else-if="index === 10">
-                  <el-button type="success" size="small" @click="showDetail(row)">详情</el-button>
-                  <el-button type="primary" size="small" :disabled="!row.hsCode" @click="updateDetail(row)">更新</el-button>
-                </template>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div v-else class="no-data">没有找到匹配的药店数据</div>
-        </div>
-
-        <!-- 卡片视图 -->
-        <div v-else class="card-view">
-          <el-empty v-if="!drugstoreData.list?.length" description="没有找到匹配的药店数据" />
-          <el-row :gutter="20" v-else>
-            <el-col v-for="drugstore in drugstoreData.list" :key="drugstore.dataId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-              <el-card class="drugstore-card" shadow="hover">
-                <template #header>
-                  <div class="card-header">
-                    <div class="card-title">
-                      <el-link type="primary" :underline="false" @click="copyText(drugstore.name)">
-                        {{ drugstore.name }}
-                      </el-link>
-                    </div>
-                    <el-tag :type="getStatusType(drugstore.status)" size="small" effect="dark">
-                      {{ getStatusText(drugstore.status) }}
-                    </el-tag>
-                  </div>
-                </template>
-                <div class="card-body">
-                  <div class="card-item"><span class="label">dataId：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.dataId)">{{ drugstore.dataId }}</el-link></div>
-                  <div class="card-item"><span class="label">原始编码：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.dataCode)">{{ drugstore.dataCode }}</el-link></div>
-                  <div class="card-item"><span class="label">原始名称：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.originalName)">{{ drugstore.originalName }}</el-link></div>
-                  <div class="card-item"><span class="label">keyId：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.keyid)">{{ drugstore.keyid }}</el-link></div>
-                  <div class="card-item"><span class="label">省份：</span>{{ drugstore.province }}</div>
-                  <div class="card-item"><span class="label">城市：</span>{{ drugstore.city }}</div>
-                  <div class="card-item"><span class="label">区县：</span>{{ drugstore.area }}</div>
-                  <div class="card-item"><span class="label">地址：</span>{{ drugstore.address }}</div>
-                </div>
-                <div class="card-footer">
-                  <el-button type="success" size="small" @click="showDetail(drugstore)">详情</el-button>
-                  <el-button type="primary" size="small" :disabled="!drugstore.hsCode" @click="updateDetail(drugstore)">更新</el-button>
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-        </div>
+            <!-- 视图切换按钮 -->
+            <el-button-group class="view-toggle">
+              <el-button
+                  :type="viewMode === 'table' ? 'primary' : 'default'"
+                  size="small"
+                  @click="viewMode = 'table'"
+                  title="表格视图"
+              >
+                <el-icon><Grid /></el-icon>
+              </el-button>
+              <el-button
+                  :type="viewMode === 'card' ? 'primary' : 'default'"
+                  size="small"
+                  @click="viewMode = 'card'"
+                  title="卡片视图"
+              >
+                <el-icon><CopyDocument /></el-icon>
+              </el-button>
+            </el-button-group>
+          </el-form-item>
+        </el-form>
       </div>
 
-      <!-- 分页 -->
-      <div class="fixed-pagination" v-if="drugstoreData.list?.length">
-        <div class="pagination-content">
-          <el-button size="small" plain :disabled="!drugstoreData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchDrugStoreData())">
-            上一页
-          </el-button>
-          <span class="page-info">
-            第 {{ drugstoreData.pageNum }} 页 / 共 {{ drugstoreData.pages }} 页 (共 {{ drugstoreData.total }} 条)
-          </span>
-          <el-button size="small" plain :disabled="!drugstoreData.hasNextPage" @click="pageNumber < drugstoreData.pages && (pageNumber++, fetchDrugStoreData())">
-            下一页
-          </el-button>
-          <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
-            <el-option :value="20" label="每页20条" />
-            <el-option :value="40" label="每页40条" />
-            <el-option :value="60" label="每页60条" />
-          </el-select>
+      <!-- 数据区域 -->
+      <div class="data-content">
+        <div class="content-wrapper" v-loading="loading">
+          <!-- 表格视图 -->
+          <div v-if="viewMode === 'table'" class="table-view">
+            <el-table
+                v-if="drugstoreData.list?.length"
+                :data="drugstoreData.list"
+                height="100%"
+                stripe
+                border
+                fit
+            >
+              <el-table-column
+                  v-for="(col, index) in columns"
+                  :key="index"
+                  :prop="col.prop"
+                  :label="col.label"
+                  :width="col.width"
+                  :fixed="col.fixed"
+                  show-overflow-tooltip
+              >
+                <template #header>
+                  <div class="th-content">
+                    {{ col.label }}
+                    <div class="resize-handle" @mousedown.stop="startResize($event, index)"></div>
+                  </div>
+                </template>
+                <template #default="{ row }">
+                  <template v-if="index === 0">
+                    <el-link type="primary" :underline="false" @click="copyText(row.dataId)" :disabled="!row.dataId">
+                      {{ row.dataId }}
+                    </el-link>
+                  </template>
+                  <template v-else-if="index === 1">
+                    <el-link type="primary" :underline="false" @click="copyText(row.dataCode)">
+                      {{ row.dataCode }}
+                    </el-link>
+                  </template>
+                  <template v-else-if="index === 2">
+                    <el-link type="primary" :underline="false" @click="copyText(row.originalName)">
+                      {{ row.originalName }}
+                    </el-link>
+                  </template>
+                  <template v-else-if="index === 3">
+                    <el-link type="primary" :underline="false" @click="copyText(row.keyid)">
+                      {{ row.keyid }}
+                    </el-link>
+                  </template>
+                  <template v-else-if="index === 4">
+                    <el-link type="primary" :underline="false" @click="copyText(row.name)">
+                      {{ row.name }}
+                    </el-link>
+                  </template>
+                  <template v-else-if="index === 5">{{ row.province }}</template>
+                  <template v-else-if="index === 6">{{ row.city }}</template>
+                  <template v-else-if="index === 7">{{ row.area }}</template>
+                  <template v-else-if="index === 8">{{ row.address }}</template>
+                  <template v-else-if="index === 9">
+                    <el-tag :type="getStatusType(row.status)" effect="dark" size="small">
+                      {{ getStatusText(row.status) }}
+                    </el-tag>
+                  </template>
+                  <template v-else-if="index === 10">
+                    <el-button type="success" size="small" @click="showDetail(row)">详情</el-button>
+                    <el-button type="primary" size="small" :disabled="!row.hsCode" @click="updateDetail(row)">更新</el-button>
+                  </template>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div v-else class="no-data-container">
+              <el-empty description="没有找到匹配的药店数据" :image-size="120" />
+            </div>
+          </div>
+
+          <!-- 卡片视图 -->
+          <div v-else class="card-view">
+            <el-empty v-if="!drugstoreData.list?.length" description="没有找到匹配的药店数据" class="no-data-container" />
+            <el-row :gutter="20" v-else>
+              <el-col v-for="drugstore in drugstoreData.list" :key="drugstore.dataId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+                <el-card class="drugstore-card" shadow="hover">
+                  <template #header>
+                    <div class="card-header">
+                      <div class="card-title">
+                        <el-link type="primary" :underline="false" @click="copyText(drugstore.name)">
+                          {{ drugstore.name }}
+                        </el-link>
+                      </div>
+                      <el-tag :type="getStatusType(drugstore.status)" size="small" effect="dark">
+                        {{ getStatusText(drugstore.status) }}
+                      </el-tag>
+                    </div>
+                  </template>
+                  <div class="card-body">
+                    <div class="card-item"><span class="label">dataId：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.dataId)">{{ drugstore.dataId }}</el-link></div>
+                    <div class="card-item"><span class="label">原始编码：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.dataCode)">{{ drugstore.dataCode }}</el-link></div>
+                    <div class="card-item"><span class="label">原始名称：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.originalName)">{{ drugstore.originalName }}</el-link></div>
+                    <div class="card-item"><span class="label">keyId：</span><el-link type="primary" :underline="false" @click="copyText(drugstore.keyid)">{{ drugstore.keyid }}</el-link></div>
+                    <div class="card-item"><span class="label">省份：</span>{{ drugstore.province }}</div>
+                    <div class="card-item"><span class="label">城市：</span>{{ drugstore.city }}</div>
+                    <div class="card-item"><span class="label">区县：</span>{{ drugstore.area }}</div>
+                    <div class="card-item"><span class="label">地址：</span>{{ drugstore.address }}</div>
+                  </div>
+                  <div class="card-footer">
+                    <el-button type="success" size="small" @click="showDetail(drugstore)">详情</el-button>
+                    <el-button type="primary" size="small" :disabled="!drugstore.hsCode" @click="updateDetail(drugstore)">更新</el-button>
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="fixed-pagination" v-if="drugstoreData.list?.length">
+          <div class="pagination-content">
+            <el-button size="small" plain :disabled="!drugstoreData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchDrugStoreData())">
+              上一页
+            </el-button>
+            <span class="page-info">
+              第 {{ drugstoreData.pageNum }} 页 / 共 {{ drugstoreData.pages }} 页 (共 {{ drugstoreData.total }} 条)
+            </span>
+            <el-button size="small" plain :disabled="!drugstoreData.hasNextPage" @click="pageNumber < drugstoreData.pages && (pageNumber++, fetchDrugStoreData())">
+              下一页
+            </el-button>
+            <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
+              <el-option :value="20" label="每页20条" />
+              <el-option :value="40" label="每页40条" />
+              <el-option :value="60" label="每页60条" />
+            </el-select>
+          </div>
         </div>
       </div>
     </div>
@@ -210,7 +215,7 @@
               </el-link>
             </template>
             <template v-else-if="key === 'status'">
-              <el-tag :type="item.type(currentDrugStore)" size="small">
+              <el-tag :type="item.type(currentDrugStore)" size="small" effect="dark" style="color: #fff;">
                 {{ item.value(currentDrugStore) }}
               </el-tag>
             </template>
@@ -285,7 +290,6 @@
               <el-form-item label="市ID"><el-input v-model="currentUpdateDrugStore.cityId" /></el-form-item>
               <el-form-item label="区县"><el-input v-model="currentUpdateDrugStore.area" /></el-form-item>
               <el-form-item label="区县ID"><el-input v-model="currentUpdateDrugStore.areaId" /></el-form-item>
-              <el-form-item label="是否市区"><el-input v-model="currentUpdateDrugStore.isCity" /></el-form-item>
               <el-form-item label="地址"><el-input v-model="currentUpdateDrugStore.address" /></el-form-item>
               <el-form-item label="等级">
                 <el-select v-model="currentUpdateDrugStore.level">
@@ -309,7 +313,7 @@
                   <el-option label="民营" value="民营" />
                 </el-select>
               </el-form-item>
-              <el-form-item label="药店类型"><el-input v-model="currentUpdateDrugStore.classify" /></el-form-item>
+              <el-form-item label="类别"><el-input v-model="currentUpdateDrugStore.classify" /></el-form-item>
               <el-form-item label="总分院kid"><el-input v-model="currentUpdateDrugStore.generalBranchKid" /></el-form-item>
               <el-form-item label="总分院名称"><el-input v-model="currentUpdateDrugStore.generalBranchName" /></el-form-item>
               <el-form-item label="是否军队医院">
@@ -319,7 +323,6 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="登记号"><el-input v-model="currentUpdateDrugStore.regcode" /></el-form-item>
-              <el-form-item label="有效期"><el-input v-model="currentUpdateDrugStore.licenseValidity" /></el-form-item>
               <el-form-item label="诊疗科室"><el-input v-model="currentUpdateDrugStore.subjects" /></el-form-item>
               <el-form-item label="法人代表"><el-input v-model="currentUpdateDrugStore.legalperson" /></el-form-item>
               <el-form-item label="统一社会信用代码"><el-input v-model="currentUpdateDrugStore.usci" /></el-form-item>
@@ -339,16 +342,6 @@
               <el-form-item label="登记状态"><el-input v-model="currentUpdateDrugStore.signStatus" /></el-form-item>
               <el-form-item label="所属行业"><el-input v-model="currentUpdateDrugStore.industry" /></el-form-item>
               <el-form-item label="登记机关"><el-input v-model="currentUpdateDrugStore.belong" /></el-form-item>
-              <el-form-item label="药店位置"><el-input v-model="currentUpdateDrugStore.location" /></el-form-item>
-              <el-form-item label="是否双通道"><el-input v-model="currentUpdateDrugStore.twoChannels" /></el-form-item>
-              <el-form-item label="是否双互联网"><el-input v-model="currentUpdateDrugStore.isInternet" /></el-form-item>
-              <el-form-item label="是否DTP药房"><el-input v-model="currentUpdateDrugStore.dtp" /></el-form-item>
-              <el-form-item label="药品经营许可证"><el-input v-model="currentUpdateDrugStore.licenseNumber" /></el-form-item>
-              <el-form-item label="是否门诊统筹"><el-input v-model="currentUpdateDrugStore.mztc" /></el-form-item>
-              <el-form-item label="医保编码"><el-input v-model="currentUpdateDrugStore.ybcode" /></el-form-item>
-              <el-form-item label="是否医保药店"><el-input v-model="currentUpdateDrugStore.isYb" /></el-form-item>
-              <el-form-item label="院内店"><el-input v-model="currentUpdateDrugStore.hosInside" /></el-form-item>
-              <el-form-item label="院边店"><el-input v-model="currentUpdateDrugStore.hosOutside" /></el-form-item>
             </el-col>
           </el-row>
         </el-form>
@@ -570,7 +563,7 @@ const saveChanges = async () => {
   if (isSaving.value) return
   isSaving.value = true
   try {
-    const { data } = await axios.post('/api/updateData/inputOneUpdateDrugStoreData', currentUpdateDrugStore.value)
+    const { data } = await axios.post('/api/updateData/OneUpdateHaoSenData', currentUpdateDrugStore.value)
     if (data.code === 200) {
       ElMessage.success('提交更新成功')
       closeUpdateModal()
@@ -614,8 +607,7 @@ const findDaKuData = async () => {
 
       ElMessage.success('匹配成功，已填充')
     } else {
-      // data.msg ||
-      ElMessage.error( '未找到匹配数据')
+      ElMessage.error('未找到匹配数据')
     }
   } catch {
     ElMessage.error('匹配失败')
@@ -677,6 +669,20 @@ onMounted(() => {
   font-size: 12px;
 }
 
+/* 整合的整体容器 */
+.integrated-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  margin: 8px;
+  border: 1px solid #ebeef5;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
 /* 2K屏幕优化 */
 @media (min-width: 2000px) and (max-width: 2600px) {
   .drugstore-data-view {
@@ -691,15 +697,14 @@ onMounted(() => {
   }
 }
 
+/* 搜索区域 - 现在在整合容器内 */
 .fixed-search {
-  position: sticky;
-  top: 1px;
-  z-index: 100;
-  padding: 10px 16px;
-  background: #f5f7fa;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-bottom: 8px;
-  border-radius: 6px;
+  flex-shrink: 0;
+  padding: 14px 18px;
+  background: #ffffff;
+  border-bottom: 1px solid #ebeef5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 6px 6px 0 0;
   max-width: 100%;
   box-sizing: border-box;
 }
@@ -728,7 +733,8 @@ onMounted(() => {
   margin-left: 16px;
 }
 
-.data-container {
+/* 数据内容区域 */
+.data-content {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -738,10 +744,6 @@ onMounted(() => {
 .content-wrapper {
   flex: 1;
   overflow: hidden;
-  margin: 8px;
-  border: 1px solid #ebeef5;
-  border-radius: 3px;
-  background: #fff;
 }
 
 .table-view {
@@ -758,6 +760,12 @@ onMounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.drugstore-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
@@ -788,30 +796,34 @@ onMounted(() => {
 }
 
 .card-item .label {
-  color: #909399;
-  font-weight: bold;
+  color: #606266;
+  font-weight: 500;
   margin-right: 6px;
+  min-width: 60px;
+  display: inline-block;
 }
 
 .card-footer {
   margin-top: auto;
   text-align: right;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
 }
 
+/* 分页区域 */
 .fixed-pagination {
-  position: sticky;
-  bottom: 0;
-  background: #f5f7fa;
-  padding: 8px;
-  border-top: 1px solid #dcdfe6;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  flex-shrink: 0;
+  background: #fafbfc;
+  padding: 12px;
+  border-top: 1px solid #ebeef5;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
 
 .pagination-content {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .page-info {
@@ -819,19 +831,20 @@ onMounted(() => {
   color: #606266;
   min-width: 220px;
   text-align: center;
+
 }
 
-.no-data {
+.no-data-container {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #909399;
 }
 
 .th-content {
   position: relative;
   text-align: center;
+  font-weight: 600;
 }
 
 .resize-handle {
@@ -841,31 +854,40 @@ onMounted(() => {
   bottom: 0;
   width: 4px;
   cursor: col-resize;
+  opacity: 0;
+  transition: opacity 0.2s;
 }
 
-.resize-handle:hover {
+.th-content:hover .resize-handle {
+  opacity: 1;
   background: #409eff;
 }
 
+/* 详情弹窗样式 */
 .detail-container {
   max-height: 60vh;
   overflow-y: auto;
+  padding-right: 8px;
 }
 
 .detail-row {
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
+  align-items: flex-start;
 }
 
 .detail-row label {
-  min-width: 140px;
-  font-weight: bold;
-  color: #606266;
+  min-width: 160px;
+  font-weight: 600;
+  color: #303133;
+  line-height: 1.5;
 }
 
 .detail-row span {
   flex: 1;
-  word-break: break-all;
+  word-break: break-word;
+  line-height: 1.5;
+  color: #606266;
 }
 
 /* 更新弹窗整体 */
@@ -881,6 +903,7 @@ onMounted(() => {
   font-size: 18px;
   font-weight: 600;
   width: 100%;
+  color: #303133;
 }
 
 .update-dialog :deep(.el-dialog__header) {
@@ -890,8 +913,8 @@ onMounted(() => {
 
 .dialog-fixed-header {
   flex-shrink: 0;
-  padding: 12px 24px;
-  background: #fafafa;
+  padding: 14px 24px;
+  background: #fff;
   border-bottom: 1px solid #ebeef5;
   position: sticky;
   top: 0;
@@ -917,10 +940,12 @@ onMounted(() => {
 .dialog-scroll-body::-webkit-scrollbar {
   width: 8px;
 }
+
 .dialog-scroll-body::-webkit-scrollbar-thumb {
   background: #c0c4cc;
   border-radius: 4px;
 }
+
 .dialog-scroll-body::-webkit-scrollbar-track {
   background: transparent;
 }

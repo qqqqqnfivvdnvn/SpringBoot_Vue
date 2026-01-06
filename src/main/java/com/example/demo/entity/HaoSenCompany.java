@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class HaoSenCompany {
+
     private String orgType;
     private String batchCode;
     private String dataId;

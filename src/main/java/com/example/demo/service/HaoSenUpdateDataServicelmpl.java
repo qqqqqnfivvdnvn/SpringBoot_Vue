@@ -163,18 +163,19 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
         haoSenUpdateDataVO.setIndustry(haoSenOrganization.getIndustry());
         haoSenUpdateDataVO.setBelong(haoSenOrganization.getBelong());
 
-        System.out.print(haoSenOrganization);
+
 
         HaoSenFileMessageDTO updateDataMessage = new HaoSenFileMessageDTO();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        // 1. 数据库操作
-        sqlMapper.deleteAllHaoSenData();
-        //插入数据
-        sqlMapper.inputHaoSenUpdateData(haoSenUpdateDataVO);
 
-//        return ApiResponseDTO.success(updateDataMessage);
         try {
+
+            // 1. 数据库操作
+            sqlMapper.deleteAllHaoSenData();
+            //插入数据
+            sqlMapper.inputHaoSenUpdateData(haoSenUpdateDataVO);
+
 //         2. 关键API调用
             String updateMessage = new ApiHaosen().callExternalUpdateApi();
             JsonNode rootNode = objectMapper.readTree(updateMessage);
@@ -183,9 +184,11 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
                 updateDataMessage.setProcessedCount(1);
                 updateDataMessage.setMessage("success");
                 updateDataMessage.setAppealMessage("更新数据推送成功");
+
             } else {
                 updateDataMessage.setMessage(rootNode.get("msg").asText());
                 updateDataMessage.setAppealMessage("更新数据推送失败");
+
             }
             return ApiResponseDTO.success(updateDataMessage);
 
@@ -197,7 +200,7 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
 
         } catch (Exception e) {
             // 系统异常
-            updateDataMessage.setMessage("系统处理异常");
+            updateDataMessage.setMessage("fail");
             updateDataMessage.setAppealMessage("更新数据处理失败");
             return ApiResponseDTO.success(updateDataMessage);
         }
