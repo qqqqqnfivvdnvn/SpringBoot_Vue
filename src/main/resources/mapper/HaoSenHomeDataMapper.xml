@@ -9,7 +9,7 @@
     <![CDATA[
         SELECT
             (SELECT count(*) FROM origin_data WHERE batch_code IN (SELECT batch_code FROM data_batch WHERE status = 1)) AS uncleanedCount,
-            (SELECT count(*) FROM data_result WHERE feedback_type = '1' AND (status IS NULL OR status = '1')) AS unappealingCount,
+            (SELECT count(*) FROM data_result WHERE feedback_type = '1' AND  status = '1') AS unappealingCount,
             (SELECT count(*) FROM base_org_company WHERE status IN (1, 3, 4) AND addtime >= CURRENT_DATE - INTERVAL '7 days' AND addtime < (CURRENT_DATE + 1)::timestamp) AS companyCount,
             (SELECT count(*) FROM base_org_hos_clean WHERE status IN (1, 3, 4) AND addtime >= CURRENT_DATE - INTERVAL '7 days' AND addtime < (CURRENT_DATE + 1)::timestamp) AS hospitalCount,
                                                          (SELECT count(*) FROM base_org_drug_store WHERE status IN (1, 3, 4) AND addtime >= CURRENT_DATE - INTERVAL '7 days' AND addtime < (CURRENT_DATE + 1)::timestamp) AS drugstoreCount
@@ -65,18 +65,18 @@
 
 
     <select id="getMainPieDataHosClean" resultType="com.example.demo.vo.PieDataVO">
-        SELECT '医院' as name,count(*) as value  from base_org_hos_clean WHERE    status in (1,2,3,4,5)
+        SELECT '医院' as name,count(*) as value  from base_org_hos_clean
 
     </select>
 
     <select id="getMainPieDataDrugStore" resultType="com.example.demo.vo.PieDataVO">
-        SELECT '药店' as name,count(*) as  value from base_org_drug_store WHERE    status in (1,2,3,4,5)
+        SELECT '药店' as name,count(*) as  value from base_org_drug_store
 
     </select>
 
 
     <select id="getMainPieDataCompany" resultType="com.example.demo.vo.PieDataVO">
-        SELECT '商业' as name ,count(*) as value  from base_org_company WHERE   status in (1,2,3,4,5)
+        SELECT '商业' as name ,count(*) as value  from base_org_company
 
     </select>
 
@@ -97,6 +97,7 @@
 
     <select id="getAppealUpdateData" resultType="com.example.demo.vo.HaoSenAppealUpdateDataVO">
         <![CDATA[
+
         WITH date_series AS (SELECT generate_series(
                                                     CURRENT_DATE - INTERVAL '6 days',
                                                     CURRENT_DATE,
@@ -106,25 +107,29 @@
             )
            , appeal_table AS (
         SELECT
-            DATE (add_time) AS day, COUNT (*) AS table1_count
+            DATE (add_time) AS day,  COUNT (DISTINCT new_data_id )  AS table1_count
         FROM appeal_and_update
         WHERE add_time >= CURRENT_DATE - INTERVAL '6 days' and type ='1'
         GROUP BY DATE (add_time)
             ),
             update_table AS (
+
         SELECT
-            DATE (add_time) AS day, COUNT (*) AS table2_count
+            DATE (add_time) AS day,  COUNT (DISTINCT new_data_id )  AS table2_count
         FROM appeal_and_update
         WHERE add_time >= CURRENT_DATE - INTERVAL '6 days' and type ='2'
         GROUP BY DATE (add_time)
+
             ),
             hs_code_table AS (
 
         SELECT
-            DATE (add_time) AS day, COUNT (*) AS table3_count
+            DATE(add_time) AS day,
+            COUNT(DISTINCT data_code) AS table3_count
         FROM data_result
-        WHERE add_time >= CURRENT_DATE - INTERVAL '6 days' and feedback_type='2'
-        GROUP BY DATE (add_time)
+        WHERE add_time >= CURRENT_DATE - INTERVAL '6 days'
+          AND feedback_type = '2'
+        GROUP BY DATE(add_time)
 
             )
         SELECT ds.day,
@@ -139,6 +144,7 @@
                  LEFT JOIN
              hs_code_table t3 on ds.day = t3.day
         ORDER BY ds.day
+
         ]]>
     </select>
 

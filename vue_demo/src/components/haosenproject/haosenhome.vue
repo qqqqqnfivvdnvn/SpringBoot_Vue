@@ -72,7 +72,13 @@
                 {{ openMenus.cleanManagement ? '▼' : '▶' }}
               </span>
             </div>
+
             <ul v-if="openMenus.cleanManagement && !isSidebarCollapsed" class="sub-menu">
+              <li @click="selectCleanData">
+                <font-awesome-icon :icon="['fas', 'eraser']" size="sm" /> &nbsp;
+                <span>清洗查看</span>
+              </li>
+
               <li @click="importCleanData">
                 <font-awesome-icon :icon="['fas', 'eraser']" size="sm" /> &nbsp;
                 <span>清洗提交</span>
@@ -163,9 +169,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import {ref, computed} from 'vue'
+import {useRouter} from 'vue-router'
 import axios from 'axios'
+
 import '@/assets/css/dark-mode.css'
 import ThemeToggle from '@/components/ui/ThemeToggle.vue'  // 引入主题切换组件
 
@@ -261,23 +268,30 @@ const companyDataView = () => {
 
 const showAppealData = () => {
   addTab('申诉数据', 'AppealDataView')
-  window.location.hash = '/appealData/showAppealData'
+  window.location.hash = '/appealData/appealData'
 }
 
 const importAppealData = () => {
   addTab('申诉提交', 'ImportAppealDataView')
-  window.location.hash = '/appealData/importCleanData'
+  window.location.hash = '/appealData/importAppealData'
 }
+
+const selectCleanData = () => {
+  addTab('清洗查看', 'SelectCleanDataView')
+  window.location.hash = '/cleanData/selectCleanData'
+}
+
 
 const importCleanData = () => {
   addTab('清洗提交', 'ImportCleanDataView')
-  window.location.hash = '/cleanData/ImportCleanDataView'
+  window.location.hash = '/cleanData/ImportCleanData'
 }
 
 const importUpdateData = () => {
   addTab('更新提交', 'ImportUpdateDataView')
-  window.location.hash = '/updateData/ImportCleanDataView'
+  window.location.hash = '/updateData/importUpdateData'
 }
+
 
 const resetToDashboard = () => {
   tabs.value = []
@@ -573,4 +587,5 @@ const toggleSidebar = () => {
   color: #af96e6;
 }
 </style>
+
 

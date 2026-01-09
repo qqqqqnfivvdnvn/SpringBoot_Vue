@@ -1,66 +1,72 @@
 <template>
   <div class="drugstore-data-view">
-    <!-- 整合的搜索和数据区域 -->
+
     <div class="integrated-container">
       <!-- 搜索区域 -->
       <div class="fixed-search">
         <el-form :inline="true" :model="searchForm" class="search-form" @submit.prevent="handleSearch">
-          <el-form-item label="原始编码">
-            <el-input v-model="searchForm.dataCode" placeholder="请输入原始编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="原始名称">
-            <el-input v-model="searchForm.originalName" placeholder="请输入原始名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="DataId">
-            <el-input v-model="searchForm.dataId" placeholder="请输入DataId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="KeyId">
-            <el-input v-model="searchForm.keyid" placeholder="请输入KeyId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="豪森编码">
-            <el-input v-model="searchForm.hsCode" placeholder="请输入清洗后的编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="省份">
-            <el-input v-model="searchForm.province" placeholder="请输入省份" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="市">
-            <el-input v-model="searchForm.city" placeholder="请输入市" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="区县">
-            <el-input v-model="searchForm.area" placeholder="请输入区县" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="药店名称">
-            <el-input v-model="searchForm.name" placeholder="请输入药店名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="药店地址">
-            <el-input v-model="searchForm.address" placeholder="请输入药店地址" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item class="form-actions">
-            <el-button type="primary" @click="handleSearch" :loading="loading">查询</el-button>
-            <el-button @click="resetSearch">重置</el-button>
-            <el-button type="success" @click="toExcel" :loading="exporting">
-              {{ exporting ? '导出中...' : '导出' }}
-            </el-button>
-            <!-- 视图切换按钮 -->
-            <el-button-group class="view-toggle">
-              <el-button
-                  :type="viewMode === 'table' ? 'primary' : 'default'"
-                  size="small"
-                  @click="viewMode = 'table'"
-                  title="表格视图"
-              >
-                <el-icon><Grid /></el-icon>
+          <!-- 上半部分：所有搜索条件 -->
+          <div class="search-conditions">
+            <el-form-item label="原始编码">
+              <el-input v-model="searchForm.dataCode" placeholder="请输入原始编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+            <el-form-item label="原始名称">
+              <el-input v-model="searchForm.originalName" placeholder="请输入原始名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+            <el-form-item label="DataId">
+              <el-input v-model="searchForm.dataId" placeholder="请输入DataId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+            <el-form-item label="KeyId">
+              <el-input v-model="searchForm.keyid" placeholder="请输入KeyId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+            <el-form-item label="豪森编码">
+              <el-input v-model="searchForm.hsCode" placeholder="请输入清洗后的编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+            <el-form-item label="省份">
+              <el-input v-model="searchForm.province" placeholder="请输入省份" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+            <el-form-item label="市">
+              <el-input v-model="searchForm.city" placeholder="请输入市" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+            <el-form-item label="区县">
+              <el-input v-model="searchForm.area" placeholder="请输入区县" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+            <el-form-item label="输入名称">
+              <el-input v-model="searchForm.name" placeholder="请输入名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+            <el-form-item label="输入地址">
+              <el-input v-model="searchForm.address" placeholder="请输入地址" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+          </div>
+
+          <!-- 下半部分：操作按钮区域，靠右对齐 -->
+          <div class="form-actions-wrapper">
+            <div class="form-actions">
+              <el-button size="small" type="primary" @click="handleSearch" :loading="loading">查询</el-button>
+              <el-button size="small" @click="resetSearch">重置</el-button>
+              <el-button size="small" type="success" @click="toExcel" :loading="exporting">
+                {{ exporting ? '导出中...' : '导出' }}
               </el-button>
-              <el-button
-                  :type="viewMode === 'card' ? 'primary' : 'default'"
-                  size="small"
-                  @click="viewMode = 'card'"
-                  title="卡片视图"
-              >
-                <el-icon><CopyDocument /></el-icon>
-              </el-button>
-            </el-button-group>
-          </el-form-item>
+              <el-button-group size="small" class="view-toggle">
+                <el-button
+                    :type="viewMode === 'table' ? 'primary' : 'default'"
+                    size="small"
+                    @click="viewMode = 'table'"
+                    title="表格视图"
+                >
+                  <el-icon><Grid /></el-icon>
+                </el-button>
+                <el-button
+                    :type="viewMode === 'card' ? 'primary' : 'default'"
+                    size="small"
+                    @click="viewMode = 'card'"
+                    title="卡片视图"
+                >
+                  <el-icon><CopyDocument /></el-icon>
+                </el-button>
+              </el-button-group>
+            </div>
+          </div>
         </el-form>
       </div>
 
@@ -698,40 +704,58 @@ onMounted(() => {
 }
 
 /* 搜索区域 - 现在在整合容器内 */
+
 .fixed-search {
   flex-shrink: 0;
-  padding: 14px 18px;
+  padding: 14px 18px 10px;
   background: #ffffff;
   border-bottom: 1px solid #ebeef5;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border-radius: 6px 6px 0 0;
-  max-width: 100%;
-  box-sizing: border-box;
 }
 
 .search-form {
   display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 搜索条件区域 */
+.search-conditions {
+  display: flex;
   flex-wrap: wrap;
   gap: 12px 8px;
-  align-items: end;
+  align-items: flex-end;
 }
 
 .search-form :deep(.el-form-item) {
   margin-bottom: 0 !important;
   flex: 1 1 180px;
+  min-width: 180px;
 }
 
+/* 按钮区域整体容器 - 用于靠右对齐 */
+.form-actions-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+/* 按钮本身容器 */
 .form-actions {
-  margin-left: 0;
   display: flex;
   align-items: center;
   gap: 10px;
-  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
+/* 视图切换按钮组微调 */
 .view-toggle {
-  margin-left: 16px;
+  margin-left: 8px;
 }
+
+
 
 /* 数据内容区域 */
 .data-content {

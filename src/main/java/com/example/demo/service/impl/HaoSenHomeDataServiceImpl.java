@@ -1,8 +1,8 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.mapper.HaoSenHomeDataMapper;
-import com.example.demo.service.impl.HaoSenHomeDataService;
+import com.example.demo.service.HaoSenHomeDataService;
 import com.example.demo.vo.HaoSenAppealUpdateDataVO;
 import com.example.demo.vo.HaoSenBarDataVO;
 import com.example.demo.vo.HaoSenDetailsDataVO;

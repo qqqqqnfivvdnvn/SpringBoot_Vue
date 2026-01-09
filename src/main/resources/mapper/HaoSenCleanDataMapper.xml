@@ -3,5 +3,61 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.HaoSenCleanDataMapper">
 
+    <!-- 通用查询条件，id 保持和你原来一致 -->
+    <sql id="conditionCleanDataWhere">
+        <where>
+            <if test="condition.batchCode != null and condition.batchCode != ''">
+                AND a.batch_code LIKE CONCAT('%', #{condition.batchCode}, '%')
+            </if>
+            <if test="condition.status != null and condition.status != ''">
+                AND a.status = #{condition.status}
+            </if>
+            <if test="condition.cleanStatus != null and condition.cleanStatus != ''">
+                AND a.clean_status = #{condition.cleanStatus}
+            </if>
+            <if test="condition.dataId != null and condition.dataId != ''">
+                AND b.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
+            </if>
+            <if test="condition.dataType != null and condition.dataType != ''">
+                AND b.data_type = #{condition.dataType}
+            </if>
+            <if test="condition.dataCode != null and condition.dataCode != ''">
+                AND b.data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
+            </if>
+            <if test="condition.originalName != null and condition.originalName != ''">
+                AND b.original_name LIKE CONCAT('%', #{condition.originalName}, '%')
+            </if>
+            <if test="condition.originalProvince != null and condition.originalProvince != ''">
+                AND b.original_province = #{condition.originalProvince}
+            </if>
+            <if test="condition.haosenCode != null and condition.haosenCode != ''">
+                AND b.haosen_code LIKE CONCAT('%', #{condition.haosenCode}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectHaoSenCleanData" resultType="com.example.demo.entity.HaoSenCleanData">
+
+        SELECT
+        a.batch_code,
+        a.status,
+        a.clean_status,
+        b.data_id,
+        b.data_type,
+        b.data_code,
+        b.original_name,
+        b.original_province,
+        b.original_address,
+        b.company_name,
+        b.haosen_code,
+        b.add_time
+        FROM data_batch AS a
+        LEFT JOIN origin_data AS b
+        ON a.batch_code = b.batch_code
+
+        <include refid="conditionCleanDataWhere"/>
+        ORDER BY add_time DESC
+    </select>
+
 
 </mapper>

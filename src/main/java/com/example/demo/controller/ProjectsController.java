@@ -2,7 +2,7 @@ package com.example.demo.controller;
 import java.util.List;
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.entity.Projects;
-import com.example.demo.service.impl.ProjectsService;
+import com.example.demo.service.ProjectsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

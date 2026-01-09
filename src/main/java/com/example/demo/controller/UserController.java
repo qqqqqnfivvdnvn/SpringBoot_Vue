@@ -4,7 +4,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.vo.UserLoginDataVO;
 import com.example.demo.entity.Users;
-import com.example.demo.service.impl.UserService;
+import com.example.demo.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

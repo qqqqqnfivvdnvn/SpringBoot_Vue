@@ -1,14 +1,19 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.apidata.ApiHaosen;
 import com.example.demo.dto.ApiResponseDTO;
+import com.example.demo.dto.HaoSenCleanConditionDTO;
 import com.example.demo.dto.HaoSenFileMessageDTO;
+import com.example.demo.entity.HaoSenCleanData;
+import com.example.demo.mapper.HaoSenCleanDataMapper;
 import com.example.demo.mapper.HaoSenSqlMapper;
-import com.example.demo.service.impl.HaoSenInputCleanDataService;
+import com.example.demo.service.HaoSenInputCleanDataService;
 import com.example.demo.utils.HaoSenAppealExcelReader;
 import com.example.demo.vo.HaoSenInputAppealDataVO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,6 +32,10 @@ public class HaoSenInputCleanDataServiceImpl implements HaoSenInputCleanDataServ
 
     @Autowired
     private HaoSenSqlMapper sqlMapper;
+
+    @Autowired
+    private HaoSenCleanDataMapper haosencleanDataMapper;
+
 
 
     @Value("${file.upload-dir}"+"\\clean_file")
@@ -105,6 +114,20 @@ public class HaoSenInputCleanDataServiceImpl implements HaoSenInputCleanDataServ
     }
 
 
+    @Override
+    public ApiResponseDTO<PageInfo<HaoSenCleanData>> selectHaoSenCleanData(HaoSenCleanConditionDTO condition, int pageNum, int pageSize) {
+        try {
+            PageHelper.startPage(pageNum, pageSize);
+            List<HaoSenCleanData> haoSenCleanData = haosencleanDataMapper.selectHaoSenCleanData(condition);
+            return ApiResponseDTO.success(new PageInfo<>(haoSenCleanData));
+
+        } finally {
+            PageHelper.clearPage();   // 必须清理 ThreadLocal
+
+        }
+
+
+    }
 
 
 }

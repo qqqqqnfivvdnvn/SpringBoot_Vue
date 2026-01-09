@@ -12,10 +12,10 @@ import DrugStoreData from '@/components/haosenproject/maindataview/DrugStoreData
 import CompanyData from '@/components/haosenproject/maindataview/CompanyDataView.vue';
 import AppealDataView from '@/components/haosenproject/appealdataview/AppealDataView.vue';
 import ImportAppealData from '@/components/haosenproject/appealdataview/ImportAppealDataView.vue';
-
 import ImportCleanData from '@/components/haosenproject/cleandataview/ImportCleanDataView.vue';
-
 import ImportUpdateData from '@/components/haosenproject/updatedataView/ImportUpdateDataView.vue';
+
+import SelectCleanData from '@/components/haosenproject/cleandataview/SelectCleanDataView';
 
 
 const routes = [
@@ -112,11 +112,11 @@ const routes = [
         path: '/appealData',
         children: [
             {
-            path: 'showAppealData',
-            name: 'showAppealData',
-            component: AppealDataView,
-            meta: { requiresAuth: true } // 需要登录才能访问
-        },
+                path: 'appealData',
+                name: 'appealData',
+                component: AppealDataView,
+                meta: { requiresAuth: true } // 需要登录才能访问
+            },
             {
                 path: 'importAppealData',
                 name: 'importAppealData',
@@ -134,7 +134,13 @@ const routes = [
                 name: 'importCleanData',
                 component: ImportCleanData,
                 meta: { requiresAuth: true } // 需要登录才能访问
-            }
+            },
+            {
+                path: 'selectCleanData',
+                name: 'selectCleanData',
+                component: SelectCleanData,
+                meta: { requiresAuth: true } // 需要登录才能访问
+            },
 
         ] // 需要登录才能访问
     },

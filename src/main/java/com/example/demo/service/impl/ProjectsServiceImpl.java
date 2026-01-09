@@ -1,9 +1,9 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.entity.Projects;
 import com.example.demo.mapper.ProjectsMapper;
-import com.example.demo.service.impl.ProjectsService;
+import com.example.demo.service.ProjectsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

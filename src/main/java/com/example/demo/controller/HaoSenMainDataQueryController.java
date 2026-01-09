@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.entity.HaoSenOrganization;
-import com.example.demo.service.impl.HaoSenMainDataQueryService;
+import com.example.demo.service.HaoSenMainDataQueryService;
 import com.example.demo.dto.HaoSenDrugStoreConditionDTO;
 import com.example.demo.dto.HaoSenHospitalConditionDTO;
 import com.example.demo.dto.HaoSenCompanyConditionDTO;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.example.demo.entity.HaoSenCompany;
 
 @Controller
 

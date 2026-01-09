@@ -4,7 +4,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.dto.HaoSenFileMessageDTO;
 import com.example.demo.entity.HaoSenOrganization;
-import com.example.demo.service.impl.HaoSenUpdateDataService;
+import com.example.demo.service.HaoSenUpdateDataService;
 import com.example.demo.vo.HaoSenAppealDataVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

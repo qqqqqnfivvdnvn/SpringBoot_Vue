@@ -6,7 +6,6 @@ public class HaoSenAppealConditionDTO {
     private String originalName;
     private String dataId;
     private String keyid;
-    private String hsCode;
     private String province;
     private String city;
     private String area;

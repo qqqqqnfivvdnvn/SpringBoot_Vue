@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 
 import com.example.demo.apidata.ApiHaosen;
@@ -6,7 +6,7 @@ import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.dto.HaoSenFileMessageDTO;
 import com.example.demo.entity.HaoSenOrganization;
 import com.example.demo.mapper.HaoSenSqlMapper;
-import com.example.demo.service.impl.HaoSenUpdateDataService;
+import com.example.demo.service.HaoSenUpdateDataService;
 import com.example.demo.utils.HaoSenAppealExcelReader;
 import com.example.demo.vo.HaoSenAppealDataVO;
 import com.example.demo.vo.HaoSenInputAppealDataVO;
