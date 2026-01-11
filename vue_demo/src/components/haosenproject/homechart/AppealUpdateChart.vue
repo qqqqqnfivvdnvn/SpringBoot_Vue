@@ -214,6 +214,7 @@ onMounted(async () => {
 <style scoped>
 /* 可以在这里添加样式 */
 .chart {
+  background: var(--bg-secondary, #ffffff);
   width: 100%;
   height: 100%;
 }

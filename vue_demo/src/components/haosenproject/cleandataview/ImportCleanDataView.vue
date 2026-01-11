@@ -3,7 +3,7 @@
     <!-- 文件上传区域 -->
     <div class="upload-container">
       <div class="upload-card">
-        <h1 class="upload-title">上传清洗数据</h1>
+        <div class="upload-title">上传申诉数据</div>
 
         <el-upload
             class="custom-upload"
@@ -188,7 +188,7 @@ const submitFile = async () => {
 <style scoped>
 .appeal-management-view {
   padding: 12px;
-  background: white;
+  background: var(--bg-secondary, #ffffff);;
   font-size: 13px;
 }
 
@@ -197,7 +197,7 @@ const submitFile = async () => {
 }
 
 .upload-card {
-  background: white;
+  background: var(--bg-secondary, #ffffff);;
   border-radius: 3px;
   padding: 12px;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.05);
@@ -206,7 +206,6 @@ const submitFile = async () => {
 
 .upload-title {
   margin: 0 0 12px;
-  color: #333;
   font-size: 17px;
   font-weight: bold;
   text-align: center;
@@ -219,7 +218,7 @@ const submitFile = async () => {
   text-align: center;
   cursor: pointer;
   transition: all 0.3s;
-  background: white;
+  background: var(--bg-secondary, #ffffff);;
   width: 100%;
   height: auto;
 }

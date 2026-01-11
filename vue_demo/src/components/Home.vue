@@ -1,5 +1,5 @@
 <template>
-  <div class="home-page" :style="homePageStyle">
+  <div class="home-page" >
     <!-- 导航栏 -->
     <nav class="navbar">
       <div class="navbar-brand">项目管理系统</div>
@@ -119,24 +119,14 @@
     </div>
   </div>
 
-
-
 </template>
 
 <script setup>
-
-
-import ThemeToggle from './ui/ThemeToggle.vue';
 
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-
-// // 响应式数据
-// const homePageStyle = ref({
-//   background: 'linear-gradient(135deg, #e3d2ff, #e3d2ff)'
-// })
 
 const userData = ref({})
 const searchQuery = ref('')
@@ -285,6 +275,7 @@ const clearAuthData = () => {
 <style scoped>
 /* 所有样式完全保留，与原版一模一样 */
 .home-page {
+
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -356,7 +347,7 @@ const clearAuthData = () => {
   padding: 15px;
   height: calc(100vh - 70px);
   overflow-y: auto;
-  background-color: #f9f9f9;
+  background: var(--bg-secondary, #ffffff);
 }
 
 .projects-container {
@@ -418,11 +409,12 @@ const clearAuthData = () => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 15px;
+
   margin-bottom: 25px;
 }
 
 .project-card {
-  background: white;
+  background: var(--bg-secondary, #ffffff);
   border-radius: 6px;
   padding: 15px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -433,6 +425,7 @@ const clearAuthData = () => {
   cursor: pointer;
   border-left: 3px solid #9478cc;
   height: 150px;
+
 }
 
 .project-card:hover {

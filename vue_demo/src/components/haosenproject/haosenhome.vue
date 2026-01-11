@@ -173,7 +173,7 @@ import {ref, computed} from 'vue'
 import {useRouter} from 'vue-router'
 import axios from 'axios'
 
-import '@/assets/css/dark-mode.css'
+
 import ThemeToggle from '@/components/ui/ThemeToggle.vue'  // 引入主题切换组件
 
 const router = useRouter()

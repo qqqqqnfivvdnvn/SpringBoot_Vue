@@ -8,6 +8,11 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'   // 中文包
 
+
+import 'element-plus/theme-chalk/index.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'  // 必须有这一行！
+import '@/assets/css/dark-mode.css'                  // 你的自定义
+
 // 导入需要的具体图标 fa-sign-out
 import {faHospital, faStore, faUniversity, faSignOutAlt,faAngleDoubleLeft ,faAngleDoubleRight,faUser,faTrash,faClock,
     faThList,faSynagogue,faStoreAlt,faHospitalAlt,faFileAlt,faBookReader,faCat,faProjectDiagram,faDatabase,faChartLine,faLaptopCode,faUsers,faBook

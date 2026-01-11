@@ -105,7 +105,8 @@ onMounted(() => {
   max-width: min(1250px, 95vw);
   padding: 12px;
   box-sizing: border-box;
-  background: white;
+  background: var(--bg-secondary, #ffffff);
+
   font-size: 12px;
   margin: 0 auto;
 }
@@ -143,7 +144,7 @@ onMounted(() => {
 
 .grid-item-small {
   flex: 1;
-  background-color: #fff;
+  background: var(--bg-secondary, #ffffff);
   border: 1px solid #ddd;
   display: flex;
   align-items: center;
@@ -179,7 +180,7 @@ onMounted(() => {
 }
 
 .sub-grid-item {
-  background-color: #fff;
+  background: var(--bg-secondary, #ffffff);
   border: 1px solid #ddd;
   border-radius: 3px;
   transition: box-shadow 0.2s;

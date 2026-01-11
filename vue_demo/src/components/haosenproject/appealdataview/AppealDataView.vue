@@ -652,7 +652,7 @@ onMounted(() => {
   height: 100vh;
   max-width: min(1250px, 95vw);
   margin: 0 auto;
-  background: white;
+  background: var(--bg-secondary, #ffffff);
   overflow: hidden;
   font-size: 12px;
 }
@@ -689,7 +689,7 @@ onMounted(() => {
 .fixed-search {
   flex-shrink: 0;
   padding: 14px 18px 10px;
-  background: #ffffff;
+  background: var(--bg-secondary, #ffffff);
   border-bottom: 1px solid #ebeef5;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border-radius: 6px 6px 0 0;
@@ -821,9 +821,9 @@ onMounted(() => {
 /* 分页区域 */
 .fixed-pagination {
   flex-shrink: 0;
-  background: #fafbfc;
+  background: var(--bg-secondary, #ffffff);
   padding: 12px;
-  border-top: 1px solid #ebeef5;
+  border-top: 1px solid var(--bg-secondary, #ffffff);
   box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
@@ -846,6 +846,7 @@ onMounted(() => {
   height: 100%;
   display: flex;
   align-items: center;
+  background: var(--bg-secondary, #ffffff);
   justify-content: center;
 }
 
@@ -922,7 +923,7 @@ onMounted(() => {
 .dialog-fixed-header {
   flex-shrink: 0;
   padding: 14px 24px;
-  background: #fff;
+  background: var(--bg-secondary, #ffffff);
   border-bottom: 1px solid #ebeef5;
   position: sticky;
   top: 0;

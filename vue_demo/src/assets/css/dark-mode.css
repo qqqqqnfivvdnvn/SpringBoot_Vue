@@ -120,3 +120,59 @@ html.dark .menu-item:hover,
 html.dark .sub-menu li:hover {
     color: #bb86fc;
 }
+
+
+html.dark {
+    /* 核心背景/文字变量（Element Plus 官方常用） */
+    --el-bg-color: #1a1625;
+    --el-bg-color-overlay: #1f1b2e;
+    --el-text-color-primary: #e0e0e0;
+    --el-text-color-regular: #d0d0d0;
+    --el-border-color: #3d3550;
+
+    /* el-upload 专用覆盖（dragger 是最容易残留白色的地方） */
+    --el-upload-dragger-bg: #1f1b2e;
+    --el-upload-dragger-border-color: #3d3550;
+    --el-upload-dragger-hover-border-color: #bb86fc;
+
+    /* dialog / card / result */
+    --el-dialog-bg-color: #1f1b2e;
+    --el-card-bg-color: #1f1b2e;
+    --el-popover-bg-color: #1f1b2e;
+}
+
+/* 更强的选择器覆盖（必要时使用 :deep 或直接） */
+html.dark .el-upload-dragger {
+    background-color: var(--el-upload-dragger-bg) !important;
+    border-color: var(--el-upload-dragger-border-color) !important;
+}
+
+html.dark .el-upload-dragger:hover,
+html.dark .el-upload-dragger.is-dragover {
+    border-color: var(--el-upload-dragger-hover-border-color) !important;
+    background-color: rgba(187, 134, 252, 0.08) !important;
+}
+
+html.dark .el-dialog,
+html.dark .el-result {
+    background-color: var(--el-dialog-bg-color) !important;
+}
+
+/* 全局变量（放在非 scoped 的 css 文件中） */
+:root {
+    --bg-secondary: #ffffff;
+    --border: #dcdfe6;
+    --shadow: rgba(0, 0, 0, 0.05);
+    --accent: #9478cc;
+}
+
+
+html.dark {
+    --bg-secondary: #1f1b2e;        /* 主要卡片背景 */
+    --bg-hover: #2d2640;
+    --border: #3d3550;
+    --shadow: rgba(0, 0, 0, 0.5);
+    --accent: #bb86fc;
+}
+
+
