@@ -1,7 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.ApiResponseDTO;
-import com.example.demo.entity.HaoSenOrganization;
+import com.example.demo.vo.HaoSenOrganizationVO;
 import com.example.demo.mapper.HaoSenMainDataQueryMapper;
 import com.example.demo.dto.HaoSenCompanyConditionDTO;
 import com.example.demo.dto.HaoSenDrugStoreConditionDTO;
@@ -30,14 +30,14 @@ public class HaoSenMainDataQueryServiceImpl implements HaoSenMainDataQueryServic
 
 
     @Override
-    public ApiResponseDTO<PageInfo<HaoSenOrganization>> getHospitalList(
+    public ApiResponseDTO<PageInfo<HaoSenOrganizationVO>> getHospitalList(
             HaoSenHospitalConditionDTO condition,
             int pageNum,
             int pageSize) {
 
         try {
             PageHelper.startPage(pageNum, pageSize);
-            List<HaoSenOrganization> list =
+            List<HaoSenOrganizationVO> list =
                     mainDataQueryMapper.HospitalQueryByCondition(condition);
             return ApiResponseDTO.success(new PageInfo<>(list));
 
@@ -52,12 +52,12 @@ public class HaoSenMainDataQueryServiceImpl implements HaoSenMainDataQueryServic
 
 
     @Override
-    public ApiResponseDTO<PageInfo<HaoSenOrganization>> getDrugStoreList(HaoSenDrugStoreConditionDTO condition ,int pageNum,
-                                                                         int pageSize) {
+    public ApiResponseDTO<PageInfo<HaoSenOrganizationVO>> getDrugStoreList(HaoSenDrugStoreConditionDTO condition , int pageNum,
+                                                                           int pageSize) {
         try {
             PageHelper.startPage(pageNum, pageSize);
-            List<HaoSenOrganization> drugStoreList = mainDataQueryMapper.DrugStoreQueryByCondition(condition);
-            PageInfo<HaoSenOrganization> haoSenOrganizationPageInfo = new PageInfo<>(drugStoreList);
+            List<HaoSenOrganizationVO> drugStoreList = mainDataQueryMapper.DrugStoreQueryByCondition(condition);
+            PageInfo<HaoSenOrganizationVO> haoSenOrganizationPageInfo = new PageInfo<>(drugStoreList);
             return ApiResponseDTO.success(haoSenOrganizationPageInfo);
 
         } finally {
@@ -69,14 +69,14 @@ public class HaoSenMainDataQueryServiceImpl implements HaoSenMainDataQueryServic
     }
 
     @Override
-    public ApiResponseDTO<PageInfo<HaoSenOrganization>> getCompanyList(HaoSenCompanyConditionDTO condition, int pageNum,
-                                                                       int pageSize) {
+    public ApiResponseDTO<PageInfo<HaoSenOrganizationVO>> getCompanyList(HaoSenCompanyConditionDTO condition, int pageNum,
+                                                                         int pageSize) {
 
         try {
 
             PageHelper.startPage(pageNum, pageSize);
-            List<HaoSenOrganization> CompanyList = mainDataQueryMapper.CompanyQueryByCondition(condition);
-            PageInfo<HaoSenOrganization> haoSenOrganizationPageInfo = new PageInfo<>(CompanyList);
+            List<HaoSenOrganizationVO> CompanyList = mainDataQueryMapper.CompanyQueryByCondition(condition);
+            PageInfo<HaoSenOrganizationVO> haoSenOrganizationPageInfo = new PageInfo<>(CompanyList);
 
             return ApiResponseDTO.success(haoSenOrganizationPageInfo);
 
@@ -94,7 +94,7 @@ public class HaoSenMainDataQueryServiceImpl implements HaoSenMainDataQueryServic
 
         boolean needLimit = MyBatisUtils.isAllBlank(condition); // 自己写个工具判空
 
-        List<HaoSenOrganization> allHospitalCondition = mainDataQueryMapper.findAllHospitalCondition(condition,needLimit);
+        List<HaoSenOrganizationVO> allHospitalCondition = mainDataQueryMapper.findAllHospitalCondition(condition,needLimit);
 
         // 调用字段映射
         WebToExcel webToExcel = new WebToExcel();
@@ -120,7 +120,7 @@ public class HaoSenMainDataQueryServiceImpl implements HaoSenMainDataQueryServic
     @Override
     public ApiResponseDTO<byte[]> exportDrugStoreList(HaoSenDrugStoreConditionDTO condition) {
         boolean needLimit = MyBatisUtils.isAllBlank(condition); // 自己写个工具判空
-        List<HaoSenOrganization> allDrugStoreCondition = mainDataQueryMapper.findAllDrugStoreCondition(condition,needLimit);
+        List<HaoSenOrganizationVO> allDrugStoreCondition = mainDataQueryMapper.findAllDrugStoreCondition(condition,needLimit);
 
         // 调用字段映射
         WebToExcel webToExcel = new WebToExcel();
@@ -147,7 +147,7 @@ public class HaoSenMainDataQueryServiceImpl implements HaoSenMainDataQueryServic
     @Override
     public ApiResponseDTO<byte[]> exportCompanyData(HaoSenCompanyConditionDTO condition) {
         boolean needLimit = MyBatisUtils.isAllBlank(condition); // 自己写个工具判空
-        List<HaoSenOrganization> allCompanyCondition = mainDataQueryMapper.findAllCompanyCondition(condition, needLimit);
+        List<HaoSenOrganizationVO> allCompanyCondition = mainDataQueryMapper.findAllCompanyCondition(condition, needLimit);
         // 调用字段映射
         WebToExcel webToExcel = new WebToExcel();
         byte[] excelBytes = webToExcel.exportConditionToExcel(allCompanyCondition,"商业数据");

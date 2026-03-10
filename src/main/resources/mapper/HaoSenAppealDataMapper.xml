@@ -49,7 +49,7 @@
                                hos_data AS (
                                    SELECT
                                        b.batch_code, b.data_id, b.data_type, b.data_code, b.original_name,
-                                       c.original_province, c.original_address, c.company_name,a.add_time,
+                                       c.original_province, c.original_address, c.company_name,a.add_time,c.haosen_code,
                                        a.remarks AS appeal_remark,
                                        NULL::text AS solve_remark,
                                            '医院' AS institution_type,
@@ -90,12 +90,12 @@
                                             LEFT JOIN origin_data c ON b.data_id = c.data_id
                                             LEFT JOIN 豪森_行政区划表0928_对应关系 f ON b.area_id = f.豪森_对应区县id
                                             LEFT JOIN 豪森五级属性对应表0819 g ON b.class5 = g.类别名称5_枚举值
-                                   WHERE b.data_id IS NOT NULL AND b.status = 1
+                                   WHERE b.data_id IS NOT NULL AND b.status in ('1','3')
                                ),
                                drug_data AS (
                                    SELECT
                                        b.batch_code, b.data_id, b.data_type, b.data_code, b.original_name,
-                                       c.original_province, c.original_address, c.company_name,a.add_time,
+                                       c.original_province, c.original_address, c.company_name,a.add_time,c.haosen_code,
                                        a.remarks AS appeal_remark,
                                        NULL::text AS solve_remark,
                                            '药店' AS institution_type,
@@ -129,12 +129,12 @@
                                             LEFT JOIN base_org_drug_store b ON a.data_code = b.data_code
                                             LEFT JOIN origin_data c ON b.data_id = c.data_id
                                             LEFT JOIN 豪森_行政区划表0928_对应关系 f ON b.area_id = f.豪森_对应区县id
-                                   WHERE b.data_id IS NOT NULL AND b.status = 1
+                                   WHERE b.data_id IS NOT NULL AND b.status in ('1','3')
                                ),
                                company_data AS (
                                    SELECT
                                        b.batch_code, b.data_id, b.data_type, b.data_code, b.original_name,
-                                       c.original_province, c.original_address, c.company_name,a.add_time,
+                                       c.original_province, c.original_address, c.company_name,a.add_time,c.haosen_code,
                                        a.remarks AS appeal_remark,
                                        NULL::text AS solve_remark,
                                            '商业' AS institution_type,
@@ -160,11 +160,11 @@
                                             LEFT JOIN base_org_company b ON a.data_code = b.data_code
                                             LEFT JOIN origin_data c ON b.data_id = c.data_id
                                             LEFT JOIN 豪森_行政区划表0928_对应关系 f ON b.area_id = f.豪森_对应区县id
-                                   WHERE b.data_id IS NOT NULL AND b.status = 1
+                                   WHERE b.data_id IS NOT NULL AND b.status in ('1','3')
                                )
                           SELECT
                               batch_code, data_id, data_type, data_code, original_name,
-                              original_province, original_address, company_name,add_time,
+                              original_province, original_address, company_name,add_time,haosen_code,
                               appeal_remark, solve_remark, institution_type, keyid,
                               name, name_history, province, provinceid, city, cityid,
                               area, areaid, address, level, grade, publicflag,
@@ -177,7 +177,7 @@
                           UNION ALL
                           SELECT
                               batch_code, data_id, data_type, data_code, original_name,
-                              original_province, original_address, company_name,add_time,
+                              original_province, original_address, company_name,add_time,haosen_code,
                               appeal_remark, solve_remark, institution_type, keyid,
                               name, name_history, province, provinceid, city, cityid,
                               area, areaid, address, level, grade, publicflag,
@@ -190,7 +190,7 @@
                           UNION ALL
                           SELECT
                               batch_code, data_id, data_type, data_code, original_name,
-                              original_province, original_address, company_name,add_time,
+                              original_province, original_address, company_name,add_time,haosen_code,
                               appeal_remark, solve_remark, institution_type, keyid,
                               name, name_history, province, provinceid, city, cityid,
                               area, areaid, address, level, grade, publicflag,

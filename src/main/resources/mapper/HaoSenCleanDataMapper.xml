@@ -9,16 +9,16 @@
             <if test="condition.batchCode != null and condition.batchCode != ''">
                 AND a.batch_code LIKE CONCAT('%', #{condition.batchCode}, '%')
             </if>
-            <if test="condition.status != null and condition.status != ''">
+            <if test="condition.status != null ">
                 AND a.status = #{condition.status}
             </if>
-            <if test="condition.cleanStatus != null and condition.cleanStatus != ''">
+            <if test="condition.cleanStatus != null ">
                 AND a.clean_status = #{condition.cleanStatus}
             </if>
             <if test="condition.dataId != null and condition.dataId != ''">
                 AND b.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
             </if>
-            <if test="condition.dataType != null and condition.dataType != ''">
+            <if test="condition.dataType != null  and condition.dataType != ''">
                 AND b.data_type = #{condition.dataType}
             </if>
             <if test="condition.dataCode != null and condition.dataCode != ''">
@@ -28,7 +28,7 @@
                 AND b.original_name LIKE CONCAT('%', #{condition.originalName}, '%')
             </if>
             <if test="condition.originalProvince != null and condition.originalProvince != ''">
-                AND b.original_province = #{condition.originalProvince}
+                AND b.original_province  LIKE CONCAT('%', #{condition.originalProvince}, '%')
             </if>
             <if test="condition.haosenCode != null and condition.haosenCode != ''">
                 AND b.haosen_code LIKE CONCAT('%', #{condition.haosenCode}, '%')
@@ -36,7 +36,7 @@
         </where>
     </sql>
 
-    <select id="selectHaoSenCleanData" resultType="com.example.demo.entity.HaoSenCleanData">
+    <select id="selectHaoSenCleanData" resultType="com.example.demo.vo.HaoSenCleanDataVO">
 
         SELECT
         a.batch_code,

@@ -2,7 +2,6 @@
   <div class="appeal-data-view">
     <!-- 整合的搜索和数据区域 -->
     <div class="integrated-container">
-
       <!-- 搜索区域 -->
       <div class="fixed-search">
         <el-form :inline="true" :model="searchForm" class="search-form" @submit.prevent="handleSearch">
@@ -40,12 +39,12 @@
           <!-- 下半部分：操作按钮区域，靠右对齐 -->
           <div class="form-actions-wrapper">
             <div class="form-actions">
-              <el-button type="primary" size="small" @click="handleSearch" :loading="loading">查询</el-button>
-              <el-button @click="resetSearch" size="small">重置</el-button>
-              <el-button type="success" size="small" @click="toExcel" :loading="exporting">
+              <el-button size="small" type="primary" @click="handleSearch" :loading="loading">查询</el-button>
+              <el-button size="small" @click="resetSearch">重置</el-button>
+              <el-button size="small" type="success" @click="toExcel" :loading="exporting">
                 {{ exporting ? '导出中...' : '导出' }}
               </el-button>
-              <el-button-group  size="small" class="view-toggle">
+              <el-button-group size="small" class="view-toggle">
                 <el-button
                     :type="viewMode === 'table' ? 'primary' : 'default'"
                     size="small"
@@ -67,7 +66,6 @@
           </div>
         </el-form>
       </div>
-
       <!-- 数据区域 -->
       <div class="data-content">
         <div class="content-wrapper" v-loading="loading">
@@ -154,7 +152,7 @@
                           {{ appeal.name }}
                         </el-link>
                       </div>
-                      <div class="appeal-remark" v-if="appeal.appealRemark"  >
+                      <div class="appeal-remark" v-if="appeal.appealRemark">
                         <el-tag type="warning" size="small" effect="dark">申诉</el-tag>
                       </div>
                     </div>
@@ -269,7 +267,9 @@
               <el-form-item label="原始名称"><el-input v-model="currentAppealDetail.originalName" readonly /></el-form-item>
               <el-form-item label="原始编码"><el-input v-model="currentAppealDetail.dataCode" readonly /></el-form-item>
               <el-form-item label="原始省份"><el-input v-model="currentAppealDetail.originalProvince" readonly /></el-form-item>
+              <el-form-item label="原始地址"><el-input v-model="currentAppealDetail.originalAddress" readonly /></el-form-item>
               <el-form-item label="经销商"><el-input v-model="currentAppealDetail.companyName" readonly /></el-form-item>
+              <el-form-item label="豪森上传的编码"><el-input v-model="currentAppealDetail.haosenCode" readonly /></el-form-item>
               <el-form-item label="申诉原因"><el-input v-model="currentAppealDetail.appealRemark" readonly /></el-form-item>
             </el-col>
             <el-col :span="12">
@@ -348,14 +348,16 @@
         </el-form>
       </div>
     </el-dialog>
+
+
   </div>
 </template>
 
 <script setup>
-import {ref, reactive, onMounted} from 'vue'
-import {Grid, CopyDocument} from '@element-plus/icons-vue'
+import { ref, reactive, onMounted } from 'vue'
+import { Grid, CopyDocument } from '@element-plus/icons-vue'
 import axios from 'axios'
-import {ElMessage, ElMessageBox} from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 视图模式：table 或 card
 const viewMode = ref('table')
@@ -388,17 +390,17 @@ const searchForm = reactive({
 })
 
 const columns = ref([
-  {label: 'dataId', prop: 'dataId'},
-  {label: '原始编码', prop: 'dataCode'},
-  {label: '原始名称', prop: 'originalName'},
-  {label: 'keyId', prop: 'keyid'},
-  {label: '标准名称', prop: 'name'},
-  {label: '省份', prop: 'province'},
-  {label: '城市', prop: 'city'},
-  {label: '区县', prop: 'area'},
-  {label: '地址', prop: 'address'},
-  {label: '申诉原因', prop: 'appealRemark'},
-  {label: '操作', fixed: 'right', width: 140}
+  { label: 'dataId', prop: 'dataId' },
+  { label: '原始编码', prop: 'dataCode' },
+  { label: '原始名称', prop: 'originalName'},
+  { label: 'keyId', prop: 'keyid' },
+  { label: '标准名称', prop: 'name'},
+  { label: '省份', prop: 'province'},
+  { label: '城市', prop: 'city' },
+  { label: '区县', prop: 'area' },
+  { label: '地址', prop: 'address' },
+  { label: '申诉原因', prop: 'appealRemark' },
+  { label: '操作', fixed: 'right' , width: 140}
 ])
 
 const showDetailModal = ref(false)
@@ -410,59 +412,68 @@ const isSaving = ref(false)
 const isFinding = ref(false)
 
 const detailFields = {
-  batchCode: {label: '批次编号', value: a => a.batchCode, copy: true},
-  dataId: {label: 'dataId', value: a => a.dataId, copy: true},
-  dataType: {label: '数据类型', value: a => a.dataType === '1' ? '存量' : a.dataType === '2' ? '增量' : '未知'},
-  dataCode: {label: '原始数据编码', value: a => a.dataCode, copy: true},
-  originalName: {label: '原始数据名称', value: a => a.originalName, copy: true},
-  originalProvince: {label: '省份', value: a => a.originalProvince || a.province},
-  originalAddress: {label: '原始地址', value: a => a.originalAddress},
-  companyName: {label: '经销商', value: a => a.companyName},
-  appealRemark: {label: '申诉原因', value: a => a.appealRemark},
-  solveRemark: {label: '申诉解决', value: a => a.solveRemark},
-  institutionType: {label: '机构类型', value: a => a.institutionType || a.orgType},
-  keyid: {label: 'keyId', value: a => a.keyid, copy: true},
-  name: {label: '医院名称', value: a => a.name, copy: true},
-  nameHistory: {label: '历史名称', value: a => a.nameHistory},
-  province: {label: '省', value: a => a.province},
-  provinceId: {label: '省份ID', value: a => a.provinceid || a.provinceId},
-  city: {label: '市', value: a => a.city},
-  cityId: {label: '市ID', value: a => a.cityid || a.cityId},
-  area: {label: '区县', value: a => a.area},
-  areaId: {label: '区县ID', value: a => a.areaid || a.areaId},
-  address: {label: '地址', value: a => a.address},
-  level: {label: '等级', value: a => a.level},
-  grade: {label: '等次', value: a => a.grade},
-  publicflag: {label: '所有制', value: a => a.publicflag},
-  classify: {label: '类别', value: a => a.classify || a.class5},
-  generalBranchKid: {label: '总分院kid', value: a => a.generalBranchKid},
-  generalBranchName: {label: '总分院名称', value: a => a.generalBranchName},
+  batchCode: { label: '批次编号', value: a => a.batchCode, copy: true },
+  dataId: { label: 'dataId', value: a => a.dataId, copy: true },
+  dataType: { label: '数据类型', value: a => a.dataType === '1' ? '存量' : a.dataType === '2' ? '增量' : '未知' },
+  dataCode: { label: '原始数据编码', value: a => a.dataCode, copy: true },
+  originalName: { label: '原始数据名称', value: a => a.originalName, copy: true },
+  originalProvince: { label: '原始省份', value: a => a.originalProvince || a.province },
+  originalAddress: { label: '原始地址', value: a => a.originalAddress , copy: true },
+  companyName: { label: '经销商', value: a => a.companyName },
+  haosenCode: { label: '豪森上传的编码', value: a => a.haosenCode},
+  appealRemark: { label: '申诉原因', value: a => a.appealRemark },
+  solveRemark: { label: '申诉解决', value: a => a.solveRemark },
+  institutionType: { label: '机构类型', value: a => a.institutionType || a.orgType },
+  keyid: { label: 'keyId', value: a => a.keyid, copy: true },
+  name: { label: '医院名称', value: a => a.name, copy: true },
+  nameHistory: { label: '历史名称', value: a => a.nameHistory },
+  province: { label: '省', value: a => a.province },
+  provinceId: { label: '省份ID', value: a => a.provinceid || a.provinceId },
+  city: { label: '市', value: a => a.city },
+  cityId: { label: '市ID', value: a => a.cityid || a.cityId },
+  area: { label: '区县', value: a => a.area },
+  areaId: { label: '区县ID', value: a => a.areaid || a.areaId },
+  address: { label: '地址', value: a => a.address },
+  level: { label: '等级', value: a => a.level },
+  grade: { label: '等次', value: a => a.grade },
+  publicflag: { label: '所有制', value: a => a.publicflag },
+  classify: { label: '类别', value: a => a.classify || a.class5 },
+  generalBranchKid: { label: '总分院kid', value: a => a.generalBranchKid },
+  generalBranchName: { label: '总分院名称', value: a => a.generalBranchName },
   militaryHos: {
     label: '军队医院',
     value: a => a.militaryHos === '1' ? '是' : a.militaryHos === '0' ? '否' : ''
   },
-  regcode: {label: '登记号', value: a => a.regcode},
-  validity: {label: '有效期', value: a => a.validity},
-  subjects: {label: '诊疗科室', value: a => a.subjects},
-  legalperson: {label: '法人代表', value: a => a.legalperson},
-  usci: {label: '统一社会信用代码', value: a => a.usci},
-  operation: {label: '经营方式', value: a => a.operation},
-  scope: {label: '经营范围', value: a => a.scope},
-  mainBranchKid: {label: '总分店kid', value: a => a.mainBranchKid},
-  mainBranchName: {label: '总分店名称', value: a => a.mainBranchName},
-  createDate: {label: '成立时间', value: a => a.createDate},
-  registCapi: {label: '注册资金', value: a => a.registCapi},
-  econKind: {label: '企业类型', value: a => a.econKind},
-  signStatus: {label: '登记状态', value: a => a.signStatus},
-  industry: {label: '所属行业', value: a => a.industry},
-  belong: {label: '登记机关', value: a => a.belong}
+  regcode: { label: '登记号', value: a => a.regcode },
+  validity: { label: '有效期', value: a => a.validity },
+  subjects: { label: '诊疗科室', value: a => a.subjects },
+  legalperson: { label: '法人代表', value: a => a.legalperson },
+  usci: { label: '统一社会信用代码', value: a => a.usci },
+  operation: { label: '经营方式', value: a => a.operation },
+  scope: { label: '经营范围', value: a => a.scope },
+  mainBranchKid: { label: '总分店kid', value: a => a.mainBranchKid },
+  mainBranchName: { label: '总分店名称', value: a => a.mainBranchName },
+  createDate: { label: '成立时间', value: a => a.createDate },
+  registCapi: { label: '注册资金', value: a => a.registCapi },
+  econKind: { label: '企业类型', value: a => a.econKind },
+  signStatus: { label: '登记状态', value: a => a.signStatus },
+  industry: { label: '所属行业', value: a => a.industry },
+  belong: { label: '登记机关', value: a => a.belong }
 }
 
 const fetchAppealData = async () => {
   loading.value = true
   try {
-    const params = {pageNum: pageNumber.value, pageSize: pageSize.value, ...searchForm}
-    const {data} = await axios.get('/api/appealData/getAppealData', {params})
+
+    const params = {
+      pageNum: pageNumber.value,
+      pageSize: pageSize.value,
+      ...Object.fromEntries(
+          Object.entries(searchForm).filter(([_, value]) => value !== '' && value !== null && value !== undefined)
+      )
+    }
+
+    const { data } = await axios.get('/api/appealData/getAppealData', { params })
     if (data.code === 200) {
       Object.assign(appealData, data.data)
       pageNumber.value = data.data.pageNum
@@ -506,14 +517,19 @@ const toExcel = async () => {
   if (exporting.value) return
   exporting.value = true
   try {
-    const params = {...searchForm}
-    const {data: jsonBlob} = await axios.get('/api/appealData/exportAppealData', {params, responseType: 'blob'})
+
+    // 过滤空值参数
+    const params = Object.fromEntries(
+        Object.entries(searchForm).filter(([_, value]) => value !== '' && value !== null && value !== undefined)
+    )
+
+    const { data: jsonBlob } = await axios.get('/api/appealData/exportAppealData', { params, responseType: 'blob' })
     const jsonText = await jsonBlob.text()
-    const {data: base64} = JSON.parse(jsonText)
+    const { data: base64 } = JSON.parse(jsonText)
     const byteChars = atob(base64)
     const byteNums = new Uint8Array(byteChars.length)
     for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i)
-    const excelBlob = new Blob([byteNums], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
+    const excelBlob = new Blob([byteNums], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
     const url = URL.createObjectURL(excelBlob)
     const link = document.createElement('a')
     link.href = url
@@ -528,7 +544,7 @@ const toExcel = async () => {
 }
 
 const showDetail = (row) => {
-  currentAppeal.value = {...row}
+  currentAppeal.value = { ...row }
   showDetailModal.value = true
 }
 
@@ -548,7 +564,7 @@ const saveChanges = async () => {
   if (isSaving.value) return
   isSaving.value = true
   try {
-    const {data} = await axios.post('/api/appealData/handleAppealData', currentAppealDetail.value)
+    const { data } = await axios.post('/api/appealData/handleAppealData', currentAppealDetail.value)
     if (data.code === 200) {
       ElMessage.success('提交申诉成功')
       closeAppealModal()
@@ -571,7 +587,7 @@ const findDaKuData = async () => {
   }
   isFinding.value = true
   try {
-    const {data} = await axios.get('/api/updateData/findDaKuData', {params: {keyid: currentAppealDetail.value.keyid}})
+    const { data } = await axios.get('/api/updateData/findDaKuData', { params: { keyid: currentAppealDetail.value.keyid } })
     if (data.code === 200 && data.data != null) {
       // 先保存原始不可编辑字段
       const protectedFields = {
@@ -584,7 +600,8 @@ const findDaKuData = async () => {
         companyName: currentAppealDetail.value.companyName,
         appealRemark: currentAppealDetail.value.appealRemark,
         solveRemark: currentAppealDetail.value.solveRemark,
-        institutionType: currentAppealDetail.value.institutionType
+        institutionType: currentAppealDetail.value.institutionType,
+        haosenCode: currentAppealDetail.value.haosenCode,
       }
 
       // 更新其他字段
@@ -605,7 +622,7 @@ const findDaKuData = async () => {
 }
 
 const resetForm = () => {
-  ElMessageBox.confirm('确定要重置所有修改吗？重置后将恢复为原始数据。', '确认重置', {type: 'warning'})
+  ElMessageBox.confirm('确定要重置所有修改吗？重置后将恢复为原始数据。', '确认重置', { type: 'warning' })
       .then(() => {
         currentAppealDetail.value = JSON.parse(JSON.stringify(originalAppeal.value))
         ElMessage.success('已重置为原始数据')
@@ -671,6 +688,60 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
+/* 顶部操作区域 */
+.top-operation-area {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 18px 0;
+  background: #ffffff;
+  border-bottom: 1px solid #ebeef5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 6px 6px 0 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 搜索条件盒子 */
+.search-conditions-box {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+/* 操作按钮盒子 */
+.action-buttons-box {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.action-buttons-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+
+}
+
+.view-toggle {
+  margin-left: auto;
+}
+
+/* 搜索表单样式 */
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 8px;
+  align-items: end;
+}
+
+.search-form :deep(.el-form-item) {
+  margin-bottom: 0 !important;
+  flex: 1 1 180px;
+}
+
 /* 2K屏幕优化 */
 @media (min-width: 2000px) and (max-width: 2600px) {
   .appeal-data-view {
@@ -685,7 +756,9 @@ onMounted(() => {
   }
 }
 
+
 /* 搜索区域 - 现在在整合容器内 */
+
 .fixed-search {
   flex-shrink: 0;
   padding: 14px 18px 10px;
@@ -735,6 +808,7 @@ onMounted(() => {
 .view-toggle {
   margin-left: 8px;
 }
+
 
 
 /* 数据内容区域 */
@@ -840,7 +914,6 @@ onMounted(() => {
   min-width: 220px;
   text-align: center;
 }
-
 
 .no-data-container {
   height: 100%;
@@ -964,6 +1037,4 @@ onMounted(() => {
   padding: 0;
   overflow: hidden;
 }
-
-
 </style>

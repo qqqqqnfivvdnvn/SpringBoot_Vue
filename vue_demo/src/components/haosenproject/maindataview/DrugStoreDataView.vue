@@ -1,6 +1,6 @@
 <template>
   <div class="drugstore-data-view">
-
+    <!-- 整合的搜索和数据区域 -->
     <div class="integrated-container">
       <!-- 搜索区域 -->
       <div class="fixed-search">
@@ -69,7 +69,6 @@
           </div>
         </el-form>
       </div>
-
       <!-- 数据区域 -->
       <div class="data-content">
         <div class="content-wrapper" v-loading="loading">
@@ -277,7 +276,9 @@
               </el-form-item>
               <el-form-item label="原始编码"><el-input v-model="currentUpdateDrugStore.dataCode" readonly /></el-form-item>
               <el-form-item label="原始省份"><el-input v-model="currentUpdateDrugStore.originalProvince" readonly /></el-form-item>
+              <el-form-item label="原始地址"><el-input v-model="currentUpdateDrugStore.originalAddress" readonly /></el-form-item>
               <el-form-item label="经销商"><el-input v-model="currentUpdateDrugStore.companyName" readonly /></el-form-item>
+              <el-form-item label="豪森上传的编码"><el-input v-model="currentUpdateDrugStore.haosenCode" readonly /></el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="机构类型">
@@ -420,7 +421,9 @@ const detailFields = {
   dataCode: { label: '原始编码', value: d => d.dataCode, copy: true },
   originalName: { label: '原始名称', value: d => d.originalName, copy: true },
   originalProvince: { label: '原始省份', value: d => d.originalProvince },
+  originalAddress: { label: '原始地址', value: d => d.originalAddress , copy: true },
   companyName: { label: '经销商', value: d => d.companyName },
+  haosenCode: { label: '豪森上传的编码', value: d => d.haosenCode },
   keyid: { label: 'keyId', value: d => d.keyid, copy: true },
   dataType: { label: '数据类型', value: d => d.dataType === '1' ? '存量' : d.dataType === '2' ? '增量' : '未知' },
   hsCode: { label: '豪森清洗后编码', value: d => d.hsCode, copy: true },
@@ -459,6 +462,7 @@ const detailFields = {
   hosInside: { label: '院内店', value: d => d.hosInside },
   hosOutside: { label: '院边店', value: d => d.hosOutside },
   field1: { label: '经纬度', value: d => d.field1 },
+
   remarks: { label: '备注', value: d => d.remarks },
   addtime: { label: '添加日期', value: d => d.addtime },
   updatetime: { label: '更新日期', value: d => d.updatetime },
@@ -482,7 +486,13 @@ const getStatusType = (status) => {
 const fetchDrugStoreData = async () => {
   loading.value = true
   try {
-    const params = { pageNum: pageNumber.value, pageSize: pageSize.value, ...searchForm }
+    const params = {
+      pageNum: pageNumber.value,
+      pageSize: pageSize.value,
+      ...Object.fromEntries(
+          Object.entries(searchForm).filter(([_, value]) => value !== '' && value !== null && value !== undefined)
+      )
+    }
     const { data } = await axios.get('/api/mainData/getDrugStoreData', { params })
     if (data.code === 200) {
       Object.assign(drugstoreData, data.data)
@@ -527,7 +537,10 @@ const toExcel = async () => {
   if (exporting.value) return
   exporting.value = true
   try {
-    const params = { ...searchForm }
+    // 过滤空值参数
+    const params = Object.fromEntries(
+        Object.entries(searchForm).filter(([_, value]) => value !== '' && value !== null && value !== undefined)
+    )
     const { data: jsonBlob } = await axios.get('/api/mainData/exportDrugStoreData', { params, responseType: 'blob' })
     const jsonText = await jsonBlob.text()
     const { data: base64 } = JSON.parse(jsonText)
@@ -603,6 +616,7 @@ const findDaKuData = async () => {
         originalName: currentUpdateDrugStore.value.originalName,
         originalProvince: currentUpdateDrugStore.value.originalProvince,
         companyName: currentUpdateDrugStore.value.companyName,
+        haosenCode: currentUpdateDrugStore.value.haosenCode,
       }
 
       // 更新其他字段
@@ -685,6 +699,7 @@ onMounted(() => {
   margin: 8px;
   border: 1px solid #ebeef5;
   border-radius: 6px;
+  background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
@@ -753,8 +768,6 @@ onMounted(() => {
 .view-toggle {
   margin-left: 8px;
 }
-
-
 
 /* 数据内容区域 */
 .data-content {
@@ -862,7 +875,6 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-secondary, #ffffff);
 }
 
 .th-content {

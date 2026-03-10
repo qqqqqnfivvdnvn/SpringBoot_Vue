@@ -340,7 +340,7 @@ const toggleSidebar = () => {
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  background-color: #af96e6;
+ /* background-color: #af96e6;*/
   color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: fixed;
@@ -348,6 +348,10 @@ const toggleSidebar = () => {
   left: 0;
   right: 0;
   z-index: 1000;
+  background-image: url("@/assets/images/header.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .navbar-brand {

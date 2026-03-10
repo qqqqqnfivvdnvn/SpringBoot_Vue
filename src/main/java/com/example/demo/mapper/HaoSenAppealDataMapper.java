@@ -17,4 +17,7 @@ public interface HaoSenAppealDataMapper {
     public List<HaoSenAppealDataVO> getAppealData(@Param("condition") HaoSenAppealConditionDTO condition);
 
 
+
+
+
 }

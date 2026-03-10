@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ApiResponseDTO;
-import com.example.demo.entity.HaoSenOrganization;
+import com.example.demo.vo.HaoSenOrganizationVO;
 import com.example.demo.service.HaoSenMainDataQueryService;
 import com.example.demo.dto.HaoSenDrugStoreConditionDTO;
 import com.example.demo.dto.HaoSenHospitalConditionDTO;
@@ -26,12 +26,12 @@ public class HaoSenMainDataQueryController {
 
 
     @GetMapping("/getHospitalData")
-    public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganization>>> getHospital(
+    public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganizationVO>>> getHospital(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "20") int pageSize,
             HaoSenHospitalConditionDTO hospitalCondition) {
 
-        ApiResponseDTO<PageInfo<HaoSenOrganization>> result =
+        ApiResponseDTO<PageInfo<HaoSenOrganizationVO>> result =
                 mainDataQueryService.getHospitalList(hospitalCondition, pageNum, pageSize);
 
         return ResponseEntity.ok(result);
@@ -49,10 +49,10 @@ public class HaoSenMainDataQueryController {
 
 
     @GetMapping("/getDrugStoreData")
-    public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganization>>> getDrugStore( @RequestParam(defaultValue = "1") int pageNum,
-                                                                                      @RequestParam(defaultValue = "20") int pageSize,
-                                                                                      @ModelAttribute HaoSenDrugStoreConditionDTO drugStoreCondition) {
-        ApiResponseDTO<PageInfo<HaoSenOrganization>> drugStoreList = mainDataQueryService.getDrugStoreList(drugStoreCondition, pageNum,pageSize);
+    public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganizationVO>>> getDrugStore(@RequestParam(defaultValue = "1") int pageNum,
+                                                                                       @RequestParam(defaultValue = "20") int pageSize,
+                                                                                       @ModelAttribute HaoSenDrugStoreConditionDTO drugStoreCondition) {
+        ApiResponseDTO<PageInfo<HaoSenOrganizationVO>> drugStoreList = mainDataQueryService.getDrugStoreList(drugStoreCondition, pageNum,pageSize);
         return ResponseEntity.ok(drugStoreList);
 
     }
@@ -68,9 +68,9 @@ public class HaoSenMainDataQueryController {
 
 
     @GetMapping("/getCompanyData")
-    public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganization>>> getCompany(@RequestParam(defaultValue = "1") int pageNum,
-                                                                                   @RequestParam(defaultValue = "20") int pageSize,
-                                                                                   @ModelAttribute HaoSenCompanyConditionDTO companyCondition) {
+    public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganizationVO>>> getCompany(@RequestParam(defaultValue = "1") int pageNum,
+                                                                                     @RequestParam(defaultValue = "20") int pageSize,
+                                                                                     @ModelAttribute HaoSenCompanyConditionDTO companyCondition) {
 
 
         return ResponseEntity.ok(mainDataQueryService.getCompanyList(companyCondition, pageNum, pageSize));

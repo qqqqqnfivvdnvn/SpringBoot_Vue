@@ -6,8 +6,8 @@ import lombok.Data;
 public class HaoSenCleanConditionDTO {
 
     private String batchCode;
-    private String status;
-    private String cleanStatus;
+    private Integer status;
+    private Integer cleanStatus;
     private String dataId;
     private String dataType;
     private String dataCode;

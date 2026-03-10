@@ -4,7 +4,7 @@ package com.example.demo.service.impl;
 import com.example.demo.apidata.ApiHaosen;
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.dto.HaoSenFileMessageDTO;
-import com.example.demo.entity.HaoSenOrganization;
+import com.example.demo.vo.HaoSenOrganizationVO;
 import com.example.demo.mapper.HaoSenSqlMapper;
 import com.example.demo.service.HaoSenUpdateDataService;
 import com.example.demo.utils.HaoSenAppealExcelReader;
@@ -110,7 +110,7 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
 
     //更新医院信息，并通过接口推送
     @Override
-    public ApiResponseDTO<HaoSenFileMessageDTO> updateOneUpdateData(HaoSenOrganization haoSenOrganization) {
+    public ApiResponseDTO<HaoSenFileMessageDTO> updateOneUpdateData(HaoSenOrganizationVO haoSenOrganization) {
         //给HaoSenAppealDataVO 赋值 ,将 haoSenOrganization 对应的值赋值给HaoSenAppealDataVO
 
         HaoSenAppealDataVO haoSenUpdateDataVO = new HaoSenAppealDataVO();

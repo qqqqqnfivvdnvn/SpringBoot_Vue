@@ -2,12 +2,14 @@
   <div class="appeal-data-view">
     <!-- 整合的搜索和数据区域 -->
     <div class="integrated-container">
-
       <!-- 搜索区域 -->
       <div class="fixed-search">
         <el-form :inline="true" :model="searchForm" class="search-form" @submit.prevent="handleSearch">
           <!-- 上半部分：所有搜索条件 -->
           <div class="search-conditions">
+            <el-form-item label="批次编号">
+              <el-input v-model="searchForm.batchCode" placeholder="请输入批次编号" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
             <el-form-item label="原始编码">
               <el-input v-model="searchForm.dataCode" placeholder="请输入原始编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
             </el-form-item>
@@ -17,35 +19,44 @@
             <el-form-item label="DataId">
               <el-input v-model="searchForm.dataId" placeholder="请输入DataId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
             </el-form-item>
-            <el-form-item label="KeyId">
-              <el-input v-model="searchForm.keyid" placeholder="请输入KeyId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            <el-form-item label="原始省份">
+              <el-input v-model="searchForm.originalProvince" placeholder="请输入原始省份" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
             </el-form-item>
-            <el-form-item label="省份">
-              <el-input v-model="searchForm.province" placeholder="请输入省份" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            <el-form-item label="经销商">
+              <el-input v-model="searchForm.companyName" placeholder="请输入经销商" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
             </el-form-item>
-            <el-form-item label="市">
-              <el-input v-model="searchForm.city" placeholder="请输入市" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            <el-form-item label="豪森编码">
+              <el-input v-model="searchForm.haosenCode" placeholder="请输入豪森编码" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
             </el-form-item>
-            <el-form-item label="区县">
-              <el-input v-model="searchForm.area" placeholder="请输入区县" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            <el-form-item label="数据类型">
+              <el-select v-model="searchForm.dataType" placeholder="请选择数据类型" clearable @clear="handleSearch">
+                <el-option label="存量" value="1" />
+                <el-option label="增量" value="2" />
+              </el-select>
             </el-form-item>
-            <el-form-item label="输入名称">
-              <el-input v-model="searchForm.name" placeholder="请输入名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            <el-form-item label="清洗状态">
+              <el-select v-model="searchForm.status" placeholder="请选择清洗状态" clearable @clear="handleSearch">
+                <el-option label="待清洗" :value="1" />
+                <el-option label="已清洗" :value="2" />
+              </el-select>
             </el-form-item>
-            <el-form-item label="输入地址">
-              <el-input v-model="searchForm.address" placeholder="请输入地址" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            <el-form-item label="抽取状态">
+              <el-select v-model="searchForm.cleanStatus" placeholder="请选择抽取状态" clearable @clear="handleSearch">
+                <el-option label="待抽取" :value="0" />
+                <el-option label="已抽取" :value="1" />
+              </el-select>
             </el-form-item>
           </div>
 
           <!-- 下半部分：操作按钮区域，靠右对齐 -->
           <div class="form-actions-wrapper">
             <div class="form-actions">
-              <el-button type="primary" size="small" @click="handleSearch" :loading="loading">查询</el-button>
-              <el-button @click="resetSearch" size="small">重置</el-button>
-              <el-button type="success" size="small" @click="toExcel" :loading="exporting">
+              <el-button size="small" type="primary" @click="handleSearch" :loading="loading">查询</el-button>
+              <el-button size="small" @click="resetSearch">重置</el-button>
+              <el-button size="small" type="success" @click="toExcel" :loading="exporting">
                 {{ exporting ? '导出中...' : '导出' }}
               </el-button>
-              <el-button-group  size="small" class="view-toggle">
+              <el-button-group size="small" class="view-toggle">
                 <el-button
                     :type="viewMode === 'table' ? 'primary' : 'default'"
                     size="small"
@@ -67,15 +78,14 @@
           </div>
         </el-form>
       </div>
-
       <!-- 数据区域 -->
       <div class="data-content">
         <div class="content-wrapper" v-loading="loading">
           <!-- 表格视图 -->
           <div v-if="viewMode === 'table'" class="table-view">
             <el-table
-                v-if="appealData.list?.length"
-                :data="appealData.list"
+                v-if="cleanData.list?.length"
+                :data="cleanData.list"
                 height="100%"
                 stripe
                 border
@@ -98,38 +108,54 @@
                 </template>
                 <template #default="{ row }">
                   <template v-if="index === 0">
+                    <el-link type="primary" :underline="false" @click="copyText(row.batchCode)" :disabled="!row.batchCode">
+                      {{ row.batchCode }}
+                    </el-link>
+                  </template>
+                  <template v-else-if="index === 1">
                     <el-link type="primary" :underline="false" @click="copyText(row.dataId)" :disabled="!row.dataId">
                       {{ row.dataId }}
                     </el-link>
                   </template>
-                  <template v-else-if="index === 1">
+                  <template v-else-if="index === 2">
                     <el-link type="primary" :underline="false" @click="copyText(row.dataCode)">
                       {{ row.dataCode }}
                     </el-link>
                   </template>
-                  <template v-else-if="index === 2">
+
+                  <template v-else-if="index === 3">
+                    {{ row.dataType === '1' ? '存量' : row.dataType === '2' ? '增量' : '未知' }}
+                  </template>
+
+                  <template v-else-if="index === 4">{{ row.originalProvince }}</template>
+
+                  <template v-else-if="index === 5">
                     <el-link type="primary" :underline="false" @click="copyText(row.originalName)">
                       {{ row.originalName }}
                     </el-link>
                   </template>
-                  <template v-else-if="index === 3">
-                    <el-link type="primary" :underline="false" @click="copyText(row.keyid)">
-                      {{ row.keyid }}
-                    </el-link>
+
+                  <template v-else-if="index === 6">{{ row.originalAddress }}</template>
+
+                  <template v-else-if="index === 7">{{ row.companyName }}</template>
+
+
+                  <template v-else-if="index === 8">
+                    <el-tag :type="getStatusTagType(row.status)" size="small">
+                      {{ formatStatus(row.status) }}
+                    </el-tag>
                   </template>
-                  <template v-else-if="index === 4">
-                    <el-link type="primary" :underline="false" @click="copyText(row.name)">
-                      {{ row.name }}
-                    </el-link>
+
+
+                  <template v-else-if="index === 9">
+                    <el-tag :type="getCleanStatusTagType(row.cleanStatus)" size="small">
+                      {{ formatCleanStatus(row.cleanStatus) }}
+                    </el-tag>
                   </template>
-                  <template v-else-if="index === 5">{{ row.province }}</template>
-                  <template v-else-if="index === 6">{{ row.city }}</template>
-                  <template v-else-if="index === 7">{{ row.area }}</template>
-                  <template v-else-if="index === 8">{{ row.address }}</template>
-                  <template v-else-if="index === 9">{{ row.appealRemark }}</template>
+
                   <template v-else-if="index === 10">
                     <el-button type="success" size="small" @click="showDetail(row)">详情</el-button>
-                    <el-button type="primary" size="small" @click="appealDetail(row)">申诉</el-button>
+                    <el-button type="primary" size="small" :disabled="row.status !== 1" @click="cleanDetail(row)">清洗</el-button>
                   </template>
                 </template>
               </el-table-column>
@@ -143,36 +169,40 @@
 
           <!-- 卡片视图 -->
           <div v-else class="card-view">
-            <el-empty v-if="!appealData.list?.length" description="没有找到匹配的数据" :image-size="120" class="no-data-container" />
+            <el-empty v-if="!cleanData.list?.length" description="没有找到匹配的数据" :image-size="120" class="no-data-container" />
             <el-row :gutter="20" v-else>
-              <el-col v-for="appeal in appealData.list" :key="appeal.dataId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+              <el-col v-for="item in cleanData.list" :key="item.dataId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
                 <el-card class="appeal-card" shadow="hover">
                   <template #header>
                     <div class="card-header">
                       <div class="card-title">
-                        <el-link type="primary" :underline="false" @click="copyText(appeal.name)">
-                          {{ appeal.name }}
+                        <el-link type="primary" :underline="false" @click="copyText(item.originalName)">
+                          {{ item.originalName }}
                         </el-link>
                       </div>
-                      <div class="appeal-remark" v-if="appeal.appealRemark"  >
-                        <el-tag type="warning" size="small" effect="dark">申诉</el-tag>
+                      <div class="status-badges">
+                        <el-tag :type="getStatusTagType(item.status)" size="small" effect="dark">
+                          {{ formatStatus(item.status) }}
+                        </el-tag>
+                        <!--                        <el-tag :type="getCleanStatusTagType(item.cleanStatus)" size="small" effect="dark" style="margin-left: 4px;">-->
+                        <!--                          {{ formatCleanStatus(item.cleanStatus) }}-->
+                        <!--                        </el-tag>-->
                       </div>
                     </div>
                   </template>
                   <div class="card-body">
-                    <div class="card-item"><span class="label">dataId：</span><el-link type="primary" :underline="false" @click="copyText(appeal.dataId)">{{ appeal.dataId }}</el-link></div>
-                    <div class="card-item"><span class="label">原始编码：</span><el-link type="primary" :underline="false" @click="copyText(appeal.dataCode)">{{ appeal.dataCode }}</el-link></div>
-                    <div class="card-item"><span class="label">原始名称：</span><el-link type="primary" :underline="false" @click="copyText(appeal.originalName)">{{ appeal.originalName }}</el-link></div>
-                    <div class="card-item"><span class="label">keyId：</span><el-link type="primary" :underline="false" @click="copyText(appeal.keyid)">{{ appeal.keyid }}</el-link></div>
-                    <div class="card-item"><span class="label">省份：</span>{{ appeal.province }}</div>
-                    <div class="card-item"><span class="label">城市：</span>{{ appeal.city }}</div>
-                    <div class="card-item"><span class="label">区县：</span>{{ appeal.area }}</div>
-                    <div class="card-item"><span class="label">地址：</span>{{ appeal.address }}</div>
-                    <div class="card-item" v-if="appeal.appealRemark"><span class="label">申诉原因：</span>{{ appeal.appealRemark }}</div>
+                    <div class="card-item"><span class="label">批次编号：</span><el-link type="primary" :underline="false" @click="copyText(item.batchCode)">{{ item.batchCode }}</el-link></div>
+                    <div class="card-item"><span class="label">dataId：</span><el-link type="primary" :underline="false" @click="copyText(item.dataId)">{{ item.dataId }}</el-link></div>
+                    <div class="card-item"><span class="label">原始编码：</span><el-link type="primary" :underline="false" @click="copyText(item.dataCode)">{{ item.dataCode }}</el-link></div>
+                    <div class="card-item"><span class="label">数据类型：</span>{{ item.dataType === '1' ? '存量' : item.dataType === '2' ? '增量' : '未知' }}</div>
+                    <div class="card-item"><span class="label">原始省份：</span>{{ item.originalProvince }}</div>
+                    <div class="card-item"><span class="label">原始地址：</span>{{ item.originalAddress }}</div>
+                    <div class="card-item"><span class="label">经销商：</span>{{ item.companyName }}</div>
+                    <div class="card-item"><span class="label">添加时间：</span>{{ formatDateTime(item.addTime) }}</div>
                   </div>
                   <div class="card-footer">
-                    <el-button type="success" size="small" @click="showDetail(appeal)">详情</el-button>
-                    <el-button type="primary" size="small" @click="appealDetail(appeal)">申诉</el-button>
+                    <el-button type="success" size="small" @click="showDetail(item)">详情</el-button>
+                    <el-button type="primary" size="small" :disabled="item.status !== 1" @click="cleanDetail(item)">清洗</el-button>
                   </div>
                 </el-card>
               </el-col>
@@ -181,15 +211,15 @@
         </div>
 
         <!-- 分页 -->
-        <div class="fixed-pagination" v-if="appealData.list?.length">
+        <div class="fixed-pagination" v-if="cleanData.list?.length">
           <div class="pagination-content">
-            <el-button size="small" plain :disabled="!appealData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchAppealData())">
+            <el-button size="small" plain :disabled="!cleanData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchCleanData())">
               上一页
             </el-button>
             <span class="page-info">
-              第 {{ appealData.pageNum }} 页 / 共 {{ appealData.pages }} 页 (共 {{ appealData.total }} 条)
+              第 {{ cleanData.pageNum }} 页 / 共 {{ cleanData.pages }} 页 (共 {{ cleanData.total }} 条)
             </span>
-            <el-button size="small" plain :disabled="!appealData.hasNextPage" @click="pageNumber < appealData.pages && (pageNumber++, fetchAppealData())">
+            <el-button size="small" plain :disabled="!cleanData.hasNextPage" @click="pageNumber < cleanData.pages && (pageNumber++, fetchCleanData())">
               下一页
             </el-button>
             <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
@@ -203,9 +233,9 @@
     </div>
 
     <!-- 详情弹窗 -->
-    <el-dialog v-model="showDetailModal" title="申诉详情" width="500px" destroy-on-close>
+    <el-dialog v-model="showDetailModal" title="数据详情" width="500px" destroy-on-close>
       <template #title>
-        <div class="custom-dialog-title">申诉详情</div>
+        <div class="custom-dialog-title">数据详情</div>
       </template>
 
       <div class="detail-container">
@@ -213,12 +243,12 @@
           <label>{{ item.label }}：</label>
           <span>
             <template v-if="item.copy">
-              <el-link type="primary" :underline="false" @click="copyText(item.value(currentAppeal))">
-                {{ item.value(currentAppeal) }}
+              <el-link type="primary" :underline="false" @click="copyText(item.value(currentCleanItem))">
+                {{ item.value(currentCleanItem) }}
               </el-link>
             </template>
             <template v-else>
-              {{ item.value(currentAppeal) }}
+              {{ item.value(currentCleanItem) }}
             </template>
           </span>
         </div>
@@ -229,9 +259,9 @@
       </template>
     </el-dialog>
 
-    <!-- 申诉处理弹窗 -->
+    <!-- 清洗处理弹窗 -->
     <el-dialog
-        v-model="appealDetailModal"
+        v-model="cleanDetailModal"
         width="70%"
         :max-width="1400"
         :close-on-click-modal="false"
@@ -239,7 +269,7 @@
         class="update-dialog"
     >
       <template #title>
-        <div class="custom-dialog-title">申诉处理</div>
+        <div class="custom-dialog-title">数据清洗</div>
       </template>
 
       <!-- 顶部固定操作栏 -->
@@ -250,49 +280,50 @@
             {{ isFinding ? '匹配中...' : '匹配大库' }}
           </el-button>
           <el-button type="primary" :loading="isSaving" @click="saveChanges">
-            {{ isSaving ? '推送中...' : '提交推送' }}
+            {{ isSaving ? '保存中...' : '保存清洗' }}
           </el-button>
-          <el-button @click="closeAppealModal">取消</el-button>
+          <el-button @click="closeCleanModal">取消</el-button>
         </div>
       </div>
 
       <!-- 可上下滚动的表单内容区 -->
       <div class="dialog-scroll-body">
-        <el-form :model="currentAppealDetail" label-width="140px">
+        <el-form :model="currentCleanDetail" label-width="140px">
           <el-row :gutter="30">
             <el-col :span="12">
-              <el-form-item label="批次编号"><el-input v-model="currentAppealDetail.batchCode" readonly /></el-form-item>
-              <el-form-item label="dataId"><el-input v-model="currentAppealDetail.dataId" readonly /></el-form-item>
+              <el-form-item label="批次编号"><el-input v-model="currentCleanDetail.batchCode" readonly /></el-form-item>
+              <el-form-item label="dataId"><el-input v-model="currentCleanDetail.dataId" readonly /></el-form-item>
               <el-form-item label="数据类型">
-                <el-input :value="currentAppealDetail.dataType === '1' ? '存量' : currentAppealDetail.dataType === '2' ? '增量' : '未知'" readonly />
+                <el-input :value="currentCleanDetail.dataType === '1' ? '存量' : currentCleanDetail.dataType === '2' ? '增量' : '未知'" readonly />
               </el-form-item>
-              <el-form-item label="原始名称"><el-input v-model="currentAppealDetail.originalName" readonly /></el-form-item>
-              <el-form-item label="原始编码"><el-input v-model="currentAppealDetail.dataCode" readonly /></el-form-item>
-              <el-form-item label="原始省份"><el-input v-model="currentAppealDetail.originalProvince" readonly /></el-form-item>
-              <el-form-item label="经销商"><el-input v-model="currentAppealDetail.companyName" readonly /></el-form-item>
-              <el-form-item label="申诉原因"><el-input v-model="currentAppealDetail.appealRemark" readonly /></el-form-item>
+              <el-form-item label="原始名称"><el-input v-model="currentCleanDetail.originalName" readonly /></el-form-item>
+              <el-form-item label="原始编码"><el-input v-model="currentCleanDetail.dataCode" readonly /></el-form-item>
+              <el-form-item label="原始省份"><el-input v-model="currentCleanDetail.originalProvince" readonly /></el-form-item>
+              <el-form-item label="原始地址"><el-input v-model="currentCleanDetail.originalAddress" readonly /></el-form-item>
+              <el-form-item label="经销商"><el-input v-model="currentCleanDetail.companyName" readonly /></el-form-item>
+              <el-form-item label="豪森编码"><el-input v-model="currentCleanDetail.haosenCode" readonly /></el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="申诉解决"><el-input v-model="currentAppealDetail.solveRemark" /></el-form-item>
+              <el-form-item label="清洗备注"><el-input v-model="currentCleanDetail.cleanRemark"  /></el-form-item>
               <el-form-item label="机构类型">
-                <el-select v-model="currentAppealDetail.institutionType">
+                <el-select v-model="currentCleanDetail.institutionType">
                   <el-option label="医院" value="医院" />
                   <el-option label="药店" value="药店" />
                   <el-option label="商业" value="商业" />
                 </el-select>
               </el-form-item>
-              <el-form-item label="keyId"><el-input v-model="currentAppealDetail.keyid" /></el-form-item>
-              <el-form-item label="标准名称"><el-input v-model="currentAppealDetail.name" /></el-form-item>
-              <el-form-item label="历史名称"><el-input v-model="currentAppealDetail.nameHistory" /></el-form-item>
-              <el-form-item label="省"><el-input v-model="currentAppealDetail.province" /></el-form-item>
-              <el-form-item label="省ID"><el-input v-model="currentAppealDetail.provinceid" /></el-form-item>
-              <el-form-item label="市"><el-input v-model="currentAppealDetail.city" /></el-form-item>
-              <el-form-item label="市ID"><el-input v-model="currentAppealDetail.cityid" /></el-form-item>
-              <el-form-item label="区县"><el-input v-model="currentAppealDetail.area" /></el-form-item>
-              <el-form-item label="区县ID"><el-input v-model="currentAppealDetail.areaid" /></el-form-item>
-              <el-form-item label="地址"><el-input v-model="currentAppealDetail.address" /></el-form-item>
+              <el-form-item label="keyId"><el-input v-model="currentCleanDetail.keyid"   /></el-form-item>
+              <el-form-item label="标准名称"><el-input v-model="currentCleanDetail.name"   /></el-form-item>
+              <el-form-item label="历史名称"><el-input v-model="currentCleanDetail.nameHistory"   /></el-form-item>
+              <el-form-item label="省"><el-input v-model="currentCleanDetail.province"   /></el-form-item>
+              <el-form-item label="省ID"><el-input v-model="currentCleanDetail.provinceid"  /></el-form-item>
+              <el-form-item label="市"><el-input v-model="currentCleanDetail.city"   /></el-form-item>
+              <el-form-item label="市ID"><el-input v-model="currentCleanDetail.cityid"   /></el-form-item>
+              <el-form-item label="区县"><el-input v-model="currentCleanDetail.area"  /></el-form-item>
+              <el-form-item label="区县ID"><el-input v-model="currentCleanDetail.areaid"   /></el-form-item>
+              <el-form-item label="地址"><el-input v-model="currentCleanDetail.address" /></el-form-item>
               <el-form-item label="等级">
-                <el-select v-model="currentAppealDetail.level">
+                <el-select v-model="currentCleanDetail.level">
                   <el-option label="未定级" value="未定级" />
                   <el-option label="一级" value="一级" />
                   <el-option label="二级" value="二级" />
@@ -300,7 +331,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="等次">
-                <el-select v-model="currentAppealDetail.grade">
+                <el-select v-model="currentCleanDetail.grade">
                   <el-option label="未定等" value="未定等" />
                   <el-option label="甲等" value="甲等" />
                   <el-option label="乙等" value="乙等" />
@@ -308,41 +339,41 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="所有制">
-                <el-select v-model="currentAppealDetail.publicflag">
+                <el-select v-model="currentCleanDetail.publicflag">
                   <el-option label="公立" value="公立" />
                   <el-option label="民营" value="民营" />
                 </el-select>
               </el-form-item>
-              <el-form-item label="类别"><el-input v-model="currentAppealDetail.classify" /></el-form-item>
-              <el-form-item label="总分院kid"><el-input v-model="currentAppealDetail.generalBranchKid" /></el-form-item>
-              <el-form-item label="总分院名称"><el-input v-model="currentAppealDetail.generalBranchName" /></el-form-item>
+              <el-form-item label="类别"><el-input v-model="currentCleanDetail.classify"   /></el-form-item>
+              <el-form-item label="总分院kid"><el-input v-model="currentCleanDetail.generalBranchKid"   /></el-form-item>
+              <el-form-item label="总分院名称"><el-input v-model="currentCleanDetail.generalBranchName"   /></el-form-item>
               <el-form-item label="是否军队医院">
-                <el-select v-model="currentAppealDetail.militaryHos">
+                <el-select v-model="currentCleanDetail.militaryHos">
                   <el-option label="是" value="1" />
                   <el-option label="否" value="0" />
                 </el-select>
               </el-form-item>
-              <el-form-item label="登记号"><el-input v-model="currentAppealDetail.regcode" /></el-form-item>
-              <el-form-item label="有效期"><el-input v-model="currentAppealDetail.validity" /></el-form-item>
-              <el-form-item label="诊疗科室"><el-input v-model="currentAppealDetail.subjects" /></el-form-item>
-              <el-form-item label="法人代表"><el-input v-model="currentAppealDetail.legalperson" /></el-form-item>
-              <el-form-item label="统一社会信用代码"><el-input v-model="currentAppealDetail.usci" /></el-form-item>
+              <el-form-item label="登记号"><el-input v-model="currentCleanDetail.regcode"   /></el-form-item>
+              <el-form-item label="有效期"><el-input v-model="currentCleanDetail.validity"  /></el-form-item>
+              <el-form-item label="诊疗科室"><el-input v-model="currentCleanDetail.subjects"   /></el-form-item>
+              <el-form-item label="法人代表"><el-input v-model="currentCleanDetail.legalperson"  /></el-form-item>
+              <el-form-item label="统一社会信用代码"><el-input v-model="currentCleanDetail.usci"  /></el-form-item>
               <el-form-item label="经营方式">
-                <el-select v-model="currentAppealDetail.operation">
+                <el-select v-model="currentCleanDetail.operation">
                   <el-option label="零售" value="零售" />
                   <el-option label="批发" value="批发" />
                   <el-option label="连锁" value="连锁" />
                 </el-select>
               </el-form-item>
-              <el-form-item label="经营范围"><el-input v-model="currentAppealDetail.scope" /></el-form-item>
-              <el-form-item label="总分店kid"><el-input v-model="currentAppealDetail.mainBranchKid" /></el-form-item>
-              <el-form-item label="总分店名称"><el-input v-model="currentAppealDetail.mainBranchName" /></el-form-item>
-              <el-form-item label="成立日期"><el-input v-model="currentAppealDetail.createDate" /></el-form-item>
-              <el-form-item label="注册资金"><el-input v-model="currentAppealDetail.registCapi" /></el-form-item>
-              <el-form-item label="企业类型"><el-input v-model="currentAppealDetail.econKind" /></el-form-item>
-              <el-form-item label="登记状态"><el-input v-model="currentAppealDetail.signStatus" /></el-form-item>
-              <el-form-item label="所属行业"><el-input v-model="currentAppealDetail.industry" /></el-form-item>
-              <el-form-item label="登记机关"><el-input v-model="currentAppealDetail.belong" /></el-form-item>
+              <el-form-item label="经营范围"><el-input v-model="currentCleanDetail.scope" /></el-form-item>
+              <el-form-item label="总分店kid"><el-input v-model="currentCleanDetail.mainBranchKid"  /></el-form-item>
+              <el-form-item label="总分店名称"><el-input v-model="currentCleanDetail.mainBranchName"  /></el-form-item>
+              <el-form-item label="成立日期"><el-input v-model="currentCleanDetail.createDate"   /></el-form-item>
+              <el-form-item label="注册资金"><el-input v-model="currentCleanDetail.registCapi"   /></el-form-item>
+              <el-form-item label="企业类型"><el-input v-model="currentCleanDetail.econKind"   /></el-form-item>
+              <el-form-item label="登记状态"><el-input v-model="currentCleanDetail.signStatus"    /></el-form-item>
+              <el-form-item label="所属行业"><el-input v-model="currentCleanDetail.industry"   /></el-form-item>
+              <el-form-item label="登记机关"><el-input v-model="currentCleanDetail.belong"  /></el-form-item>
             </el-col>
           </el-row>
         </el-form>
@@ -352,15 +383,15 @@
 </template>
 
 <script setup>
-import {ref, reactive, onMounted} from 'vue'
-import {Grid, CopyDocument} from '@element-plus/icons-vue'
+import { ref, reactive, onMounted } from 'vue'
+import { Grid, CopyDocument } from '@element-plus/icons-vue'
 import axios from 'axios'
-import {ElMessage, ElMessageBox} from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 视图模式：table 或 card
 const viewMode = ref('table')
 
-const appealData = reactive({
+const cleanData = reactive({
   list: [],
   total: 0,
   pages: 0,
@@ -375,101 +406,135 @@ const pageSize = ref(20)
 const pageNumber = ref(1)
 
 const searchForm = reactive({
+  batchCode: '',
   dataCode: '',
   originalName: '',
   dataId: '',
-  keyid: '',
-  hsCode: '',
-  province: '',
-  city: '',
-  area: '',
-  name: '',
-  address: ''
+  originalProvince: '',
+  companyName: '',
+  haosenCode: '',
+  dataType: '',
+  status: '',
+  cleanStatus: ''
 })
 
 const columns = ref([
-  {label: 'dataId', prop: 'dataId'},
-  {label: '原始编码', prop: 'dataCode'},
-  {label: '原始名称', prop: 'originalName'},
-  {label: 'keyId', prop: 'keyid'},
-  {label: '标准名称', prop: 'name'},
-  {label: '省份', prop: 'province'},
-  {label: '城市', prop: 'city'},
-  {label: '区县', prop: 'area'},
-  {label: '地址', prop: 'address'},
-  {label: '申诉原因', prop: 'appealRemark'},
-  {label: '操作', fixed: 'right', width: 140}
+  { label: '批次编号', prop: 'batchCode'  },
+  { label: 'dataId', prop: 'dataId' },
+  { label: '原始编码', prop: 'dataCode' },
+  { label: '数据类型', prop: 'dataType'  },
+  { label: '原始省份', prop: 'originalProvince' },
+  { label: '原始名称', prop: 'originalName' },
+  { label: '原始地址', prop: 'originalAddress'  },
+  { label: '经销商', prop: 'companyName' },
+  { label: '清洗状态', prop: 'status'  },
+  { label: '抽取状态', prop: 'cleanStatus' },
+  { label: '操作', fixed: 'right', width: 140 }
 ])
 
 const showDetailModal = ref(false)
-const appealDetailModal = ref(false)
-const currentAppeal = ref({})
-const originalAppeal = ref({})
-const currentAppealDetail = ref({})
+const cleanDetailModal = ref(false)
+const currentCleanItem = ref({})
+const originalCleanItem = ref({})
+const currentCleanDetail = ref({})
 const isSaving = ref(false)
 const isFinding = ref(false)
 
 const detailFields = {
-  batchCode: {label: '批次编号', value: a => a.batchCode, copy: true},
-  dataId: {label: 'dataId', value: a => a.dataId, copy: true},
-  dataType: {label: '数据类型', value: a => a.dataType === '1' ? '存量' : a.dataType === '2' ? '增量' : '未知'},
-  dataCode: {label: '原始数据编码', value: a => a.dataCode, copy: true},
-  originalName: {label: '原始数据名称', value: a => a.originalName, copy: true},
-  originalProvince: {label: '省份', value: a => a.originalProvince || a.province},
-  originalAddress: {label: '原始地址', value: a => a.originalAddress},
-  companyName: {label: '经销商', value: a => a.companyName},
-  appealRemark: {label: '申诉原因', value: a => a.appealRemark},
-  solveRemark: {label: '申诉解决', value: a => a.solveRemark},
-  institutionType: {label: '机构类型', value: a => a.institutionType || a.orgType},
-  keyid: {label: 'keyId', value: a => a.keyid, copy: true},
-  name: {label: '医院名称', value: a => a.name, copy: true},
-  nameHistory: {label: '历史名称', value: a => a.nameHistory},
-  province: {label: '省', value: a => a.province},
-  provinceId: {label: '省份ID', value: a => a.provinceid || a.provinceId},
-  city: {label: '市', value: a => a.city},
-  cityId: {label: '市ID', value: a => a.cityid || a.cityId},
-  area: {label: '区县', value: a => a.area},
-  areaId: {label: '区县ID', value: a => a.areaid || a.areaId},
-  address: {label: '地址', value: a => a.address},
-  level: {label: '等级', value: a => a.level},
-  grade: {label: '等次', value: a => a.grade},
-  publicflag: {label: '所有制', value: a => a.publicflag},
-  classify: {label: '类别', value: a => a.classify || a.class5},
-  generalBranchKid: {label: '总分院kid', value: a => a.generalBranchKid},
-  generalBranchName: {label: '总分院名称', value: a => a.generalBranchName},
-  militaryHos: {
-    label: '军队医院',
-    value: a => a.militaryHos === '1' ? '是' : a.militaryHos === '0' ? '否' : ''
-  },
-  regcode: {label: '登记号', value: a => a.regcode},
-  validity: {label: '有效期', value: a => a.validity},
-  subjects: {label: '诊疗科室', value: a => a.subjects},
-  legalperson: {label: '法人代表', value: a => a.legalperson},
-  usci: {label: '统一社会信用代码', value: a => a.usci},
-  operation: {label: '经营方式', value: a => a.operation},
-  scope: {label: '经营范围', value: a => a.scope},
-  mainBranchKid: {label: '总分店kid', value: a => a.mainBranchKid},
-  mainBranchName: {label: '总分店名称', value: a => a.mainBranchName},
-  createDate: {label: '成立时间', value: a => a.createDate},
-  registCapi: {label: '注册资金', value: a => a.registCapi},
-  econKind: {label: '企业类型', value: a => a.econKind},
-  signStatus: {label: '登记状态', value: a => a.signStatus},
-  industry: {label: '所属行业', value: a => a.industry},
-  belong: {label: '登记机关', value: a => a.belong}
+  batchCode: { label: '批次编号', value: a => a.batchCode, copy: true },
+  dataId: { label: 'dataId', value: a => a.dataId, copy: true },
+  dataType: { label: '数据类型', value: a => a.dataType === '1' ? '存量' : a.dataType === '2' ? '增量' : '' },
+  dataCode: { label: '原始编码', value: a => a.dataCode, copy: true },
+  originalName: { label: '原始名称', value: a => a.originalName, copy: true },
+  originalProvince: { label: '原始省份', value: a => a.originalProvince },
+  originalAddress: { label: '原始地址', value: a => a.originalAddress  },
+  companyName: { label: '经销商', value: a => a.companyName },
+  haosenCode: { label: '豪森编码', value: a => a.haosenCode  },
+  status: { label: '清洗状态', value: a => formatStatus(a.status) },
+  cleanStatus: { label: '抽取状态', value: a => formatCleanStatus(a.cleanStatus) },
+  addTime: { label: '添加时间', value: a => formatDateTime(a.addTime) }
 }
 
-const fetchAppealData = async () => {
+// 格式化状态显示
+const formatStatus = (status) => {
+  switch (status) {
+    case 1: return '待清洗'
+    case 2: return '已清洗'
+
+  }
+}
+
+
+const formatCleanStatus = (cleanStatus) => {
+  switch (cleanStatus) {
+    case 0: return '待抽取'
+    case 1: return '已抽取'
+
+  }
+}
+
+// 获取状态标签类型
+const getStatusTagType = (status) => {
+  switch (status) {
+    case 0: return 'info'      // 待推送 - 灰色
+    case 1: return 'warning'   // 推送中 - 黄色
+    case 2: return 'success'   // 已推送 - 绿色
+    case 3: return 'danger'    // 推送失败 - 红色
+    default: return ''
+  }
+}
+
+const getCleanStatusTagType = (cleanStatus) => {
+  switch (cleanStatus) {
+    case 0: return 'info'      // 未清洗 - 灰色
+    case 1: return 'warning'   // 清洗中 - 黄色
+    case 2: return 'success'   // 已清洗 - 绿色
+    case 3: return 'danger'    // 清洗失败 - 红色
+    default: return ''
+  }
+}
+
+// 格式化日期时间
+const formatDateTime = (dateTime) => {
+  if (!dateTime) return ''
+  try {
+    const date = new Date(dateTime)
+    return date.toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).replace(/\//g, '-')
+  } catch {
+    return dateTime
+  }
+}
+
+const fetchCleanData = async () => {
   loading.value = true
   try {
-    const params = {pageNum: pageNumber.value, pageSize: pageSize.value, ...searchForm}
-    const {data} = await axios.get('/api/appealData/getAppealData', {params})
+    // 构建查询参数，过滤空值
+    const params = {
+      pageNum: pageNumber.value,
+      pageSize: pageSize.value,
+      ...Object.fromEntries(
+          Object.entries(searchForm).filter(([_, value]) => value !== '' && value !== null && value !== undefined)
+      )
+    }
+
+    const { data } = await axios.get('/api/cleanData/selectCleanData', { params })
+
     if (data.code === 200) {
-      Object.assign(appealData, data.data)
+      Object.assign(cleanData, data.data)
       pageNumber.value = data.data.pageNum
     } else {
       ElMessage.error(data.msg || '获取数据失败')
     }
-  } catch {
+  } catch (error) {
+    console.error('获取数据失败:', error)
     ElMessage.error('网络请求异常')
   } finally {
     loading.value = false
@@ -478,18 +543,18 @@ const fetchAppealData = async () => {
 
 const handleSearch = () => {
   pageNumber.value = 1
-  fetchAppealData()
+  fetchCleanData()
 }
 
 const resetSearch = () => {
   Object.keys(searchForm).forEach(key => (searchForm[key] = ''))
   pageNumber.value = 1
-  fetchAppealData()
+  fetchCleanData()
 }
 
 const handlePageSizeChange = () => {
   pageNumber.value = 1
-  fetchAppealData()
+  fetchCleanData()
 }
 
 const copyText = async (text) => {
@@ -506,21 +571,26 @@ const toExcel = async () => {
   if (exporting.value) return
   exporting.value = true
   try {
-    const params = {...searchForm}
-    const {data: jsonBlob} = await axios.get('/api/appealData/exportAppealData', {params, responseType: 'blob'})
+
+    // 过滤空值参数
+    const params = Object.fromEntries(
+        Object.entries(searchForm).filter(([_, value]) => value !== '' && value !== null && value !== undefined)
+    )
+    const { data: jsonBlob } = await axios.get('/api/cleanData/exportCleanData', { params, responseType: 'blob' })
     const jsonText = await jsonBlob.text()
-    const {data: base64} = JSON.parse(jsonText)
+    const { data: base64 } = JSON.parse(jsonText)
     const byteChars = atob(base64)
     const byteNums = new Uint8Array(byteChars.length)
     for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i)
-    const excelBlob = new Blob([byteNums], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
+    const excelBlob = new Blob([byteNums], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
     const url = URL.createObjectURL(excelBlob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `豪森申诉数据_${new Date().toLocaleDateString()}.xlsx`
+    link.download = `清洗数据_${new Date().toLocaleDateString()}.xlsx`
     link.click()
     URL.revokeObjectURL(url)
-  } catch {
+  } catch (error) {
+    console.error('导出失败:', error)
     ElMessage.error('导出失败')
   } finally {
     exporting.value = false
@@ -528,35 +598,36 @@ const toExcel = async () => {
 }
 
 const showDetail = (row) => {
-  currentAppeal.value = {...row}
+  currentCleanItem.value = { ...row }
   showDetailModal.value = true
 }
 
-const appealDetail = (row) => {
-  originalAppeal.value = JSON.parse(JSON.stringify(row))
-  currentAppealDetail.value = JSON.parse(JSON.stringify(row))
-  appealDetailModal.value = true
+const cleanDetail = (row) => {
+  originalCleanItem.value = JSON.parse(JSON.stringify(row))
+  currentCleanDetail.value = JSON.parse(JSON.stringify(row))
+  cleanDetailModal.value = true
 }
 
-const closeAppealModal = () => {
-  appealDetailModal.value = false
-  currentAppealDetail.value = {}
-  originalAppeal.value = {}
+const closeCleanModal = () => {
+  cleanDetailModal.value = false
+  currentCleanDetail.value = {}
+  originalCleanItem.value = {}
 }
 
 const saveChanges = async () => {
   if (isSaving.value) return
   isSaving.value = true
   try {
-    const {data} = await axios.post('/api/appealData/handleAppealData', currentAppealDetail.value)
+    const { data } = await axios.post('/api/cleanData/handleCleanData', currentCleanDetail.value)
     if (data.code === 200) {
-      ElMessage.success('提交申诉成功')
-      closeAppealModal()
-      fetchAppealData()
+      ElMessage.success('保存清洗成功')
+      closeCleanModal()
+      fetchCleanData()
     } else {
-      ElMessage.error(data.msg || '提交失败')
+      ElMessage.error(data.msg || '保存失败')
     }
-  } catch {
+  } catch (error) {
+    console.error('保存失败:', error)
     ElMessage.error('网络异常')
   } finally {
     isSaving.value = false
@@ -565,39 +636,40 @@ const saveChanges = async () => {
 
 const findDaKuData = async () => {
   if (isFinding.value) return
-  if (!currentAppealDetail.value.keyid) {
+  if (!currentCleanDetail.value.keyid) {
     ElMessage.warning('请先输入keyid')
     return
   }
   isFinding.value = true
   try {
-    const {data} = await axios.get('/api/updateData/findDaKuData', {params: {keyid: currentAppealDetail.value.keyid}})
+    const { data } = await axios.get('/api/updateData/findDaKuData', { params: { keyid: currentCleanDetail.value.keyid } })
     if (data.code === 200 && data.data != null) {
       // 先保存原始不可编辑字段
       const protectedFields = {
-        batchCode: currentAppealDetail.value.batchCode,
-        dataId: currentAppealDetail.value.dataId,
-        dataType: currentAppealDetail.value.dataType,
-        dataCode: currentAppealDetail.value.dataCode,
-        originalName: currentAppealDetail.value.originalName,
-        originalProvince: currentAppealDetail.value.originalProvince,
-        companyName: currentAppealDetail.value.companyName,
-        appealRemark: currentAppealDetail.value.appealRemark,
-        solveRemark: currentAppealDetail.value.solveRemark,
-        institutionType: currentAppealDetail.value.institutionType
+        batchCode: currentCleanDetail.value.batchCode,
+        dataId: currentCleanDetail.value.dataId,
+        dataType: currentCleanDetail.value.dataType,
+        dataCode: currentCleanDetail.value.dataCode,
+        originalName: currentCleanDetail.value.originalName,
+        originalProvince: currentCleanDetail.value.originalProvince,
+        originalAddress: currentCleanDetail.value.originalAddress,
+        companyName: currentCleanDetail.value.companyName,
+        haosenCode: currentCleanDetail.value.haosenCode,
+        cleanRemark: currentCleanDetail.value.cleanRemark
       }
 
       // 更新其他字段
-      Object.assign(currentAppealDetail.value, data.data)
+      Object.assign(currentCleanDetail.value, data.data)
 
       // 强制恢复原始字段
-      Object.assign(currentAppealDetail.value, protectedFields)
+      Object.assign(currentCleanDetail.value, protectedFields)
 
       ElMessage.success('匹配成功，已填充')
     } else {
       ElMessage.error('未找到匹配数据')
     }
-  } catch {
+  } catch (error) {
+    console.error('匹配失败:', error)
     ElMessage.error('匹配失败')
   } finally {
     isFinding.value = false
@@ -605,10 +677,13 @@ const findDaKuData = async () => {
 }
 
 const resetForm = () => {
-  ElMessageBox.confirm('确定要重置所有修改吗？重置后将恢复为原始数据。', '确认重置', {type: 'warning'})
+  ElMessageBox.confirm('确定要重置所有修改吗？重置后将恢复为原始数据。', '确认重置', { type: 'warning' })
       .then(() => {
-        currentAppealDetail.value = JSON.parse(JSON.stringify(originalAppeal.value))
+        currentCleanDetail.value = JSON.parse(JSON.stringify(originalCleanItem.value))
         ElMessage.success('已重置为原始数据')
+      })
+      .catch(() => {
+        // 用户取消重置
       })
 }
 
@@ -641,11 +716,12 @@ const stopResize = () => {
 }
 
 onMounted(() => {
-  fetchAppealData()
+  fetchCleanData()
 })
 </script>
 
 <style scoped>
+/* 样式保持不变，只修改了类名从 appeal 到 clean */
 .appeal-data-view {
   display: flex;
   flex-direction: column;
@@ -671,6 +747,60 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
+/* 顶部操作区域 */
+.top-operation-area {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 18px 0;
+  background: #ffffff;
+  border-bottom: 1px solid #ebeef5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 6px 6px 0 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 搜索条件盒子 */
+.search-conditions-box {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+/* 操作按钮盒子 */
+.action-buttons-box {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.action-buttons-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+
+}
+
+.view-toggle {
+  margin-left: auto;
+}
+
+/* 搜索表单样式 */
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 8px;
+  align-items: end;
+}
+
+.search-form :deep(.el-form-item) {
+  margin-bottom: 0 !important;
+  flex: 1 1 180px;
+}
+
 /* 2K屏幕优化 */
 @media (min-width: 2000px) and (max-width: 2600px) {
   .appeal-data-view {
@@ -685,7 +815,9 @@ onMounted(() => {
   }
 }
 
+
 /* 搜索区域 - 现在在整合容器内 */
+
 .fixed-search {
   flex-shrink: 0;
   padding: 14px 18px 10px;
@@ -735,6 +867,7 @@ onMounted(() => {
 .view-toggle {
   margin-left: 8px;
 }
+
 
 
 /* 数据内容区域 */
@@ -789,6 +922,11 @@ onMounted(() => {
   white-space: nowrap;
 }
 
+.status-badges {
+  display: flex;
+  align-items: center;
+}
+
 .appeal-remark {
   margin-left: 8px;
 }
@@ -840,7 +978,6 @@ onMounted(() => {
   min-width: 220px;
   text-align: center;
 }
-
 
 .no-data-container {
   height: 100%;
@@ -964,6 +1101,6 @@ onMounted(() => {
   padding: 0;
   overflow: hidden;
 }
-
-
 </style>
+
+

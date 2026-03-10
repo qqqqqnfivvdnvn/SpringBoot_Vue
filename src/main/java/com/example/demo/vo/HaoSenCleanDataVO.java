@@ -1,14 +1,14 @@
-package com.example.demo.entity;
+package com.example.demo.vo;
 
 import lombok.Data;
 
 @Data
-public class HaoSenCleanData {
+public class HaoSenCleanDataVO {
 
     //    batch_code	status	clean_status	data_id	data_type	data_code	original_name	original_province	original_address	company_name	haosen_code	add_time
     private String batchCode;
-    private String status;
-    private String cleanStatus;
+    private Integer status;
+    private Integer cleanStatus;
     private String dataId;
     private String dataType;
     private String dataCode;

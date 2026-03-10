@@ -102,9 +102,21 @@
                 WHEN a.med_union_community = '3' THEN NULL
                 ELSE NULL
                 END med_union_community,
+            CASE
+                WHEN e.leading_unit_keyid  is not null  THEN e.leading_unit_keyid
+                WHEN f.leading_unit_keyid is not null THEN f.leading_unit_keyid
+                ELSE NULL
+                END medUnionCommunityKeyid,
+
+            CASE
+                WHEN e.leading_unit  is not null  THEN e.leading_unit
+                WHEN f.leading_unit is not null THEN f.leading_unit
+                ELSE NULL
+                END medUnionCommunityName,
+
             a.ybcode,
             a.regcode,
-            a.validity ,
+            a.validity,
             a.menzhen,
             a.bed_count,
             a.medical_count,
@@ -141,24 +153,35 @@
                 ELSE NULL
                 END internet_hosclassify,
             a.field1,
+            a.field2,
+            a.field3,
+            a.field4,
+            a.field5,
+            a.field6,
+            a.field7,
+            a.field8,
             d.original_province,
             d.original_address,
-            d.company_name
+            d.company_name,
+            d.haosen_code
         FROM base_org_hos_clean a
                  LEFT JOIN 豪森五级属性对应表0819 b ON a.class5 = b.类别名称5_枚举值
                  LEFT JOIN 豪森_行政区划表0928_对应关系 c ON a.area_id = c.豪森_对应区县id
                  LEFT JOIN origin_data d ON a.data_id = d.data_id
+                 LEFT JOIN haosen_medical_community e on a.keyid=e.member_unit_keyid and a.med_union_community='1'
+                 LEFT JOIN haosen_medical_alliance f on a.keyid=f.member_unit_keyid and a.med_union_community='2'
+
     </sql>
 
     <!-- 医疗机构分页查询 -->
-    <select id="HospitalQueryByCondition" resultType="com.example.demo.entity.HaoSenOrganization">
+    <select id="HospitalQueryByCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
         <include refid="hospitalSelectCommon"/>
         <include refid="conditionHospitalWhere"/>
         ORDER BY addtime DESC
     </select>
 
     <!-- 根据条件导出医疗机构数据 -->
-    <select id="findAllHospitalCondition" resultType="com.example.demo.entity.HaoSenOrganization">
+    <select id="findAllHospitalCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
         <include refid="hospitalSelectCommon"/>
         <include refid="conditionHospitalWhere"/>
         ORDER BY addtime DESC
@@ -318,9 +341,18 @@
             a.hos_inside,
             a.hos_outside,
             a.field1,
+            a.field2,
+            a.field3,
+            a.field4,
+            a.field5,
+            a.field6,
+            a.field7,
+            a.field8,
             c.original_province,
             c.original_address,
-            c.company_name
+            c.company_name,
+            c.haosen_code
+
         FROM base_org_drug_store a
                  LEFT JOIN 豪森_行政区划表0928_对应关系 b
                            ON a.area_id = b.豪森_对应区县id
@@ -330,14 +362,14 @@
     </sql>
 
     <!-- 药店分页查询 -->
-    <select id="DrugStoreQueryByCondition" resultType="com.example.demo.entity.HaoSenOrganization">
+    <select id="DrugStoreQueryByCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
         <include refid="drugStoreSelectCommon"/>
         <include refid="conditionDrugStoreWhere"/>
         ORDER BY addtime desc
     </select>
 
     <!-- 根据条件导出药店数据 -->
-    <select id="findAllDrugStoreCondition" resultType="com.example.demo.entity.HaoSenOrganization">
+    <select id="findAllDrugStoreCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
         <include refid="drugStoreSelectCommon"/>
         <include refid="conditionDrugStoreWhere"/>
         ORDER BY addtime DESC
@@ -440,6 +472,13 @@
             a.addtime,
             a.appeal_dataid,
             a.field1,
+            a.field2,
+            a.field3,
+            a.field4,
+            a.field5,
+            a.field6,
+            a.field7,
+            a.field8,
             CASE a.classify
                 WHEN '1' THEN '批发商'
                 WHEN '2' THEN '批发零售商'
@@ -453,8 +492,8 @@
                 END AS is_insert,
             c.original_province,
             c.original_address,
-            c.company_name
-
+            c.company_name,
+            c.haosen_code
         FROM base_org_company a
                  LEFT JOIN 豪森_行政区划表0928_对应关系 b
                            ON a.area_id = b.豪森_对应区县id
@@ -463,14 +502,14 @@
 
     </sql>
     <!-- 商业分页查询 -->
-    <select id="CompanyQueryByCondition" resultType="com.example.demo.entity.HaoSenOrganization">
+    <select id="CompanyQueryByCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
         <include refid="companySelectCommon"/>
         <include refid="conditionCompanyWhere"/>
         ORDER BY addtime desc
     </select>
 
     <!-- 根据条件导出药店数据 -->
-    <select id="findAllCompanyCondition" resultType="com.example.demo.entity.HaoSenOrganization">
+    <select id="findAllCompanyCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
         <include refid="companySelectCommon"/>
         <include refid="conditionDrugStoreWhere"/>
         ORDER BY addtime DESC

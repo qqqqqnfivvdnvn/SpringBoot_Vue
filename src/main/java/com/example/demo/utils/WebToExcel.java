@@ -1,6 +1,6 @@
 package com.example.demo.utils;
 
-import com.example.demo.entity.HaoSenOrganization;
+import com.example.demo.vo.HaoSenOrganizationVO;
 import com.example.demo.vo.HaoSenAppealDataVO;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -107,7 +107,7 @@ public class WebToExcel {
     }
 
 
-    public  byte[] exportConditionToExcel(List<HaoSenOrganization> allHospitalCondition,String sheetName){
+    public  byte[] exportConditionToExcel(List<HaoSenOrganizationVO> allDataCondition, String sheetName){
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              XSSFWorkbook workbook = new XSSFWorkbook()) {
@@ -139,7 +139,7 @@ public class WebToExcel {
 
             // 填充数据
             int rowNum = 1;
-            for (HaoSenOrganization data : allHospitalCondition) {
+            for (HaoSenOrganizationVO data : allDataCondition) {
 
                 XSSFRow row = sheet.createRow(rowNum++);
                 int colNum = 0;

@@ -1,10 +1,10 @@
-package com.example.demo.entity;
+package com.example.demo.vo;
 
 import lombok.Data;
 
 @Data
 
-public class HaoSenOrganization {
+public class HaoSenOrganizationVO {
     // ========== 三个实体类都有的字段 ==========
     private String batchCode;
     private String dataCode;
@@ -31,6 +31,13 @@ public class HaoSenOrganization {
     private String repeatId;
     private String appealDataId;
     private String field1;
+    private String field2;
+    private String field3;
+    private String field4;
+    private String field5;
+    private String field6;
+    private String field7;
+    private String field8;
     private String appealRemark;
     private String solveRemark;
     private String classify;

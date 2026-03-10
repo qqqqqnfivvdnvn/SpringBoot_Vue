@@ -1,7 +1,7 @@
 <template>
   <div class="home-page" >
     <!-- 导航栏 -->
-    <nav class="navbar">
+    <nav class="navbar" >
       <div class="navbar-brand">项目管理系统</div>
       <div class="navbar-links">
         <router-link to="/home">首页</router-link>
@@ -287,7 +287,7 @@ const clearAuthData = () => {
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  background-color: #af96e6;
+  /*background-color: #af96e6;*/
   color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: fixed;
@@ -295,6 +295,12 @@ const clearAuthData = () => {
   left: 0;
   right: 0;
   z-index: 1000;
+
+
+  background-image: url("@/assets/images/header.png"); /* 换成你的路径 */
+  background-size: cover;      /* 铺满、保持比例 */
+  background-position: center; /* 居中 */
+  background-repeat: no-repeat;
 }
 
 .navbar-brand {

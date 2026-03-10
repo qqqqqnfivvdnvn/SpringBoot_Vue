@@ -4,7 +4,7 @@ import com.example.demo.apidata.ApiHaosen;
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.dto.HaoSenCleanConditionDTO;
 import com.example.demo.dto.HaoSenFileMessageDTO;
-import com.example.demo.entity.HaoSenCleanData;
+import com.example.demo.vo.HaoSenCleanDataVO;
 import com.example.demo.mapper.HaoSenCleanDataMapper;
 import com.example.demo.mapper.HaoSenSqlMapper;
 import com.example.demo.service.HaoSenInputCleanDataService;
@@ -115,10 +115,10 @@ public class HaoSenInputCleanDataServiceImpl implements HaoSenInputCleanDataServ
 
 
     @Override
-    public ApiResponseDTO<PageInfo<HaoSenCleanData>> selectHaoSenCleanData(HaoSenCleanConditionDTO condition, int pageNum, int pageSize) {
+    public ApiResponseDTO<PageInfo<HaoSenCleanDataVO>> selectHaoSenCleanData(HaoSenCleanConditionDTO condition, int pageNum, int pageSize) {
         try {
             PageHelper.startPage(pageNum, pageSize);
-            List<HaoSenCleanData> haoSenCleanData = haosencleanDataMapper.selectHaoSenCleanData(condition);
+            List<HaoSenCleanDataVO> haoSenCleanData = haosencleanDataMapper.selectHaoSenCleanData(condition);
             return ApiResponseDTO.success(new PageInfo<>(haoSenCleanData));
 
         } finally {

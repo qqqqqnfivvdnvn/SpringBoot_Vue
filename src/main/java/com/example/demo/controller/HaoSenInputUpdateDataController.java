@@ -3,7 +3,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.dto.HaoSenFileMessageDTO;
-import com.example.demo.entity.HaoSenOrganization;
+import com.example.demo.vo.HaoSenOrganizationVO;
 import com.example.demo.service.HaoSenUpdateDataService;
 import com.example.demo.vo.HaoSenAppealDataVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class HaoSenInputUpdateDataController {
 
     //单条页面更新医院数据，推送接口更新数据
     @PostMapping("/OneUpdateHaoSenData")
-    public ResponseEntity<ApiResponseDTO<HaoSenFileMessageDTO>> OneUpdateHaoSenData(@RequestBody HaoSenOrganization haoSenOrganization ) {
+    public ResponseEntity<ApiResponseDTO<HaoSenFileMessageDTO>> OneUpdateHaoSenData(@RequestBody HaoSenOrganizationVO haoSenOrganization ) {
 
         return ResponseEntity.ok(haoSenUpdateDataService.updateOneUpdateData(haoSenOrganization));
 
