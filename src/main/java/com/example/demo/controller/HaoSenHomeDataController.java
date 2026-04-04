@@ -16,7 +16,7 @@ import java.util.List;
 
 @Controller
 
-@RequestMapping("/homeData")
+@RequestMapping("/haosen/homeData")
 
 
 public class HaoSenHomeDataController {

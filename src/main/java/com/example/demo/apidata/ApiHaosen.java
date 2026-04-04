@@ -19,8 +19,8 @@ public class ApiHaosen {
 
             // 设置合理超时（10秒）
             RequestConfig config = RequestConfig.custom()
-                    .setConnectTimeout(1800000)
-                    .setSocketTimeout(1800000)
+                    .setConnectTimeout(3600000)
+                    .setSocketTimeout(3600000)
                     .build();
             request.setConfig(config);
 
@@ -42,8 +42,8 @@ public class ApiHaosen {
 
             // 设置合理超时（10秒）
             RequestConfig config = RequestConfig.custom()
-                    .setConnectTimeout(10)
-                    .setSocketTimeout(10)
+                    .setConnectTimeout(3600000)
+                    .setSocketTimeout(3600000)
                     .build();
             request.setConfig(config);
 
@@ -59,16 +59,14 @@ public class ApiHaosen {
     }
 
 
-
-
     public String callExternalCleanDataApi() {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet request = new HttpGet("http://192.168.33.9:8000/clean_data");
 
             // 设置合理超时（10秒）
             RequestConfig config = RequestConfig.custom()
-                    .setConnectTimeout(1800000)
-                    .setSocketTimeout(1800000)
+                    .setConnectTimeout(3600000)
+                    .setSocketTimeout(3600000)
                     .build();
             request.setConfig(config);
 

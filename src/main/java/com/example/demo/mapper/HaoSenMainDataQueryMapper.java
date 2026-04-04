@@ -13,7 +13,7 @@ import java.util.List;
 @Mapper
 @DS("slave_pg")
 
-public interface HaoSenMainDataQueryMapper {
+public interface HaoSenMainDataQueryMapper  {
     public List<HaoSenOrganizationVO> HospitalQueryByCondition(@Param("condition") HaoSenHospitalConditionDTO condition);
 
     public List<HaoSenOrganizationVO> findAllHospitalCondition(@Param("condition") HaoSenHospitalConditionDTO condition, @Param("needLimit") boolean needLimit);
@@ -22,7 +22,6 @@ public interface HaoSenMainDataQueryMapper {
     public List<HaoSenOrganizationVO> DrugStoreQueryByCondition(@Param("condition") HaoSenDrugStoreConditionDTO condition);
 
     public List<HaoSenOrganizationVO> findAllDrugStoreCondition(@Param("condition") HaoSenDrugStoreConditionDTO condition, @Param("needLimit") boolean needLimit);
-
 
 
     public List<HaoSenOrganizationVO> CompanyQueryByCondition(@Param("condition") HaoSenCompanyConditionDTO condition);

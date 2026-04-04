@@ -3,41 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.HaoSenMainDataQueryMapper">
 
-    <!-- 医疗机构条件查询SQL -->
-    <sql id="conditionHospitalWhere">
-        <where>
-            <if test="condition.dataCode != null and condition.dataCode != ''">
-                a.data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
-            </if>
-            <if test="condition.name != null and condition.name != ''">
-                AND a.name LIKE CONCAT('%', #{condition.name}, '%')
-            </if>
-            <if test="condition.province != null and condition.province != ''">
-                AND a.province LIKE CONCAT('%', #{condition.province}, '%')
-            </if>
-            <if test="condition.city != null and condition.city != ''">
-                AND a.city LIKE CONCAT('%', #{condition.city}, '%')
-            </if>
-            <if test="condition.area != null and condition.area != ''">
-                AND a.area LIKE CONCAT('%', #{condition.area}, '%')
-            </if>
-            <if test="condition.address != null and condition.address != ''">
-                AND a.address LIKE CONCAT('%', #{condition.address}, '%')
-            </if>
-            <if test="condition.originalName != null and condition.originalName != ''">
-                AND a.original_name LIKE CONCAT('%', #{condition.originalName}, '%')
-            </if>
-            <if test="condition.hsCode != null and condition.hsCode != ''">
-                AND a.hs_code LIKE CONCAT('%', #{condition.hsCode}, '%')
-            </if>
-            <if test="condition.keyid != null and condition.keyid != ''">
-                AND a.keyid LIKE CONCAT('%', #{condition.keyid}, '%')
-            </if>
-            <if test="condition.dataId != null and condition.dataId != ''">
-                AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
-            </if>
-        </where>
-    </sql>
+
 
     <!-- 通用的医疗机构SELECT部分 -->
     <sql id="hospitalSelectCommon">
@@ -174,47 +140,12 @@
     </sql>
 
     <!-- 医疗机构分页查询 -->
-    <select id="HospitalQueryByCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
+    <select id="HospitalQueryByCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO" >
         <include refid="hospitalSelectCommon"/>
-        <include refid="conditionHospitalWhere"/>
-        ORDER BY addtime DESC
-    </select>
-
-    <!-- 根据条件导出医疗机构数据 -->
-    <select id="findAllHospitalCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
-        <include refid="hospitalSelectCommon"/>
-        <include refid="conditionHospitalWhere"/>
-        ORDER BY addtime DESC
-
-        <!-- 关键：无查询条件时自动加 limit 100 -->
-        <if test="needLimit != null and needLimit == true">
-            <choose>
-                <when test="
-                (condition == null) or
-                ((condition.dataCode == null or condition.dataCode == '') and
-                (condition.name == null or condition.name == '') and
-                (condition.province == null or condition.province == '') and
-                (condition.city == null or condition.city == '') and
-                (condition.area == null or condition.area == '') and
-                (condition.address == null or condition.address == '') and
-                (condition.originalName == null or condition.originalName == '') and
-                (condition.hsCode == null or condition.hsCode == '') and
-                (condition.keyid == null or condition.keyid == '') and
-                (condition.dataId == null or condition.dataId == ''))
-            ">LIMIT 100</when>
-            </choose>
-        </if>
-    </select>
-
-
-
-    <!-- 药店条件查询SQL -->
-    <sql id="conditionDrugStoreWhere">
         <where>
             <if test="condition.dataCode != null and condition.dataCode != ''">
                 a.data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
             </if>
-
             <if test="condition.name != null and condition.name != ''">
                 AND a.name LIKE CONCAT('%', #{condition.name}, '%')
             </if>
@@ -236,16 +167,75 @@
             <if test="condition.hsCode != null and condition.hsCode != ''">
                 AND a.hs_code LIKE CONCAT('%', #{condition.hsCode}, '%')
             </if>
-
             <if test="condition.keyid != null and condition.keyid != ''">
                 AND a.keyid LIKE CONCAT('%', #{condition.keyid}, '%')
             </if>
-
             <if test="condition.dataId != null and condition.dataId != ''">
                 AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
             </if>
         </where>
-    </sql>
+        ORDER BY addtime DESC
+    </select>
+
+    <!-- 根据条件导出医疗机构数据 -->
+    <select id="findAllHospitalCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
+        <include refid="hospitalSelectCommon"/>
+        <where>
+            <if test="condition.dataCode != null and condition.dataCode != ''">
+                a.data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
+            </if>
+            <if test="condition.name != null and condition.name != ''">
+                AND a.name LIKE CONCAT('%', #{condition.name}, '%')
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND a.province LIKE CONCAT('%', #{condition.province}, '%')
+            </if>
+            <if test="condition.city != null and condition.city != ''">
+                AND a.city LIKE CONCAT('%', #{condition.city}, '%')
+            </if>
+            <if test="condition.area != null and condition.area != ''">
+                AND a.area LIKE CONCAT('%', #{condition.area}, '%')
+            </if>
+            <if test="condition.address != null and condition.address != ''">
+                AND a.address LIKE CONCAT('%', #{condition.address}, '%')
+            </if>
+            <if test="condition.originalName != null and condition.originalName != ''">
+                AND a.original_name LIKE CONCAT('%', #{condition.originalName}, '%')
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND a.hs_code LIKE CONCAT('%', #{condition.hsCode}, '%')
+            </if>
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND a.keyid LIKE CONCAT('%', #{condition.keyid}, '%')
+            </if>
+            <if test="condition.dataId != null and condition.dataId != ''">
+                AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
+            </if>
+        </where>
+        ORDER BY addtime DESC
+        <!-- 关键：无查询条件时自动限制 100 条 -->
+        <if test="needLimit != null and needLimit == true">
+            <choose>
+                <when test="
+                (condition == null) or
+                ((condition.dataCode == null or condition.dataCode == '') and
+                (condition.name == null or condition.name == '') and
+                (condition.province == null or condition.province == '') and
+                (condition.city == null or condition.city == '') and
+                (condition.area == null or condition.area == '') and
+                (condition.address == null or condition.address == '') and
+                (condition.originalName == null or condition.originalName == '') and
+                (condition.hsCode == null or condition.hsCode == '') and
+                (condition.keyid == null or condition.keyid == '') and
+                (condition.dataId == null or condition.dataId == ''))
+            ">OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY</when>
+            </choose>
+        </if>
+    </select>
+
+
+
+
 
     <!-- 通用的药店SELECT部分 -->
     <sql id="drugStoreSelectCommon" >
@@ -364,41 +354,6 @@
     <!-- 药店分页查询 -->
     <select id="DrugStoreQueryByCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
         <include refid="drugStoreSelectCommon"/>
-        <include refid="conditionDrugStoreWhere"/>
-        ORDER BY addtime desc
-    </select>
-
-    <!-- 根据条件导出药店数据 -->
-    <select id="findAllDrugStoreCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
-        <include refid="drugStoreSelectCommon"/>
-        <include refid="conditionDrugStoreWhere"/>
-        ORDER BY addtime DESC
-
-        <!-- 关键：无查询条件时自动加 limit 100 -->
-        <if test="needLimit != null and needLimit == true">
-            <choose>
-                <when test="
-                (condition == null) or
-                ((condition.dataCode == null or condition.dataCode == '') and
-                (condition.name == null or condition.name == '') and
-                (condition.province == null or condition.province == '') and
-                (condition.city == null or condition.city == '') and
-                (condition.area == null or condition.area == '') and
-                (condition.address == null or condition.address == '') and
-                (condition.originalName == null or condition.originalName == '') and
-                (condition.hsCode == null or condition.hsCode == '') and
-                (condition.keyid == null or condition.keyid == '') and
-                (condition.dataId == null or condition.dataId == ''))
-            ">LIMIT 100</when>
-            </choose>
-        </if>
-    </select>
-
-
-
-
-    <!-- 商业条件查询SQL -->
-    <sql id="conditionCompanyWhere">
         <where>
             <if test="condition.dataCode != null and condition.dataCode != ''">
                 a.data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
@@ -434,7 +389,73 @@
                 AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
             </if>
         </where>
-    </sql>
+        ORDER BY addtime desc
+    </select>
+
+    <!-- 根据条件导出药店数据 -->
+    <select id="findAllDrugStoreCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
+        <include refid="drugStoreSelectCommon"/>
+        <where>
+            <if test="condition.dataCode != null and condition.dataCode != ''">
+                a.data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
+            </if>
+
+            <if test="condition.name != null and condition.name != ''">
+                AND a.name LIKE CONCAT('%', #{condition.name}, '%')
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND a.province LIKE CONCAT('%', #{condition.province}, '%')
+            </if>
+            <if test="condition.city != null and condition.city != ''">
+                AND a.city LIKE CONCAT('%', #{condition.city}, '%')
+            </if>
+            <if test="condition.area != null and condition.area != ''">
+                AND a.area LIKE CONCAT('%', #{condition.area}, '%')
+            </if>
+            <if test="condition.address != null and condition.address != ''">
+                AND a.address LIKE CONCAT('%', #{condition.address}, '%')
+            </if>
+            <if test="condition.originalName != null and condition.originalName != ''">
+                AND a.original_name LIKE CONCAT('%', #{condition.originalName}, '%')
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND a.hs_code LIKE CONCAT('%', #{condition.hsCode}, '%')
+            </if>
+
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND a.keyid LIKE CONCAT('%', #{condition.keyid}, '%')
+            </if>
+
+            <if test="condition.dataId != null and condition.dataId != ''">
+                AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
+            </if>
+        </where>
+        ORDER BY addtime DESC
+        <!-- 关键：无查询条件时自动限制 100 条 -->
+        <if test="needLimit != null and needLimit == true">
+            <choose>
+                <when test="
+                (condition == null) or
+                ((condition.dataCode == null or condition.dataCode == '') and
+                (condition.name == null or condition.name == '') and
+                (condition.province == null or condition.province == '') and
+                (condition.city == null or condition.city == '') and
+                (condition.area == null or condition.area == '') and
+                (condition.address == null or condition.address == '') and
+                (condition.originalName == null or condition.originalName == '') and
+                (condition.hsCode == null or condition.hsCode == '') and
+                (condition.keyid == null or condition.keyid == '') and
+                (condition.dataId == null or condition.dataId == ''))
+            ">OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY</when>
+            </choose>
+        </if>
+
+    </select>
+
+
+
+
+
     <!-- 通用的商业SELECT部分 -->
     <sql id="companySelectCommon">
         SELECT
@@ -504,17 +525,84 @@
     <!-- 商业分页查询 -->
     <select id="CompanyQueryByCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
         <include refid="companySelectCommon"/>
-        <include refid="conditionCompanyWhere"/>
+        <where>
+            <if test="condition.dataCode != null and condition.dataCode != ''">
+                a.data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
+            </if>
+
+            <if test="condition.name != null and condition.name != ''">
+                AND a.name LIKE CONCAT('%', #{condition.name}, '%')
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND a.province LIKE CONCAT('%', #{condition.province}, '%')
+            </if>
+            <if test="condition.city != null and condition.city != ''">
+                AND a.city LIKE CONCAT('%', #{condition.city}, '%')
+            </if>
+            <if test="condition.area != null and condition.area != ''">
+                AND a.area LIKE CONCAT('%', #{condition.area}, '%')
+            </if>
+            <if test="condition.address != null and condition.address != ''">
+                AND a.address LIKE CONCAT('%', #{condition.address}, '%')
+            </if>
+            <if test="condition.originalName != null and condition.originalName != ''">
+                AND a.original_name LIKE CONCAT('%', #{condition.originalName}, '%')
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND a.hs_code LIKE CONCAT('%', #{condition.hsCode}, '%')
+            </if>
+
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND a.keyid LIKE CONCAT('%', #{condition.keyid}, '%')
+            </if>
+
+            <if test="condition.dataId != null and condition.dataId != ''">
+                AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
+            </if>
+        </where>
         ORDER BY addtime desc
     </select>
 
-    <!-- 根据条件导出药店数据 -->
+    <!-- 根据条件导出商业数据 -->
     <select id="findAllCompanyCondition" resultType="com.example.demo.vo.HaoSenOrganizationVO">
         <include refid="companySelectCommon"/>
-        <include refid="conditionDrugStoreWhere"/>
-        ORDER BY addtime DESC
+        <where>
+            <if test="condition.dataCode != null and condition.dataCode != ''">
+                a.data_code LIKE CONCAT('%', #{condition.dataCode}, '%')
+            </if>
 
-        <!-- 关键：无查询条件时自动加 limit 100 -->
+            <if test="condition.name != null and condition.name != ''">
+                AND a.name LIKE CONCAT('%', #{condition.name}, '%')
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND a.province LIKE CONCAT('%', #{condition.province}, '%')
+            </if>
+            <if test="condition.city != null and condition.city != ''">
+                AND a.city LIKE CONCAT('%', #{condition.city}, '%')
+            </if>
+            <if test="condition.area != null and condition.area != ''">
+                AND a.area LIKE CONCAT('%', #{condition.area}, '%')
+            </if>
+            <if test="condition.address != null and condition.address != ''">
+                AND a.address LIKE CONCAT('%', #{condition.address}, '%')
+            </if>
+            <if test="condition.originalName != null and condition.originalName != ''">
+                AND a.original_name LIKE CONCAT('%', #{condition.originalName}, '%')
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND a.hs_code LIKE CONCAT('%', #{condition.hsCode}, '%')
+            </if>
+
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND a.keyid LIKE CONCAT('%', #{condition.keyid}, '%')
+            </if>
+
+            <if test="condition.dataId != null and condition.dataId != ''">
+                AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
+            </if>
+        </where>
+        ORDER BY addtime DESC
+        <!-- 关键：无查询条件时自动限制 100 条 -->
         <if test="needLimit != null and needLimit == true">
             <choose>
                 <when test="
@@ -529,7 +617,7 @@
                 (condition.hsCode == null or condition.hsCode == '') and
                 (condition.keyid == null or condition.keyid == '') and
                 (condition.dataId == null or condition.dataId == ''))
-            ">LIMIT 100</when>
+            ">OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY</when>
             </choose>
         </if>
     </select>

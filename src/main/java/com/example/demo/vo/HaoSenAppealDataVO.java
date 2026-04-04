@@ -12,9 +12,12 @@ public class HaoSenAppealDataVO {
     private String originalProvince;   // original_province → originalProvince
     private String originalAddress;
     private String companyName;        // company_name → companyName
+    private String haosenCode;
+
     private String appealRemark;       // appeal_remark → appealRemark
     private String solveRemark;        // solve_remark → solveRemark
     private String institutionType;    // institution_type → institutionType
+
 
     private String keyid;              // keyid → keyId (更符合驼峰规则)
     private String name;

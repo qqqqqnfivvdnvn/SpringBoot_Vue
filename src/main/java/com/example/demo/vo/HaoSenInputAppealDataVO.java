@@ -3,49 +3,53 @@ package com.example.demo.vo;
 import com.example.demo.annotation.ExcelColumn;
 import lombok.Data;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Data
 public class HaoSenInputAppealDataVO {
 
+    // 定义预期表头常量（直接使用你提供的列表）
+    public static final List<String> EXPECTED_HEADERS = Arrays.asList(
+            "批次编号", "data_id", "数据类型", "原始数据编码", "原始数据名称",
+            "省份", "原始数据地址", "经销商", "机构类型", "keyid",
+            "医院名称", "历史名称", "省", "省ID", "市",
+            "市ID", "区县", "区县ID", "地址", "等级",
+            "等次", "所有制", "类别", "总分院kid", "总分院名称",
+            "军队医院", "登记号", "有效期", "诊疗科室", "法人代表",
+            "统一社会信用代码", "经营方式", "经营范围", "总分店kid", "总分店名称",
+            "成立时间", "注册资金", "企业类型", "登记状态", "所属行业",
+            "登记机关"
+    );
+
     @ExcelColumn(name = "批次编号")
     private String batchCode;
-
     @ExcelColumn(name = "data_id")
     private String dataId;
-
     @ExcelColumn(name = "数据类型")
     private String dataType;
-
     @ExcelColumn(name = "原始数据编码")
     private String dataCode;
-
     @ExcelColumn(name = "原始数据名称")
     private String originalName;
-
     @ExcelColumn(name = "省份")
     private String originalProvince;
-
-    @ExcelColumn(name = "original_address")
+    @ExcelColumn(name = "原始数据地址")
     private String originalAddress;
-
     @ExcelColumn(name = "经销商")
     private String companyName;
-
     @ExcelColumn(name = "申诉备注")
     private String appealRemark;
-
     @ExcelColumn(name = "申诉解决")
     private String solveRemark;
-
     @ExcelColumn(name = "备注")
     private String remark;
 
 
     @ExcelColumn(name = "机构类型")
-    private String institutionType;
-
+    private String orgType;
     @ExcelColumn(name = "keyid")
     private String keyid;
-
     @ExcelColumn(name = "医院名称")
     private String name;
     @ExcelColumn(name = "历史名称")
@@ -53,18 +57,17 @@ public class HaoSenInputAppealDataVO {
     @ExcelColumn(name = "省")
     private String province;
     @ExcelColumn(name = "省ID")
-    private String provinceid;
+    private String provinceId;
     @ExcelColumn(name = "市")
     private String city;
     @ExcelColumn(name = "市ID")
-    private String cityid;
+    private String cityId;
     @ExcelColumn(name = "区县")
     private String area;
     @ExcelColumn(name = "区县ID")
-    private String areaid;
+    private String areaId;
     @ExcelColumn(name = "地址")
     private String address;
-
     @ExcelColumn(name = "等级")
     private String level;
     @ExcelColumn(name = "等次")

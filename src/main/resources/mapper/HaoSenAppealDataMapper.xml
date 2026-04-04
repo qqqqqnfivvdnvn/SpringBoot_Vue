@@ -3,7 +3,177 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.HaoSenAppealDataMapper">
 
-    <sql id="conditionCompanyWhere">
+
+
+    <sql id="appealSelectCommon">
+
+        SELECT * from (
+                          WITH feedback_data AS (
+                              SELECT DISTINCT data_code, remarks
+                              FROM data_result
+                              WHERE feedback_type = '1' AND status = '1'
+                          ),
+                               hos_data AS (
+                                   SELECT
+                                       b.batch_code, b.data_id, b.data_type, b.data_code, b.original_name,
+                                       c.original_province, c.original_address, c.company_name,c.haosen_code,
+                                       a.remarks AS appeal_remark,
+                                       NULL::text AS solve_remark,
+                                       '医院' AS org_type,
+                                       b.keyid, b.name, b.name_history,
+                                       f.省 AS province, f.省id::text AS province_id,
+                                       f.市 AS city, f.市id::text AS city_id,
+                                       f.区县 AS area, f.区县id::text AS area_id,
+                                       b.address,
+                                       CASE b.level
+                                           WHEN '1' THEN '一级'
+                                           WHEN '2' THEN '二级'
+                                           WHEN '3' THEN '三级'
+                                           WHEN '4' THEN '未定级'
+                                           ELSE NULL
+                                           END AS level,
+                                       CASE b.grade
+                                           WHEN '1' THEN '甲等'
+                                           WHEN '2' THEN '乙等'
+                                           WHEN '3' THEN '丙等'
+                                           WHEN '4' THEN '未定等'
+                                           ELSE NULL
+                                           END AS grade,
+                                       CASE b.publicflag
+                                           WHEN '1' THEN '公立'
+                                           WHEN '2' THEN '民营'
+                                           ELSE NULL
+                                           END AS publicflag,
+                                       COALESCE(g.类别名称5, '') AS classify,
+                                       b.general_branch_kid, b.general_branch_name,
+                                       CASE WHEN b.military_hos = '1' THEN '1'::text ELSE NULL::text END AS military_hos,
+                                       b.regcode, b.validity, b.subjects, b.legalperson, b.usci,
+                                       NULL::text AS operation, NULL::text AS scope,
+                                       NULL::text AS main_branch_kid, NULL::text AS main_branch_name,
+                                       NULL::text AS create_date, NULL::text AS regist_capi, NULL::text AS econ_kind,
+                                       NULL::text AS sign_status, NULL::text AS industry, NULL::text AS belong,b.status
+                                   FROM feedback_data a
+                                            LEFT JOIN base_org_hos_clean b ON a.data_code = b.data_code
+                                            LEFT JOIN origin_data c ON b.data_id = c.data_id
+                                            LEFT JOIN 豪森_行政区划表0928_对应关系 f ON b.area_id = f.豪森_对应区县id
+                                            LEFT JOIN 豪森五级属性对应表0819 g ON b.class5 = g.类别名称5_枚举值
+                                   WHERE b.data_id IS NOT NULL AND b.status in ('1','3')
+                               ),
+                               drug_data AS (
+                                   SELECT
+                                       b.batch_code, b.data_id, b.data_type, b.data_code, b.original_name,
+                                       c.original_province, c.original_address, c.company_name,c.haosen_code,
+                                       a.remarks AS appeal_remark,
+                                       NULL::text AS solve_remark,
+                                       '药店' AS org_type,
+                                       b.keyid, b.name, COALESCE(b.history_name, '') AS name_history,
+                                       f.省 AS province, f.省id::text AS province_id,
+                                       f.市 AS city, f.市id::text AS city_id,
+                                       f.区县 AS area, f.区县id::text AS area_id,
+                                       b.address,
+                                       NULL::text AS level, NULL::text AS grade, NULL::text AS publicflag,
+                                       CASE b.pharmacy_ature
+                                           WHEN '1' THEN '连锁药店总部'
+                                           WHEN '2' THEN '零售单体药店'
+                                           WHEN '3' THEN '批发商'
+                                           WHEN '5' THEN '零售连锁门店'
+                                           ELSE NULL
+                                           END AS classify,
+                                       NULL::text AS general_branch_kid, NULL::text AS general_branch_name,
+                                       NULL::text AS military_hos, NULL::text AS regcode, NULL::text AS validity,
+                                       NULL::text AS subjects, b.oper_name AS legalperson, b.usci,
+                                       CASE b.operation
+                                           WHEN '1' THEN '零售'
+                                           WHEN '2' THEN '连锁'
+                                           WHEN '3' THEN '批发'
+                                           ELSE NULL
+                                           END AS operation,
+                                       b.scope, b.main_branch_kid, b.main_branch_name,
+                                       b.create_date, b.regist_capi,
+                                       NULL::text AS econ_kind, b.sign_status,
+                                       NULL::text AS industry, NULL::text AS belong,b.status
+                                   FROM feedback_data a
+                                            LEFT JOIN base_org_drug_store b ON a.data_code = b.data_code
+                                            LEFT JOIN origin_data c ON b.data_id = c.data_id
+                                            LEFT JOIN 豪森_行政区划表0928_对应关系 f ON b.area_id = f.豪森_对应区县id
+                                   WHERE b.data_id IS NOT NULL AND b.status in ('1','3')
+                               ),
+                               company_data AS (
+                                   SELECT
+                                       b.batch_code, b.data_id, b.data_type, b.data_code, b.original_name,
+                                       c.original_province, c.original_address, c.company_name,c.haosen_code,
+                                       a.remarks AS appeal_remark,
+                                       NULL::text AS solve_remark,
+                                       '商业' AS org_type,
+                                       b.keyid, b.name, COALESCE(b.name_history, '') AS name_history,
+                                       f.省 AS province, f.省id::text AS province_id,
+                                       f.市 AS city, f.市id::text AS city_id,
+                                       f.区县 AS area, f.区县id::text AS area_id,
+                                       b.address,
+                                       NULL::text AS level, NULL::text AS grade, NULL::text AS publicflag,
+                                       CASE b.classify
+                                           WHEN '1' THEN '批发商'
+                                           WHEN '2' THEN '批发零售商'
+                                           ELSE NULL
+                                           END AS classify,
+                                       NULL::text AS general_branch_kid, NULL::text AS general_branch_name,
+                                       NULL::text AS military_hos, NULL::text AS regcode, NULL::text AS validity,
+                                       NULL::text AS subjects, b.oper_name AS legalperson, COALESCE(b.credit_code, '') AS usci,
+                                       NULL::text AS operation, b.scope,
+                                       NULL::text AS main_branch_kid, NULL::text AS main_branch_name,
+                                       b.create_date, b.regist_capi, COALESCE(b.econ_kind, '') AS econ_kind, b.sign_status,
+                                       COALESCE(b.industry, '') AS industry, COALESCE(b.belong, '') AS belong,b.status
+                                   FROM feedback_data a
+                                            LEFT JOIN base_org_company b ON a.data_code = b.data_code
+                                            LEFT JOIN origin_data c ON b.data_id = c.data_id
+                                            LEFT JOIN 豪森_行政区划表0928_对应关系 f ON b.area_id = f.豪森_对应区县id
+                                   WHERE b.data_id IS NOT NULL AND b.status in ('1','3')
+                               )
+                          SELECT
+                              batch_code, data_id, data_type, data_code, original_name,
+                              original_province, original_address, company_name,haosen_code,
+                              appeal_remark, solve_remark, org_type, keyid,
+                              name, name_history, province, province_id, city, city_id,
+                              area, area_id, address, level, grade, publicflag,
+                              classify, general_branch_kid, general_branch_name,
+                              military_hos, regcode, validity, subjects, legalperson,
+                              usci, operation, scope, main_branch_kid, main_branch_name,
+                              create_date, regist_capi, econ_kind, sign_status,
+                              industry, belong,status
+                          FROM hos_data
+                          UNION ALL
+                          SELECT
+                              batch_code, data_id, data_type, data_code, original_name,
+                              original_province, original_address, company_name,haosen_code,
+                              appeal_remark, solve_remark, org_type, keyid,
+                              name, name_history, province, province_id, city, city_id,
+                              area, area_id, address, level, grade, publicflag,
+                              classify, general_branch_kid, general_branch_name,
+                              military_hos, regcode, validity, subjects, legalperson,
+                              usci, operation, scope, main_branch_kid, main_branch_name,
+                              create_date, regist_capi, econ_kind, sign_status,
+                              industry, belong,status
+                          FROM drug_data
+                          UNION ALL
+                          SELECT
+                              batch_code, data_id, data_type, data_code, original_name,
+                              original_province, original_address, company_name,haosen_code,
+                              appeal_remark, solve_remark, org_type, keyid,
+                              name, name_history, province, province_id, city, city_id,
+                              area, area_id, address, level, grade, publicflag,
+                              classify, general_branch_kid, general_branch_name,
+                              military_hos, regcode, validity, subjects, legalperson,
+                              usci, operation, scope, main_branch_kid, main_branch_name,
+                              create_date, regist_capi, econ_kind, sign_status,
+                              industry, belong,status
+                          FROM company_data ) a
+
+    </sql>
+
+    <select id="getAppealData" resultType="com.example.demo.vo.HaoSenOrganizationVO">
+
+        <include refid="appealSelectCommon"/>
+
         <where>
 
             <if test="condition.dataCode != null and condition.dataCode != ''">
@@ -37,178 +207,7 @@
                 AND data_id LIKE CONCAT('%', #{condition.dataId}, '%')
             </if>
         </where>
-    </sql>
 
-    <sql id="appealSelectCommon">
-        SELECT * from (
-                          WITH feedback_data AS (
-                              SELECT data_code, remarks ,add_time
-                              FROM data_result
-                              WHERE feedback_type = '1' AND status = '1'
-                          ),
-                               hos_data AS (
-                                   SELECT
-                                       b.batch_code, b.data_id, b.data_type, b.data_code, b.original_name,
-                                       c.original_province, c.original_address, c.company_name,a.add_time,c.haosen_code,
-                                       a.remarks AS appeal_remark,
-                                       NULL::text AS solve_remark,
-                                           '医院' AS institution_type,
-                                       b.keyid, b.name, b.name_history,
-                                       f.省 AS province, f.省id::text AS provinceid,
-                                           f.市 AS city, f.市id::text AS cityid,
-                                           f.区县 AS area, f.区县id::text AS areaid,
-                                           b.address,
-                                       CASE b.level
-                                           WHEN '1' THEN '一级'
-                                           WHEN '2' THEN '二级'
-                                           WHEN '3' THEN '三级'
-                                           WHEN '4' THEN '未定级'
-                                           ELSE NULL
-                                           END AS level,
-                                       CASE b.grade
-                                           WHEN '1' THEN '甲等'
-                                           WHEN '2' THEN '乙等'
-                                           WHEN '3' THEN '丙等'
-                                           WHEN '4' THEN '未定等'
-                                           ELSE NULL
-                                           END AS grade,
-                                       CASE b.publicflag
-                                           WHEN '1' THEN '公立'
-                                           WHEN '2' THEN '民营'
-                                           ELSE NULL
-                                           END AS publicflag,
-                                       COALESCE(g.类别名称5, '') AS classify,
-                                       b.general_branch_kid, b.general_branch_name,
-                                       CASE WHEN b.military_hos = '1' THEN '1'::text ELSE NULL::text END AS military_hos,
-                                       b.regcode, b.validity, b.subjects, b.legalperson, b.usci,
-                                       NULL::text AS operation, NULL::text AS scope,
-                                           NULL::text AS main_branch_kid, NULL::text AS main_branch_name,
-                                           NULL::text AS create_date, NULL::text AS regist_capi, NULL::text AS econ_kind,
-                                           NULL::text AS sign_status, NULL::text AS industry, NULL::text AS belong
-                                   FROM feedback_data a
-                                            LEFT JOIN base_org_hos_clean b ON a.data_code = b.data_code
-                                            LEFT JOIN origin_data c ON b.data_id = c.data_id
-                                            LEFT JOIN 豪森_行政区划表0928_对应关系 f ON b.area_id = f.豪森_对应区县id
-                                            LEFT JOIN 豪森五级属性对应表0819 g ON b.class5 = g.类别名称5_枚举值
-                                   WHERE b.data_id IS NOT NULL AND b.status in ('1','3')
-                               ),
-                               drug_data AS (
-                                   SELECT
-                                       b.batch_code, b.data_id, b.data_type, b.data_code, b.original_name,
-                                       c.original_province, c.original_address, c.company_name,a.add_time,c.haosen_code,
-                                       a.remarks AS appeal_remark,
-                                       NULL::text AS solve_remark,
-                                           '药店' AS institution_type,
-                                       b.keyid, b.name, COALESCE(b.history_name, '') AS name_history,
-                                       f.省 AS province, f.省id::text AS provinceid,
-                                           f.市 AS city, f.市id::text AS cityid,
-                                           f.区县 AS area, f.区县id::text AS areaid,
-                                           b.address,
-                                       NULL::text AS level, NULL::text AS grade, NULL::text AS publicflag,
-                                           CASE b.pharmacy_ature
-                                               WHEN '1' THEN '连锁药店总部'
-                                               WHEN '2' THEN '零售单体药店'
-                                               WHEN '3' THEN '批发商'
-                                               WHEN '5' THEN '零售连锁门店'
-                                               ELSE NULL
-                                               END AS classify,
-                                       NULL::text AS general_branch_kid, NULL::text AS general_branch_name,
-                                           NULL::text AS military_hos, NULL::text AS regcode, NULL::text AS validity,
-                                           NULL::text AS subjects, b.oper_name AS legalperson, b.usci,
-                                       CASE b.operation
-                                           WHEN '1' THEN '零售'
-                                           WHEN '2' THEN '连锁'
-                                           WHEN '3' THEN '批发'
-                                           ELSE NULL
-                                           END AS operation,
-                                       b.scope, b.main_branch_kid, b.main_branch_name,
-                                       b.create_date, b.regist_capi,
-                                       NULL::text AS econ_kind, b.sign_status,
-                                       NULL::text AS industry, NULL::text AS belong
-                                   FROM feedback_data a
-                                            LEFT JOIN base_org_drug_store b ON a.data_code = b.data_code
-                                            LEFT JOIN origin_data c ON b.data_id = c.data_id
-                                            LEFT JOIN 豪森_行政区划表0928_对应关系 f ON b.area_id = f.豪森_对应区县id
-                                   WHERE b.data_id IS NOT NULL AND b.status in ('1','3')
-                               ),
-                               company_data AS (
-                                   SELECT
-                                       b.batch_code, b.data_id, b.data_type, b.data_code, b.original_name,
-                                       c.original_province, c.original_address, c.company_name,a.add_time,c.haosen_code,
-                                       a.remarks AS appeal_remark,
-                                       NULL::text AS solve_remark,
-                                           '商业' AS institution_type,
-                                       b.keyid, b.name, COALESCE(b.name_history, '') AS name_history,
-                                       f.省 AS province, f.省id::text AS provinceid,
-                                           f.市 AS city, f.市id::text AS cityid,
-                                           f.区县 AS area, f.区县id::text AS areaid,
-                                           b.address,
-                                       NULL::text AS level, NULL::text AS grade, NULL::text AS publicflag,
-                                           CASE b.classify
-                                               WHEN '1' THEN '批发商'
-                                               WHEN '2' THEN '批发零售商'
-                                               ELSE NULL
-                                               END AS classify,
-                                       NULL::text AS general_branch_kid, NULL::text AS general_branch_name,
-                                           NULL::text AS military_hos, NULL::text AS regcode, NULL::text AS validity,
-                                           NULL::text AS subjects, b.oper_name AS legalperson, COALESCE(b.credit_code, '') AS usci,
-                                       NULL::text AS operation, b.scope,
-                                       NULL::text AS main_branch_kid, NULL::text AS main_branch_name,
-                                           b.create_date, b.regist_capi, COALESCE(b.econ_kind, '') AS econ_kind, b.sign_status,
-                                       COALESCE(b.industry, '') AS industry, COALESCE(b.belong, '') AS belong
-                                   FROM feedback_data a
-                                            LEFT JOIN base_org_company b ON a.data_code = b.data_code
-                                            LEFT JOIN origin_data c ON b.data_id = c.data_id
-                                            LEFT JOIN 豪森_行政区划表0928_对应关系 f ON b.area_id = f.豪森_对应区县id
-                                   WHERE b.data_id IS NOT NULL AND b.status in ('1','3')
-                               )
-                          SELECT
-                              batch_code, data_id, data_type, data_code, original_name,
-                              original_province, original_address, company_name,add_time,haosen_code,
-                              appeal_remark, solve_remark, institution_type, keyid,
-                              name, name_history, province, provinceid, city, cityid,
-                              area, areaid, address, level, grade, publicflag,
-                              classify, general_branch_kid, general_branch_name,
-                              military_hos, regcode, validity, subjects, legalperson,
-                              usci, operation, scope, main_branch_kid, main_branch_name,
-                              create_date, regist_capi, econ_kind, sign_status,
-                              industry, belong
-                          FROM hos_data
-                          UNION ALL
-                          SELECT
-                              batch_code, data_id, data_type, data_code, original_name,
-                              original_province, original_address, company_name,add_time,haosen_code,
-                              appeal_remark, solve_remark, institution_type, keyid,
-                              name, name_history, province, provinceid, city, cityid,
-                              area, areaid, address, level, grade, publicflag,
-                              classify, general_branch_kid, general_branch_name,
-                              military_hos, regcode, validity, subjects, legalperson,
-                              usci, operation, scope, main_branch_kid, main_branch_name,
-                              create_date, regist_capi, econ_kind, sign_status,
-                              industry, belong
-                          FROM drug_data
-                          UNION ALL
-                          SELECT
-                              batch_code, data_id, data_type, data_code, original_name,
-                              original_province, original_address, company_name,add_time,haosen_code,
-                              appeal_remark, solve_remark, institution_type, keyid,
-                              name, name_history, province, provinceid, city, cityid,
-                              area, areaid, address, level, grade, publicflag,
-                              classify, general_branch_kid, general_branch_name,
-                              military_hos, regcode, validity, subjects, legalperson,
-                              usci, operation, scope, main_branch_kid, main_branch_name,
-                              create_date, regist_capi, econ_kind, sign_status,
-                              industry, belong
-                          FROM company_data ) a
-    </sql>
-
-    <select id="getAppealData" resultType="com.example.demo.vo.HaoSenAppealDataVO">
-
-        <include refid="appealSelectCommon"/>
-
-        <include refid="conditionCompanyWhere"/>
-
-        ORDER BY add_time Desc
 
     </select>
 

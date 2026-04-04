@@ -4,14 +4,20 @@ package com.example.demo.service.impl;
 import com.example.demo.apidata.ApiHaosen;
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.dto.HaoSenFileMessageDTO;
+import com.example.demo.dto.HaoSenUpdateStatusDTO;
+import com.example.demo.entity.HaoSenDataIu;
+import com.example.demo.mapper.HaoSenUpdateDataMapper;
+import com.example.demo.service.HaoSenLxDataService;
+import com.example.demo.utils.ExcelHeaderValidator;
+import com.example.demo.utils.HaoSenToLxEntity;
+import com.example.demo.vo.HaoSenInputAppealDataVO;
 import com.example.demo.vo.HaoSenOrganizationVO;
 import com.example.demo.mapper.HaoSenSqlMapper;
 import com.example.demo.service.HaoSenUpdateDataService;
-import com.example.demo.utils.HaoSenAppealExcelReader;
-import com.example.demo.vo.HaoSenAppealDataVO;
-import com.example.demo.vo.HaoSenInputAppealDataVO;
+import com.example.demo.utils.ReaderExcel;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,7 +27,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -29,9 +37,17 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
 
 
     @Autowired
-    private HaoSenSqlMapper sqlMapper;
+    private  HaoSenSqlMapper sqlMapper;
 
-    @Value("${file.upload-dir}"+"\\update_file")
+
+    @Autowired
+    private HaoSenLxDataService haoSenLxDataService;
+
+    @Autowired
+    private HaoSenUpdateDataMapper haoSenUpdateDataMapper;
+
+
+    @Value("${file.upload-dir}"+"/update_file")
     private String uploadDir;
 
     //导入更新数据的文件接口
@@ -48,121 +64,88 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
             Path filePath = uploadPath.resolve(Objects.requireNonNull(file.getOriginalFilename()));
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+
+            // 2. 验证表头 - 传入预期的表头作为参数
+            ExcelHeaderValidator.HeaderValidationResult headerResult =
+                    ExcelHeaderValidator.validate(
+                            filePath.toString(),
+                            HaoSenInputAppealDataVO.EXPECTED_HEADERS  // 将预期表头作为参数传入
+                    );
+
+            // 3. 检查表头验证结果
+            if (!headerResult.isValid()) {
+                // 表头验证失败，直接返回错误信息
+
+                return ApiResponseDTO.error("表头验证失败：" + headerResult.getMessage());
+            }
+
             // 2. 解析Excel
-            HaoSenAppealExcelReader reader = new HaoSenAppealExcelReader();
+            ReaderExcel reader = new ReaderExcel();
             List<HaoSenInputAppealDataVO> updateData = reader.readExcel(filePath.toString(), HaoSenInputAppealDataVO.class);
 
             if (updateData.isEmpty()) {
-                fileMessage.setMessage("文件内容为空");
-                fileMessage.setAppealMessage("更新数据导入失败");
-                return ApiResponseDTO.success(fileMessage);
+                return ApiResponseDTO.error("文件内容为空");
             }
 
             // 3. 数据库操作（事务内）
             sqlMapper.deleteAllHaoSenData();
 
+            List<HaoSenDataIu> haoSenDataIuList = new ArrayList<>();
+            HaoSenToLxEntity haoSenToLxEntity = new HaoSenToLxEntity();
+
             // 3. 清空并导入数据（事务操作）
             for (HaoSenInputAppealDataVO appeal : updateData) {
-                sqlMapper.inputHaoSenData(appeal);
+
+                HaoSenOrganizationVO haoSenOrganization = new HaoSenOrganizationVO();
+                BeanUtils.copyProperties(appeal, haoSenOrganization);
+                sqlMapper.inputHaoSenUpdateData(haoSenOrganization);
+
+                haoSenDataIuList.add(haoSenToLxEntity.ToLxColumn(haoSenOrganization));
+
             }
 
-            // 4. 关键API调用（必须在事务内）
+            haoSenLxDataService.lxUpdateData(haoSenDataIuList);
+
+            // 4. 关键API调用
             String updateMessage = new ApiHaosen().callExternalUpdateApi();
-
-
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(updateMessage);
             if (rootNode.get("code").asInt() == 200){
                 // 5. 全部成功后的响应
-                fileMessage.setProcessedCount(updateData.size());
-                fileMessage.setMessage("success");
-                fileMessage.setAppealMessage("更新数据推送成功");
+                fileMessage.setResult(updateData.size());
+                fileMessage.setMessage("更新数据推送成功");
+                return ApiResponseDTO.success(fileMessage);
             } else {
-                fileMessage.setMessage(rootNode.get("msg").asText());
-                fileMessage.setAppealMessage("更新数据推送失败");
+
+                return ApiResponseDTO.error(rootNode.get("msg").asText());
             }
-            return ApiResponseDTO.success(fileMessage);
+
+
+
 
         } catch (RuntimeException e) {
             // 业务异常（如API调用失败）
-            fileMessage.setMessage("fail");
-            fileMessage.setAppealMessage("更新数据推送失败");
-            return ApiResponseDTO.success(fileMessage);
+            return ApiResponseDTO.error("更新数据推送失败");
         } catch (Exception e) {
             // 系统异常
-            fileMessage.setMessage("系统处理异常");
-            fileMessage.setAppealMessage("更新数据处理失败");
-            return ApiResponseDTO.success(fileMessage);
+            return ApiResponseDTO.error("系统处理异常");
         }
 
     }
 
 
 
-
     //获取药店、医疗机构大库的单条数据
     @Override
-    public ApiResponseDTO<HaoSenAppealDataVO> findDaKuData(String keyid) {
+    public ApiResponseDTO<HaoSenOrganizationVO> findDaKuData(String keyid) {
         return ApiResponseDTO.success(sqlMapper.findDaKuData(keyid));
     }
 
 
 
-    //更新医院信息，并通过接口推送
+    //更新医院、药店、商业信息，并通过接口推送
     @Override
     public ApiResponseDTO<HaoSenFileMessageDTO> updateOneUpdateData(HaoSenOrganizationVO haoSenOrganization) {
-        //给HaoSenAppealDataVO 赋值 ,将 haoSenOrganization 对应的值赋值给HaoSenAppealDataVO
-
-        HaoSenAppealDataVO haoSenUpdateDataVO = new HaoSenAppealDataVO();
-
-        haoSenUpdateDataVO.setBatchCode(haoSenOrganization.getBatchCode());
-        haoSenUpdateDataVO.setDataId(haoSenOrganization.getDataId());
-        haoSenUpdateDataVO.setDataType(haoSenOrganization.getDataType());
-        haoSenUpdateDataVO.setDataCode(haoSenOrganization.getDataCode());
-        haoSenUpdateDataVO.setOriginalName(haoSenOrganization.getOriginalName());
-        haoSenUpdateDataVO.setOriginalProvince(haoSenOrganization.getOriginalProvince());
-        haoSenUpdateDataVO.setOriginalAddress(haoSenOrganization.getOriginalAddress());
-        haoSenUpdateDataVO.setCompanyName(haoSenOrganization.getCompanyName());
-        haoSenUpdateDataVO.setAppealRemark(haoSenOrganization.getAppealRemark());
-        haoSenUpdateDataVO.setSolveRemark(haoSenOrganization.getSolveRemark());
-        haoSenUpdateDataVO.setInstitutionType(haoSenOrganization.getOrgType());
-        haoSenUpdateDataVO.setKeyid(haoSenOrganization.getKeyid());
-        haoSenUpdateDataVO.setName(haoSenOrganization.getName());
-        haoSenUpdateDataVO.setNameHistory(haoSenOrganization.getNameHistory());
-        haoSenUpdateDataVO.setProvince(haoSenOrganization.getProvince());
-        haoSenUpdateDataVO.setProvinceid(haoSenOrganization.getProvinceId());
-        haoSenUpdateDataVO.setCity(haoSenOrganization.getCity());
-        haoSenUpdateDataVO.setCityid(haoSenOrganization.getCityId());
-        haoSenUpdateDataVO.setArea(haoSenOrganization.getArea());
-        haoSenUpdateDataVO.setAreaid(haoSenOrganization.getAreaId());
-        haoSenUpdateDataVO.setAddress(haoSenOrganization.getAddress());
-        haoSenUpdateDataVO.setLevel(haoSenOrganization.getLevel());
-        haoSenUpdateDataVO.setGrade(haoSenOrganization.getGrade());
-        haoSenUpdateDataVO.setPublicflag(haoSenOrganization.getPublicflag());
-        haoSenUpdateDataVO.setClassify(haoSenOrganization.getClassify());
-        haoSenUpdateDataVO.setGeneralBranchKid(haoSenOrganization.getGeneralBranchKid());
-        haoSenUpdateDataVO.setGeneralBranchName(haoSenOrganization.getGeneralBranchName());
-        haoSenUpdateDataVO.setMilitaryHos(haoSenOrganization.getMilitaryHos());
-        haoSenUpdateDataVO.setRegcode(haoSenOrganization.getRegcode());
-        haoSenUpdateDataVO.setValidity(haoSenOrganization.getValidity());
-        haoSenUpdateDataVO.setSubjects(haoSenOrganization.getSubjects());
-        haoSenUpdateDataVO.setLegalperson(haoSenOrganization.getLegalperson());
-        haoSenUpdateDataVO.setUsci(haoSenOrganization.getUsci());
-
-//        药店字段
-//        scope,mainBranchKid,mainBranchName,createDate,registCapi,econKind,signStatus,industry,belong
-
-        haoSenUpdateDataVO.setOperation(haoSenOrganization.getOperation());
-        haoSenUpdateDataVO.setScope(haoSenOrganization.getScope());
-        haoSenUpdateDataVO.setMainBranchKid(haoSenOrganization.getMainBranchKid());
-        haoSenUpdateDataVO.setMainBranchName(haoSenOrganization.getMainBranchName());
-        haoSenUpdateDataVO.setCreateDate(haoSenOrganization.getCreateDate());
-        haoSenUpdateDataVO.setRegistCapi(haoSenOrganization.getRegistCapi());
-        haoSenUpdateDataVO.setEconKind(haoSenOrganization.getEconKind());
-        haoSenUpdateDataVO.setSignStatus(haoSenOrganization.getSignStatus());
-        haoSenUpdateDataVO.setIndustry(haoSenOrganization.getIndustry());
-        haoSenUpdateDataVO.setBelong(haoSenOrganization.getBelong());
-
 
 
         HaoSenFileMessageDTO updateDataMessage = new HaoSenFileMessageDTO();
@@ -171,38 +154,44 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
 
         try {
 
+
+            //  更新业务库逻辑
+            List<HaoSenDataIu> haoSenDataIuList = new ArrayList<>();
+            HaoSenToLxEntity haoSenToLxEntity = new HaoSenToLxEntity();
+            haoSenDataIuList.add(haoSenToLxEntity.ToLxColumn(haoSenOrganization));
+            haoSenLxDataService.lxUpdateData(haoSenDataIuList);
+
+
             // 1. 数据库操作
             sqlMapper.deleteAllHaoSenData();
             //插入数据
-            sqlMapper.inputHaoSenUpdateData(haoSenUpdateDataVO);
+            sqlMapper.inputHaoSenUpdateData(haoSenOrganization);
 
-//         2. 关键API调用
+            //2. 关键API调用
             String updateMessage = new ApiHaosen().callExternalUpdateApi();
             JsonNode rootNode = objectMapper.readTree(updateMessage);
+
             if (rootNode.get("code").asInt() == 200){
-                // 5. 全部成功后的响应
-                updateDataMessage.setProcessedCount(1);
-                updateDataMessage.setMessage("success");
-                updateDataMessage.setAppealMessage("更新数据推送成功");
+
+                updateDataMessage.setResult(1);
+                updateDataMessage.setMessage("更新数据推送成功");
+                return ApiResponseDTO.success(updateDataMessage);
 
             } else {
-                updateDataMessage.setMessage(rootNode.get("msg").asText());
-                updateDataMessage.setAppealMessage("更新数据推送失败");
 
+                return ApiResponseDTO.error(rootNode.get("msg").asText());
             }
-            return ApiResponseDTO.success(updateDataMessage);
+
+
+
 
         } catch (RuntimeException e) {
             // 业务异常（如API调用失败）
-            updateDataMessage.setMessage("fail");
-            updateDataMessage.setAppealMessage("更新数据推送失败");
-            return ApiResponseDTO.success(updateDataMessage);
+            return ApiResponseDTO.error("更新数据推送失败");
 
         } catch (Exception e) {
             // 系统异常
-            updateDataMessage.setMessage("fail");
-            updateDataMessage.setAppealMessage("更新数据处理失败");
-            return ApiResponseDTO.success(updateDataMessage);
+            return ApiResponseDTO.error("系统处理异常");
         }
 
 
@@ -210,6 +199,42 @@ public class HaoSenUpdateDataServicelmpl implements HaoSenUpdateDataService {
     }
 
 
+    //更新医院、药店、商业的状态 status 相关字段 status  1 正常,2 作废,3 无法清洗,4 豪森禁用客户,5 重复数据
+    @Override
+    public ApiResponseDTO<Integer> updateInstitutionType(HaoSenUpdateStatusDTO haoSenUpdateStatusDTO) {
+        String institutionType = haoSenUpdateStatusDTO.getInstitutionType();
+
+        if (institutionType == null || institutionType.equals("")) {
+            return ApiResponseDTO.error("机构类型不能为空");
+        } else if (institutionType.equals("hospital")) {
+            return ApiResponseDTO.success(haoSenUpdateDataMapper.updateHospitalStatus(haoSenUpdateStatusDTO));
+        } else if (institutionType.equals("drugStore")) {
+            return ApiResponseDTO.success(haoSenUpdateDataMapper.updateDrugStoreStatus(haoSenUpdateStatusDTO));
+        } else if (institutionType.equals("company")) {
+            return ApiResponseDTO.success(haoSenUpdateDataMapper.updateCompanyStatus(haoSenUpdateStatusDTO));
+        }
+        return ApiResponseDTO.error("机构类型不存在");
+
+    }
+
+
+// 删除机构数据
+    @Override
+    public ApiResponseDTO<Integer> deleteInstitutionData(Map<String, String> params) {
+        String institutionType = params.get("institutionType");
+        String dataId = params.get("dataId");
+        if (institutionType == null || dataId == null || institutionType.equals("") || dataId.equals("")) {
+            return ApiResponseDTO.error("机构类型或数据ID不能为空");
+        } else if (institutionType.equals("hospital")) {
+            return ApiResponseDTO.success(haoSenUpdateDataMapper.deleteHospitalDataById(dataId));
+        } else if (institutionType.equals("drugStore")) {
+            return ApiResponseDTO.success(haoSenUpdateDataMapper.deleteDrugStoreDataById(dataId));
+        } else if (institutionType.equals("company")) {
+            return ApiResponseDTO.success(haoSenUpdateDataMapper.deleteCompanyDataById(dataId));
+        }
+        return ApiResponseDTO.error("机构类型不存在");
+
+    }
 
 
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 
-@RequestMapping("/mainData")
+@RequestMapping("/haosen/mainData")
 
 public class HaoSenMainDataQueryController {
 

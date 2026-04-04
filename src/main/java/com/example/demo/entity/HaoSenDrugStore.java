@@ -60,6 +60,7 @@ public class HaoSenDrugStore {
     private String field6;
     private String field7;
     private String field8;
+
     private String originalProvince;
     private String originalAddress;
     private String companyName;

@@ -1,15 +1,25 @@
 package com.example.demo.vo;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
 
 public class HaoSenOrganizationVO {
+
+
     // ========== 三个实体类都有的字段 ==========
     private String batchCode;
     private String dataCode;
-    private String dataId;
+    private String dataType;
     private String originalName;
+    private String originalProvince;
+    private String originalAddress;
+    private String companyName;
+    private String haosenCode;
+    private String orgType;
+    private String dataId;
+    private String keyid;
     private String elianId;
     private String name;
     private String nameHistory;
@@ -23,8 +33,6 @@ public class HaoSenOrganizationVO {
     private String remarks;
     private String updatetime;
     private String status;
-    private String dataType;
-    private String keyid;
     private String hsCode;
     private String addtime;
     private String isInsert;
@@ -38,9 +46,11 @@ public class HaoSenOrganizationVO {
     private String field6;
     private String field7;
     private String field8;
+
     private String appealRemark;
     private String solveRemark;
     private String classify;
+
 
     // ========== 医院和药店共有的字段 ==========
     private String usci;
@@ -49,7 +59,6 @@ public class HaoSenOrganizationVO {
     private String isCity;
 
     // ========== 医院特有字段 ==========
-    private String orgType;
     private String level;
     private String grade;
     private String publicflag;
@@ -63,6 +72,8 @@ public class HaoSenOrganizationVO {
     private String militaryHos;
     private String internetHos;
     private String medUnionCommunity;
+    private String medUnionCommunityKeyid;
+    private String medUnionCommunityName;
     private String regcode;
     private String menzhen;
     private String bedCount;
@@ -73,9 +84,6 @@ public class HaoSenOrganizationVO {
     private String generalBranchKid;
     private String generalBranchName;
     private String internetHosclassify;
-    private String originalProvince;
-    private String originalAddress;
-    private String companyName;
 
 
     // ========== 药店特有字段 ==========

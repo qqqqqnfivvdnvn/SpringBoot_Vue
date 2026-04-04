@@ -5,10 +5,10 @@ import lombok.Data;
 @Data
 public class HaoSenCleanDataVO {
 
-    //    batch_code	status	clean_status	data_id	data_type	data_code	original_name	original_province	original_address	company_name	haosen_code	add_time
+//    batch_code	status	clean_status	data_id	data_type	data_code	original_name	original_province	original_address	company_name	haosen_code	add_time
     private String batchCode;
-    private Integer status;
-    private Integer cleanStatus;
+    private Integer  batchStatus;
+    private Integer  cleanStatus;
     private String dataId;
     private String dataType;
     private String dataCode;
@@ -17,6 +17,9 @@ public class HaoSenCleanDataVO {
     private String originalAddress;
     private String companyName;
     private String haosenCode;
+    private String duplicateFlag;
     private String addTime;
+
+
 
 }

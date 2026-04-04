@@ -6,4 +6,7 @@ import lombok.Data;
 public class PieDataVO {
     private String name;
     private int value;
+
+    
+
 }

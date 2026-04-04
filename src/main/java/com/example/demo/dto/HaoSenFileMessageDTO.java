@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class HaoSenFileMessageDTO {
     private String message;
-    private int processedCount;
-    private String appealMessage;
+
+    private int result;
 
 }

@@ -6,7 +6,7 @@ import com.example.demo.vo.HaoSenOrganizationVO;
 import com.github.pagehelper.PageInfo;
 import com.example.demo.dto.HaoSenHospitalConditionDTO;
 
-public interface HaoSenMainDataQueryService {
+public interface HaoSenMainDataQueryService  {
 
     public ApiResponseDTO<PageInfo<HaoSenOrganizationVO>> getHospitalList(HaoSenHospitalConditionDTO condition, int pageNum,
                                                                           int pageSize);

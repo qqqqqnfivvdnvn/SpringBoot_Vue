@@ -24,9 +24,7 @@ import java.util.Map;
 
 
 @RestController
-
 @RequestMapping("/user")
-
 public class UserController {
 
     @Autowired
@@ -112,6 +110,7 @@ public class UserController {
 
         }
     }
+
 
     @GetMapping("/pageuser")
     public List<Users> getUsers(
