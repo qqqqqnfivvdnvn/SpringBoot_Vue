@@ -216,6 +216,11 @@ public class HaoSenInputCleanDataServiceImpl implements HaoSenInputCleanDataServ
         boolean needLimit = MyBatisUtils.isAllBlank(condition); // 自己写个工具判空
 
         List<HaoSenCleanDataVO> haoSenCleanData = haosencleanDataMapper.findAllHaoSenCleanData(condition,needLimit);
+
+        if (haoSenCleanData == null || haoSenCleanData.isEmpty()) {
+            return ApiResponseDTO.error("没有数据可导出");
+        }
+
         HaoSenToExcel webToExcel = new HaoSenToExcel();
         byte[] excelBytes = webToExcel.exportCleanDataExcel(haoSenCleanData,"清洗数据");
         HttpHeaders headers = new HttpHeaders();

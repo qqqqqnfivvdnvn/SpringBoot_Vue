@@ -59,6 +59,12 @@
             <if test="condition.haosenCode != null and condition.haosenCode != ''">
                 AND b.haosen_code LIKE CONCAT('%', #{condition.haosenCode}, '%')
             </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND b.add_time &gt;= TO_TIMESTAMP(#{condition.startTime}, 'YYYY-MM-DD HH24:MI:SS')
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND b.add_time &lt;= TO_TIMESTAMP(#{condition.endTime}, 'YYYY-MM-DD HH24:MI:SS')
+            </if>
         </where>
         ORDER BY add_time DESC
     </select>
@@ -94,6 +100,12 @@
             <if test="condition.haosenCode != null and condition.haosenCode != ''">
                 AND b.haosen_code LIKE CONCAT('%', #{condition.haosenCode}, '%')
             </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND b.add_time &gt;= TO_TIMESTAMP(#{condition.startTime}, 'YYYY-MM-DD HH24:MI:SS')
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND b.add_time &lt;= TO_TIMESTAMP(#{condition.endTime}, 'YYYY-MM-DD HH24:MI:SS')
+            </if>
         </where>
         ORDER BY add_time DESC
 
@@ -110,7 +122,9 @@
             (condition.dataCode == null or condition.dataCode == '') and
             (condition.originalName == null or condition.originalName == '') and
             (condition.originalProvince == null or condition.originalProvince == '') and
-            (condition.haosenCode == null or condition.haosenCode == ''))
+            (condition.haosenCode == null or condition.haosenCode == '') and
+            (condition.startTime == null or condition.startTime == '') and
+            (condition.endTime == null or condition.endTime == ''))
         ">OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY</when>
             </choose>
         </if>

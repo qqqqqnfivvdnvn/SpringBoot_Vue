@@ -14,5 +14,7 @@ public class HaoSenCleanConditionDTO {
     private String originalName;
     private String originalProvince;
     private String haosenCode;
+    private String startTime;
+    private String endTime;
 
 }

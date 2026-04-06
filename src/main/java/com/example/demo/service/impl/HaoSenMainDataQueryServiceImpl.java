@@ -95,6 +95,10 @@ public class HaoSenMainDataQueryServiceImpl  implements  HaoSenMainDataQueryServ
 
         List<HaoSenOrganizationVO> allHospitalCondition = mainDataQueryMapper.findAllHospitalCondition(condition,needLimit);
 
+        if (allHospitalCondition == null || allHospitalCondition.isEmpty()) {
+            return ApiResponseDTO.error("没有数据可导出");
+        }
+
         // 调用字段映射
         HaoSenToExcel webToExcel = new HaoSenToExcel();
         byte[] excelBytes = webToExcel.exportConditionToExcel(allHospitalCondition,"医疗机构数据");
@@ -120,6 +124,10 @@ public class HaoSenMainDataQueryServiceImpl  implements  HaoSenMainDataQueryServ
     public ApiResponseDTO<byte[]> exportDrugStoreList(HaoSenDrugStoreConditionDTO condition) {
         boolean needLimit = MyBatisUtils.isAllBlank(condition); // 自己写个工具判空
         List<HaoSenOrganizationVO> allDrugStoreCondition = mainDataQueryMapper.findAllDrugStoreCondition(condition,needLimit);
+
+        if (allDrugStoreCondition == null || allDrugStoreCondition.isEmpty()) {
+            return ApiResponseDTO.error("没有数据可导出");
+        }
 
         // 调用字段映射
         HaoSenToExcel webToExcel = new HaoSenToExcel();
@@ -148,6 +156,11 @@ public class HaoSenMainDataQueryServiceImpl  implements  HaoSenMainDataQueryServ
     public ApiResponseDTO<byte[]> exportCompanyData(HaoSenCompanyConditionDTO condition) {
         boolean needLimit = MyBatisUtils.isAllBlank(condition); // 自己写个工具判空
         List<HaoSenOrganizationVO> allCompanyCondition = mainDataQueryMapper.findAllCompanyCondition(condition, needLimit);
+
+        if (allCompanyCondition == null || allCompanyCondition.isEmpty()) {
+            return ApiResponseDTO.error("没有数据可导出");
+        }
+
         // 调用字段映射
         HaoSenToExcel webToExcel = new HaoSenToExcel();
         byte[] excelBytes = webToExcel.exportConditionToExcel(allCompanyCondition,"商业数据");

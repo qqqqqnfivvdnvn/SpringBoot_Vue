@@ -1,0 +1,153 @@
+"""
+高德地图地理编码查询模块
+支持多 key 轮换，用于根据地址获取经纬度坐标
+"""
+from __future__ import annotations
+
+from typing import Any
+
+import requests
+
+# 高德地图 API 地址
+AMAP_GEOCODE_URL = 'https://restapi.amap.com/v3/geocode/geo'
+
+# 多个 key 列表
+API_KEYS = [
+    '5b2f92dd2cad9e00d64b779fdce91598',  # 陈
+    'fc464f6074e1d612bab41934e24c4dfb',  # 葛
+    '1969087a7d06a715f66c5a93b6702592',  # 何
+    '74d0a7437dc1ed1f1cefa8da67b4593b'   #张
+    # '5ccc5d3ea27695355d22e8d635317de0',  # 肖
+]
+
+# 当前使用的 key 索引
+_current_key_index = 0
+
+
+# ==================== Key 管理功能 ====================
+
+def get_current_key() -> str:
+    """获取当前使用的 key"""
+    return API_KEYS[_current_key_index]
+
+
+def _switch_to_next_key() -> str:
+    """切换到下一个 key"""
+    global _current_key_index
+    _current_key_index = (_current_key_index + 1) % len(API_KEYS)
+    print(f"切换到 key: {get_current_key()}")
+    return get_current_key()
+
+
+def add_key(new_key: str) -> None:
+    """添加新的 key"""
+    if new_key not in API_KEYS:
+        API_KEYS.append(new_key)
+        print(f"成功添加 key，当前共有 {len(API_KEYS)} 个 key")
+
+
+def get_key_status() -> dict[str, Any]:
+    """获取 key 状态"""
+    return {
+        'total_keys': len(API_KEYS),
+        'current_key_index': _current_key_index,
+        'current_key': get_current_key()
+    }
+
+
+# ==================== 地理编码查询功能 ====================
+
+def _create_empty_result(province: str, address: str, infocode: Any = None, info: str = None) -> dict[str, Any]:
+    """创建空的结果字典"""
+    return {
+        'infocode': infocode,
+        'info': info,
+        'location': None,
+        'province': province,
+        'city': None,
+        'area': None,
+        'areaid': None,
+        'address': address
+    }
+
+
+def get_area_lat_lng(province: str, address: str) -> dict[str, Any]:
+    """
+    根据地址获取经纬度坐标
+
+    Args:
+        province: 省份/城市
+        address: 详细地址
+
+    Returns:
+        包含地理编码信息的字典
+    """
+    area_lat_lng = _create_empty_result(province, address)
+
+    original_key_index = _current_key_index
+    max_retries = len(API_KEYS)
+
+    for _ in range(max_retries):
+        current_key = get_current_key()
+        params = {
+            'city': province,
+            'address': address,
+            'key': current_key,
+            'output': 'json'
+        }
+
+        try:
+            response = requests.get(AMAP_GEOCODE_URL, params, timeout=5)
+
+            if response.status_code == 200:
+                json_result = response.json()
+                infocode = json_result.get('infocode', '')
+
+                if infocode == '10000':  # 成功
+                    area_lat_lng['infocode'] = json_result['infocode']
+                    area_lat_lng['info'] = json_result['info']
+
+                    geocodes = json_result.get('geocodes', [])
+                    if geocodes:
+                        m = geocodes[0]  # 取第一个结果
+                        # 区县级为空时使用城市名
+                        area_lat_lng['area'] = m['city'] if len(m.get('district', '')) == 0 else m['district']
+                        area_lat_lng['city'] = m['city']
+                        area_lat_lng['province'] = m['province']
+                        area_lat_lng['areaid'] = m['adcode']
+                        area_lat_lng['location'] = m['location']
+
+                    return area_lat_lng
+
+                else:  # 其他错误
+                    area_lat_lng['infocode'] = json_result['infocode']
+                    area_lat_lng['info'] = json_result['info']
+                    area_lat_lng['area'] = None
+                    area_lat_lng['city'] = None
+                    area_lat_lng['areaid'] = None
+                    area_lat_lng['location'] = None
+                    print(f"请求失败，错误码：{infocode}, 信息：{json_result.get('info', '')}")
+                    _switch_to_next_key()
+                    continue
+            else:
+                # HTTP 错误
+                area_lat_lng['infocode'] = 3
+                area_lat_lng['info'] = '请求失败'
+                return area_lat_lng
+
+        except Exception as e:
+            # 网络异常
+            area_lat_lng['infocode'] = 3
+            area_lat_lng['info'] = '请求失败'
+            return area_lat_lng
+
+    # 所有 key 都尝试失败
+    area_lat_lng['infocode'] = 3
+    area_lat_lng['info'] = '所有 key 都已尝试失败'
+    return area_lat_lng
+
+
+if __name__ == '__main__':
+    result = get_area_lat_lng('广元市', '广元市利州区苴国路490号')
+    print(result)
+    print("最终 key 状态:", get_key_status())

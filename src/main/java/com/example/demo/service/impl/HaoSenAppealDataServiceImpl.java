@@ -76,6 +76,10 @@ public class HaoSenAppealDataServiceImpl implements HaoSenAppealDataService {
 
         List<HaoSenOrganizationVO> appealData = appealDataMapper.getAppealData(condition);
 
+        if (appealData == null || appealData.isEmpty()) {
+            return ApiResponseDTO.error("没有数据可导出");
+        }
+
 
         // 调用字段映射
         HaoSenToExcel webToExcel = new HaoSenToExcel();
