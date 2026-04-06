@@ -1,0 +1,190 @@
+html.dark {
+    background-color: #0e0b1a;
+    color: #e0e0e0;
+}
+
+html.dark .home-page {
+    background: linear-gradient(135deg, #1a1625, #0e0b1a);
+}
+
+html.dark .navbar {
+    background-color: #1f1b2e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .navbar-links a {
+    color: #e0e0e0;
+}
+
+html.dark .navbar-links a:hover {
+    color: #bb86fc;
+}
+
+html.dark .sidebar {
+    background-color: #1f1b2e;
+    color: #e0e0e0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+html.dark .sidebar-header {
+    color: #bb86fc;
+}
+
+html.dark .menu-item:hover,
+html.dark .sub-menu li:hover {
+    background-color: #2d2640;
+}
+
+html.dark .arrow {
+    color: #bb86fc;
+}
+
+html.dark .content {
+    background-color: #1a1625;
+    color: #e0e0e0;
+}
+
+html.dark .content-header {
+    background-color: #1f1b2e;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .tab {
+    background-color: #2d2640;
+    border-color: #3d3550;
+    color: #e0e0e0;
+}
+
+html.dark .tab.active {
+    background-color: #1a1625;
+    color: #bb86fc;
+    border-bottom-color: #1a1625;
+    font-weight: bold;
+}
+
+html.dark .close-tab {
+    color: #777;
+}
+
+html.dark .close-tab:hover {
+    color: #bbb;
+}
+
+html.dark .toast {
+    background-color: #bb86fc;
+    color: #000;
+    font-weight: 500;
+}
+
+html.dark .logout-button {
+    background-color: #bb86fc;
+    color: #000;
+}
+
+html.dark .logout-button:hover {
+    background-color: #cf9eff;
+}
+
+html.dark .collapse-button {
+    color: #bb86fc;
+}
+
+html.dark .collapse-button:hover {
+    color: #e0b3ff;
+}
+
+/* 修复：图标颜色统一，不被意外覆盖 */
+font-awesome-icon {
+    color: inherit; /* 跟随父元素文字颜色 */
+}
+
+/* 亮模式菜单文字和图标颜色 */
+.menu-item,
+.sub-menu li {
+    color: #333;
+}
+
+/* 暗模式菜单文字和图标颜色 */
+html.dark .menu-item,
+html.dark .sub-menu li {
+    color: #e0e0e0;
+}
+
+/* 悬停高亮（亮/暗统一） */
+.menu-item:hover,
+.sub-menu li:hover {
+    color: #9478cc;
+}
+
+html.dark .menu-item:hover,
+html.dark .sub-menu li:hover {
+    color: #bb86fc;
+}
+
+
+html.dark {
+    /* 核心背景/文字变量（Element Plus 官方常用） */
+    --el-bg-color: #1a1625;
+    --el-bg-color-overlay: #1f1b2e;
+    --el-text-color-primary: #e0e0e0;
+    --el-text-color-regular: #d0d0d0;
+    --el-border-color: #3d3550;
+
+    /* el-upload 专用覆盖（dragger 是最容易残留白色的地方） */
+    --el-upload-dragger-bg: #1f1b2e;
+    --el-upload-dragger-border-color: #3d3550;
+    --el-upload-dragger-hover-border-color: #bb86fc;
+
+    /* dialog / card / result */
+    --el-dialog-bg-color: #1f1b2e;
+    --el-card-bg-color: #1f1b2e;
+    --el-popover-bg-color: #1f1b2e;
+}
+
+/* 更强的选择器覆盖（必要时使用 :deep 或直接） */
+html.dark .el-upload-dragger {
+    background-color: var(--el-upload-dragger-bg) !important;
+    border-color: var(--el-upload-dragger-border-color) !important;
+}
+
+html.dark .el-upload-dragger:hover,
+html.dark .el-upload-dragger.is-dragover {
+    border-color: var(--el-upload-dragger-hover-border-color) !important;
+    background-color: rgba(187, 134, 252, 0.08) !important;
+}
+
+html.dark .el-dialog,
+html.dark .el-result {
+    background-color: var(--el-dialog-bg-color) !important;
+}
+
+/* 全局变量（放在非 scoped 的 css 文件中） */
+:root {
+    --bg-secondary: #ffffff;
+    --border: #dcdfe6;
+    --shadow: rgba(0, 0, 0, 0.05);
+    --accent: #9478cc;
+
+    /* 主题颜色变量（默认值，运行时会被组件动态覆盖） */
+    --theme-primary: #9478cc;
+    --theme-dark: #7d60b8;
+    --theme-light: #b89ff0;
+    --theme-rgba: rgba(148, 120, 204, 0.35);
+    --theme-rgba-light: rgba(148, 120, 204, 0.08);
+    --theme-rgba-shadow: rgba(148, 120, 204, 0.45);
+    --theme-gradient: linear-gradient(135deg, #9478cc, #7d60b8);
+    --theme-gradient-nav: linear-gradient(90deg, #7d60b8 0%, #9478cc 60%, #b89ff0 100%);
+    --theme-text-dark: #b89ff0;
+    --theme-icon-dark: #b89ff0;
+}
+
+
+html.dark {
+    --bg-secondary: #141414;        /* 主要卡片背景 */
+    --bg-hover: #2d2640;
+    --border: #3d3550;
+    --shadow: rgba(0, 0, 0, 0.5);
+    --accent: #bb86fc;
+}
+
+

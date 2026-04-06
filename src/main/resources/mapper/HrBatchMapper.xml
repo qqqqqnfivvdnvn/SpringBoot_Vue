@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.HrBatchMapper">
+
+    <resultMap id="HrBatchVOResultMap" type="com.example.demo.vo.HrBatchVO">
+        <result column="batch_id" property="batchId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+        <result column="status_desc" property="statusDesc"/>
+        <result column="data_count" property="dataCount"/>
+        <result column="original_filename" property="originalFilename"/>
+        <result column="message" property="message"/>
+    </resultMap>
+
+    <select id="selectByCondition" resultMap="HrBatchVOResultMap">
+        SELECT
+            b.batch_id,
+            b.create_time,
+            b.update_time,
+            b.status,
+            b.original_filename,
+            b.message,
+            CASE b.status
+                WHEN 0 THEN '处理中'
+                WHEN 1 THEN '已处理'
+                WHEN 2 THEN '处理失败'
+                ELSE '未知'
+            END AS status_desc,
+            COUNT(m.batch_id) AS data_count
+        FROM haosen_project..hr_batch b
+        LEFT JOIN haosen_project..hr_monitoring_data m ON b.batch_id = m.batch_id
+        <where>
+            <if test="condition.batchId != null and condition.batchId != ''">
+                AND b.batch_id = #{condition.batchId}
+            </if>
+            <if test="condition.status != null">
+                AND b.status = #{condition.status}
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND b.create_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND b.create_time &lt;= #{condition.endTime}
+            </if>
+        </where>
+        GROUP BY b.batch_id, b.create_time, b.update_time, b.status, b.original_filename, b.message
+        ORDER BY b.create_time DESC
+    </select>
+
+    <select id="selectByBatchId" resultMap="HrBatchVOResultMap">
+        SELECT
+            batch_id,
+            create_time,
+            update_time,
+            status,
+            original_filename,
+            message,
+            CASE status
+                WHEN 0 THEN '处理中'
+                WHEN 1 THEN '已处理'
+                WHEN 2 THEN '处理失败'
+                ELSE '未知'
+            END AS status_desc
+        FROM haosen_project..hr_batch
+        WHERE batch_id = #{batchId}
+    </select>
+
+    <insert id="insert" parameterType="com.example.demo.entity.HrBatch">
+        INSERT INTO haosen_project..hr_batch (batch_id, create_time, update_time, status, original_filename, message)
+        VALUES (#{batchId}, #{createTime}, #{updateTime}, #{status}, #{originalFilename}, #{message})
+    </insert>
+
+    <update id="updateStatus">
+        UPDATE haosen_project..hr_batch
+        SET status = #{status}, update_time = GETDATE()
+        WHERE batch_id = #{batchId}
+    </update>
+
+    <update id="updateStatusWithMessage">
+        UPDATE haosen_project..hr_batch
+        SET status = #{status}, message = #{message}, update_time = GETDATE()
+        WHERE batch_id = #{batchId}
+    </update>
+
+</mapper>

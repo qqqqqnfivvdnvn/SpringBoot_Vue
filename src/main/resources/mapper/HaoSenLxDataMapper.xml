@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.HaoSenLxDataMapper">
+
+<!--    清空表haosen_data_iu-->
+    <update id="deleteAllIuData" >
+        DELETE FROM liuxiang_haosen.haosen_data_iu
+    </update>
+
+
+    <!--加入数据处理逻辑 执行sql-->
+<!--   1. 比对关系更新-->
+<!--   2. 比对关系新增-->
+<!--   3. 主数据新增-->
+<!--   4. 主数据更新-->
+
+    <update id="executeAllSQLOperations">
+    <![CDATA[
+
+
+        UPDATE liuxiang_haosen.data_org_relation b
+        SET base_key_id = a.keyid,
+            status = 2,
+            update_time = NOW(),
+            remark = a.appeal_remark
+            FROM liuxiang_haosen.haosen_data_iu a
+        WHERE a.data_id = b.hash_id
+          AND (COALESCE(a.keyid,'') <> COALESCE(b.base_key_id,'') OR b.status <> 2)
+          AND a.keyid IS NOT NULL
+          AND a.keyid <> '';
+
+
+        INSERT INTO liuxiang_haosen.data_org_relation (
+            id, hash_id, data_source_name, business_name, org_name, province, addr,
+            base_key_id, base_org_id, status, add_time, update_time
+        )
+        SELECT
+            liuxiang_haosen.uuid_generate_v1(),
+            data_id,
+            distributor,
+            distributor,
+            original_data_name,
+            original_province,
+            COALESCE(NULLIF(original_data_address,''),original_province),
+            keyid,
+            keyid,
+            2,
+            NOW(),
+            NOW()
+        FROM liuxiang_haosen.haosen_data_iu a
+        WHERE LENGTH(keyid) > 10
+          AND NOT EXISTS (
+                SELECT 1
+                FROM liuxiang_haosen.data_org_relation
+                WHERE hash_id = a.data_id
+            );
+
+
+        INSERT INTO liuxiang_haosen.base_org (
+            std_orgid, key_id, org_name, history_name, province, province_id, city, city_id,
+            area_name, area_id, address, org_level, org_grade, org_owner_form, org_five_property,
+            superior_unit, is_pla, reg_code, validity, medical_subjects, org_legal_person,
+            credit_code, business_model, scope, create_date, regist_capi, econ_kind,
+            reg_status, industry, approva_org, manual_type, add_time, update_time,
+            superior_unit_name, base_type_name, base_type
+        )
+        SELECT
+            keyid,
+            keyid,
+            org_name,
+            MAX(history_name),
+            province,
+            province_id,
+            city,
+            city_id,
+            area_name,
+            area_id,
+            address,
+            org_level,
+            org_grade,
+            org_owner_form,
+            org_five_property,
+            COALESCE(NULLIF(superior_unit_kid,''), NULLIF(branch_kid,''),''),
+            is_pla,
+            reg_code,
+            validity,
+            MAX(medical_subjects),
+            org_legal_person,
+            MAX(credit_code),
+            business_model,
+            scope,
+            LEFT(create_date,10),
+            regist_capi,
+            econ_kind,
+            reg_status,
+            industry,
+            approva_org,
+            1,
+            NOW(),
+            NOW(),
+            COALESCE(NULLIF(superior_unit_name,''), NULLIF(branch_name,''),''),
+            base_type_name,
+            CASE
+            WHEN base_type_name='药店' THEN 1
+            WHEN base_type_name='商业' THEN 0
+            WHEN base_type_name='医院' THEN 2
+            ELSE NULL
+        END
+        FROM liuxiang_haosen.haosen_data_iu a
+    WHERE keyid IS NOT NULL
+        AND keyid <> ''
+        AND NOT EXISTS (
+            SELECT 1
+            FROM liuxiang_haosen.base_org
+            WHERE key_id = a.keyid
+        )
+    GROUP BY
+        keyid,
+        keyid,
+        org_name,
+        history_name,
+        province,
+        province_id,
+        city,
+        city_id,
+        area_name,
+        area_id,
+        address,
+        org_level,
+        org_grade,
+        org_owner_form,
+        org_five_property,
+        superior_unit_kid,
+        branch_kid,
+        is_pla,
+        reg_code,
+        validity,
+        medical_subjects,
+        org_legal_person,
+        credit_code,
+        business_model,
+        scope,
+        create_date,
+        regist_capi,
+        econ_kind,
+        reg_status,
+        industry,
+        approva_org,
+        superior_unit_name,
+        branch_name,
+        base_type_name;
+
+
+        UPDATE liuxiang_haosen.base_org a
+        SET
+            update_time = NOW(),
+            org_name = COALESCE(t.org_name, a.org_name),
+            history_name = COALESCE(t.history_name, a.history_name),
+            province = COALESCE(t.province, a.province),
+            province_id = COALESCE(t.province_id, a.province_id),
+            city = COALESCE(t.city, a.city),
+            city_id = COALESCE(t.city_id, a.city_id),
+            area_name = COALESCE(t.area_name, a.area_name),
+            area_id = COALESCE(t.area_id, a.area_id),
+            address = COALESCE(t.address, a.address),
+            org_level = COALESCE(t.org_level, a.org_level),
+            org_grade = COALESCE(t.org_grade, a.org_grade),
+            org_owner_form = COALESCE(t.org_owner_form, a.org_owner_form),
+            org_five_property = COALESCE(t.org_five_property, a.org_five_property),
+            superior_unit = COALESCE(t.superior_unit, a.superior_unit),
+            is_pla = COALESCE(t.is_pla, a.is_pla),
+            reg_code = COALESCE(t.reg_code, a.reg_code),
+            validity = COALESCE(t.validity, a.validity),
+            medical_subjects = COALESCE(t.medical_subjects, a.medical_subjects),
+            org_legal_person = COALESCE(t.org_legal_person, a.org_legal_person),
+            credit_code = COALESCE(t.credit_code, a.credit_code),
+            business_model = COALESCE(t.business_model, a.business_model),
+            scope = COALESCE(t.scope, a.scope),
+            create_date = LEFT(t.create_date, 10),
+            regist_capi = COALESCE(t.regist_capi, a.regist_capi),
+            econ_kind = COALESCE(t.econ_kind, a.econ_kind),
+            reg_status = COALESCE(t.reg_status, a.reg_status),
+            industry = COALESCE(t.industry, a.industry),
+            approva_org = COALESCE(t.approva_org, a.approva_org),
+            base_type_name = COALESCE(t.base_type_name, a.base_type_name),
+            superior_unit_name = COALESCE(t.superior_unit_name, a.superior_unit_name),
+            base_type = CASE
+            WHEN t.base_type_name='药店' THEN 1
+            WHEN t.base_type_name='商业' THEN 0
+            WHEN t.base_type_name='医院' THEN 2
+            ELSE NULL
+        END
+        FROM (
+        SELECT
+            keyid AS std_orgid,
+            keyid AS key_id,
+            org_name,
+            history_name,
+            province,
+            province_id,
+            city,
+            city_id,
+            area_name,
+            area_id,
+            address,
+            org_level,
+            org_grade,
+            org_owner_form,
+            org_five_property,
+            COALESCE(NULLIF(superior_unit_kid,''), NULLIF(branch_kid,''),'') as superior_unit,
+            is_pla,
+            reg_code,
+            validity,
+            medical_subjects,
+            org_legal_person,
+            credit_code,
+            business_model,
+            scope,
+            create_date,
+            regist_capi,
+            econ_kind,
+            reg_status,
+            industry,
+            approva_org,
+            COALESCE(NULLIF(superior_unit_name,''), NULLIF(branch_name,''),'') as superior_unit_name,
+            base_type_name
+        FROM liuxiang_haosen.haosen_data_iu a
+        WHERE keyid IS NOT NULL
+        GROUP BY
+            keyid,
+            keyid,
+            org_name,
+            history_name,
+            province,
+            province_id,
+            city,
+            city_id,
+            area_name,
+            area_id,
+            address,
+            org_level,
+            org_grade,
+            org_owner_form,
+            org_five_property,
+            COALESCE(NULLIF(superior_unit_kid,''), NULLIF(branch_kid,''),''),
+            is_pla,
+            reg_code,
+            validity,
+            medical_subjects,
+            org_legal_person,
+            credit_code,
+            business_model,
+            scope,
+            create_date,
+            regist_capi,
+            econ_kind,
+            reg_status,
+            industry,
+            approva_org,
+            COALESCE(NULLIF(superior_unit_name,''), NULLIF(branch_name,''),''),
+            base_type_name
+    ) t
+    WHERE a.key_id = t.key_id
+        AND (
+            COALESCE(a.org_name,'') <> COALESCE(t.org_name, COALESCE(a.org_name,'')) OR
+            COALESCE(a.history_name,'') <> COALESCE(t.history_name, COALESCE(a.history_name,'')) OR
+            COALESCE(a.province,'') <> COALESCE(t.province, COALESCE(a.province,'')) OR
+            COALESCE(a.province_id,'') <> COALESCE(t.province_id, COALESCE(a.province_id,'')) OR
+            COALESCE(a.city,'') <> COALESCE(t.city, COALESCE(a.city,'')) OR
+            COALESCE(a.city_id,'') <> COALESCE(t.city_id, COALESCE(a.city_id,'')) OR
+            COALESCE(a.area_name,'') <> COALESCE(t.area_name, COALESCE(a.area_name,'')) OR
+            COALESCE(a.area_id,'') <> COALESCE(t.area_id, COALESCE(a.area_id,'')) OR
+            COALESCE(a.address,'') <> COALESCE(t.address, COALESCE(a.address,'')) OR
+            COALESCE(a.org_level,'') <> COALESCE(t.org_level, COALESCE(a.org_level,'')) OR
+            COALESCE(a.org_grade,'') <> COALESCE(t.org_grade, COALESCE(a.org_grade,'')) OR
+            COALESCE(a.org_owner_form,'') <> COALESCE(t.org_owner_form, COALESCE(a.org_owner_form,'')) OR
+            COALESCE(a.org_five_property,'') <> COALESCE(t.org_five_property, COALESCE(a.org_five_property,'')) OR
+            COALESCE(a.superior_unit,'') <> COALESCE(t.superior_unit, COALESCE(a.superior_unit,'')) OR
+            COALESCE(a.is_pla,'') <> COALESCE(t.is_pla, COALESCE(a.is_pla,'')) OR
+            COALESCE(a.reg_code,'') <> COALESCE(t.reg_code, COALESCE(a.reg_code,'')) OR
+            COALESCE(a.validity,'') <> COALESCE(t.validity, COALESCE(a.validity,'')) OR
+            COALESCE(a.medical_subjects,'') <> COALESCE(t.medical_subjects, COALESCE(a.medical_subjects,'')) OR
+            COALESCE(a.org_legal_person,'') <> COALESCE(t.org_legal_person, COALESCE(a.org_legal_person,'')) OR
+            COALESCE(a.credit_code,'') <> COALESCE(t.credit_code, COALESCE(a.credit_code,'')) OR
+            COALESCE(a.business_model,'') <> COALESCE(t.business_model, COALESCE(a.business_model,'')) OR
+            COALESCE(a.scope,'') <> COALESCE(t.scope, COALESCE(a.scope,'')) OR
+            COALESCE(a.create_date,'') <> LEFT(COALESCE(t.create_date, COALESCE(a.create_date,'')), 10) OR
+            COALESCE(a.regist_capi,'') <> COALESCE(t.regist_capi, COALESCE(a.regist_capi,'')) OR
+            COALESCE(a.econ_kind,'') <> COALESCE(t.econ_kind, COALESCE(a.econ_kind,'')) OR
+            COALESCE(a.reg_status,'') <> COALESCE(t.reg_status, COALESCE(a.reg_status,'')) OR
+            COALESCE(a.industry,'') <> COALESCE(t.industry, COALESCE(a.industry,'')) OR
+            COALESCE(a.approva_org,'') <> COALESCE(t.approva_org, COALESCE(a.approva_org,'')) OR
+            COALESCE(a.base_type_name,'') <> COALESCE(t.base_type_name, COALESCE(a.base_type_name,'')) OR
+            COALESCE(a.superior_unit_name,'') <> COALESCE(t.superior_unit_name, COALESCE(a.superior_unit_name,''))
+        );
+
+        UPDATE liuxiang_haosen.origin_org_haosen
+        SET push_status = 1, update_time = NOW()
+        WHERE data_id IN (
+            SELECT data_id FROM liuxiang_haosen.haosen_data_iu
+        )
+          AND (push_status != 1 OR push_status IS NULL);
+
+
+        ]]>
+</update>
+
+
+</mapper>

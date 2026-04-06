@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.MdLocationMapper">
+
+    <resultMap id="MdLocationExportVOMap" type="com.example.demo.vo.MdLocationExportVO">
+        <result property="id" column="id"/>
+        <result property="originalName" column="original_name"/>
+        <result property="originalProvince" column="original_province"/>
+        <result property="originalAddress" column="original_address"/>
+        <result property="provName" column="prov"/>
+        <result property="provId" column="prov_id"/>
+        <result property="cityName" column="city"/>
+        <result property="cityId" column="city_id"/>
+        <result property="countyName" column="county"/>
+        <result property="countyId" column="county_id"/>
+        <result property="lngLat" column="lng_lat"/>
+    </resultMap>
+
+    <resultMap id="MdLocationMap" type="com.example.demo.entity.MdLocation">
+        <result property="id" column="id"/>
+        <result property="batchId" column="batch_id"/>
+        <result property="originalName" column="original_name"/>
+        <result property="originalProvince" column="original_province"/>
+        <result property="originalAddress" column="original_address"/>
+        <result property="areaName" column="area_name"/>
+        <result property="areaId" column="area_id"/>
+        <result property="lngLat" column="lng_lat"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!-- 根据条件查询地理位置列表 -->
+    <select id="selectByCondition" resultMap="MdLocationMap">
+        SELECT
+            id,
+            batch_id,
+            original_name,
+            original_province,
+            original_address,
+            area_name,
+            area_id,
+            lng_lat,
+            province,
+            city,
+            create_time
+        FROM haosen_project.dbo.md_location a
+        <where>
+            <if test="condition.batchId != null and condition.batchId != ''">
+                AND a.batch_id = #{condition.batchId}
+            </if>
+            <if test="condition.originalName != null and condition.originalName != ''">
+                AND a.original_name LIKE '%' + #{condition.originalName} + '%'
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND a.province LIKE '%' + #{condition.province} + '%'
+            </if>
+            <if test="condition.city != null and condition.city != ''">
+                AND a.city LIKE '%' + #{condition.city} + '%'
+            </if>
+            <if test="condition.areaName != null and condition.areaName != ''">
+                AND a.area_name LIKE '%' + #{condition.areaName} + '%'
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 批量插入地理位置数据 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO haosen_project.dbo.md_location (
+            id,
+            batch_id,
+            original_name,
+            original_province,
+            original_address,
+            area_name,
+            area_id,
+            lng_lat,
+            province,
+            city,
+            create_time,
+            update_time
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.id},
+                #{item.batchId},
+                #{item.originalName},
+                #{item.originalProvince},
+                #{item.originalAddress},
+                #{item.areaName},
+                #{item.areaId},
+                #{item.lngLat},
+                #{item.province},
+                #{item.city},
+                GETDATE(),
+                GETDATE()
+            )
+        </foreach>
+    </insert>
+
+    <!-- 根据批次 ID 删除数据 -->
+    <delete id="deleteByBatchId">
+        DELETE FROM haosen_project.dbo.md_location WHERE batch_id = #{batchId}
+    </delete>
+
+    <!-- 根据批次 ID 查询数据条数 -->
+    <select id="countByBatchId" resultType="int">
+        SELECT COUNT(*) FROM haosen_project.dbo.md_location WHERE batch_id = #{batchId}
+    </select>
+
+    <!-- 导出地理位置数据 -->
+    <select id="selectExportData" resultMap="MdLocationExportVOMap">
+        SELECT
+            a.id,
+            a.original_name,
+            a.original_province,
+            a.original_address,
+            a.lng_lat,
+            b.省id as prov_id,
+            b.省 as prov,
+            b.市id as city_id,
+            b.市 as city,
+            b.区县id as county_id,
+            b.区县 as county
+        FROM haosen_project.dbo.md_location a
+        LEFT JOIN test.dbo.行政区划表0928_民政部 b ON a.area_id = b.区县id
+        <where>
+            <if test="condition.batchId != null and condition.batchId != ''">
+                AND a.batch_id = #{condition.batchId}
+            </if>
+        </where>
+        ORDER BY a.create_time DESC
+    </select>
+
+</mapper>

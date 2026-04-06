@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.HaoSenUpdateDataMapper">
+
+    <!--更新库里中数据的状态 1 正常,2 作废,3 无法清洗,4 豪森禁用客户,5 重复数据-->
+    <update id="updateHospitalStatus">
+        update base_org_hos_clean
+        set status=#{updateStatus.status},
+        updatetime=now(),
+        remarks =
+        <choose>
+            <when test="updateStatus.remark != null and updateStatus.remark != ''">
+                CONCAT(remarks,';', #{updateStatus.remark})
+            </when>
+            <otherwise>
+                remarks
+            </otherwise>
+        </choose>
+        where data_id = #{updateStatus.dataId};
+
+        update hos_clean
+        set status=#{updateStatus.status},
+        updatetime=now(),
+        remarks =
+        <choose>
+            <when test="updateStatus.remark != null and updateStatus.remark != ''">
+                CONCAT(remarks,';', #{updateStatus.remark})
+            </when>
+            <otherwise>
+                remarks
+            </otherwise>
+        </choose>
+        where data_id = #{updateStatus.dataId};
+
+    </update>
+    <update id="updateDrugStoreStatus">
+
+        update base_org_drug_store
+        set status=#{updateStatus.status},
+        updatetime=now(),
+        remarks =
+        <choose>
+            <when test="updateStatus.remark != null and updateStatus.remark != ''">
+                CONCAT(remarks,';', #{updateStatus.remark})
+            </when>
+            <otherwise>
+                remarks
+            </otherwise>
+        </choose>
+        where data_id = #{updateStatus.dataId};
+
+        update drug_store
+        set status=#{updateStatus.status},
+        updatetime=now(),
+        remarks =
+        <choose>
+            <when test="updateStatus.remark != null and updateStatus.remark != ''">
+                CONCAT(remarks,';', #{updateStatus.remark})
+            </when>
+            <otherwise>
+                remarks
+            </otherwise>
+        </choose>
+        where data_id = #{updateStatus.dataId};
+
+
+    </update>
+    <update id="updateCompanyStatus">
+
+        update base_org_company
+        set status=#{updateStatus.status},
+        updatetime=now(),
+        remarks =
+        <choose>
+            <when test="updateStatus.remark != null and updateStatus.remark != ''">
+                CONCAT(remarks,';', #{updateStatus.remark})
+            </when>
+            <otherwise>
+                remarks
+            </otherwise>
+        </choose>
+        where data_id = #{updateStatus.dataId};
+
+        update company
+        set status=#{updateStatus.status},
+        updatetime=now(),
+        remarks =
+        <choose>
+            <when test="updateStatus.remark != null and updateStatus.remark != ''">
+                CONCAT(remarks,';', #{updateStatus.remark})
+            </when>
+            <otherwise>
+                remarks
+            </otherwise>
+        </choose>
+        where data_id = #{updateStatus.dataId};
+
+    </update>
+
+
+    <delete id="deleteHospitalDataById">
+        delete from base_org_hos_clean where data_id = #{dataId};
+        delete from hos_clean where data_id = #{dataId};
+
+    </delete>
+
+    <delete id="deleteDrugStoreDataById">
+        delete from base_org_drug_store where data_id = #{dataId};
+        delete from drug_store where data_id = #{dataId};
+
+    </delete>
+
+    <delete id="deleteCompanyDataById">
+        delete from base_org_company where data_id = #{dataId};
+        delete from company where data_id = #{dataId};
+
+    </delete>
+
+
+</mapper>

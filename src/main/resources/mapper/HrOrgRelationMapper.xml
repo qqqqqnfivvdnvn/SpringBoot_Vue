@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.HrOrgRelationMapper">
+
+    <resultMap id="HrOrgRelationResultMap" type="com.example.demo.entity.HrOrgRelation">
+        <result column="business_license_name" property="businessLicenseName"/>
+        <result column="province" property="province"/>
+        <result column="key_id" property="keyId"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="add_time" property="addTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="selectByCondition" resultMap="HrOrgRelationResultMap">
+        SELECT *
+        FROM haosen_project..hr_org_relation
+        <where>
+            <if test="condition.businessLicenseName != null and condition.businessLicenseName != ''">
+                AND business_license_name LIKE '%' + #{condition.businessLicenseName} + '%'
+            </if>
+            <if test="condition.keyId != null and condition.keyId != ''">
+                AND key_id = #{condition.keyId}
+            </if>
+            <if test="condition.address != null and condition.address != ''">
+                AND address LIKE '%' + #{condition.address} + '%'
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND province = #{condition.province}
+            </if>
+        </where>
+        ORDER BY add_time DESC
+    </select>
+
+    <insert id="insert" parameterType="com.example.demo.entity.HrOrgRelation">
+        INSERT INTO haosen_project..hr_org_relation (province, business_license_name, key_id, name, address, add_time, update_time)
+        VALUES (#{province}, #{businessLicenseName}, #{keyId}, #{name}, #{address}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update" parameterType="com.example.demo.entity.HrOrgRelation">
+        UPDATE haosen_project..hr_org_relation
+        SET province = #{province},
+            business_license_name = #{businessLicenseName},
+            key_id = #{keyId},
+            name = #{name},
+            address = #{address},
+            update_time = GETDATE()
+        WHERE business_license_name = #{businessLicenseName}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM haosen_project..hr_org_relation WHERE business_license_name = #{businessLicenseName}
+    </delete>
+
+    <update id="syncFromTemp">
+        <![CDATA[
+        INSERT INTO haosen_project..hr_org_relation (business_license_name, province, key_id, name, address, add_time, update_time)
+        SELECT t.business_license_name, t.standardized_province, t.key_id, t.name, t.address, GETDATE(), GETDATE()
+        FROM (
+                 SELECT
+                     business_license_name,
+                     standardized_province,
+                     key_id,
+                     name,
+                     address,
+                     ROW_NUMBER() OVER (PARTITION BY business_license_name ORDER BY create_time DESC) AS rn
+                 FROM haosen_project..hr_monitoring_data
+                 WHERE batch_id = #{batchId}
+                   AND business_license_name <> ''
+             ) t
+        WHERE t.rn = 1
+          AND NOT EXISTS (
+            SELECT 1
+            FROM haosen_project..hr_org_relation h
+            WHERE h.business_license_name = t.business_license_name
+        ) AND key_id <> '';
+        ]]>
+    </update>
+
+</mapper>

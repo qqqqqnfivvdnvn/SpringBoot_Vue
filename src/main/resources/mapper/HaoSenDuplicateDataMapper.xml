@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.HaoSenDuplicateDataMapper">
+
+
+<select id="getDuplicateData" resultType="com.example.demo.vo.HaoSenCheckDuplicateDataVO" >
+
+   <![CDATA[
+  SELECT * from
+        (
+
+        WITH duplicate_keys AS (
+        SELECT '医院' as table_name, keyid, hs_code
+        FROM base_org_hos_clean
+        WHERE status = 1 AND hs_code <> ''
+        GROUP BY keyid, hs_code
+        HAVING COUNT(*) > 1
+
+        UNION ALL
+
+        SELECT '商业' as table_name, keyid, hs_code
+        FROM base_org_company
+        WHERE status = 1 AND hs_code <> ''
+        GROUP BY keyid, hs_code
+        HAVING COUNT(*) > 1
+
+        UNION ALL
+
+        SELECT '药店' as table_name, keyid, hs_code
+        FROM base_org_drug_store
+        WHERE status = 1 AND hs_code <> ''
+        GROUP BY keyid, hs_code
+        HAVING COUNT(*) > 1
+        )
+
+        SELECT
+        '医院' as org_type,
+        h.data_id,
+        h.original_name,
+        h.data_code,
+        h.keyid,
+        h.province,
+        h.name,
+        h.hs_code,
+        h.addtime,
+        h.name_history
+        FROM base_org_hos_clean h
+        INNER JOIN duplicate_keys d
+        ON d.table_name = '医院'
+        AND h.keyid = d.keyid
+        AND h.hs_code = d.hs_code
+        WHERE h.status = 1 AND h.hs_code <> ''
+
+        UNION ALL
+
+        SELECT
+        '商业' as org_type,
+        c.data_id,
+        c.original_name,
+        c.data_code,
+        c.keyid,
+        c.province,
+        c.name,
+        c.hs_code,
+        c.addtime,
+        c.name_history
+        FROM base_org_company c
+        INNER JOIN duplicate_keys d
+        ON d.table_name = '商业'
+        AND c.keyid = d.keyid
+        AND c.hs_code = d.hs_code
+        WHERE c.status = 1 AND c.hs_code <> ''
+
+        UNION ALL
+
+        SELECT
+        '药店' as org_type,
+        dg.data_id,
+        dg.original_name,
+        dg.data_code,
+        dg.keyid,
+        dg.province,
+        dg.name,
+        dg.hs_code,
+        dg.addtime,
+        dg.history_name
+        FROM base_org_drug_store dg
+        INNER JOIN duplicate_keys d
+        ON d.table_name = '药店'
+        AND dg.keyid = d.keyid
+        AND dg.hs_code = d.hs_code
+        WHERE dg.status = 1 AND dg.hs_code <> ''
+        )  a
+
+            ]]>
+    <where>
+
+        <if test="condition.orgType != null and condition.orgType != ''">
+            AND org_type = #{condition.orgType}
+        </if>
+        <if test="condition.dataId != null and condition.dataId != ''">
+            AND data_id = #{condition.dataId}
+        </if>
+        <if test="condition.originalName != null and condition.originalName != ''">
+            AND original_name = #{condition.originalName}
+        </if>
+        <if test="condition.dataCode != null and condition.dataCode != ''">
+            AND data_code = #{condition.dataCode}
+        </if>
+        <if test="condition.province != null and condition.province != ''">
+            AND province  = #{condition.province}
+        </if>
+        <if test="condition.name != null and condition.name != ''">
+            AND name = #{condition.name}
+        </if>
+        <if test="condition.hsCode != null and condition.hsCode != ''">
+            AND hs_code = #{condition.hsCode}
+        </if>
+
+        <if test="condition.keyid != null and condition.keyid != ''">
+            AND keyid = #{condition.keyid}
+        </if>
+
+    </where>
+    ORDER BY a.keyid DESC
+</select>
+
+<!--    &#45;&#45; 优化base_org_company去重-->
+<!--    &#45;&#45; 优化company表更新-->
+<!--    &#45;&#45; 优化base_org_hos_clean去重-->
+<!--    &#45;&#45; 优化hos_clean表更新-->
+<!--    &#45;&#45; 优化base_org_drug_store去重-->
+<!--    &#45;&#45; 优化drug_store表更新-->
+<!--    &#45;&#45; 表1: base_org_company-->
+<!--    &#45;&#45; 表2: company-->
+<!--    &#45;&#45; 表3: base_org_hos_clean-->
+<!--    &#45;&#45; 表4: hos_clean-->
+<!--    &#45;&#45; 表5: base_org_drug_store-->
+<!--    &#45;&#45; 表6: drug_store-->
+
+<update id="updateDuplicateData">
+    <![CDATA[
+
+    WITH duplicate_data AS (
+        SELECT data_id
+        FROM (
+                 SELECT data_id,
+                        ROW_NUMBER() OVER(PARTITION BY keyid, hs_code ORDER BY addtime DESC) as rn
+                 FROM base_org_company
+                 WHERE status = 1 AND hs_code <> ''
+                   AND (keyid, hs_code) IN (
+                     SELECT keyid, hs_code
+                     FROM base_org_company
+                     WHERE status = 1 AND hs_code <> ''
+                     GROUP BY keyid, hs_code
+                     HAVING COUNT(*) > 1
+                 )
+             ) t
+        WHERE rn <> 1
+    )
+    UPDATE base_org_company
+    SET status = 5,
+        remarks = CONCAT(
+                COALESCE(remarks, ''),
+                '重复数据',
+                TO_CHAR(CURRENT_DATE, 'YYMMDD'),
+                ';'
+            ),
+        updatetime = NOW()
+        FROM duplicate_data d
+    WHERE base_org_company.data_id = d.data_id;
+
+    UPDATE company
+    SET status = 5,
+        remarks = CONCAT(
+                COALESCE(remarks, ''),
+                '重复数据',
+                TO_CHAR(CURRENT_DATE, 'YYMMDD'),
+                ';'
+            ),
+        updatetime = NOW()
+    WHERE status = 1
+      AND data_id IN (SELECT data_id FROM base_org_company WHERE status = 5);
+
+
+    WITH duplicate_data AS (
+        SELECT data_id
+        FROM (
+                 SELECT data_id,
+                        ROW_NUMBER() OVER(PARTITION BY keyid, hs_code ORDER BY addtime DESC) as rn
+                 FROM base_org_hos_clean
+                 WHERE status = 1 AND hs_code <> ''
+                   AND (keyid, hs_code) IN (
+                     SELECT keyid, hs_code
+                     FROM base_org_hos_clean
+                     WHERE status = 1 AND hs_code <> ''
+                     GROUP BY keyid, hs_code
+                     HAVING COUNT(*) > 1
+                 )
+             ) t
+        WHERE rn <> 1
+    )
+    UPDATE base_org_hos_clean
+    SET status = 5,
+        remarks = CONCAT(
+                COALESCE(remarks, ''),
+                '重复数据',
+                TO_CHAR(CURRENT_DATE, 'YYMMDD'),
+                ';'
+            ),
+        updatetime = NOW()
+        FROM duplicate_data d
+    WHERE base_org_hos_clean.data_id = d.data_id;
+
+    UPDATE hos_clean
+    SET status = 5,
+        remarks = CONCAT(
+                COALESCE(remarks, ''),
+                '重复数据',
+                TO_CHAR(CURRENT_DATE, 'YYMMDD'),
+                ';'
+            ),
+        updatetime = NOW()
+    WHERE status = 1
+      AND data_id IN (SELECT data_id FROM base_org_hos_clean WHERE status = 5);
+
+
+    WITH duplicate_data AS (
+        SELECT data_id
+        FROM (
+                 SELECT data_id,
+                        ROW_NUMBER() OVER(PARTITION BY keyid, hs_code ORDER BY addtime DESC) as rn
+                 FROM base_org_drug_store
+                 WHERE status = 1 AND hs_code <> ''
+                   AND (keyid, hs_code) IN (
+                     SELECT keyid, hs_code
+                     FROM base_org_drug_store
+                     WHERE status = 1 AND hs_code <> ''
+                     GROUP BY keyid, hs_code
+                     HAVING COUNT(*) > 1
+                 )
+             ) t
+        WHERE rn <> 1
+    )
+    UPDATE base_org_drug_store
+    SET status = 5,
+        remarks = CONCAT(
+                COALESCE(remarks, ''),
+                '重复数据',
+                TO_CHAR(CURRENT_DATE, 'YYMMDD'),
+                ';'
+            ),
+        updatetime = NOW()
+        FROM duplicate_data d
+    WHERE base_org_drug_store.data_id = d.data_id;
+
+    UPDATE drug_store
+    SET status = 5,
+        remarks = CONCAT(
+                COALESCE(remarks, ''),
+                '重复数据',
+                TO_CHAR(CURRENT_DATE, 'YYMMDD'),
+                ';'
+            ),
+        updatetime = NOW()
+    WHERE status = 1
+      AND data_id IN (SELECT data_id FROM base_org_drug_store WHERE status = 5);
+
+
+
+
+
+
+    UPDATE base_org_company t1
+    SET status = 1,
+        updatetime = NOW()
+    WHERE t1.status = 5
+      AND NOT EXISTS (
+            SELECT 1
+            FROM base_org_company t2
+            WHERE t2.status = 1
+              AND t2.hs_code <> ''
+              AND t2.keyid = t1.keyid
+              AND t2.hs_code = t1.hs_code
+        );
+
+
+    UPDATE company t1
+    SET status = 1,
+        updatetime = NOW()
+    WHERE t1.status = 5
+      AND NOT EXISTS (
+            SELECT 1
+            FROM company t2
+            WHERE t2.status = 1
+              AND t2.hs_code <> ''
+              AND t2.keyid = t1.keyid
+              AND t2.hs_code = t1.hs_code
+        );
+
+
+    UPDATE base_org_hos_clean t1
+    SET status = 1,
+        updatetime = NOW()
+    WHERE t1.status = 5
+      AND NOT EXISTS (
+            SELECT 1
+            FROM base_org_hos_clean t2
+            WHERE t2.status = 1
+              AND t2.hs_code <> ''
+              AND t2.keyid = t1.keyid
+              AND t2.hs_code = t1.hs_code
+        );
+
+
+    UPDATE hos_clean t1
+    SET status = 1,
+        updatetime = NOW()
+    WHERE t1.status = 5
+      AND NOT EXISTS (
+            SELECT 1
+            FROM hos_clean t2
+            WHERE t2.status = 1
+              AND t2.hs_code <> ''
+              AND t2.keyid = t1.keyid
+              AND t2.hs_code = t1.hs_code
+        );
+
+
+    UPDATE base_org_drug_store t1
+    SET status = 1,
+        updatetime = NOW()
+    WHERE t1.status = 5
+      AND NOT EXISTS (
+            SELECT 1
+            FROM base_org_drug_store t2
+            WHERE t2.status = 1
+              AND t2.hs_code <> ''
+              AND t2.keyid = t1.keyid
+              AND t2.hs_code = t1.hs_code
+        );
+
+
+    UPDATE drug_store t1
+    SET status = 1,
+        updatetime = NOW()
+    WHERE t1.status = 5
+      AND NOT EXISTS (
+            SELECT 1
+            FROM drug_store t2
+            WHERE t2.status = 1
+              AND t2.hs_code <> ''
+              AND t2.keyid = t1.keyid
+              AND t2.hs_code = t1.hs_code
+        );
+
+    ]]>
+</update>
+
+
+<select id="getExportHSData" resultType="com.example.demo.vo.HaoSenCheckDuplicateDataVO">
+        <![CDATA[
+    SELECT * from
+        (
+
+            SELECT * from
+                (
+                    WITH duplicate_codes AS (
+
+                        SELECT hs_code, '商业' AS data_type FROM base_org_company
+                        WHERE status = 1 AND hs_code <> ''
+                        GROUP BY hs_code HAVING COUNT(*) > 1
+
+                        UNION
+
+
+                        SELECT hs_code, '药店' AS data_type FROM base_org_drug_store
+                        WHERE status = 1 AND hs_code <> ''
+                        GROUP BY hs_code HAVING COUNT(*) > 1
+
+                        UNION
+
+
+                        SELECT hs_code, '医院' AS data_type FROM base_org_hos_clean
+                        WHERE status = 1 AND hs_code <> ''
+                        GROUP BY hs_code HAVING COUNT(*) > 1
+                    )
+
+                    SELECT
+                        data_id,
+                        data_code  ,
+                        original_name ,
+                        keyid,
+                        province ,
+                        name  ,
+                        name_history  ,
+                        address ,
+                        hs_code  ,
+                        addtime  ,
+                        sign_status  ,
+                        NULL AS yl_remark,
+                        '商业' AS org_type,
+                        '豪森同一个编码对应多个数据' AS remark
+                    FROM base_org_company c
+                    WHERE status = 1
+                      AND hs_code <> ''
+                      AND EXISTS (
+                            SELECT 1 FROM duplicate_codes dc
+                            WHERE dc.hs_code = c.hs_code AND dc.data_type = '商业'
+                        )
+
+                    UNION ALL
+
+                    SELECT
+                        data_id,
+                        data_code  ,
+                        original_name ,
+                        keyid,
+                        province  ,
+                        name    ,
+                        history_name  ,
+                        address  ,
+                        hs_code  ,
+                        addtime  ,
+                        sign_status  ,
+                        NULL yl_remark,
+                        '药店' org_type,
+                        '豪森同一个编码对应多个数据' remark
+                    FROM base_org_drug_store ds
+                    WHERE status = 1
+                      AND hs_code <> ''
+                      AND EXISTS (
+                            SELECT 1 FROM duplicate_codes dc
+                            WHERE dc.hs_code = ds.hs_code AND dc.data_type = '药店'
+                        )
+
+                    UNION ALL
+
+                    SELECT
+                        data_id,
+                        data_code  ,
+                        original_name  ,
+                        keyid,
+                        province  ,
+                        name  ,
+                        name_history  ,
+                        address  ,
+                        hs_code  ,
+                        addtime  ,
+                        NULL AS sign_status,
+                        NULL AS yl_remark,
+                        '医院' AS org_type,
+                        '豪森同一个编码对应多个数据' remark
+                    FROM base_org_hos_clean hc
+                    WHERE status = 1
+                      AND hs_code <> ''
+                      AND EXISTS (
+                            SELECT 1 FROM duplicate_codes dc
+                            WHERE dc.hs_code = hc.hs_code AND dc.data_type = '医院'
+                        )
+                ) a
+
+            UNION all
+
+            SELECT * from
+                (
+                    WITH duplicate_keys AS (
+
+                        SELECT keyid, '商业' AS data_type
+                        FROM base_org_company
+                        WHERE status = 1
+                        GROUP BY keyid
+                        HAVING COUNT(*) > 1
+
+                        UNION ALL
+
+
+                        SELECT keyid, '药店' AS data_type
+                        FROM base_org_drug_store
+                        WHERE status = 1
+                        GROUP BY keyid
+                        HAVING COUNT(*) > 1
+
+                        UNION ALL
+
+
+                        SELECT keyid, '医院' AS data_type
+                        FROM base_org_hos_clean
+                        WHERE status = 1
+                        GROUP BY keyid
+                        HAVING COUNT(*) > 1
+                    )
+
+                    SELECT
+                        data_id,
+                        data_code ,
+                        original_name ,
+                        keyid,
+                        province  ,
+                        name  ,
+                        name_history ,
+                        address  ,
+                        hs_code  ,
+                        addtime  ,
+                        sign_status  ,
+                        NULL yl_remark,
+                        '商业' org_type,
+                        '同一条数据对应多个豪森编码，或者没有返回需要确认编码' remark
+                    FROM base_org_company c
+                    WHERE status = 1
+                      AND EXISTS (
+                            SELECT 1 FROM duplicate_keys dk
+                            WHERE dk.keyid = c.keyid AND dk.data_type = '商业'
+                        )
+
+                    UNION ALL
+
+                    SELECT
+                        data_id,
+                        data_code  ,
+                        original_name  ,
+                        keyid,
+                        province ,
+                        name  ,
+                        history_name ,
+                        address ,
+                        hs_code  ,
+                        addtime   ,
+                        sign_status  ,
+                        NULL yl_remark,
+                        '药店' AS org_type,
+                        '同一条数据对应多个豪森编码，或者没有返回需要确认编码' remark
+                    FROM base_org_drug_store ds
+                    WHERE status = 1
+                      AND EXISTS (
+                            SELECT 1 FROM duplicate_keys dk
+                            WHERE dk.keyid = ds.keyid AND dk.data_type = '药店'
+                        )
+
+                    UNION ALL
+
+                    SELECT
+                        data_id,
+                        data_code  ,
+                        original_name  ,
+                        keyid,
+                        province  ,
+                        name ,
+                        name_history  ,
+                        address    ,
+                        hs_code    ,
+                        addtime    ,
+                        NULL sign_status,
+                        NULL yl_remark,
+                        '医院' org_type,
+                        '同一条数据对应多个豪森编码，或者没有返回需要确认编码' remark
+                    FROM base_org_hos_clean hc
+                    WHERE status = 1
+                      AND EXISTS (
+                            SELECT 1 FROM duplicate_keys dk
+                            WHERE dk.keyid = hc.keyid AND dk.data_type = '医院'
+                        )
+                ) a
+
+        ) a
+
+    ]]>
+
+    <where>
+
+        <if test="condition.orgType != null and condition.orgType != ''">
+            AND org_type = #{condition.orgType}
+        </if>
+        <if test="condition.dataId != null and condition.dataId != ''">
+            AND data_id = #{condition.dataId}
+        </if>
+        <if test="condition.originalName != null and condition.originalName != ''">
+            AND original_name = #{condition.originalName}
+        </if>
+        <if test="condition.dataCode != null and condition.dataCode != ''">
+            AND data_code = #{condition.dataCode}
+        </if>
+        <if test="condition.province != null and condition.province != ''">
+            AND province  = #{condition.province}
+        </if>
+        <if test="condition.name != null and condition.name != ''">
+            AND name = #{condition.name}
+        </if>
+        <if test="condition.hsCode != null and condition.hsCode != ''">
+            AND hs_code = #{condition.hsCode}
+        </if>
+
+        <if test="condition.keyid != null and condition.keyid != ''">
+            AND keyid = #{condition.keyid}
+        </if>
+
+    </where>
+
+</select>
+
+        </mapper>

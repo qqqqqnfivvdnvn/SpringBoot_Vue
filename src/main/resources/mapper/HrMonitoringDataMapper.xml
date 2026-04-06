@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.HrMonitoringDataMapper">
+
+    <resultMap id="HrMonitoringDataResultMap" type="com.example.demo.entity.HrMonitoringData">
+        <result column="batch_id" property="batchId"/>
+        <result column="serial_no" property="serialNo"/>
+        <result column="monitoring_year" property="monitoringYear"/>
+        <result column="id" property="id"/>
+        <result column="product_id" property="productId"/>
+        <result column="product_name" property="productName"/>
+        <result column="platform" property="platform"/>
+        <result column="generic_name" property="genericName"/>
+        <result column="url" property="url"/>
+        <result column="specification" property="specification"/>
+        <result column="online_store_price" property="onlineStorePrice"/>
+        <result column="box_quantity" property="boxQuantity"/>
+        <result column="unit_price_per_box" property="unitPricePerBox"/>
+        <result column="store_name" property="storeName"/>
+        <result column="business_license_name" property="businessLicenseName"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="sales_volume" property="salesVolume"/>
+        <result column="category" property="category"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="crawled_time" property="crawledTime"/>
+        <result column="repeated_count" property="repeatedCount"/>
+        <result column="shipping_origin" property="shippingOrigin"/>
+        <result column="key_id" property="keyId"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="standardized_province" property="standardizedProvince"/>
+        <result column="short_name" property="shortName"/>
+        <result column="remarks" property="remarks"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <resultMap id="HrBatchExportResultMap" type="com.example.demo.vo.HrBatchExportVO">
+        <result column="serial_no" property="serialNo"/>
+        <result column="monitoring_year" property="monitoringYear"/>
+        <result column="id" property="id"/>
+        <result column="product_name" property="productName"/>
+        <result column="platform" property="platform"/>
+        <result column="generic_name" property="genericName"/>
+        <result column="short_name" property="shortName"/>
+        <result column="specification" property="specification"/>
+        <result column="online_store_price" property="onlineStorePrice"/>
+        <result column="box_quantity" property="boxQuantity"/>
+        <result column="unit_price_per_box" property="unitPricePerBox"/>
+        <result column="store_name" property="storeName"/>
+        <result column="business_license_name" property="businessLicenseName"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="sales_volume" property="salesVolume"/>
+        <result column="category" property="category"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="crawled_time" property="crawledTime"/>
+        <result column="repeated_count" property="repeatedCount"/>
+        <result column="shipping_origin" property="shippingOrigin"/>
+        <result column="key_id" property="keyId"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="url" property="url"/>
+        <result column="standardized_province" property="standardizedProvince"/>
+        <result column="remarks" property="remarks"/>
+    </resultMap>
+
+    <select id="selectByCondition" resultMap="HrMonitoringDataResultMap">
+        SELECT *
+        FROM haosen_project..hr_monitoring_data
+        <where>
+            <if test="condition.batchId != null and condition.batchId != ''">
+                AND batch_id = #{condition.batchId}
+            </if>
+            <if test="condition.keyId != null and condition.keyId != ''">
+                AND key_id = #{condition.keyId}
+            </if>
+            <if test="condition.address != null and condition.address != ''">
+                AND address LIKE '%' + #{condition.address} + '%'
+            </if>
+            <if test="condition.productName != null and condition.productName != ''">
+                AND product_name LIKE '%' + #{condition.productName} + '%'
+            </if>
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE '%' + #{condition.name} + '%'
+            </if>
+            <if test="condition.businessLicenseName != null and condition.businessLicenseName != ''">
+                AND business_license_name LIKE '%' + #{condition.businessLicenseName} + '%'
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND province = #{condition.province}
+            </if>
+            <if test="condition.createTime != null and condition.createTime != ''">
+                AND created_time &gt;= #{condition.createTime} + ' 00:00:00'
+                AND created_time &lt;= #{condition.createTime} + ' 23:59:59'
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByConditionWithLimit" resultMap="HrMonitoringDataResultMap">
+        SELECT *
+        FROM haosen_project..hr_monitoring_data
+        <where>
+            <if test="condition.batchId != null and condition.batchId != ''">
+                AND batch_id = #{condition.batchId}
+            </if>
+            <if test="condition.keyId != null and condition.keyId != ''">
+                AND key_id = #{condition.keyId}
+            </if>
+            <if test="condition.address != null and condition.address != ''">
+                AND address LIKE '%' + #{condition.address} + '%'
+            </if>
+            <if test="condition.productName != null and condition.productName != ''">
+                AND product_name LIKE '%' + #{condition.productName} + '%'
+            </if>
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE '%' + #{condition.name} + '%'
+            </if>
+            <if test="condition.businessLicenseName != null and condition.businessLicenseName != ''">
+                AND business_license_name LIKE '%' + #{condition.businessLicenseName} + '%'
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND province = #{condition.province}
+            </if>
+            <if test="condition.createTime != null and condition.createTime != ''">
+                AND created_time &gt;= #{condition.createTime} + ' 00:00:00'
+                AND created_time &lt;= #{condition.createTime} + ' 23:59:59'
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        <!-- 导出时如果没有查询条件，自动限制 100 条 -->
+        <if test="needLimit != null and needLimit == true">
+            <choose>
+                <when test="
+                (condition == null) or
+                ((condition.batchId == null or condition.batchId == '') and
+                (condition.keyId == null or condition.keyId == '') and
+                (condition.address == null or condition.address == '') and
+                (condition.productName == null or condition.productName == '') and
+                (condition.name == null or condition.name == '') and
+                (condition.businessLicenseName == null or condition.businessLicenseName == '') and
+                (condition.province == null or condition.province == '') and
+                (condition.createTime == null or condition.createTime == ''))
+            ">OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY</when>
+            </choose>
+        </if>
+    </select>
+
+    <insert id="batchInsert">
+        INSERT INTO haosen_project..hr_monitoring_data_tmp (
+            batch_id, serial_no, monitoring_year, id, product_name, platform,
+            generic_name, url, specification, online_store_price, box_quantity,
+            unit_price_per_box, store_name, business_license_name, province, city,
+            sales_volume, category, created_time, crawled_time, repeated_count,
+            shipping_origin, key_id, name, address, standardized_province,
+            short_name, remarks
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.batchId}, #{item.serialNo}, #{item.monitoringYear}, #{item.id},
+                #{item.productName}, #{item.platform},
+                #{item.genericName}, #{item.url}, #{item.specification},
+                #{item.onlineStorePrice}, #{item.boxQuantity}, #{item.unitPricePerBox},
+                #{item.storeName}, #{item.businessLicenseName}, #{item.province},
+                #{item.city}, #{item.salesVolume}, #{item.category},
+                #{item.createdTime}, #{item.crawledTime}, #{item.repeatedCount},
+                #{item.shippingOrigin}, #{item.keyId}, #{item.name},
+                #{item.address}, #{item.standardizedProvince}, #{item.shortName},
+                #{item.remarks}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteByBatchId">
+        DELETE FROM haosen_project..hr_monitoring_data_tmp WHERE batch_id = #{batchId}
+    </delete>
+
+    <select id="selectByBatchId" resultMap="HrMonitoringDataResultMap">
+        SELECT *
+        FROM haosen_project..hr_monitoring_data
+        WHERE batch_id = #{batchId}
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectExportDataByBatchId" resultMap="HrBatchExportResultMap">
+        SELECT
+            serial_no, monitoring_year, id, product_name, platform,
+            generic_name, short_name, specification, online_store_price, box_quantity,
+            unit_price_per_box, store_name, business_license_name, province, city,
+            sales_volume, category, created_time, crawled_time, repeated_count,
+            shipping_origin, key_id, name, address, url, standardized_province,
+            remarks
+        FROM haosen_project..hr_monitoring_data
+        WHERE batch_id = #{batchId}
+        ORDER BY serial_no ASC
+    </select>
+
+    <update id="transferFromTemp">
+        <![CDATA[
+        -- 步骤 1: 更新临时表的标准化省份
+        UPDATE haosen_project..hr_monitoring_data_tmp
+        SET standardized_province = a.省
+        FROM test..行政区划表0928_民政部 a
+        WHERE CHARINDEX(hr_monitoring_data_tmp.province, a.省) > 0
+          AND batch_id = #{batchId};
+
+        -- 步骤 2: 从比对关系表补充 key_id, name, address (优先匹配省份 + 营业执照)
+        UPDATE haosen_project..hr_monitoring_data_tmp
+        SET key_id = a.key_id,
+            name = a.name,
+            address = a.address
+        FROM haosen_project..hr_org_relation a
+        WHERE hr_monitoring_data_tmp.standardized_province = a.province
+          AND hr_monitoring_data_tmp.business_license_name = a.business_license_name
+          AND hr_monitoring_data_tmp.key_id IS NULL
+          AND hr_monitoring_data_tmp.batch_id = #{batchId};
+
+        -- 步骤 3: 从比对关系表补充 key_id, name, address (仅匹配营业执照)
+        UPDATE haosen_project..hr_monitoring_data_tmp
+        SET key_id = a.key_id,
+            name = a.name,
+            address = a.address
+        FROM haosen_project..hr_org_relation a
+        WHERE hr_monitoring_data_tmp.business_license_name = a.business_license_name
+          AND hr_monitoring_data_tmp.key_id IS NULL
+          AND hr_monitoring_data_tmp.batch_id = #{batchId};
+
+        -- 步骤 4: 将数据从临时表转移到正式表
+        INSERT INTO haosen_project..hr_monitoring_data (
+            batch_id, serial_no, monitoring_year, id, product_name, platform,
+            generic_name, url, specification, online_store_price, box_quantity,
+            unit_price_per_box, store_name, business_license_name, province, city,
+            sales_volume, category, created_time, crawled_time, repeated_count,
+            shipping_origin, key_id, name, address, standardized_province,
+            short_name, remarks, create_time, update_time
+        )
+        SELECT
+            batch_id, serial_no, monitoring_year, id, product_name, platform,
+            generic_name, url, specification, online_store_price, box_quantity,
+            unit_price_per_box, store_name, business_license_name, province, city,
+            sales_volume, category, created_time, crawled_time, repeated_count,
+            shipping_origin, key_id, name, address, standardized_province,
+            short_name, remarks, GETDATE(), GETDATE()
+        FROM (
+            -- 第一部分：key_id 不为空的数据直接插入
+            SELECT
+                batch_id, serial_no, monitoring_year, id, product_name, platform,
+                generic_name, url, specification, online_store_price, box_quantity,
+                unit_price_per_box, store_name, business_license_name, province, city,
+                sales_volume, category, created_time, crawled_time, repeated_count,
+                shipping_origin, key_id, name, address, standardized_province,
+                short_name, remarks
+            FROM haosen_project..hr_monitoring_data_tmp
+            WHERE key_id IS NOT NULL AND batch_id = #{batchId}
+            UNION ALL
+            -- 第二部分：key_id 为空的数据，通过标准名称/历史名称匹配后插入
+            SELECT
+                a.batch_id, a.serial_no, a.monitoring_year, a.id, a.product_name,
+                a.platform, a.generic_name, a.url, a.specification, a.online_store_price,
+                a.box_quantity, a.unit_price_per_box, a.store_name, a.business_license_name,
+                a.province, a.city, a.sales_volume, a.category, a.created_time,
+                a.crawled_time, a.repeated_count, a.shipping_origin,
+                c.key_id, c.name, c.address,
+                a.standardized_province, a.short_name, a.remarks
+            FROM (
+                SELECT
+                    batch_id, serial_no, monitoring_year, id, product_name, platform,
+                    generic_name, url, specification, online_store_price, box_quantity,
+                    unit_price_per_box, store_name, business_license_name, province, city,
+                    sales_volume, category, created_time, crawled_time, repeated_count,
+                    shipping_origin, standardized_province, short_name, remarks
+                FROM haosen_project..hr_monitoring_data_tmp
+                WHERE key_id IS NULL AND batch_id = #{batchId}
+            ) a
+            LEFT JOIN (
+                SELECT * FROM test..医院_标准名称
+                UNION ALL
+                SELECT * FROM test..医院_历史名称
+                UNION ALL
+                SELECT * FROM test..药店_标准名称
+                UNION ALL
+                SELECT * FROM test..药店_历史名称
+            ) b ON a.business_license_name = REPLACE(REPLACE(REPLACE(b.name, '（', '('), '）', ')'), ' ', '')
+               AND a.standardized_province = b.province
+            LEFT JOIN (
+                SELECT keyid AS key_id, name AS name, address AS address
+                FROM HospitalInfo..hospital
+                UNION ALL
+                SELECT key_id AS key_id, name AS name, address AS address
+                FROM HospitalInfo..company
+            ) c ON b.keyid = c.key_id
+        ) AS combined_data;
+
+        -- 步骤 5: 同步比对关系数据到 hr_org_relation 表
+        INSERT INTO haosen_project..hr_org_relation (business_license_name, province, key_id, name, address, add_time, update_time)
+        SELECT t.business_license_name, t.standardized_province, t.key_id, t.name, t.address, GETDATE(), GETDATE()
+        FROM (
+            SELECT
+                business_license_name,
+                standardized_province,
+                key_id,
+                name,
+                address,
+                ROW_NUMBER() OVER (PARTITION BY business_license_name ORDER BY create_time DESC) AS rn
+            FROM haosen_project..hr_monitoring_data
+            WHERE batch_id = #{batchId}
+              AND business_license_name <> ''
+        ) t
+        WHERE t.rn = 1
+          AND NOT EXISTS (
+            SELECT 1
+            FROM haosen_project..hr_org_relation h
+            WHERE h.business_license_name = t.business_license_name
+          )
+          AND t.key_id <> '';
+
+        -- 步骤 6: 更新批次状态为已处理 (status=1)
+        UPDATE haosen_project..hr_batch
+        SET status = 1, update_time = GETDATE(),message = '处理完成'
+        WHERE batch_id = #{batchId};
+        ]]>
+    </update>
+
+</mapper>
