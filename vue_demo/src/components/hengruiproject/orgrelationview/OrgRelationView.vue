@@ -134,7 +134,7 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ relationData.pages }} 页</span>
+              <span>页，共 {{ relationData.pages }} 页 ({{ relationData.total }} 条)</span>
             </div>
             <el-button size="small" plain :disabled="relationData.isLastPage" @click="pageNumber < relationData.pages && (pageNumber++, fetchRelationData())">
               下一页

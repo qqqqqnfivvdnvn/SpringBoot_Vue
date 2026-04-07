@@ -106,7 +106,7 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ batchData.pages }} 页</span>
+              <span>页，共 {{ batchData.pages }} 页 ({{ batchData.total }} 条)</span>
             </div>
             <el-button size="small" plain :disabled="batchData.isLastPage" @click="pageNumber < batchData.pages && (pageNumber++, fetchBatchData())">
               下一页

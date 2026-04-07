@@ -51,7 +51,8 @@
                                        NULL::text AS operation, NULL::text AS scope,
                                        NULL::text AS main_branch_kid, NULL::text AS main_branch_name,
                                        NULL::text AS create_date, NULL::text AS regist_capi, NULL::text AS econ_kind,
-                                       NULL::text AS sign_status, NULL::text AS industry, NULL::text AS belong,b.status
+                                       NULL::text AS sign_status, NULL::text AS industry, NULL::text AS belong,
+                                       b.status, b.addtime
                                    FROM feedback_data a
                                             LEFT JOIN base_org_hos_clean b ON a.data_code = b.data_code
                                             LEFT JOIN origin_data c ON b.data_id = c.data_id
@@ -91,7 +92,8 @@
                                        b.scope, b.main_branch_kid, b.main_branch_name,
                                        b.create_date, b.regist_capi,
                                        NULL::text AS econ_kind, b.sign_status,
-                                       NULL::text AS industry, NULL::text AS belong,b.status
+                                       NULL::text AS industry, NULL::text AS belong,
+                                       b.status, b.addtime
                                    FROM feedback_data a
                                             LEFT JOIN base_org_drug_store b ON a.data_code = b.data_code
                                             LEFT JOIN origin_data c ON b.data_id = c.data_id
@@ -122,7 +124,8 @@
                                        NULL::text AS operation, b.scope,
                                        NULL::text AS main_branch_kid, NULL::text AS main_branch_name,
                                        b.create_date, b.regist_capi, COALESCE(b.econ_kind, '') AS econ_kind, b.sign_status,
-                                       COALESCE(b.industry, '') AS industry, COALESCE(b.belong, '') AS belong,b.status
+                                       COALESCE(b.industry, '') AS industry, COALESCE(b.belong, '') AS belong,
+                                       b.status, b.addtime
                                    FROM feedback_data a
                                             LEFT JOIN base_org_company b ON a.data_code = b.data_code
                                             LEFT JOIN origin_data c ON b.data_id = c.data_id
@@ -139,7 +142,7 @@
                               military_hos, regcode, validity, subjects, legalperson,
                               usci, operation, scope, main_branch_kid, main_branch_name,
                               create_date, regist_capi, econ_kind, sign_status,
-                              industry, belong,status
+                              industry, belong, status, addtime
                           FROM hos_data
                           UNION ALL
                           SELECT
@@ -152,7 +155,7 @@
                               military_hos, regcode, validity, subjects, legalperson,
                               usci, operation, scope, main_branch_kid, main_branch_name,
                               create_date, regist_capi, econ_kind, sign_status,
-                              industry, belong,status
+                              industry, belong, status, addtime
                           FROM drug_data
                           UNION ALL
                           SELECT
@@ -165,7 +168,7 @@
                               military_hos, regcode, validity, subjects, legalperson,
                               usci, operation, scope, main_branch_kid, main_branch_name,
                               create_date, regist_capi, econ_kind, sign_status,
-                              industry, belong,status
+                              industry, belong, status, addtime
                           FROM company_data ) a
 
     </sql>
@@ -205,6 +208,12 @@
 
             <if test="condition.dataId != null and condition.dataId != ''">
                 AND data_id LIKE CONCAT('%', #{condition.dataId}, '%')
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND addtime &gt;= #{condition.startTime}::timestamp
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND addtime &lt;= #{condition.endTime}::timestamp
             </if>
         </where>
 

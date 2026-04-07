@@ -11,4 +11,6 @@ public class HaoSenAppealConditionDTO {
     private String area;
     private String name;
     private String address;
+    private String startTime;
+    private String endTime;
 }

@@ -38,15 +38,61 @@
             <el-form-item label="输入地址">
               <el-input v-model="searchForm.address" placeholder="请输入地址" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
             </el-form-item>
+            <el-form-item label="批次编号" v-if="showMoreFilters">
+              <el-input v-model="searchForm.batchCode" placeholder="请输入批次编号" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+            <el-form-item label="状态" v-if="showMoreFilters">
+              <el-select v-model="searchForm.status" placeholder="请选择状态" clearable @clear="handleSearch" style="width: 120px;">
+                <el-option label="正常" value="1" />
+                <el-option label="作废" value="2" />
+                <el-option label="无法清洗" value="3" />
+                <el-option label="禁用客户" value="4" />
+                <el-option label="重复数据" value="5" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="添加日期" v-if="showMoreFilters">
+              <el-date-picker
+                v-model="dateRange"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                clearable
+                @clear="handleSearch"
+                @change="handleSearch"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                style="width: 480px;"
+              />
+            </el-form-item>
+            <el-form-item label="更新日期" v-if="showMoreFilters">
+              <el-date-picker
+                v-model="updateDateRange"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                clearable
+                @clear="handleSearch"
+                @change="handleSearch"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                style="width: 480px;"
+              />
+            </el-form-item>
           </div>
 
-          <!-- 操作按钮区域：查询、重置、导出、视图切换 -->
+          <!-- 操作按钮区域：查询、重置、导出、更多筛选、视图切换 -->
           <div class="form-actions-wrapper">
             <div class="form-actions">
               <el-button size="small" type="primary" @click="handleSearch" :loading="loading">查询</el-button>
               <el-button size="small" @click="resetSearch">重置</el-button>
               <el-button size="small" type="success" @click="toExcel" :loading="exporting">
                 {{ exporting ? '导出中...' : '导出' }}
+              </el-button>
+              <el-button size="small" :type="showMoreFilters ? 'primary' : 'default'" @click="toggleMoreFilters">
+                更多筛选
+                <el-icon class="expand-icon" :class="{ 'is-expanded': showMoreFilters }"><ArrowUp /></el-icon>
               </el-button>
               <el-button-group size="small" class="view-toggle">
                 <el-button
@@ -251,7 +297,7 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ hospitalData.pages }} 页</span>
+              <span>页，共 {{ hospitalData.pages }} 页 ({{ hospitalData.total }} 条)</span>
             </div>
             <el-button size="small" plain :disabled="!hospitalData.hasNextPage" @click="pageNumber < hospitalData.pages && (pageNumber++, fetchHospitalData())">
               下一页
@@ -351,8 +397,6 @@
               <el-form-item label="原始编码"><el-input v-model="currentUpdateHospital.dataCode" readonly /></el-form-item>
               <el-form-item label="原始省份"><el-input v-model="currentUpdateHospital.originalProvince" readonly /></el-form-item>
               <el-form-item label="原始地址"><el-input v-model="currentUpdateHospital.originalAddress" readonly /></el-form-item>
-
-              <el-form-item label="经销商"><el-input v-model="currentUpdateHospital.companyName" readonly /></el-form-item>
               <el-form-item label="豪森上传的编码"><el-input v-model="currentUpdateHospital.haosenCode" readonly /></el-form-item>
             </el-col>
             <el-col :span="12">
@@ -476,7 +520,7 @@
 // ==================== 依赖导入 ====================
 import '@/assets/css/dark-mode.css'
 import { ref, reactive, onMounted, computed } from 'vue'
-import { Grid, CopyDocument, Search, EditPen, Tickets, Delete, Operation, ArrowDown } from '@element-plus/icons-vue'
+import { Grid, CopyDocument, Search, EditPen, Tickets, Delete, Operation, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import axios from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -517,8 +561,27 @@ const searchForm = reactive({
   city: '',
   area: '',
   name: '',
-  address: ''
+  address: '',
+  batchCode: '',
+  status: '',
+  startTime: '',
+  endTime: '',
+  updateStartTime: '',
+  updateEndTime: ''
 })
+
+// ==================== 更多筛选控制 ====================
+const showMoreFilters = ref(false)
+const dateRange = ref([])
+const updateDateRange = ref([])
+
+// 是否有更多筛选条件（用于控制展开/收起按钮显示）
+const hasMoreFilters = ref(true)
+
+// 切换更多筛选
+const toggleMoreFilters = () => {
+  showMoreFilters.value = !showMoreFilters.value
+}
 
 // ==================== 表格列配置 ====================
 const columns = ref([
@@ -611,7 +674,6 @@ const detailFields = {
   originalName: { label: '原始名称', value: h => h.originalName, copy: true },
   originalProvince: { label: '原始省份', value: h => h.originalProvince },
   originalAddress: { label: '原始地址', value: h => h.originalAddress, copy: true },
-  companyName: { label: '经销商', value: h => h.companyName },
   haosenCode: { label: '豪森上传的编码', value: h => h.haosenCode },
   keyid: { label: 'keyId', value: h => h.keyid, copy: true },
   dataType: { label: '数据类型', value: h => h.dataType === '1' ? '存量' : h.dataType === '2' ? '增量' : '未知' },
@@ -752,6 +814,22 @@ const fetchHospitalData = async () => {
 const handleSearch = () => {
   pageNumber.value = 1
   jumpPageNumber.value = 1
+  // 同步日期范围到搜索表单
+  if (dateRange.value && dateRange.value.length === 2) {
+    searchForm.startTime = dateRange.value[0]
+    searchForm.endTime = dateRange.value[1]
+  } else {
+    searchForm.startTime = ''
+    searchForm.endTime = ''
+  }
+  // 同步更新日期范围到搜索表单
+  if (updateDateRange.value && updateDateRange.value.length === 2) {
+    searchForm.updateStartTime = updateDateRange.value[0]
+    searchForm.updateEndTime = updateDateRange.value[1]
+  } else {
+    searchForm.updateStartTime = ''
+    searchForm.updateEndTime = ''
+  }
   fetchHospitalData()
 }
 
@@ -766,6 +844,8 @@ const handleJumpPage = () => {
 // 重置搜索条件
 const resetSearch = () => {
   Object.keys(searchForm).forEach(key => (searchForm[key] = ''))
+  dateRange.value = []
+  updateDateRange.value = []
   pageNumber.value = 1
   fetchHospitalData()
 }
@@ -1003,7 +1083,6 @@ const findDaKuData = async () => {
         originalName: currentUpdateHospital.value.originalName,
         originalProvince: currentUpdateHospital.value.originalProvince,
         originalAddress: currentUpdateHospital.value.originalAddress,
-        companyName: currentUpdateHospital.value.companyName,
         appealRemark: currentUpdateHospital.value.appealRemark,
         solveRemark: currentUpdateHospital.value.solveRemark,
         orgType: currentUpdateHospital.value.orgType,
@@ -1144,6 +1223,24 @@ onMounted(() => {
   justify-content: flex-end;
 }
 
+/* 更多筛选按钮图标旋转 */
+.expand-icon {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.expand-icon.is-expanded {
+  transform: rotate(180deg);
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .view-toggle {
   margin-left: 8px;
 }
@@ -1240,6 +1337,12 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 16px;
+}
+
+.total-info {
+  font-size: 12px;
+  color: #606266;
+  white-space: nowrap;
 }
 
 .page-jumper {

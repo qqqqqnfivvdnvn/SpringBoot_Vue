@@ -274,7 +274,7 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ cleanData.pages }} 页</span>
+              <span>页，共 {{ cleanData.pages }} 页 ({{ cleanData.total }} 条)</span>
             </div>
             <el-button size="small" plain :disabled="!cleanData.hasNextPage" @click="pageNumber < cleanData.pages && (pageNumber++, fetchCleanData())">
               下一页

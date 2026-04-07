@@ -159,7 +159,7 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ monitoringData.pages }} 页</span>
+              <span>页，共 {{ monitoringData.pages }} 页 ({{ monitoringData.total }} 条)</span>
             </div>
             <el-button size="small" plain :disabled="monitoringData.isLastPage" @click="pageNumber < monitoringData.pages && (pageNumber++, fetchMonitoringData())">
               下一页

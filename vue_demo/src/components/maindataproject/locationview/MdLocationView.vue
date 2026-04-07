@@ -98,7 +98,7 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ locationData.pages }} 页</span>
+              <span>页，共 {{ locationData.pages }} 页 ({{ locationData.total }} 条)</span>
             </div>
             <el-button size="small" plain :disabled="locationData.isLastPage" @click="pageNumber < locationData.pages && (pageNumber++, fetchData())">
               下一页

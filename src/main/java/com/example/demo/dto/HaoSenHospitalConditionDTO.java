@@ -15,6 +15,11 @@ public class HaoSenHospitalConditionDTO {
     private String area;
     private String name;
     private String address;
-
+    private String batchCode;
+    private String status;
+    private String startTime;
+    private String endTime;
+    private String updateStartTime;
+    private String updateEndTime;
 
 }

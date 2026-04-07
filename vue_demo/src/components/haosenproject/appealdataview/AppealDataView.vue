@@ -34,6 +34,21 @@
             <el-form-item label="输入地址">
               <el-input v-model="searchForm.address" placeholder="请输入地址" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
             </el-form-item>
+            <el-form-item label="添加日期">
+              <el-date-picker
+                v-model="dateRange"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                clearable
+                @clear="handleSearch"
+                @change="handleSearch"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                style="width: 480px;"
+              />
+            </el-form-item>
           </div>
 
           <!-- 下半部分：操作按钮区域，靠右对齐 -->
@@ -211,7 +226,7 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ appealData.pages }} 页</span>
+              <span>页，共 {{ appealData.pages }} 页 ({{ appealData.total }} 条)</span>
             </div>
             <el-button size="small" plain :disabled="!appealData.hasNextPage" @click="pageNumber < appealData.pages && (pageNumber++, fetchAppealData())">
               下一页
@@ -438,8 +453,13 @@ const searchForm = reactive({
   city: '',
   area: '',
   name: '',
-  address: ''
+  address: '',
+  startTime: '',
+  endTime: ''
 })
+
+// ==================== 日期范围选择器 ====================
+const dateRange = ref([])
 
 // ==================== 表格列配置 ====================
 const columns = ref([
@@ -605,6 +625,15 @@ const fetchAppealData = async () => {
 
 // ==================== 搜索和分页处理函数 ====================
 const handleSearch = () => {
+  // 同步日期范围到 searchForm
+  if (dateRange.value && dateRange.value.length === 2) {
+    searchForm.startTime = dateRange.value[0]
+    searchForm.endTime = dateRange.value[1]
+  } else {
+    searchForm.startTime = ''
+    searchForm.endTime = ''
+  }
+
   pageNumber.value = 1
   jumpPageNumber.value = 1
   fetchAppealData()
@@ -620,6 +649,7 @@ const handleJumpPage = () => {
 
 const resetSearch = () => {
   Object.keys(searchForm).forEach(key => (searchForm[key] = ''))
+  dateRange.value = []
   pageNumber.value = 1
   fetchAppealData()
 }

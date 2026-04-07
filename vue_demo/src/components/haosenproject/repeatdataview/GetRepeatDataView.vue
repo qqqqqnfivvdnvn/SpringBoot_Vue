@@ -146,7 +146,7 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ duplicateData.pages }} 页</span>
+              <span>页，共 {{ duplicateData.pages }} 页 ({{ duplicateData.total }} 条)</span>
             </div>
             <el-button size="small" plain :disabled="!duplicateData.hasNextPage" @click="pageNumber < duplicateData.pages && (pageNumber++, fetchDuplicateData())">
               下一页

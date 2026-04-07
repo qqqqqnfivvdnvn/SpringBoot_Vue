@@ -173,6 +173,24 @@
             <if test="condition.dataId != null and condition.dataId != ''">
                 AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
             </if>
+            <if test="condition.batchCode != null and condition.batchCode != ''">
+                AND a.batch_code LIKE CONCAT('%', #{condition.batchCode}, '%')
+            </if>
+            <if test="condition.status != null and condition.status != ''">
+                AND a.status = #{condition.status}::smallint
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND a.addtime &gt;= #{condition.startTime}::timestamp
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND a.addtime &lt;= #{condition.endTime}::timestamp
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND a.updatetime &gt;= #{condition.updateStartTime}::timestamp
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND a.updatetime &lt;= #{condition.updateEndTime}::timestamp
+            </if>
         </where>
         ORDER BY addtime DESC
     </select>
@@ -211,6 +229,24 @@
             <if test="condition.dataId != null and condition.dataId != ''">
                 AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
             </if>
+            <if test="condition.batchCode != null and condition.batchCode != ''">
+                AND a.batch_code LIKE CONCAT('%', #{condition.batchCode}, '%')
+            </if>
+            <if test="condition.status != null and condition.status != ''">
+                AND a.status = #{condition.status}::smallint
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND a.addtime &gt;= #{condition.startTime}::timestamp
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND a.addtime &lt;= #{condition.endTime}::timestamp
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND a.updatetime &gt;= #{condition.updateStartTime}::timestamp
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND a.updatetime &lt;= #{condition.updateEndTime}::timestamp
+            </if>
         </where>
         ORDER BY addtime DESC
         <!-- 关键：无查询条件时自动限制 100 条 -->
@@ -227,7 +263,13 @@
                 (condition.originalName == null or condition.originalName == '') and
                 (condition.hsCode == null or condition.hsCode == '') and
                 (condition.keyid == null or condition.keyid == '') and
-                (condition.dataId == null or condition.dataId == ''))
+                (condition.dataId == null or condition.dataId == '') and
+                (condition.batchCode == null or condition.batchCode == '') and
+                (condition.status == null or condition.status == '') and
+                (condition.startTime == null or condition.startTime == '') and
+                (condition.endTime == null or condition.endTime == '') and
+                (condition.updateStartTime == null or condition.updateStartTime == '') and
+                (condition.updateEndTime == null or condition.updateEndTime == ''))
             ">OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY</when>
             </choose>
         </if>
@@ -388,6 +430,24 @@
             <if test="condition.dataId != null and condition.dataId != ''">
                 AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
             </if>
+            <if test="condition.batchCode != null and condition.batchCode != ''">
+                AND a.batch_code LIKE CONCAT('%', #{condition.batchCode}, '%')
+            </if>
+            <if test="condition.status != null and condition.status != ''">
+                AND a.status = #{condition.status}::smallint
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND a.addtime &gt;= #{condition.startTime}::timestamp
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND a.addtime &lt;= #{condition.endTime}::timestamp
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND a.updatetime &gt;= #{condition.updateStartTime}::timestamp
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND a.updatetime &lt;= #{condition.updateEndTime}::timestamp
+            </if>
         </where>
         ORDER BY addtime desc
     </select>
@@ -429,6 +489,24 @@
             <if test="condition.dataId != null and condition.dataId != ''">
                 AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
             </if>
+            <if test="condition.batchCode != null and condition.batchCode != ''">
+                AND a.batch_code LIKE CONCAT('%', #{condition.batchCode}, '%')
+            </if>
+            <if test="condition.status != null and condition.status != ''">
+                AND a.status = #{condition.status}::smallint
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND a.addtime &gt;= #{condition.startTime}::timestamp
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND a.addtime &lt;= #{condition.endTime}::timestamp
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND a.updatetime &gt;= #{condition.updateStartTime}::timestamp
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND a.updatetime &lt;= #{condition.updateEndTime}::timestamp
+            </if>
         </where>
         ORDER BY addtime DESC
         <!-- 关键：无查询条件时自动限制 100 条 -->
@@ -445,7 +523,13 @@
                 (condition.originalName == null or condition.originalName == '') and
                 (condition.hsCode == null or condition.hsCode == '') and
                 (condition.keyid == null or condition.keyid == '') and
-                (condition.dataId == null or condition.dataId == ''))
+                (condition.dataId == null or condition.dataId == '') and
+                (condition.batchCode == null or condition.batchCode == '') and
+                (condition.status == null or condition.status == '') and
+                (condition.startTime == null or condition.startTime == '') and
+                (condition.endTime == null or condition.endTime == '') and
+                (condition.updateStartTime == null or condition.updateStartTime == '') and
+                (condition.updateEndTime == null or condition.updateEndTime == ''))
             ">OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY</when>
             </choose>
         </if>
@@ -559,6 +643,24 @@
             <if test="condition.dataId != null and condition.dataId != ''">
                 AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
             </if>
+            <if test="condition.batchCode != null and condition.batchCode != ''">
+                AND a.batch_code LIKE CONCAT('%', #{condition.batchCode}, '%')
+            </if>
+            <if test="condition.status != null and condition.status != ''">
+                AND a.status = #{condition.status}::smallint
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND a.addtime &gt;= #{condition.startTime}::timestamp
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND a.addtime &lt;= #{condition.endTime}::timestamp
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND a.updatetime &gt;= #{condition.updateStartTime}::timestamp
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND a.updatetime &lt;= #{condition.updateEndTime}::timestamp
+            </if>
         </where>
         ORDER BY addtime desc
     </select>
@@ -600,6 +702,24 @@
             <if test="condition.dataId != null and condition.dataId != ''">
                 AND a.data_id LIKE CONCAT('%', #{condition.dataId}, '%')
             </if>
+            <if test="condition.batchCode != null and condition.batchCode != ''">
+                AND a.batch_code LIKE CONCAT('%', #{condition.batchCode}, '%')
+            </if>
+            <if test="condition.status != null and condition.status != ''">
+                AND a.status = #{condition.status}::smallint
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND a.addtime &gt;= #{condition.startTime}::timestamp
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND a.addtime &lt;= #{condition.endTime}::timestamp
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND a.updatetime &gt;= #{condition.updateStartTime}::timestamp
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND a.updatetime &lt;= #{condition.updateEndTime}::timestamp
+            </if>
         </where>
         ORDER BY addtime DESC
         <!-- 关键：无查询条件时自动限制 100 条 -->
@@ -616,7 +736,13 @@
                 (condition.originalName == null or condition.originalName == '') and
                 (condition.hsCode == null or condition.hsCode == '') and
                 (condition.keyid == null or condition.keyid == '') and
-                (condition.dataId == null or condition.dataId == ''))
+                (condition.dataId == null or condition.dataId == '') and
+                (condition.batchCode == null or condition.batchCode == '') and
+                (condition.status == null or condition.status == '') and
+                (condition.startTime == null or condition.startTime == '') and
+                (condition.endTime == null or condition.endTime == '') and
+                (condition.updateStartTime == null or condition.updateStartTime == '') and
+                (condition.updateEndTime == null or condition.updateEndTime == ''))
             ">OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY</when>
             </choose>
         </if>

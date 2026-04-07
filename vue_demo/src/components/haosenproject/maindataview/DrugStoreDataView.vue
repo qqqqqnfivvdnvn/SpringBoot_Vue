@@ -37,15 +37,61 @@
             <el-form-item label="输入地址">
               <el-input v-model="searchForm.address" placeholder="请输入地址" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
             </el-form-item>
+            <el-form-item label="批次编号" v-if="showMoreFilters">
+              <el-input v-model="searchForm.batchCode" placeholder="请输入批次编号" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
+            <el-form-item label="状态" v-if="showMoreFilters">
+              <el-select v-model="searchForm.status" placeholder="请选择状态" clearable @clear="handleSearch" style="width: 120px;">
+                <el-option label="正常" value="1" />
+                <el-option label="作废" value="2" />
+                <el-option label="无法清洗" value="3" />
+                <el-option label="禁用客户" value="4" />
+                <el-option label="重复数据" value="5" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="添加日期" v-if="showMoreFilters">
+              <el-date-picker
+                v-model="dateRange"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                clearable
+                @clear="handleSearch"
+                @change="handleSearch"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                style="width: 480px;"
+              />
+            </el-form-item>
+            <el-form-item label="更新日期" v-if="showMoreFilters">
+              <el-date-picker
+                v-model="updateDateRange"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                clearable
+                @clear="handleSearch"
+                @change="handleSearch"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                style="width: 480px;"
+              />
+            </el-form-item>
           </div>
 
-          <!-- 下半部分：操作按钮区域，靠右对齐 -->
+          <!-- 操作按钮区域：查询、重置、导出、更多筛选、视图切换 -->
           <div class="form-actions-wrapper">
             <div class="form-actions">
               <el-button size="small" type="primary" @click="handleSearch" :loading="loading">查询</el-button>
               <el-button size="small" @click="resetSearch">重置</el-button>
               <el-button size="small" type="success" @click="toExcel" :loading="exporting">
                 {{ exporting ? '导出中...' : '导出' }}
+              </el-button>
+              <el-button size="small" :type="showMoreFilters ? 'primary' : 'default'" @click="toggleMoreFilters">
+                更多筛选
+                <el-icon class="expand-icon" :class="{ 'is-expanded': showMoreFilters }"><ArrowUp /></el-icon>
               </el-button>
               <el-button-group size="small" class="view-toggle">
                 <el-button
@@ -244,7 +290,7 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ drugstoreData.pages }} 页</span>
+              <span>页，共 {{ drugstoreData.pages }} 页 ({{ drugstoreData.total }} 条)</span>
             </div>
             <el-button size="small" plain :disabled="!drugstoreData.hasNextPage" @click="pageNumber < drugstoreData.pages && (pageNumber++, fetchDrugStoreData())">
               下一页
@@ -464,12 +510,19 @@
 // ==================== 依赖导入 ====================
 import '@/assets/css/dark-mode.css'
 import { ref, reactive, onMounted, computed } from 'vue'
-import { Grid, CopyDocument, Search, EditPen, Tickets, Delete, Operation, ArrowDown } from '@element-plus/icons-vue'
+import { Grid, CopyDocument, Search, EditPen, Tickets, Delete, Operation, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import axios from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 // ==================== 视图状态管理 ====================
 const viewMode = ref('table')
+
+// ==================== 更多筛选状态 ====================
+const showMoreFilters = ref(false)
+
+// ==================== 日期范围选择器 ====================
+const dateRange = ref([])
+const updateDateRange = ref([])
 
 // ==================== 数据状态管理 ====================
 const drugstoreData = reactive({
@@ -505,7 +558,13 @@ const searchForm = reactive({
   city: '',
   area: '',
   name: '',
-  address: ''
+  address: '',
+  batchCode: '',
+  status: '',
+  startTime: '',
+  endTime: '',
+  updateStartTime: '',
+  updateEndTime: ''
 })
 
 // ==================== 表格列配置 ====================
@@ -700,6 +759,24 @@ const fetchDrugStoreData = async () => {
 // ==================== 搜索和分页处理函数 ====================
 // 触发搜索
 const handleSearch = () => {
+  // 同步日期范围到 searchForm
+  if (dateRange.value && dateRange.value.length === 2) {
+    searchForm.startTime = dateRange.value[0]
+    searchForm.endTime = dateRange.value[1]
+  } else {
+    searchForm.startTime = ''
+    searchForm.endTime = ''
+  }
+
+  // 同步更新日期范围到 searchForm
+  if (updateDateRange.value && updateDateRange.value.length === 2) {
+    searchForm.updateStartTime = updateDateRange.value[0]
+    searchForm.updateEndTime = updateDateRange.value[1]
+  } else {
+    searchForm.updateStartTime = ''
+    searchForm.updateEndTime = ''
+  }
+
   pageNumber.value = 1
   jumpPageNumber.value = 1
   fetchDrugStoreData()
@@ -716,8 +793,15 @@ const handleJumpPage = () => {
 // 重置搜索条件
 const resetSearch = () => {
   Object.keys(searchForm).forEach(key => (searchForm[key] = ''))
+  dateRange.value = []
+  updateDateRange.value = []
   pageNumber.value = 1
   fetchDrugStoreData()
+}
+
+// 切换更多筛选
+const toggleMoreFilters = () => {
+  showMoreFilters.value = !showMoreFilters.value
 }
 
 // 每页条数改变处理
@@ -1163,6 +1247,15 @@ onMounted(() => {
 /* 视图切换按钮组微调 */
 .view-toggle {
   margin-left: 8px;
+}
+
+/* 更多筛选按钮图标旋转 */
+.expand-icon {
+  transition: transform 0.3s ease;
+}
+
+.expand-icon.is-expanded {
+  transform: rotate(180deg);
 }
 
 /* 数据内容区域 */
