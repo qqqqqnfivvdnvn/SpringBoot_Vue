@@ -186,39 +186,48 @@ const themeColors = ref({
 // 动态主题样式
 const themeStyle = computed(() => {
   const { primary, dark, light } = themeColors.value
+  const primaryRgb = hexToRgb(primary)
+  const darkRgb = hexToRgb(dark)
   return {
     '--theme-primary': primary,
     '--theme-dark': dark,
     '--theme-light': light,
-    '--theme-rgba': `rgba(${hexToRgb(primary)}, 0.35)`,
-    '--theme-rgba-light': `rgba(${hexToRgb(primary)}, 0.08)`,
-    '--theme-rgba-shadow': `rgba(${hexToRgb(primary)}, 0.45)`,
+    '--theme-rgba': `rgba(${primaryRgb}, 0.35)`,
+    '--theme-rgba-light': `rgba(${primaryRgb}, 0.08)`,
+    '--theme-rgba-shadow': `rgba(${primaryRgb}, 0.45)`,
     '--theme-gradient': `linear-gradient(135deg, ${primary}, ${dark})`,
     '--theme-gradient-nav': `linear-gradient(90deg, ${dark} 0%, ${primary} 60%, ${light} 100%)`,
     // 暗色模式导航栏渐变 - 使用更暗的色调
     '--theme-gradient-nav-dark': `linear-gradient(90deg, ${adjustColor(primary.replace('#', ''), -35)} 0%, ${adjustColor(primary.replace('#', ''), -25)} 60%, ${adjustColor(primary.replace('#', ''), -15)} 100%)`,
     '--theme-text-dark': light,
     '--theme-icon-dark': light,
+    // 导航栏元素 - 暗色模式
+    '--theme-nav-icon-bg': `rgba(${darkRgb}, 0.3)`,
+    '--theme-nav-icon-border': `rgba(${darkRgb}, 0.5)`,
+    '--theme-nav-btn-bg': `rgba(${darkRgb}, 0.2)`,
+    '--theme-nav-btn-border': `rgba(${darkRgb}, 0.35)`,
+    '--theme-nav-btn-hover': `rgba(${primaryRgb}, 0.3)`,
+    '--theme-nav-text': `rgba(255, 255, 255, 0.85)`,
     // 菜单 hover 背景色 - 使用主题色的浅色版本（亮色模式）
-    '--theme-bg-hover': `rgba(${hexToRgb(primary)}, 0.08)`,
-    '--theme-bg-hover-dark': `rgba(${hexToRgb(primary)}, 0.12)`,
-    '--theme-bg-open': `rgba(${hexToRgb(primary)}, 0.12)`,
-    '--theme-bg-open-dark': `rgba(${hexToRgb(primary)}, 0.16)`,
+    '--theme-bg-hover': `rgba(${primaryRgb}, 0.08)`,
+    '--theme-bg-hover-dark': `rgba(${primaryRgb}, 0.12)`,
+    '--theme-bg-open': `rgba(${primaryRgb}, 0.12)`,
+    '--theme-bg-open-dark': `rgba(${primaryRgb}, 0.16)`,
     // 暗色模式下的背景色
-    '--theme-bg-hover-dark-mode': `rgba(${hexToRgb(primary)}, 0.15)`,
-    '--theme-bg-hover-dark-mode-dark': `rgba(${hexToRgb(primary)}, 0.20)`,
-    '--theme-bg-open-dark-mode': `rgba(${hexToRgb(primary)}, 0.20)`,
-    '--theme-bg-open-dark-mode-dark': `rgba(${hexToRgb(primary)}, 0.25)`,
+    '--theme-bg-hover-dark-mode': `rgba(${primaryRgb}, 0.15)`,
+    '--theme-bg-hover-dark-mode-dark': `rgba(${primaryRgb}, 0.20)`,
+    '--theme-bg-open-dark-mode': `rgba(${primaryRgb}, 0.20)`,
+    '--theme-bg-open-dark-mode-dark': `rgba(${primaryRgb}, 0.25)`,
     // 标签页背景色（亮色模式）
-    '--theme-tab-border': `rgba(${hexToRgb(primary)}, 0.2)`,
-    '--theme-tab-bg': `rgba(${hexToRgb(primary)}, 0.05)`,
+    '--theme-tab-border': `rgba(${primaryRgb}, 0.2)`,
+    '--theme-tab-bg': `rgba(${primaryRgb}, 0.05)`,
     '--theme-tab-text': primary,
-    '--theme-tab-hover-bg': `rgba(${hexToRgb(primary)}, 0.1)`,
+    '--theme-tab-hover-bg': `rgba(${primaryRgb}, 0.1)`,
     // 标签页背景色（暗色模式）
-    '--theme-tab-border-dark': `rgba(${hexToRgb(primary)}, 0.3)`,
-    '--theme-tab-bg-dark': `rgba(${hexToRgb(primary)}, 0.15)`,
-    '--theme-tab-text-dark': `rgba(${hexToRgb(primary)}, 0.7)`,
-    '--theme-tab-hover-bg-dark': `rgba(${hexToRgb(primary)}, 0.25)`,
+    '--theme-tab-border-dark': `rgba(${primaryRgb}, 0.3)`,
+    '--theme-tab-bg-dark': `rgba(${primaryRgb}, 0.15)`,
+    '--theme-tab-text-dark': `rgba(${primaryRgb}, 0.7)`,
+    '--theme-tab-hover-bg-dark': `rgba(${primaryRgb}, 0.25)`,
   }
 })
 
@@ -474,6 +483,11 @@ html.dark .navbar {
   border: 1px solid rgba(255,255,255,0.25);
 }
 
+html.dark .logo-icon {
+  background: var(--theme-nav-icon-bg);
+  border-color: var(--theme-nav-icon-border);
+}
+
 .brand-text {
   display: flex;
   flex-direction: column;
@@ -503,21 +517,32 @@ html.dark .navbar {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: rgba(255,255,255,0.85);
+  color: var(--theme-nav-text, rgba(255,255,255,0.85));
   text-decoration: none;
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 0.85rem;
   transition: all 0.25s ease;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--theme-nav-btn-border, rgba(255,255,255,0.2));
+  background: var(--theme-nav-btn-bg, rgba(255,255,255,0.08));
 }
 
 .nav-btn:hover {
-  background: var(--theme-primary);
+  background: var(--theme-nav-btn-hover, var(--theme-primary));
   color: #fff;
   border-color: var(--theme-primary);
   box-shadow: 0 2px 12px var(--theme-rgba-shadow);
+}
+
+html.dark .nav-btn {
+  background: var(--theme-nav-btn-bg);
+  border-color: var(--theme-nav-btn-border);
+  color: var(--theme-nav-text);
+}
+
+html.dark .nav-btn:hover {
+  background: var(--theme-nav-btn-hover);
+  border-color: var(--theme-primary);
 }
 
 /* 右局：用户区 */
@@ -542,7 +567,7 @@ html.dark .navbar {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.6);
+  border: 2px solid var(--theme-nav-btn-border, rgba(255,255,255,0.6));
   object-fit: cover;
 }
 
@@ -561,21 +586,22 @@ html.dark .navbar {
   font-size: 0.85rem;
   font-weight: 500;
   opacity: 0.9;
+  color: var(--theme-nav-text, rgba(255,255,255,0.9));
 }
 
 .divider-v {
   width: 1px;
   height: 20px;
-  background: rgba(255,255,255,0.3);
+  background: var(--theme-nav-btn-border, rgba(255,255,255,0.3));
 }
 
 .logout-button {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255,255,255,0.12);
+  background: var(--theme-nav-btn-bg, rgba(255,255,255,0.12));
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.25);
+  border: 1px solid var(--theme-nav-btn-border, rgba(255,255,255,0.25));
   padding: 6px 14px;
   border-radius: 20px;
   cursor: pointer;
@@ -584,17 +610,20 @@ html.dark .navbar {
 }
 
 .logout-button:hover {
-  background: rgba(255,255,255,0.25);
-  border-color: rgba(255,255,255,0.5);
+  background: var(--theme-nav-btn-hover, rgba(255,255,255,0.25));
+  border-color: var(--theme-primary);
+  color: #fff;
 }
 
 html.dark .logout-button {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.12);
+  background: var(--theme-nav-btn-bg);
+  border-color: var(--theme-nav-btn-border);
+  color: #fff;
 }
 
 html.dark .logout-button:hover {
-  background: rgba(255,255,255,0.14);
+  background: var(--theme-nav-btn-hover);
+  border-color: var(--theme-primary);
 }
 
 /* ============ 主体布局 ============ */
