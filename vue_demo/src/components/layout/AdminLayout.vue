@@ -135,7 +135,7 @@
 <script setup>
 import '@/assets/css/dark-mode.css'
 import avatarImg from '@/assets/img/avatar-modified.png'
-import { ref, computed, onMounted, resolveComponent, defineProps } from 'vue'
+import { ref, computed, onMounted, resolveComponent, defineProps, defineExpose } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 
