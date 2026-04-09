@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, defineExpose } from 'vue';
 import * as echarts from 'echarts';
 import axios from "axios";
 
