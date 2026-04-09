@@ -116,7 +116,7 @@
         <!-- 内容视图 -->
         <div class="content-body">
           <transition name="fade" mode="out-in">
-            <component :is="currentViewComponent" :key="currentView" />
+            <component :is="currentView" :key="currentView" />
           </transition>
         </div>
       </div>
@@ -135,7 +135,7 @@
 <script setup>
 import '@/assets/css/dark-mode.css'
 import avatarImg from '@/assets/img/avatar-modified.png'
-import { ref, computed, onMounted, resolveComponent } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 
@@ -287,16 +287,6 @@ const isSidebarCollapsed = ref(false)
 
 const tabs = ref([])
 const currentView = ref(props.defaultView)
-
-// 动态解析组件，支持字符串名称自动转换为组件
-const currentViewComponent = computed(() => {
-  try {
-    return resolveComponent(currentView.value)
-  } catch (e) {
-    console.warn(`Component "${currentView.value}" not found, using fallback`)
-    return null
-  }
-})
 
 // 菜单操作
 const toggleMenu = (menu) => {
