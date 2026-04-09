@@ -7,33 +7,7 @@ html.dark .home-page {
     background: linear-gradient(135deg, #1a1625, #0e0b1a);
 }
 
-html.dark .navbar {
-    background: var(--theme-gradient-nav-dark, #1f1b2e) !important;
-    box-shadow: 0 3px 20px rgba(0, 0, 0, 0.5) !important;
-    color: var(--theme-nav-text, #e0e0e0) !important;
-}
-
-html.dark .navbar .navbar-left,
-html.dark .navbar .navbar-right {
-    color: var(--theme-nav-text, #e0e0e0) !important;
-}
-
-html.dark .navbar .brand-title,
-html.dark .navbar .brand-subtitle {
-    color: var(--theme-nav-text, #e0e0e0) !important;
-}
-
-html.dark .navbar .nav-btn {
-    background: var(--theme-nav-btn-bg, rgba(255,255,255,0.08)) !important;
-    border-color: var(--theme-nav-btn-border, rgba(255,255,255,0.2)) !important;
-    color: var(--theme-nav-text, #e0e0e0) !important;
-}
-
-html.dark .navbar .logout-button {
-    background: var(--theme-nav-btn-bg, rgba(255,255,255,0.12)) !important;
-    border-color: var(--theme-nav-btn-border, rgba(255,255,255,0.25)) !important;
-    color: #fff !important;
-}
+/* 导航栏样式已移至 AdminLayout.vue 中使用主题变量 */
 
 html.dark .navbar-links a {
     color: #e0e0e0;

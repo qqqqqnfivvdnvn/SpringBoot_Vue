@@ -454,11 +454,6 @@ html.dark .home-page {
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-html.dark .navbar {
-  background: var(--theme-gradient-nav-dark);
-  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.5);
-}
-
 /* 左区：Logo */
 .navbar-left {
   display: flex;
@@ -1094,5 +1089,64 @@ html.dark .toast {
 .toast-slide-leave-to {
   opacity: 0;
   transform: translateX(-50%) translateY(-16px) scale(0.9);
+}
+</style>
+
+<style>
+/* 暗色模式导航栏样式 - 使用 non-scoped 样式以确保正确应用 */
+/* 这些样式依赖于 .home-page 上设置的 CSS 变量 */
+
+html.dark .home-page .navbar {
+  background: var(--theme-gradient-nav-dark) !important;
+  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+html.dark .home-page .navbar .navbar-left,
+html.dark .home-page .navbar .navbar-right {
+  color: var(--theme-nav-text, rgba(255, 255, 255, 0.85)) !important;
+}
+
+html.dark .home-page .navbar .brand-title,
+html.dark .home-page .navbar .brand-subtitle {
+  color: var(--theme-nav-text, rgba(255, 255, 255, 0.85)) !important;
+}
+
+html.dark .home-page .navbar .nav-btn {
+  background: var(--theme-nav-btn-bg, rgba(125, 96, 184, 0.2)) !important;
+  border-color: var(--theme-nav-btn-border, rgba(125, 96, 184, 0.35)) !important;
+  color: var(--theme-nav-text, rgba(255, 255, 255, 0.85)) !important;
+}
+
+html.dark .home-page .navbar .nav-btn:hover {
+  background: var(--theme-nav-btn-hover, rgba(148, 120, 204, 0.3)) !important;
+  border-color: var(--theme-primary) !important;
+}
+
+html.dark .home-page .navbar .logout-button {
+  background: var(--theme-nav-btn-bg, rgba(125, 96, 184, 0.2)) !important;
+  border-color: var(--theme-nav-btn-border, rgba(125, 96, 184, 0.35)) !important;
+  color: #fff !important;
+}
+
+html.dark .home-page .navbar .logout-button:hover {
+  background: var(--theme-nav-btn-hover, rgba(148, 120, 204, 0.3)) !important;
+  border-color: var(--theme-primary) !important;
+}
+
+html.dark .home-page .navbar .logo-icon {
+  background: var(--theme-nav-icon-bg, rgba(125, 96, 184, 0.3)) !important;
+  border-color: var(--theme-nav-icon-border, rgba(125, 96, 184, 0.5)) !important;
+}
+
+html.dark .home-page .navbar .avatar img {
+  border-color: var(--theme-nav-btn-border, rgba(125, 96, 184, 0.6)) !important;
+}
+
+html.dark .home-page .navbar .divider-v {
+  background: var(--theme-nav-btn-border, rgba(125, 96, 184, 0.35)) !important;
+}
+
+html.dark .home-page .navbar .username {
+  color: var(--theme-nav-text, rgba(255, 255, 255, 0.85)) !important;
 }
 </style>
