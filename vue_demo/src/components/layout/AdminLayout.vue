@@ -498,12 +498,22 @@ html.dark .logo-icon {
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.5px;
+  color: #fff;
+}
+
+html.dark .brand-title {
+  color: var(--theme-nav-text, rgba(255,255,255,0.95));
 }
 
 .brand-subtitle {
   font-size: 0.68rem;
   opacity: 0.75;
   letter-spacing: 0.3px;
+  color: rgba(255,255,255,0.8);
+}
+
+html.dark .brand-subtitle {
+  color: var(--theme-nav-text, rgba(255,255,255,0.75));
 }
 
 /* 中局：导航按钮 */
