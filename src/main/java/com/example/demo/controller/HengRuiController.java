@@ -162,4 +162,12 @@ public class HengRuiController {
 
         return ResponseEntity.ok().headers(headers).body(response.getData());
     }
+
+    /**
+     * 功能 3：数据比对关系 - 导入关系数据
+     */
+    @PostMapping("/relation/importRelation")
+    public ResponseEntity<ApiResponseDTO<String>> importRelation(@RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(orgRelationService.importRelationExcel(file));
+    }
 }

@@ -37,7 +37,7 @@ public class HrToExcel {
         @ExcelProperty("ID")
         private String id;
 
-        @ExcelProperty("商品 ID")
+        @ExcelProperty("商品ID")
         private String productId;
 
         @ExcelProperty("商品名")

@@ -20,7 +20,7 @@ public class HrMonitoringData {
     @ExcelColumn(name = "ID")
     private String id;
 
-    @ExcelColumn(name = "商品 ID")
+    @ExcelColumn(name = "商品ID")
     private String productId;
 
     @ExcelColumn(name = "商品名")

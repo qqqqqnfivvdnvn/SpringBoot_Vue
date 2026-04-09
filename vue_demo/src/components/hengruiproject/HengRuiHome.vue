@@ -114,6 +114,10 @@
                 <font-awesome-icon :icon="['fas', 'exchange-alt']" class="sub-icon" />
                 <span>比对关系</span>
               </li>
+              <li @click="importRelationData">
+                <font-awesome-icon :icon="['fas', 'upload']" class="sub-icon" />
+                <span>关系导入</span>
+              </li>
             </ul>
           </li>
         </ul>
@@ -263,7 +267,8 @@ const componentsMap = {
   BatchDataView: 'BatchDataView',
   ImportBatchDataView: 'ImportBatchDataView',
   MonitoringDataView: 'MonitoringDataView',
-  OrgRelationView: 'OrgRelationView'
+  OrgRelationView: 'OrgRelationView',
+  ImportOrgRelationView: 'ImportOrgRelationView'
 }
 
 const currentViewComponent = computed(() => componentsMap[currentView.value] || 'BatchDataView')
@@ -339,6 +344,11 @@ const showMonitoringData = () => {
 const showRelationData = () => {
   addTab('比对关系', 'OrgRelationView')
   window.location.hash = '/hengrui/relation'
+}
+
+const importRelationData = () => {
+  addTab('关系导入', 'ImportOrgRelationView')
+  window.location.hash = '/hengrui/importRelation'
 }
 
 

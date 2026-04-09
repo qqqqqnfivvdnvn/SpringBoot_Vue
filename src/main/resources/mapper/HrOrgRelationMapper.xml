@@ -53,9 +53,12 @@
         DELETE FROM haosen_project..hr_org_relation WHERE business_license_name = #{businessLicenseName}
     </delete>
 
-    <update id="syncFromTemp">
+    <select id="syncFromTemp" resultType="int">
         <![CDATA[
+        DECLARE @InsertedCount TABLE (id INT);
+
         INSERT INTO haosen_project..hr_org_relation (business_license_name, province, key_id, name, address, add_time, update_time)
+        OUTPUT 1 INTO @InsertedCount
         SELECT t.business_license_name, t.standardized_province, t.key_id, t.name, t.address, GETDATE(), GETDATE()
         FROM (
                  SELECT
@@ -65,17 +68,20 @@
                      name,
                      address,
                      ROW_NUMBER() OVER (PARTITION BY business_license_name ORDER BY create_time DESC) AS rn
-                 FROM haosen_project..hr_monitoring_data
+                 FROM haosen_project..hr_monitoring_data_tmp
                  WHERE batch_id = #{batchId}
                    AND business_license_name <> ''
+                   AND key_id <> ''
              ) t
         WHERE t.rn = 1
           AND NOT EXISTS (
             SELECT 1
             FROM haosen_project..hr_org_relation h
             WHERE h.business_license_name = t.business_license_name
-        ) AND key_id <> '';
+        );
+
+        SELECT COUNT(*) FROM @InsertedCount;
         ]]>
-    </update>
+    </select>
 
 </mapper>

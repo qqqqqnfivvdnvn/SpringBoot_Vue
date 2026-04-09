@@ -69,7 +69,7 @@
                 resizable
             >
               <el-table-column prop="businessLicenseName" label="营业执照名称" width="180" show-overflow-tooltip />
-              <el-table-column prop="province" label="省份" width="80" />
+              <el-table-column prop="province" label="省份" width="80" show-overflow-tooltip/>
               <el-table-column prop="keyId" label="KeyID" width="120" show-overflow-tooltip />
               <el-table-column prop="name" label="标准名称" width="150" show-overflow-tooltip />
               <el-table-column prop="address" label="地址" min-width="200" show-overflow-tooltip />
@@ -250,7 +250,6 @@ const addForm = reactive({
 
 const addDialogVisible = ref(false)
 
-// 格式化日期时间（用于表格列 formatter）
 const formatDateTime = (row, column, cellValue) => {
   if (!cellValue) return ''
   const date = new Date(cellValue)

@@ -89,6 +89,7 @@
             >
               <el-table-column prop="serialNo" label="序号" width="60" />
               <el-table-column prop="productName" label="商品名" width="120" show-overflow-tooltip />
+              <el-table-column prop="productId" label="商品ID" width="100" show-overflow-tooltip />
               <el-table-column prop="genericName" label="通用名" width="120" show-overflow-tooltip />
               <el-table-column prop="platform" label="平台" width="80" />
               <el-table-column prop="specification" label="规格" width="100" show-overflow-tooltip />
@@ -124,6 +125,7 @@
                     </div>
                   </template>
                   <div class="card-body">
+                    <div class="card-item"><span class="label">商品ID：</span>{{ item.productId }}</div>
                     <div class="card-item"><span class="label">通用名：</span>{{ item.genericName }}</div>
                     <div class="card-item"><span class="label">规格：</span>{{ item.specification }}</div>
                     <div class="card-item"><span class="label">价格：</span>¥{{ item.onlineStorePrice }}</div>

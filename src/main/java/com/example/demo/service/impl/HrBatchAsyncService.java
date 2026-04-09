@@ -65,6 +65,7 @@ public class HrBatchAsyncService {
                 entity.setSerialNo(vo.getSerialNo());
                 entity.setMonitoringYear(vo.getMonitoringYear());
                 entity.setId(vo.getId());
+                entity.setProductId(vo.getProductId());
                 entity.setProductName(vo.getProductName());
                 entity.setPlatform(vo.getPlatform());
                 entity.setGenericName(vo.getGenericName());

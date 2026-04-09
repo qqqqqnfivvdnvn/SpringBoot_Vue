@@ -23,5 +23,5 @@ public interface HrOrgRelationMapper {
 
     int deleteById(@Param("businessLicenseName") String businessLicenseName);
 
-    void syncFromTemp(@Param("batchId") String batchId);
+    int syncFromTemp(@Param("batchId") String batchId);
 }

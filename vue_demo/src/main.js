@@ -96,6 +96,7 @@ import BatchDataView from "@/components/hengruiproject/batchdataview/BatchDataVi
 import ImportBatchDataView from "@/components/hengruiproject/batchdataview/ImportBatchDataView.vue"
 import MonitoringDataView from "@/components/hengruiproject/monitoringdataview/MonitoringDataView.vue"
 import OrgRelationView from "@/components/hengruiproject/orgrelationview/OrgRelationView.vue"
+import ImportOrgRelationView from "@/components/hengruiproject/orgrelationview/ImportOrgRelationView.vue"
 
 import MdLocationBatchView from "@/components/maindataproject/locationview/MdLocationBatchView.vue"
 import MdLocationUploadView from "@/components/maindataproject/locationview/MdLocationUploadView.vue"
@@ -119,6 +120,7 @@ app.component('BatchDataView', BatchDataView)
 app.component('ImportBatchDataView', ImportBatchDataView)
 app.component('MonitoringDataView', MonitoringDataView)
 app.component('OrgRelationView', OrgRelationView)
+app.component('ImportOrgRelationView', ImportOrgRelationView)
 
 app.component('MdLocationBatchView', MdLocationBatchView)
 app.component('MdLocationUploadView', MdLocationUploadView)

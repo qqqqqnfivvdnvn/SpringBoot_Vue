@@ -4,6 +4,7 @@ import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.dto.HrOrgRelationConditionDTO;
 import com.example.demo.vo.HrOrgRelationVO;
 import com.github.pagehelper.PageInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface HrOrgRelationService {
     ApiResponseDTO<String> addRelation(HrOrgRelationVO relation);
 
     ApiResponseDTO<byte[]> exportRelationExcel(HrOrgRelationConditionDTO condition);
+
+    ApiResponseDTO<String> importRelationExcel(MultipartFile file);
 }

@@ -23,6 +23,7 @@ import BatchDataView from '@/components/hengruiproject/batchdataview/BatchDataVi
 import ImportBatchDataView from '@/components/hengruiproject/batchdataview/ImportBatchDataView.vue';
 import MonitoringDataView from '@/components/hengruiproject/monitoringdataview/MonitoringDataView.vue';
 import OrgRelationView from '@/components/hengruiproject/orgrelationview/OrgRelationView.vue';
+import ImportOrgRelationView from '@/components/hengruiproject/orgrelationview/ImportOrgRelationView.vue';
 
 // 主数据项目
 import MainDataHome from '@/components/maindataproject/MainDataHome.vue';
@@ -236,6 +237,12 @@ const routes = [
                 path: 'relation',
                 name: 'relationData',
                 component: OrgRelationView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'importRelation',
+                name: 'importRelation',
+                component: ImportOrgRelationView,
                 meta: { requiresAuth: true }
             }
         ]

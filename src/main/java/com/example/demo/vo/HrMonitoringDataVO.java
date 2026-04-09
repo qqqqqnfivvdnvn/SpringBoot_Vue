@@ -13,7 +13,7 @@ import java.util.List;
 public class HrMonitoringDataVO {
 
     public static final List<String> EXPECTED_HEADERS = Arrays.asList(
-            "序号", "监测年份", "ID", "商品名", "平台", "通用名", "品名简称", "规格",
+            "序号", "监测年份", "ID", "商品ID", "商品名", "平台", "通用名", "品名简称", "规格",
             "网店价格（元）", "盒数", "单盒价", "店铺名称", "营业执照名称", "省", "市",
             "销量", "分类", "新增时间", "爬取时间", "反复次数", "发货地",
             "地址", "链接", "备注"
@@ -30,7 +30,7 @@ public class HrMonitoringDataVO {
     @ExcelColumn(name = "ID")
     private String id;
 
-    @ExcelColumn(name = "商品 ID")
+    @ExcelColumn(name = "商品ID")
     private String productId;
 
     @ExcelColumn(name = "商品名")

@@ -52,7 +52,7 @@
           <h4>文件格式要求：</h4>
           <el-descriptions :column="1" border size="small">
             <el-descriptions-item label="必需字段">
-              序号、监测年份、ID、商品名、平台、通用名、品名简称、规格、网店价格（元）、盒数、单盒价、店铺名称、营业执照名称、省、市、销量、分类、新增时间、爬取时间、反复次数、发货地、地址、链接、备注
+              序号、监测年份、ID、商品ID、商品名、平台、通用名、品名简称、规格、网店价格（元）、盒数、单盒价、店铺名称、营业执照名称、省、市、销量、分类、新增时间、爬取时间、反复次数、发货地、地址、链接、备注
             </el-descriptions-item>
             <el-descriptions-item label="文件格式">
               .xlsx 或 .xls

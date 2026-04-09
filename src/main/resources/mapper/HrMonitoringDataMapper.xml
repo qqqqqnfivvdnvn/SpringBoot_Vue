@@ -41,6 +41,7 @@
         <result column="serial_no" property="serialNo"/>
         <result column="monitoring_year" property="monitoringYear"/>
         <result column="id" property="id"/>
+        <result column="product_id" property="productId"/>
         <result column="product_name" property="productName"/>
         <result column="platform" property="platform"/>
         <result column="generic_name" property="genericName"/>
@@ -151,7 +152,7 @@
 
     <insert id="batchInsert">
         INSERT INTO haosen_project..hr_monitoring_data_tmp (
-            batch_id, serial_no, monitoring_year, id, product_name, platform,
+            batch_id, serial_no, monitoring_year, id, product_id, product_name, platform,
             generic_name, url, specification, online_store_price, box_quantity,
             unit_price_per_box, store_name, business_license_name, province, city,
             sales_volume, category, created_time, crawled_time, repeated_count,
@@ -162,7 +163,7 @@
         <foreach collection="list" item="item" separator=",">
             (
                 #{item.batchId}, #{item.serialNo}, #{item.monitoringYear}, #{item.id},
-                #{item.productName}, #{item.platform},
+                #{item.productId}, #{item.productName}, #{item.platform},
                 #{item.genericName}, #{item.url}, #{item.specification},
                 #{item.onlineStorePrice}, #{item.boxQuantity}, #{item.unitPricePerBox},
                 #{item.storeName}, #{item.businessLicenseName}, #{item.province},
@@ -188,7 +189,7 @@
 
     <select id="selectExportDataByBatchId" resultMap="HrBatchExportResultMap">
         SELECT
-            serial_no, monitoring_year, id, product_name, platform,
+            serial_no, monitoring_year, id, product_id, product_name, platform,
             generic_name, short_name, specification, online_store_price, box_quantity,
             unit_price_per_box, store_name, business_license_name, province, city,
             sales_volume, category, created_time, crawled_time, repeated_count,
@@ -231,7 +232,7 @@
 
         -- 步骤 4: 将数据从临时表转移到正式表
         INSERT INTO haosen_project..hr_monitoring_data (
-            batch_id, serial_no, monitoring_year, id, product_name, platform,
+            batch_id, serial_no, monitoring_year, id, product_id, product_name, platform,
             generic_name, url, specification, online_store_price, box_quantity,
             unit_price_per_box, store_name, business_license_name, province, city,
             sales_volume, category, created_time, crawled_time, repeated_count,
@@ -239,7 +240,7 @@
             short_name, remarks, create_time, update_time
         )
         SELECT
-            batch_id, serial_no, monitoring_year, id, product_name, platform,
+            batch_id, serial_no, monitoring_year, id, product_id, product_name, platform,
             generic_name, url, specification, online_store_price, box_quantity,
             unit_price_per_box, store_name, business_license_name, province, city,
             sales_volume, category, created_time, crawled_time, repeated_count,
@@ -248,7 +249,7 @@
         FROM (
             -- 第一部分：key_id 不为空的数据直接插入
             SELECT
-                batch_id, serial_no, monitoring_year, id, product_name, platform,
+                batch_id, serial_no, monitoring_year, id, product_id, product_name, platform,
                 generic_name, url, specification, online_store_price, box_quantity,
                 unit_price_per_box, store_name, business_license_name, province, city,
                 sales_volume, category, created_time, crawled_time, repeated_count,
@@ -259,7 +260,7 @@
             UNION ALL
             -- 第二部分：key_id 为空的数据，通过标准名称/历史名称匹配后插入
             SELECT
-                a.batch_id, a.serial_no, a.monitoring_year, a.id, a.product_name,
+                a.batch_id, a.serial_no, a.monitoring_year, a.id, a.product_id, a.product_name,
                 a.platform, a.generic_name, a.url, a.specification, a.online_store_price,
                 a.box_quantity, a.unit_price_per_box, a.store_name, a.business_license_name,
                 a.province, a.city, a.sales_volume, a.category, a.created_time,
@@ -268,7 +269,7 @@
                 a.standardized_province, a.short_name, a.remarks
             FROM (
                 SELECT
-                    batch_id, serial_no, monitoring_year, id, product_name, platform,
+                    batch_id, serial_no, monitoring_year, id, product_id, product_name, platform,
                     generic_name, url, specification, online_store_price, box_quantity,
                     unit_price_per_box, store_name, business_license_name, province, city,
                     sales_volume, category, created_time, crawled_time, repeated_count,
