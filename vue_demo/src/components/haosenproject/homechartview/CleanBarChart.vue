@@ -3,6 +3,7 @@
 </template>
 
 <script setup>
+import '@/assets/css/dark-mode.css'
 import {ref, onMounted, onUnmounted, computed} from 'vue';
 import * as echarts from 'echarts';
 import axios from 'axios';

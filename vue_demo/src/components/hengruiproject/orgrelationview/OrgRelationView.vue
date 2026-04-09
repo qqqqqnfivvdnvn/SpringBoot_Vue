@@ -202,6 +202,7 @@
 </template>
 
 <script setup>
+import '@/assets/css/dark-mode.css'
 import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
