@@ -1,6 +1,7 @@
 <template>
   <div class="home-page" :style="themeStyle">
-    <!-- 顶部导航栏 -->
+
+
     <nav class="navbar">
       <div class="navbar-left">
         <div class="logo-area">
@@ -462,6 +463,11 @@ html.dark .navbar {
 .navbar-left {
   display: flex;
   align-items: center;
+  color: #fff;
+}
+
+html.dark .navbar-left {
+  color: var(--theme-nav-text, rgba(255,255,255,0.95));
 }
 
 .logo-area {
@@ -560,6 +566,11 @@ html.dark .nav-btn:hover {
   display: flex;
   align-items: center;
   gap: 14px;
+  color: #fff;
+}
+
+html.dark .navbar-right {
+  color: var(--theme-nav-text, rgba(255,255,255,0.95));
 }
 
 .user-info {
