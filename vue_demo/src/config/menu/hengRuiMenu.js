@@ -5,7 +5,7 @@ export const hengRuiProjectConfig = {
   brandTitle: '恒瑞主数据',
   brandSubtitle: '后台管理系统',
   homeRoute: 'HengRuiHome',
-  defaultColor: '#ff9e7d' // 珊瑚橙
+  defaultColor: '#6ab7ff' // 天蓝色
 }
 
 export const hengRuiMenuConfig = {
