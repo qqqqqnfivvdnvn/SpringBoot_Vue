@@ -195,6 +195,8 @@ const themeStyle = computed(() => {
     '--theme-rgba-shadow': `rgba(${hexToRgb(primary)}, 0.45)`,
     '--theme-gradient': `linear-gradient(135deg, ${primary}, ${dark})`,
     '--theme-gradient-nav': `linear-gradient(90deg, ${dark} 0%, ${primary} 60%, ${light} 100%)`,
+    // 暗色模式导航栏渐变 - 使用更暗的色调
+    '--theme-gradient-nav-dark': `linear-gradient(90deg, ${adjustColor(primary.replace('#', ''), -35)} 0%, ${adjustColor(primary.replace('#', ''), -25)} 60%, ${adjustColor(primary.replace('#', ''), -15)} 100%)`,
     '--theme-text-dark': light,
     '--theme-icon-dark': light,
     // 菜单 hover 背景色 - 使用主题色的浅色版本（亮色模式）
@@ -443,7 +445,7 @@ html.dark .home-page {
 }
 
 html.dark .navbar {
-  background: var(--theme-gradient-nav);
+  background: var(--theme-gradient-nav-dark);
   box-shadow: 0 3px 20px rgba(0, 0, 0, 0.5);
 }
 
