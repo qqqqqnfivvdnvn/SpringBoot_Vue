@@ -1,5 +1,5 @@
 <template>
-  <div class="home-page" :style="themeStyle">
+  <div class="home-page">
 
 
     <nav class="navbar">
@@ -136,7 +136,7 @@
 <script setup>
 import '@/assets/css/dark-mode.css'
 import avatarImg from '@/assets/img/avatar-modified.png'
-import { ref, computed, onMounted, resolveComponent, defineProps, defineExpose } from 'vue'
+import { ref, computed, onMounted, onUnmounted, resolveComponent, defineProps, defineExpose, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 
@@ -184,53 +184,98 @@ const themeColors = ref({
   light: adjustColor(props.projectConfig.defaultColor.replace('#', ''), 20)
 })
 
-// 动态主题样式
-const themeStyle = computed(() => {
+// 设置 CSS 变量到 html 元素上
+function setCssVariables() {
   const { primary, dark, light } = themeColors.value
   const primaryRgb = hexToRgb(primary)
   const darkRgb = hexToRgb(dark)
-  return {
-    '--theme-primary': primary,
-    '--theme-dark': dark,
-    '--theme-light': light,
-    '--theme-rgba': `rgba(${primaryRgb}, 0.35)`,
-    '--theme-rgba-light': `rgba(${primaryRgb}, 0.08)`,
-    '--theme-rgba-shadow': `rgba(${primaryRgb}, 0.45)`,
-    '--theme-gradient': `linear-gradient(135deg, ${primary}, ${dark})`,
-    '--theme-gradient-nav': `linear-gradient(90deg, ${dark} 0%, ${primary} 60%, ${light} 100%)`,
-    // 暗色模式导航栏渐变 - 使用更暗的色调
-    '--theme-gradient-nav-dark': `linear-gradient(90deg, ${adjustColor(primary.replace('#', ''), -35)} 0%, ${adjustColor(primary.replace('#', ''), -25)} 60%, ${adjustColor(primary.replace('#', ''), -15)} 100%)`,
-    '--theme-text-dark': light,
-    '--theme-icon-dark': light,
-    // 导航栏元素 - 暗色模式
-    '--theme-nav-icon-bg': `rgba(${darkRgb}, 0.3)`,
-    '--theme-nav-icon-border': `rgba(${darkRgb}, 0.5)`,
-    '--theme-nav-btn-bg': `rgba(${darkRgb}, 0.2)`,
-    '--theme-nav-btn-border': `rgba(${darkRgb}, 0.35)`,
-    '--theme-nav-btn-hover': `rgba(${primaryRgb}, 0.3)`,
-    '--theme-nav-text': `rgba(255, 255, 255, 0.85)`,
-    // 菜单 hover 背景色 - 使用主题色的浅色版本（亮色模式）
-    '--theme-bg-hover': `rgba(${primaryRgb}, 0.08)`,
-    '--theme-bg-hover-dark': `rgba(${primaryRgb}, 0.12)`,
-    '--theme-bg-open': `rgba(${primaryRgb}, 0.12)`,
-    '--theme-bg-open-dark': `rgba(${primaryRgb}, 0.16)`,
-    // 暗色模式下的背景色
-    '--theme-bg-hover-dark-mode': `rgba(${primaryRgb}, 0.15)`,
-    '--theme-bg-hover-dark-mode-dark': `rgba(${primaryRgb}, 0.20)`,
-    '--theme-bg-open-dark-mode': `rgba(${primaryRgb}, 0.20)`,
-    '--theme-bg-open-dark-mode-dark': `rgba(${primaryRgb}, 0.25)`,
-    // 标签页背景色（亮色模式）
-    '--theme-tab-border': `rgba(${primaryRgb}, 0.2)`,
-    '--theme-tab-bg': `rgba(${primaryRgb}, 0.05)`,
-    '--theme-tab-text': primary,
-    '--theme-tab-hover-bg': `rgba(${primaryRgb}, 0.1)`,
-    // 标签页背景色（暗色模式）
-    '--theme-tab-border-dark': `rgba(${primaryRgb}, 0.3)`,
-    '--theme-tab-bg-dark': `rgba(${primaryRgb}, 0.15)`,
-    '--theme-tab-text-dark': `rgba(${primaryRgb}, 0.7)`,
-    '--theme-tab-hover-bg-dark': `rgba(${primaryRgb}, 0.25)`,
-  }
-})
+
+  const setVar = (name, value) => document.documentElement.style.setProperty(name, value)
+
+  setVar('--theme-primary', primary)
+  setVar('--theme-dark', dark)
+  setVar('--theme-light', light)
+  setVar('--theme-rgba', `rgba(${primaryRgb}, 0.35)`)
+  setVar('--theme-rgba-light', `rgba(${primaryRgb}, 0.08)`)
+  setVar('--theme-rgba-shadow', `rgba(${primaryRgb}, 0.45)`)
+  setVar('--theme-gradient', `linear-gradient(135deg, ${primary}, ${dark})`)
+  setVar('--theme-gradient-nav', `linear-gradient(90deg, ${dark} 0%, ${primary} 60%, ${light} 100%)`)
+  // 暗色模式导航栏渐变 - 使用更暗的色调
+  setVar('--theme-gradient-nav-dark', `linear-gradient(90deg, ${adjustColor(primary.replace('#', ''), -35)} 0%, ${adjustColor(primary.replace('#', ''), -25)} 60%, ${adjustColor(primary.replace('#', ''), -15)} 100%)`)
+  setVar('--theme-text-dark', light)
+  setVar('--theme-icon-dark', light)
+  // 导航栏元素 - 暗色模式
+  setVar('--theme-nav-icon-bg', `rgba(${darkRgb}, 0.3)`)
+  setVar('--theme-nav-icon-border', `rgba(${darkRgb}, 0.5)`)
+  setVar('--theme-nav-btn-bg', `rgba(${darkRgb}, 0.2)`)
+  setVar('--theme-nav-btn-border', `rgba(${darkRgb}, 0.35)`)
+  setVar('--theme-nav-btn-hover', `rgba(${primaryRgb}, 0.3)`)
+  setVar('--theme-nav-text', `rgba(255, 255, 255, 0.85)`)
+  // 菜单 hover 背景色
+  setVar('--theme-bg-hover', `rgba(${primaryRgb}, 0.08)`)
+  setVar('--theme-bg-hover-dark', `rgba(${primaryRgb}, 0.12)`)
+  setVar('--theme-bg-open', `rgba(${primaryRgb}, 0.12)`)
+  setVar('--theme-bg-open-dark', `rgba(${primaryRgb}, 0.16)`)
+  // 暗色模式下的背景色
+  setVar('--theme-bg-hover-dark-mode', `rgba(${primaryRgb}, 0.15)`)
+  setVar('--theme-bg-hover-dark-mode-dark', `rgba(${primaryRgb}, 0.20)`)
+  setVar('--theme-bg-open-dark-mode', `rgba(${primaryRgb}, 0.20)`)
+  setVar('--theme-bg-open-dark-mode-dark', `rgba(${primaryRgb}, 0.25)`)
+  // 标签页背景色（亮色模式）
+  setVar('--theme-tab-border', `rgba(${primaryRgb}, 0.2)`)
+  setVar('--theme-tab-bg', `rgba(${primaryRgb}, 0.05)`)
+  setVar('--theme-tab-text', primary)
+  setVar('--theme-tab-hover-bg', `rgba(${primaryRgb}, 0.1)`)
+  // 标签页背景色（暗色模式）
+  setVar('--theme-tab-border-dark', `rgba(${primaryRgb}, 0.3)`)
+  setVar('--theme-tab-bg-dark', `rgba(${primaryRgb}, 0.15)`)
+  setVar('--theme-tab-text-dark', `rgba(${primaryRgb}, 0.7)`)
+  setVar('--theme-tab-hover-bg-dark', `rgba(${primaryRgb}, 0.25)`)
+}
+
+// 移除 CSS 变量
+function removeCssVariables() {
+  const removeVar = (name) => document.documentElement.style.removeProperty(name)
+
+  removeVar('--theme-primary')
+  removeVar('--theme-dark')
+  removeVar('--theme-light')
+  removeVar('--theme-rgba')
+  removeVar('--theme-rgba-light')
+  removeVar('--theme-rgba-shadow')
+  removeVar('--theme-gradient')
+  removeVar('--theme-gradient-nav')
+  removeVar('--theme-gradient-nav-dark')
+  removeVar('--theme-text-dark')
+  removeVar('--theme-icon-dark')
+  removeVar('--theme-nav-icon-bg')
+  removeVar('--theme-nav-icon-border')
+  removeVar('--theme-nav-btn-bg')
+  removeVar('--theme-nav-btn-border')
+  removeVar('--theme-nav-btn-hover')
+  removeVar('--theme-nav-text')
+  removeVar('--theme-bg-hover')
+  removeVar('--theme-bg-hover-dark')
+  removeVar('--theme-bg-open')
+  removeVar('--theme-bg-open-dark')
+  removeVar('--theme-bg-hover-dark-mode')
+  removeVar('--theme-bg-hover-dark-mode-dark')
+  removeVar('--theme-bg-open-dark-mode')
+  removeVar('--theme-bg-open-dark-mode-dark')
+  removeVar('--theme-tab-border')
+  removeVar('--theme-tab-bg')
+  removeVar('--theme-tab-text')
+  removeVar('--theme-tab-hover-bg')
+  removeVar('--theme-tab-border-dark')
+  removeVar('--theme-tab-bg-dark')
+  removeVar('--theme-tab-text-dark')
+  removeVar('--theme-tab-hover-bg-dark')
+}
+
+// 监听主题颜色变化
+watch(themeColors, () => {
+  setCssVariables()
+}, { deep: true })
 
 // HEX 转 RGB 辅助函数
 function hexToRgb(hex) {
@@ -274,6 +319,7 @@ function loadThemeColor() {
 
 onMounted(() => {
   loadThemeColor()
+  setCssVariables()
   // 从 sessionStorage 获取用户信息
   const tempData = localStorage.getItem('user') || sessionStorage.getItem('userData')
   if (tempData) {
@@ -283,6 +329,11 @@ onMounted(() => {
       console.error('解析 userData 失败', e)
     }
   }
+})
+
+// 组件卸载时清理 CSS 变量
+onUnmounted(() => {
+  removeCssVariables()
 })
 
 // 菜单状态
@@ -452,6 +503,11 @@ html.dark .home-page {
   right: 0;
   z-index: 1000;
   transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+html.dark .navbar {
+  background: var(--theme-gradient-nav-dark);
+  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.5);
 }
 
 /* 左区：Logo */
@@ -1089,64 +1145,5 @@ html.dark .toast {
 .toast-slide-leave-to {
   opacity: 0;
   transform: translateX(-50%) translateY(-16px) scale(0.9);
-}
-</style>
-
-<style>
-/* 暗色模式导航栏样式 - 使用 non-scoped 样式以确保正确应用 */
-/* 这些样式依赖于 .home-page 上设置的 CSS 变量 */
-
-html.dark .home-page .navbar {
-  background: var(--theme-gradient-nav-dark) !important;
-  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.5) !important;
-}
-
-html.dark .home-page .navbar .navbar-left,
-html.dark .home-page .navbar .navbar-right {
-  color: var(--theme-nav-text, rgba(255, 255, 255, 0.85)) !important;
-}
-
-html.dark .home-page .navbar .brand-title,
-html.dark .home-page .navbar .brand-subtitle {
-  color: var(--theme-nav-text, rgba(255, 255, 255, 0.85)) !important;
-}
-
-html.dark .home-page .navbar .nav-btn {
-  background: var(--theme-nav-btn-bg, rgba(125, 96, 184, 0.2)) !important;
-  border-color: var(--theme-nav-btn-border, rgba(125, 96, 184, 0.35)) !important;
-  color: var(--theme-nav-text, rgba(255, 255, 255, 0.85)) !important;
-}
-
-html.dark .home-page .navbar .nav-btn:hover {
-  background: var(--theme-nav-btn-hover, rgba(148, 120, 204, 0.3)) !important;
-  border-color: var(--theme-primary) !important;
-}
-
-html.dark .home-page .navbar .logout-button {
-  background: var(--theme-nav-btn-bg, rgba(125, 96, 184, 0.2)) !important;
-  border-color: var(--theme-nav-btn-border, rgba(125, 96, 184, 0.35)) !important;
-  color: #fff !important;
-}
-
-html.dark .home-page .navbar .logout-button:hover {
-  background: var(--theme-nav-btn-hover, rgba(148, 120, 204, 0.3)) !important;
-  border-color: var(--theme-primary) !important;
-}
-
-html.dark .home-page .navbar .logo-icon {
-  background: var(--theme-nav-icon-bg, rgba(125, 96, 184, 0.3)) !important;
-  border-color: var(--theme-nav-icon-border, rgba(125, 96, 184, 0.5)) !important;
-}
-
-html.dark .home-page .navbar .avatar img {
-  border-color: var(--theme-nav-btn-border, rgba(125, 96, 184, 0.6)) !important;
-}
-
-html.dark .home-page .navbar .divider-v {
-  background: var(--theme-nav-btn-border, rgba(125, 96, 184, 0.35)) !important;
-}
-
-html.dark .home-page .navbar .username {
-  color: var(--theme-nav-text, rgba(255, 255, 255, 0.85)) !important;
 }
 </style>
