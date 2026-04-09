@@ -315,6 +315,8 @@ function loadThemeColor() {
       light: adjustColor(defaultHex, 20)
     }
   }
+  // 确保 CSS 变量在 loadThemeColor 后被更新
+  setCssVariables()
 }
 
 onMounted(() => {
