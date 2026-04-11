@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserProjectRelationServiceImpl implements UserProjectRelationService {
@@ -51,7 +52,7 @@ public class UserProjectRelationServiceImpl implements UserProjectRelationServic
     }
 
     @Override
-    public List<UserProjectRelation> getPermissionsByProjectId(String projectId) {
+    public List<Map<String, Object>> getPermissionsByProjectId(String projectId) {
         return userProjectRelationMapper.findByProjectId(projectId);
     }
 

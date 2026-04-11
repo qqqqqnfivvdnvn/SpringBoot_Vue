@@ -4,6 +4,7 @@ import com.example.demo.dto.ProjectPermissionDTO;
 import com.example.demo.entity.UserProjectRelation;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserProjectRelationService {
 
@@ -15,7 +16,7 @@ public interface UserProjectRelationService {
 
     List<UserProjectRelation> getPermissionsByUserId(String userId);
 
-    List<UserProjectRelation> getPermissionsByProjectId(String projectId);
+    List<Map<String, Object>> getPermissionsByProjectId(String projectId);
 
     String getUserPermission(String userId, String projectId);
 }

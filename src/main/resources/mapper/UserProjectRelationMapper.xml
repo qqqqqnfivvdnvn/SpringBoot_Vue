@@ -17,8 +17,12 @@
         SELECT * FROM [haosen_project].[dbo].[user_project_relation] WHERE [user_id] = #{userId} ORDER BY [create_time] DESC
     </select>
 
-    <select id="findByProjectId" resultType="com.example.demo.entity.UserProjectRelation">
-        SELECT * FROM [haosen_project].[dbo].[user_project_relation] WHERE [project_id] = #{projectId} ORDER BY [create_time] DESC
+    <select id="findByProjectId" resultType="java.util.Map">
+        SELECT r.user_id, r.project_id, r.permission_type, r.create_time, r.creator_id, u.username
+        FROM [haosen_project].[dbo].[user_project_relation] r
+        LEFT JOIN [haosen_project].[dbo].[Users] u ON r.user_id = u.id
+        WHERE r.project_id = #{projectId}
+        ORDER BY r.create_time DESC
     </select>
 
     <select id="findByUserAndProject" resultType="com.example.demo.entity.UserProjectRelation">

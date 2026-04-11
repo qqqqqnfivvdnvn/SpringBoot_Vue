@@ -80,9 +80,9 @@ public class PermissionController {
      * 获取项目的所有用户权限
      */
     @GetMapping("/project/{projectId}")
-    public ResponseEntity<ApiResponseDTO<List<UserProjectRelation>>> getProjectPermissions(
+    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getProjectPermissions(
         @PathVariable String projectId) {
-        List<UserProjectRelation> permissions = userProjectRelationService.getPermissionsByProjectId(projectId);
+        List<Map<String, Object>> permissions = userProjectRelationService.getPermissionsByProjectId(projectId);
         return ResponseEntity.ok(ApiResponseDTO.success(permissions));
     }
 

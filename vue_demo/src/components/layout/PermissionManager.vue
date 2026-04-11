@@ -37,7 +37,12 @@
         style="width: 100%"
         empty-text="暂无授权用户"
       >
-        <el-table-column prop="user_id" label="用户 ID" min-width="220" />
+        <el-table-column prop="username" label="用户名" min-width="150" />
+        <el-table-column label="用户 ID" min-width="220">
+          <template #default="scope">
+            <el-tag size="small">{{ scope.row.user_id }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="权限类型" width="180">
           <template #default="scope">
             <el-select
