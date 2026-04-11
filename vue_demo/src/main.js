@@ -109,6 +109,8 @@ import MdLocationBatchView from "@/components/maindataproject/locationview/MdLoc
 import MdLocationUploadView from "@/components/maindataproject/locationview/MdLocationUploadView.vue"
 import MdLocationView from "@/components/maindataproject/locationview/MdLocationView.vue"
 
+import PermissionManager from "@/components/layout/PermissionManager.vue"
+
 
 app.component('HomeDashboardView', HomeDashboardView)
 app.component('HospitalDataView', HospitalDataView)
@@ -132,6 +134,8 @@ app.component('ImportOrgRelationView', ImportOrgRelationView)
 app.component('MdLocationBatchView', MdLocationBatchView)
 app.component('MdLocationUploadView', MdLocationUploadView)
 app.component('MdLocationView', MdLocationView)
+
+app.component('PermissionManager', PermissionManager)
 
 // 全局注册组件
 app.component('font-awesome-icon', FontAwesomeIcon)
