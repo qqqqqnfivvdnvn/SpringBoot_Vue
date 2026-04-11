@@ -19,5 +19,17 @@
 select id,name,description,icon,color,route_name,CAST(addtime AS DATE) as addtime,user_id,user_name from haosen_project..projects order by addtime
     </select>
 
+    <select id="findByUserId" resultType="com.example.demo.entity.Projects">
+        SELECT id,name,description,icon,color,route_name,CAST(addtime AS DATE) as addtime,user_id,user_name
+        FROM haosen_project..projects
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectById" resultType="com.example.demo.entity.Projects">
+        SELECT id,name,description,icon,color,route_name,CAST(addtime AS DATE) as addtime,user_id,user_name
+        FROM haosen_project..projects
+        WHERE id = #{id}
+    </select>
+
 
 </mapper>

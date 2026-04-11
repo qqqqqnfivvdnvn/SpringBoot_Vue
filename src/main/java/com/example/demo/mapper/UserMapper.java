@@ -16,8 +16,11 @@ public interface UserMapper  extends BaseMapper<Users>{
     @Select("SELECT id,username, password,email,addtime FROM haosen_project..users")
     public List<Users> findAll();
 
-    @Select("SELECT top 1 id,username,password,email FROM haosen_project..users WHERE username = #{username}")
+    @Select("SELECT top 1 id,username,password,email,role FROM haosen_project..users WHERE username = #{username}")
     public Users findByName(String username);
+
+    @Select("SELECT id,username,password,email,role FROM haosen_project..users WHERE id = #{id}")
+    public Users selectById(String id);
 
     @Insert("INSERT INTO haosen_project..users (id,username, password,email,addtime) VALUES (#{id},#{username},#{password},#{email},#{addtime})")
     public int insert(Users user);

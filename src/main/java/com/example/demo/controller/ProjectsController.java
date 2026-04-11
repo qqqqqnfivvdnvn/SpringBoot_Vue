@@ -3,6 +3,7 @@ import java.util.List;
 import com.example.demo.dto.ApiResponseDTO;
 import com.example.demo.entity.Projects;
 import com.example.demo.service.ProjectsService;
+import com.example.demo.vo.ProjectWithPermissionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,18 @@ public class ProjectsController {
 
     }
 
+    /**
+     * 获取当前用户有权限的项目列表（带权限信息）
+     */
+    @GetMapping("/getMyProjects")
+    public ResponseEntity<ApiResponseDTO<List<ProjectWithPermissionVO>>> getMyProjects(@RequestParam String userId) {
+        ApiResponseDTO<List<ProjectWithPermissionVO>> response = projectsService.getProjectsForUser(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 获取所有项目（管理员专用）
+     */
     @GetMapping("/getAllProjects")
     public ResponseEntity<ApiResponseDTO<List<Projects>>> getAllProjects() {
         ApiResponseDTO<List<Projects>> response = projectsService.getAllProjects();

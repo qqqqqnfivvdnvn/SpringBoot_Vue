@@ -16,4 +16,8 @@ public interface ProjectsMapper {
 
     public List<Projects> findAllProjects();
 
+    public List<Projects> findByUserId(String userId);
+
+    public Projects selectById(String id);
+
 }

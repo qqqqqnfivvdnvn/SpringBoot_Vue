@@ -63,6 +63,14 @@
             <div class="card-footer">
               <font-awesome-icon :icon="['fas', 'calendar-alt']" />
               <span>{{ project.addtime }}</span>
+              <button
+                v-if="project.permissionType === 'admin' || project.permissionType === 'owner'"
+                class="permission-btn"
+                @click.stop="openPermissionManager(project)"
+                title="权限管理"
+              >
+                <font-awesome-icon :icon="['fas', 'user-shield']" />
+              </button>
             </div>
           </div>
         </div>
@@ -137,12 +145,20 @@
         </div>
       </div>
     </div>
+
+    <!-- 权限管理对话框 -->
+    <PermissionManager
+      v-if="currentProject"
+      :project="currentProject"
+      v-model:visible="permissionDialogVisible"
+    />
   </div>
 </template>
 
 <script setup>
 import '@/assets/css/dark-mode.css'
 import avatarImg from '@/assets/img/avatar-modified.png'
+import PermissionManager from './layout/PermissionManager.vue'
 
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -160,6 +176,8 @@ const showDialog = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
 const toastType = ref('success')
+const currentProject = ref(null)
+const permissionDialogVisible = ref(false)
 
 const showToastMessage = (message, type = 'success') => {
   toastMessage.value = message
@@ -219,10 +237,11 @@ onMounted(() => {
   getProjects()
 })
 
-// 获取所有项目
+// 获取用户有权限的项目
 const getProjects = async () => {
   try {
-    const response = await axios.get('/api/projects/getAllProjects')
+    const userId = userData.value.userid;
+    const response = await axios.get(`/api/projects/getMyProjects?userId=${userId}`)
     projects.value = response.data.data || []
   } catch (error) {
     console.error('获取项目失败:', error)
@@ -266,6 +285,12 @@ const showAddProjectDialog = () => {
     color: '#9478cc'
   }
   showDialog.value = true
+}
+
+// 打开权限管理对话框
+const openPermissionManager = (project) => {
+  currentProject.value = project
+  permissionDialogVisible.value = true
 }
 
 // 添加新项目
@@ -656,6 +681,33 @@ html.dark .card-body p {
 html.dark .card-footer {
   border-top-color: #334155;
   color: #64748b;
+}
+
+.permission-btn {
+  background: linear-gradient(135deg, #9d7de8, #7c5cbf);
+  border: none;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: auto;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.permission-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(124, 92, 191, 0.4);
+}
+
+html.dark .permission-btn {
+  background: linear-gradient(135deg, #334155, #1e293b);
+}
+
+html.dark .permission-btn:hover {
+  box-shadow: 0 2px 8px rgba(100, 116, 139, 0.4);
 }
 
 /* ===== 新建卡片 ===== */
