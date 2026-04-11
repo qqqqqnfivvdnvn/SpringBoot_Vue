@@ -31,6 +31,9 @@ import MdLocationBatchView from '@/components/maindataproject/locationview/MdLoc
 import MdLocationUploadView from '@/components/maindataproject/locationview/MdLocationUploadView.vue';
 import MdLocationView from '@/components/maindataproject/locationview/MdLocationView.vue';
 
+// 权限管理测试页面
+import PermissionTest from '@/components/layout/PermissionTest.vue';
+
 
 const routes = [
     {
@@ -271,6 +274,13 @@ const routes = [
                 meta: { requiresAuth: true }
             }
         ]
+    },
+
+    {
+        path: '/permission-test',
+        name: 'PermissionTest',
+        component: PermissionTest,
+        meta: { requiresAuth: true }
     }
 
 
