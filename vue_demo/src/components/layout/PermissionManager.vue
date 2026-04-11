@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <template>
   <el-dialog
     v-model="dialogVisible"
@@ -75,6 +76,8 @@
 </template>
 
 <script setup>
+// eslint-disable-next-line no-undef
+// defineProps 和 defineEmits 是 Vue 3 编译器宏，在 <script setup> 中自动可用
 import { ref, watch } from 'vue'
 import axios from 'axios'
 
