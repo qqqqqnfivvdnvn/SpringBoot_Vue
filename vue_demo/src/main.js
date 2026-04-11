@@ -17,9 +17,17 @@ import {
     faStore,
     faUniversity,
     faSignOutAlt,
+    faSignInAlt,
     faAngleDoubleLeft,
     faAngleDoubleRight,
     faUser,
+    faUserPlus,
+    faCheckCircle,
+    faExclamationCircle,
+    faTimesCircle,
+    faShieldAlt,
+    faRocket,
+    faDatabase,
     faTrash,
     faClock,
     faThList,
@@ -30,7 +38,6 @@ import {
     faBookReader,
     faCat,
     faProjectDiagram,
-    faDatabase,
     faChartLine,
     faLaptopCode,
     faUsers,
@@ -44,7 +51,6 @@ import {
     faOilCan,
     faFlag,
     faFileUpload,
-    faTimesCircle,
     faPaw,
     faFeather,
     faPaperPlane,
@@ -72,10 +78,10 @@ import {
 const app = createApp(App); // 创建应用实例 file-upload
 
 // 将图标添加到库中
-library.add(faHospital,faStore,faUniversity,faSignOutAlt,faAngleDoubleLeft,
-    faAngleDoubleRight,faUser,faTrash,faClock,faThList,faSynagogue,faStoreAlt,faHospitalAlt,faFileAlt,faBookReader,faCat,
-    faProjectDiagram,faDatabase,faChartLine,faLaptopCode,faUsers,faBook,faSearch,faStar,faCalendarAlt,faPlusCircle,faEraser,faSnowman,faOilCan,
-    faFlag,faFileUpload,faTimesCircle,faPaw,faFeather,faPaperPlane,faLeaf,faPlus,faHome,faChevronRight,faArrowLeft,faChevronDown,faTimes,faBriefcase,
+library.add(faHospital,faStore,faUniversity,faSignOutAlt,faSignInAlt,faAngleDoubleLeft,
+    faAngleDoubleRight,faUser,faUserPlus,faCheckCircle,faExclamationCircle,faTimesCircle,faShieldAlt,faRocket,faDatabase,faTrash,faClock,faThList,faSynagogue,faStoreAlt,faHospitalAlt,faFileAlt,faBookReader,faCat,
+    faProjectDiagram,faChartLine,faLaptopCode,faUsers,faBook,faSearch,faStar,faCalendarAlt,faPlusCircle,faEraser,faSnowman,faOilCan,
+    faFlag,faFileUpload,faPaw,faFeather,faPaperPlane,faLeaf,faPlus,faHome,faChevronRight,faArrowLeft,faChevronDown,faTimes,faBriefcase,
     faTable,faLayerGroup,faLink,faList,faUpload,faExchangeAlt,faMapMarkedAlt)
 
 import HomeDashboardView from '@/components/haosenproject/homechartview/HomeDashboardView.vue'

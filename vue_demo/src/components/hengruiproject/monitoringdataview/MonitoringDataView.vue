@@ -222,11 +222,11 @@ const fetchMonitoringData = async () => {
       ...searchForm
     }
 
-    console.log('请求参数:', params)
+
 
     const response = await axios.get('/api/hengrui/monitoring/getDataList', { params })
 
-    console.log('响应数据:', response.data)
+
 
     if (response.data.code === 200 && response.data.data) {
       const page = response.data.data

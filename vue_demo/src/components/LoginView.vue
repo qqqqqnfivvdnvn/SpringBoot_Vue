@@ -3,54 +3,74 @@
     <!-- 左侧欢迎区域 -->
     <div class="welcome-section">
       <div class="welcome-content">
-        <div class="welcome-icon">&#128274;</div>
-        <h1>主数据管理系统</h1>
+        <div class="welcome-icon">
+          <font-awesome-icon :icon="['fas', 'database']" />
+        </div>
+        <h1>数据管理系统</h1>
         <p class="welcome-subtitle">统一管理、高效协作、数据驱动决策</p>
+        <div class="welcome-features">
+          <div class="feature-item">
+            <font-awesome-icon :icon="['fas', 'check-circle']" />
+            <span>统一数据标准</span>
+          </div>
+          <div class="feature-item">
+            <font-awesome-icon :icon="['fas', 'shield-alt']" />
+            <span>安全可靠</span>
+          </div>
+          <div class="feature-item">
+            <font-awesome-icon :icon="['fas', 'chart-line']" />
+            <span>高效管理</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- 右侧登录表单 -->
     <div class="form-section">
-      <form @submit.prevent="handleSubmit" class="form-wrapper">
-        <div class="form-header">
-          <h2>欢迎回来</h2>
-          <p>请登录您的账户继续使用</p>
-        </div>
+      <div class="form-card">
+        <form @submit.prevent="handleSubmit">
+          <div class="form-header">
+            <h2>欢迎回来</h2>
+            <p>请登录您的账户继续使用</p>
+          </div>
 
-        <div class="form-group">
-          <label for="username">用户名：</label>
-          <input
-              type="text"
-              id="username"
-              v-model="username"
-              placeholder="请输入用户名"
-              required
-              autocomplete="username"
-          />
-        </div>
+          <div class="form-group">
+            <label for="username">用户名</label>
+            <input
+                type="text"
+                id="username"
+                v-model="username"
+                placeholder="请输入用户名"
+                required
+                autocomplete="username"
+                class="form-input"
+            />
+          </div>
 
-        <div class="form-group">
-          <label for="password">密码：</label>
-          <input
-              type="password"
-              id="password"
-              v-model="password"
-              placeholder="*********"
-              required
-              autocomplete="current-password"
-          />
-        </div>
+          <div class="form-group">
+            <label for="password">密码</label>
+            <input
+                type="password"
+                id="password"
+                v-model="password"
+                placeholder="请输入密码"
+                required
+                autocomplete="current-password"
+                class="form-input"
+            />
+          </div>
 
-        <button type="submit" :disabled="isLoading" class="submit-btn">
-          <span v-if="isLoading" class="loading-spinner"></span>
-          <font-awesome-icon v-else :icon="['fas', 'sign-in-alt']" style="margin-right:6px" />
-          {{ isLoading ? '登录中...' : '登录' }}
-        </button>
+          <button type="submit" :disabled="isLoading" class="submit-btn">
+            <span v-if="isLoading" class="loading-spinner"></span>
+            <font-awesome-icon v-else :icon="['fas', 'sign-in-alt']" />
+            {{ isLoading ? '登录中...' : '登录' }}
+          </button>
 
-        <div class="links">
-          <router-link to="/register">新用户？注册</router-link>
-        </div>
-      </form>
+          <div class="links">
+            <router-link to="/register">新用户？注册账户</router-link>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- Toast 提示 -->
@@ -104,17 +124,12 @@ const handleSubmit = async () => {
 
     if (response.data.code === 200) {
       const userData = response.data.data
-      // 存储登录信息 持久保留
       localStorage.setItem('token', userData.token)
       localStorage.setItem('user', JSON.stringify(userData))
-      // 临时数据
       sessionStorage.setItem('userData', JSON.stringify(userData))
-
-
 
       showToastMessage('登录成功')
 
-      // 跳转：优先使用 redirect 参数，否则去首页
       const redirectPath = route.query.redirect || '/home'
 
       setTimeout(() => {
@@ -140,14 +155,14 @@ const handleSubmit = async () => {
 .login-page {
   display: flex;
   height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   overflow: hidden;
 }
 
 /* ===== 左侧欢迎区 ===== */
 .welcome-section {
   flex: 1;
-  background: linear-gradient(145deg, #7c5cbf 0%, #9d7de8 50%, #b89ff0 100%);
+  background: linear-gradient(145deg, #8b5cf6 0%, #7c3aed 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -157,7 +172,6 @@ const handleSubmit = async () => {
   transition: background 0.3s ease;
 }
 
-/* 装饰圆形背景 */
 .welcome-section::before {
   content: '';
   position: absolute;
@@ -183,7 +197,7 @@ const handleSubmit = async () => {
 }
 
 html.dark .welcome-section {
-  background: linear-gradient(145deg, #1e1430 0%, #2d2048 50%, #3a2a5e 100%);
+  background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
 }
 
 .welcome-content {
@@ -195,17 +209,18 @@ html.dark .welcome-section {
 }
 
 .welcome-icon {
-  width: 72px;
-  height: 72px;
-  background: rgba(255, 255, 255, 0.18);
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin: 0 auto 24px;
-  border: 1px solid rgba(255,255,255,0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(6px);
+  color: #fff;
 }
 
 .welcome-content h1 {
@@ -218,9 +233,9 @@ html.dark .welcome-section {
 
 .welcome-subtitle {
   font-size: 0.92rem;
-  opacity: 0.8;
-  margin-bottom: 36px;
-  line-height: 1.7;
+  opacity: 0.85;
+  margin-bottom: 28px;
+  line-height: 1.6;
 }
 
 .welcome-features {
@@ -228,18 +243,28 @@ html.dark .welcome-section {
   display: inline-flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: 24px;
 }
 
 .feature-item {
-  font-size: 0.88rem;
-  opacity: 0.9;
+  font-size: 0.85rem;
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255,255,255,0.1);
-  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.2s ease;
+}
+
+.feature-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
+}
+
+.feature-item font-awesome-icon {
+  font-size: 0.9rem;
 }
 
 /* ===== 右侧表单区 ===== */
@@ -248,107 +273,126 @@ html.dark .welcome-section {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f0f2f8;
+  background: #f8fafc;
   transition: background-color 0.3s ease;
 }
 
 html.dark .form-section {
-  background-color: #12121e;
+  background: #0f172a;
 }
 
-.form-wrapper {
+.form-card {
   width: 100%;
-  max-width: 400px;
-  padding: 0 40px;
+  max-width: 420px;
+  padding: 48px 44px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+html.dark .form-card {
+  background: #1e293b;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
 }
 
 .form-header {
   margin-bottom: 32px;
+  text-align: center;
 }
 
 .form-header h2 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #2c2060;
-  margin-bottom: 6px;
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  color: #1e293b;
+  margin-bottom: 8px;
   transition: color 0.3s ease;
 }
 
 html.dark .form-header h2 {
-  color: #d0c0f8;
+  color: #f1f5f9;
 }
 
 .form-header p {
-  font-size: 0.88rem;
-  color: #9090a8;
+  font-size: 0.9rem;
+  color: #64748b;
   transition: color 0.3s ease;
 }
 
 html.dark .form-header p {
-  color: #6a6080;
+  color: #94a3b8;
 }
 
 .form-group {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 6px;
-  color: #4a4068;
+  margin-bottom: 8px;
+  color: #475569;
   font-weight: 600;
   font-size: 0.875rem;
   transition: color 0.3s ease;
 }
 
 html.dark .form-group label {
-  color: #a898cc;
+  color: #cbd5e1;
 }
 
-.form-group input {
+.form-input {
   width: 100%;
-  padding: 11px 14px;
-  border: 1.5px solid #ddd8f0;
+  padding: 12px 16px;
+  border: 1.5px solid #e2e8f0;
   border-radius: 10px;
   font-size: 0.95rem;
   box-sizing: border-box;
-  background-color: #fff;
-  color: #333;
+  background-color: #ffffff;
+  color: #1e293b;
   transition: all 0.25s ease;
   font-family: inherit;
 }
 
-html.dark .form-group input {
-  background-color: #1a1a2c;
-  border-color: #38305a;
-  color: #e0d8f8;
+html.dark .form-input {
+  background-color: #0f172a;
+  border-color: #475569;
+  color: #f1f5f9;
 }
 
-.form-group input::placeholder {
-  color: #c0b8d8;
+.form-input::placeholder {
+  color: #94a3b8;
 }
 
-html.dark .form-group input::placeholder {
-  color: #4a4068;
+html.dark .form-input::placeholder {
+  color: #64748b;
 }
 
-.form-group input:focus {
+.form-input:focus {
   outline: none;
-  border-color: #9d7de8;
-  box-shadow: 0 0 0 3px rgba(157, 125, 232, 0.18);
-  background-color: #fff;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+  background-color: #ffffff;
 }
 
-html.dark .form-group input:focus {
-  border-color: #7060b8;
-  box-shadow: 0 0 0 3px rgba(112, 96, 184, 0.25);
-  background-color: #1e1e30;
+html.dark .form-input:focus {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.25);
+  background-color: #0f172a;
+}
+
+.form-input:hover:not(:focus) {
+  border-color: #cbd5e1;
+}
+
+html.dark .form-input:hover:not(:focus) {
+  border-color: #64748b;
 }
 
 .submit-btn {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #9d7de8, #7c5cbf);
+  padding: 13px 24px;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -357,49 +401,51 @@ html.dark .form-group input:focus {
   cursor: pointer;
   margin-top: 8px;
   position: relative;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 14px rgba(124, 92, 191, 0.35);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
   font-family: inherit;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #b09af0, #9d7de8);
-  box-shadow: 0 6px 20px rgba(124, 92, 191, 0.5);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+  transform: translateY(-2px);
 }
 
 .submit-btn:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 3px 10px rgba(124, 92, 191, 0.3);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
 }
 
 html.dark .submit-btn {
-  background: linear-gradient(135deg, #5a3d8c, #3e246e);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #334155, #1e293b);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 html.dark .submit-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #7050a8, #5a3d8c);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(135deg, #475569, #334155);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 .submit-btn:disabled {
-  opacity: 0.65;
+  opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
 .loading-spinner {
   display: inline-block;
-  width: 15px;
-  height: 15px;
-  border: 2px solid rgba(255,255,255,0.5);
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
   border-top-color: #fff;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-right: 8px;
-  vertical-align: middle;
+  animation: spin 0.7s linear infinite;
 }
 
 @keyframes spin {
@@ -409,28 +455,35 @@ html.dark .submit-btn:hover:not(:disabled) {
 .links {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+html.dark .links {
+  border-top-color: #334155;
 }
 
 .links a {
-  color: #9d7de8;
+  color: #8b5cf6;
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: color 0.25s ease;
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  transition: all 0.2s ease;
 }
 
 html.dark .links a {
-  color: #a898cc;
+  color: #94a3b8;
 }
 
 .links a:hover {
-  color: #7c5cbf;
+  color: #7c3aed;
   text-decoration: underline;
 }
 
 html.dark .links a:hover {
-  color: #c8b8ee;
+  color: #cbd5e1;
 }
 
 /* ===== 响应式 ===== */
@@ -445,8 +498,8 @@ html.dark .links a:hover {
   }
 
   .welcome-icon {
-    width: 52px;
-    height: 52px;
+    width: 56px;
+    height: 56px;
     font-size: 1.5rem;
     margin-bottom: 14px;
   }
@@ -456,8 +509,8 @@ html.dark .links a:hover {
   }
 
   .welcome-subtitle {
-    font-size: 0.85rem;
-    margin-bottom: 0;
+    font-size: 0.82rem;
+    margin-bottom: 12px;
   }
 
   .welcome-features {
@@ -465,15 +518,16 @@ html.dark .links a:hover {
   }
 
   .welcome-content {
-    padding: 24px 20px;
+    padding: 20px;
   }
 
   .form-section {
     flex: 1;
+    padding: 24px 20px;
   }
 
-  .form-wrapper {
-    padding: 0 24px;
+  .form-card {
+    padding: 32px 24px;
   }
 }
 
@@ -486,40 +540,40 @@ html.dark .links a:hover {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 11px 22px;
+  padding: 12px 24px;
   border-radius: 24px;
   font-size: 0.875rem;
   font-weight: 500;
   color: #fff;
   z-index: 9999;
   white-space: nowrap;
-  box-shadow: 0 4px 20px rgba(124, 92, 191, 0.4);
-  background: linear-gradient(135deg, #9d7de8, #7c5cbf);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
 }
 
 .toast.warning {
-  background: linear-gradient(135deg, #f0a050, #d97820);
-  box-shadow: 0 4px 20px rgba(217, 120, 32, 0.4);
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
 }
 
 .toast.error {
-  background: linear-gradient(135deg, #e86868, #c04040);
-  box-shadow: 0 4px 20px rgba(192, 64, 64, 0.4);
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
 }
 
 html.dark .toast {
-  background: linear-gradient(135deg, #5a3d8c, #3e246e);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  background: linear-gradient(135deg, #334155, #1e293b);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
 }
 
 html.dark .toast.warning {
-  background: linear-gradient(135deg, #a06020, #7a4010);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 html.dark .toast.error {
-  background: linear-gradient(135deg, #8c3030, #5a1a1a);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .toast-icon {

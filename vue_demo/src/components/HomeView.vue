@@ -354,7 +354,7 @@ html.dark .home-page {
 }
 
 html.dark .navbar {
-  background: linear-gradient(90deg, #1e1430 0%, #2d2048 60%, #3a2a5e 100%);
+  background: linear-gradient(90deg, #1e293b 0%, #0f172a 60%, #1e293b 100%);
   box-shadow: 0 3px 20px rgba(0, 0, 0, 0.5);
 }
 
@@ -479,19 +479,19 @@ html.dark .logout-button:hover {
 
 .search-box input:focus {
   outline: none;
-  border-color: #9d7de8;
-  box-shadow: 0 0 0 3px rgba(157, 125, 232, 0.15);
+  border-color: #64748b;
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.15);
 }
 
 html.dark .search-box input {
-  background: #1a1a2c;
-  border-color: #38305a;
-  color: #e0d8f8;
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
 }
 
 html.dark .search-box input:focus {
-  border-color: #7060b8;
-  box-shadow: 0 0 0 3px rgba(112, 96, 184, 0.25);
+  border-color: #475569;
+  box-shadow: 0 0 0 3px rgba(71, 85, 99, 0.25);
 }
 
 .search-icon {
@@ -499,7 +499,7 @@ html.dark .search-box input:focus {
   left: 13px;
   top: 50%;
   transform: translateY(-50%);
-  color: #9d7de8;
+  color: #64748b;
   font-size: 0.85rem;
 }
 
@@ -535,21 +535,21 @@ html.dark .search-box input:focus {
 }
 
 html.dark .tabs button {
-  background: #1a1a2c;
-  border-color: #38305a;
-  color: #a898cc;
+  background: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
 }
 
 html.dark .tabs button:hover {
-  background: #22203a;
-  border-color: #7060b8;
-  color: #c8b8ee;
+  background: #334155;
+  border-color: #475569;
+  color: #cbd5e1;
 }
 
 html.dark .tabs button.active {
-  background: linear-gradient(135deg, #5a3d8c, #3e246e);
+  background: linear-gradient(135deg, #334155, #1e293b);
   border-color: transparent;
-  color: #e0d0ff;
+  color: #e2e8f0;
 }
 
 /* ===== 项目网格 ===== */
@@ -618,18 +618,18 @@ html.dark .project-card:hover {
   margin: 0 0 6px 0;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #2c2060;
+  color: #1e293b;
   transition: color 0.3s;
 }
 
 html.dark .card-body h3 {
-  color: #d0c0f8;
+  color: #e2e8f0;
 }
 
 .card-body p {
   margin: 0 0 10px 0;
   font-size: 0.78rem;
-  color: #9090a8;
+  color: #64748b;
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -639,7 +639,7 @@ html.dark .card-body h3 {
 }
 
 html.dark .card-body p {
-  color: #7070a0;
+  color: #94a3b8;
 }
 
 .card-footer {
@@ -647,20 +647,20 @@ html.dark .card-body p {
   align-items: center;
   gap: 6px;
   font-size: 0.72rem;
-  color: #c0b8d8;
+  color: #94a3b8;
   margin-top: auto;
   padding-top: 8px;
-  border-top: 1px solid #f0eaff;
+  border-top: 1px solid #e2e8f0;
 }
 
 html.dark .card-footer {
-  border-top-color: #2a2040;
-  color: #4a4068;
+  border-top-color: #334155;
+  color: #64748b;
 }
 
 /* ===== 新建卡片 ===== */
 .add-card {
-  border: 2px dashed #ddd8f0;
+  border: 2px dashed #e2e8f0;
   box-shadow: none;
   background: transparent;
   min-height: 160px;
@@ -674,13 +674,13 @@ html.dark .card-footer {
 }
 
 html.dark .add-card {
-  border-color: #38305a;
+  border-color: #334155;
   background: transparent;
 }
 
 html.dark .add-card:hover {
-  border-color: #7060b8;
-  background: rgba(112, 96, 184, 0.08);
+  border-color: #475569;
+  background: rgba(71, 85, 99, 0.08);
 }
 
 .add-card-inner {
@@ -691,7 +691,7 @@ html.dark .add-card:hover {
   height: 100%;
   min-height: 160px;
   gap: 12px;
-  color: #c0b8d8;
+  color: #b0a0d0;
   transition: color 0.22s;
 }
 
@@ -700,11 +700,11 @@ html.dark .add-card:hover {
 }
 
 html.dark .add-card-inner {
-  color: #4a4068;
+  color: #64748b;
 }
 
 html.dark .add-card:hover .add-card-inner {
-  color: #a898cc;
+  color: #94a3b8;
 }
 
 .add-icon {
@@ -759,8 +759,8 @@ html.dark .dialog {
 }
 
 html.dark .dialog-header {
-  border-bottom-color: #2a2040;
-  background: linear-gradient(90deg, #1e1a30, #1a1a2c);
+  border-bottom-color: #334155;
+  background: linear-gradient(90deg, #1e293b, #334155);
 }
 
 .dialog-header h3 {
@@ -771,7 +771,7 @@ html.dark .dialog-header {
 }
 
 html.dark .dialog-header h3 {
-  color: #d0c0f8;
+  color: #e2e8f0;
 }
 
 .dialog-close {
@@ -790,7 +790,7 @@ html.dark .dialog-header h3 {
 }
 
 html.dark .dialog-close:hover {
-  color: #c8b8ee;
+  color: #cbd5e1;
 }
 
 .dialog-content {
@@ -805,7 +805,7 @@ html.dark .dialog-close:hover {
   display: block;
   margin-bottom: 5px;
   font-weight: 600;
-  color: #4a4068;
+  color: #7a6a9e;
   font-size: 0.83rem;
   transition: color 0.3s;
 }
@@ -816,7 +816,7 @@ html.dark .dialog-close:hover {
 }
 
 html.dark .form-group label {
-  color: #a898cc;
+  color: #94a3b8;
 }
 
 .form-group input,
@@ -842,9 +842,9 @@ html.dark .form-group label {
 
 html.dark .form-group input,
 html.dark .form-group textarea {
-  background: #12121e;
-  border-color: #38305a;
-  color: #e0d8f8;
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
 }
 
 html.dark .form-group input:focus,
@@ -887,13 +887,13 @@ html.dark .form-group textarea:focus {
 }
 
 html.dark .icon-selector button {
-  background: #22203a;
-  color: #a898cc;
+  background: #1e293b;
+  color: #94a3b8;
 }
 
 html.dark .icon-selector button:hover {
-  background: #2c2850;
-  border-color: #5040a0;
+  background: #334155;
+  border-color: #64748b;
 }
 
 .icon-selector button.selected {
@@ -904,7 +904,7 @@ html.dark .icon-selector button:hover {
 }
 
 html.dark .icon-selector button.selected {
-  background: linear-gradient(135deg, #5a3d8c, #3e246e);
+  background: linear-gradient(135deg, #334155, #1e293b);
 }
 
 /* 颜色选择器 */
@@ -945,11 +945,11 @@ html.dark .color-selector div.selected {
   justify-content: flex-end;
   gap: 10px;
   padding: 14px 22px 18px;
-  border-top: 1px solid #ece8f5;
+  border-top: 1px solid #e2e8f0;
 }
 
 html.dark .dialog-actions {
-  border-top-color: #2a2040;
+  border-top-color: #334155;
 }
 
 .dialog-actions button {
@@ -975,15 +975,15 @@ html.dark .dialog-actions {
 }
 
 html.dark .dialog-actions .cancel {
-  background: #22203a;
-  border-color: #38305a;
-  color: #a898cc;
+  background: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
 }
 
 html.dark .dialog-actions .cancel:hover {
-  background: #2c2850;
-  border-color: #5040a0;
-  color: #c8b8ee;
+  background: #334155;
+  border-color: #475569;
+  color: #cbd5e1;
 }
 
 .dialog-actions .confirm {
@@ -1000,12 +1000,12 @@ html.dark .dialog-actions .cancel:hover {
 }
 
 html.dark .dialog-actions .confirm {
-  background: linear-gradient(135deg, #5a3d8c, #3e246e);
+  background: linear-gradient(135deg, #334155, #1e293b);
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 html.dark .dialog-actions .confirm:hover {
-  background: linear-gradient(135deg, #7050a8, #5a3d8c);
+  background: linear-gradient(135deg, #475569, #334155);
 }
 
 /* ===== 响应式 ===== */
@@ -1055,7 +1055,7 @@ html.dark .dialog-actions .confirm:hover {
   color: #fff;
   z-index: 9999;
   white-space: nowrap;
-  box-shadow: 0 4px 20px rgba(124, 92, 191, 0.4);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
   background: linear-gradient(135deg, #9d7de8, #7c5cbf);
 }
 
@@ -1070,7 +1070,7 @@ html.dark .dialog-actions .confirm:hover {
 }
 
 html.dark .toast {
-  background: linear-gradient(135deg, #5a3d8c, #3e246e);
+  background: linear-gradient(135deg, #334155, #1e293b);
   box-shadow: 0 4px 24px rgba(0,0,0,0.5);
 }
 

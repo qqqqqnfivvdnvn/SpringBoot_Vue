@@ -102,12 +102,10 @@ onMounted(() => {
   flex-direction: column;
   height: 100%;
   width: 100%;
-  max-width: min(1250px, 95vw);
+  max-width: min(1400px, 96vw);
   padding: 12px;
   box-sizing: border-box;
   background: var(--bg-secondary, #ffffff);
-
-  font-size: 12px;
   margin: 0 auto;
 }
 
@@ -125,25 +123,28 @@ onMounted(() => {
   }
 }
 
-/* 网格布局 */
+/* 网格布局 - 使用 minmax 实现灵活高度 */
 .grid-container {
   display: grid;
-  grid-template-rows: 100px 1fr 1fr;
-  gap: 6px;
+  grid-template-rows: minmax(80px, auto) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
   height: 100%;
   width: 100%;
 }
 
-/* 顶部五个卡片容器 */
+/* 顶部五个卡片容器 - 响应式排列 */
 .grid-item-container {
   grid-column: 1 / -1;
   display: flex;
-  gap: 6px;
-  height: 100px;
+  gap: 8px;
+  min-height: 90px;
+  flex-wrap: wrap;
 }
 
 .grid-item-small {
   flex: 1;
+  min-width: 0;
   background: var(--bg-secondary, #ffffff);
   border: 1px solid #ddd;
   display: flex;
@@ -152,6 +153,8 @@ onMounted(() => {
   border-radius: 3px;
   transition: box-shadow 0.2s;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 8px 4px;
+  gap: 6px;
 }
 
 .grid-item-small:hover {
@@ -160,23 +163,61 @@ onMounted(() => {
 
 .grid-item-small .label {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   color: var(--el-text-color-primary, #000000);
+  white-space: nowrap;
 }
 
 .grid-item-small .value {
-  font-size: 16px;
+  font-size: 18px;
   color: #2575fc;
   font-weight: bold;
+  min-width: 40px;
 }
 
-/* 第二、三行大区域 */
+/* 小屏幕优化 - 卡片换行 */
+@media (max-width: 768px) {
+  .grid-item-container {
+    flex-wrap: wrap;
+  }
+
+  .grid-item-small {
+    flex: 0 0 calc(50% - 8px);
+    min-width: calc(50% - 8px);
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-item-small {
+    flex: 0 0 100%;
+    min-width: 100%;
+  }
+
+  .grid-item-small .label {
+    font-size: 12px;
+  }
+
+  .grid-item-small .value {
+    font-size: 16px;
+  }
+}
+
+/* 第二、三行大区域 - 响应式网格 */
 .grid-item-4-6,
 .grid-item-7-9 {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 8px;
+  min-height: 0;
+}
+
+/* 小屏幕切换为单列 */
+@media (max-width: 768px) {
+  .grid-item-4-6,
+  .grid-item-7-9 {
+    grid-template-columns: 1fr;
+  }
 }
 
 .sub-grid-item {
@@ -187,6 +228,7 @@ onMounted(() => {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
+  min-height: 200px;
 }
 
 .sub-grid-item:hover {
