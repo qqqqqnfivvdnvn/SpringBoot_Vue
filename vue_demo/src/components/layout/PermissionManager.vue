@@ -78,7 +78,7 @@
 <script setup>
 // eslint-disable-next-line no-undef
 // defineProps 和 defineEmits 是 Vue 3 编译器宏，在 <script setup> 中自动可用
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import axios from 'axios'
 
 const props = defineProps({
@@ -86,19 +86,24 @@ const props = defineProps({
   visible: Boolean
 })
 
-const emit = defineEmits(['update:visible'])
+const emit = defineEmits(['update:visible', 'update:project'])
 
-const dialogVisible = ref(false)
+const dialogVisible = ref(props.visible)
 const userPermissions = ref([])
 const availableUsers = ref([])
 const selectedUserId = ref('')
 const selectedPermission = ref('write')
 
-// 同步 dialogVisible
+// 监听外部 visible 变化
 watch(() => props.visible, (val) => {
   dialogVisible.value = val
+  if (val && props.project) {
+    loadPermissions()
+    loadUsers()
+  }
 })
 
+// 监听 dialog 关闭
 watch(dialogVisible, (val) => {
   emit('update:visible', val)
 })
@@ -117,6 +122,7 @@ const getPermissionLabel = (type) => {
 
 // 获取项目权限列表
 const loadPermissions = async () => {
+  if (!props.project?.id) return
   try {
     const res = await axios.get(`/api/permission/project/${props.project.id}`)
     userPermissions.value = res.data.data || []
@@ -137,8 +143,8 @@ const loadUsers = async () => {
 
 // 添加权限
 const addPermission = async () => {
-  if (!selectedUserId.value) {
-    alert('请选择用户')
+  if (!selectedUserId.value || !props.project?.id) {
+    alert('请选择用户和项目')
     return
   }
 
@@ -161,7 +167,7 @@ const updatePermission = async (row) => {
   try {
     await axios.post('/api/permission/update', {
       projectId: props.project.id,
-      userId: row.userId,
+      userId: row.user_id,
       permissionType: row.permissionType
     })
     alert('更新成功')
@@ -175,7 +181,7 @@ const removePermission = async (row) => {
   try {
     await axios.post('/api/permission/revoke', {
       projectId: props.project.id,
-      userId: row.userId
+      userId: row.user_id
     })
     alert('移除成功')
     loadPermissions()
@@ -184,11 +190,13 @@ const removePermission = async (row) => {
   }
 }
 
-// 初始化
-if (props.project) {
-  loadPermissions()
-  loadUsers()
-}
+// 初始化加载
+onMounted(() => {
+  if (props.visible && props.project) {
+    loadPermissions()
+    loadUsers()
+  }
+})
 </script>
 
 <style scoped>

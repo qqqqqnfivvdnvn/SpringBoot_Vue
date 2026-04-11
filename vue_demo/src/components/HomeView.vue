@@ -150,7 +150,8 @@
     <PermissionManager
       v-if="currentProject"
       :project="currentProject"
-      v-model:visible="permissionDialogVisible"
+      :visible="permissionDialogVisible"
+      @update:visible="permissionDialogVisible = $event"
     />
   </div>
 </template>
@@ -289,8 +290,11 @@ const showAddProjectDialog = () => {
 
 // 打开权限管理对话框
 const openPermissionManager = (project) => {
+  console.log('打开权限管理对话框:', project)
+  console.log('当前项目权限类型:', project.permissionType)
   currentProject.value = project
   permissionDialogVisible.value = true
+  console.log('对话框状态:', permissionDialogVisible.value)
 }
 
 // 添加新项目
