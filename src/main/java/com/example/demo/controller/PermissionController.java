@@ -32,9 +32,11 @@ public class PermissionController {
         );
 
         if (success) {
-            return ResponseEntity.ok(ApiResponseDTO.success(true, "授权成功"));
+            ApiResponseDTO<Boolean> response = ApiResponseDTO.success(true);
+            response.setMsg("授权成功");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(ApiResponseDTO.error("该用户已有此项目权限", false));
+            return ResponseEntity.ok(ApiResponseDTO.error("该用户已有此项目权限"));
         }
     }
 
@@ -46,9 +48,11 @@ public class PermissionController {
         boolean success = userProjectRelationService.removePermission(dto.getUserId(), dto.getProjectId());
 
         if (success) {
-            return ResponseEntity.ok(ApiResponseDTO.success(true, "权限已移除"));
+            ApiResponseDTO<Boolean> response = ApiResponseDTO.success(true);
+            response.setMsg("权限已移除");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(ApiResponseDTO.error("权限记录不存在", false));
+            return ResponseEntity.ok(ApiResponseDTO.error("权限记录不存在"));
         }
     }
 
@@ -64,9 +68,11 @@ public class PermissionController {
         );
 
         if (success) {
-            return ResponseEntity.ok(ApiResponseDTO.success(true, "权限已更新"));
+            ApiResponseDTO<Boolean> response = ApiResponseDTO.success(true);
+            response.setMsg("权限已更新");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(ApiResponseDTO.error("权限记录不存在", false));
+            return ResponseEntity.ok(ApiResponseDTO.error("权限记录不存在"));
         }
     }
 

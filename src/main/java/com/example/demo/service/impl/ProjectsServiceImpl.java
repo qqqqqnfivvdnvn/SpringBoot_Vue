@@ -82,7 +82,7 @@ public class ProjectsServiceImpl implements ProjectsService {
         try {
             Users user = userMapper.selectById(userId);
             if (user == null) {
-                return ApiResponseDTO.error("用户不存在", null);
+                return ApiResponseDTO.error("用户不存在");
             }
 
             List<ProjectWithPermissionVO> result;
@@ -128,7 +128,7 @@ public class ProjectsServiceImpl implements ProjectsService {
             return ApiResponseDTO.success(result);
         } catch (Exception e) {
             e.printStackTrace();
-            return ApiResponseDTO.error("获取项目失败：" + e.getMessage(), null);
+            return ApiResponseDTO.error("获取项目失败：" + e.getMessage());
         }
     }
 

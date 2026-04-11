@@ -1,0 +1,61 @@
+/* 主数据项目主题颜色配置 */
+
+/* 亮色模式 - 绿色系 */
+:root {
+  --maindata-primary-light: #90be6d;
+  --maindata-dark-light: #7da85a;
+  --maindata-light-light: #a3d180;
+}
+
+/* 暗色模式 - 深绿色系 */
+html.dark {
+  --maindata-primary-dark: #3d6b2f;
+  --maindata-dark-dark: #2d5222;
+  --maindata-light-dark: #4f8a3f;
+}
+
+/* 项目特定样式覆盖 */
+html.dark .home-page.maindata-project {
+  background-color: #12121e;
+}
+
+html.dark .maindata-project {
+  --theme-gradient-nav: linear-gradient(90deg, #2d5222 0%, #3d6b2f 60%, #4f8a3f 100%);
+  --theme-gradient: linear-gradient(135deg, #3d6b2f, #2d5222);
+}
+
+html.dark aside.sidebar.maindata-sidebar {
+  background-color: #1a2a18;
+  box-shadow: 3px 0 20px rgba(0, 0, 0, 0.35);
+}
+
+html.dark .content-header.maindata-content-header {
+  background-color: #1a2a18;
+  border-bottom-color: #2a3520;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+html.dark .tab.maindata-tab {
+  background-color: #1e2a18;
+  border-color: #2a3520;
+  color: #6a8060;
+}
+
+html.dark .tab.maindata-tab:hover {
+  background-color: #253520;
+  color: #7dc163;
+}
+
+html.dark .tab.active.maindata-tab-active {
+  background-color: #1a2a18;
+  color: #7dc163;
+}
+
+html.dark .close-tab.maindata-close-tab {
+  color: #4a5a40;
+}
+
+html.dark .close-tab.maindata-close-tab:hover {
+  background: #2a3520;
+  color: #7dc163;
+}
