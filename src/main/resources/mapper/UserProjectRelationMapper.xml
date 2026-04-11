@@ -5,28 +5,28 @@
 <mapper namespace="com.example.demo.mapper.UserProjectRelationMapper">
 
     <insert id="insert" parameterType="com.example.demo.entity.UserProjectRelation">
-        INSERT INTO [user_project_relation] ([user_id], [project_id], [permission_type], [create_time], [creator_id])
+        INSERT INTO [haosen_project].[dbo].[user_project_relation] ([user_id], [project_id], [permission_type], [create_time], [creator_id])
         VALUES (#{userId}, #{projectId}, #{permissionType}, GETDATE(), #{creatorId})
     </insert>
 
     <delete id="delete">
-        DELETE FROM [user_project_relation] WHERE [user_id] = #{userId} AND [project_id] = #{projectId}
+        DELETE FROM [haosen_project].[dbo].[user_project_relation] WHERE [user_id] = #{userId} AND [project_id] = #{projectId}
     </delete>
 
     <select id="findByUserId" resultType="com.example.demo.entity.UserProjectRelation">
-        SELECT * FROM [user_project_relation] WHERE [user_id] = #{userId} ORDER BY [create_time] DESC
+        SELECT * FROM [haosen_project].[dbo].[user_project_relation] WHERE [user_id] = #{userId} ORDER BY [create_time] DESC
     </select>
 
     <select id="findByProjectId" resultType="com.example.demo.entity.UserProjectRelation">
-        SELECT * FROM [user_project_relation] WHERE [project_id] = #{projectId} ORDER BY [create_time] DESC
+        SELECT * FROM [haosen_project].[dbo].[user_project_relation] WHERE [project_id] = #{projectId} ORDER BY [create_time] DESC
     </select>
 
     <select id="findByUserAndProject" resultType="com.example.demo.entity.UserProjectRelation">
-        SELECT * FROM [user_project_relation] WHERE [user_id] = #{userId} AND [project_id] = #{projectId}
+        SELECT * FROM [haosen_project].[dbo].[user_project_relation] WHERE [user_id] = #{userId} AND [project_id] = #{projectId}
     </select>
 
     <update id="updatePermission">
-        UPDATE [user_project_relation] SET [permission_type] = #{permissionType}
+        UPDATE [haosen_project].[dbo].[user_project_relation] SET [permission_type] = #{permissionType}
         WHERE [user_id] = #{userId} AND [project_id] = #{projectId}
     </update>
 
