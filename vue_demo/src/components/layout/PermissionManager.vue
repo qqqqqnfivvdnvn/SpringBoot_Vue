@@ -124,7 +124,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:visible'])
 
-const dialogVisible = ref(false)
+const dialogVisible = ref(props.visible)
 const userPermissions = ref([])
 const availableUsers = ref([])
 const selectedUserId = ref('')
@@ -134,7 +134,11 @@ const loading = ref(false)
 // 监听外部 visible 变化
 watch(() => props.visible, (val) => {
   dialogVisible.value = val
-})
+  if (val) {
+    loadPermissions()
+    loadUsers()
+  }
+}, { immediate: true })
 
 // 监听 dialog 关闭
 watch(dialogVisible, (val) => {
