@@ -342,9 +342,9 @@ html.dark .home-page {
   align-items: center;
   padding: 0 24px;
   height: 58px;
-  background: var(--theme-gradient-nav, linear-gradient(90deg, #7c5cbf 0%, #9d7de8 60%, #b89ff0 100%));
+  background: linear-gradient(90deg, #7c5cbf 0%, #9d7de8 60%, #b89ff0 100%);
   color: #fff;
-  box-shadow: 0 3px 16px var(--theme-rgba, rgba(124, 92, 191, 0.35));
+  box-shadow: 0 3px 16px rgba(124, 92, 191, 0.35);
   position: fixed;
   top: 0;
   left: 0;
@@ -354,7 +354,7 @@ html.dark .home-page {
 }
 
 html.dark .navbar {
-  background: var(--theme-gradient-nav-dark, linear-gradient(90deg, #1e1430 0%, #2d2048 60%, #3a2a5e 100%));
+  background: linear-gradient(90deg, #1e1430 0%, #2d2048 60%, #3a2a5e 100%);
   box-shadow: 0 3px 20px rgba(0, 0, 0, 0.5);
 }
 

@@ -7,8 +7,6 @@ html.dark .home-page {
     background: linear-gradient(135deg, #1a1625, #0e0b1a);
 }
 
-/* 导航栏样式已移至 AdminLayout.vue 中使用主题变量 */
-
 html.dark .navbar-links a {
     color: #e0e0e0;
 }
@@ -161,51 +159,6 @@ html.dark .el-result {
     --border: #dcdfe6;
     --shadow: rgba(0, 0, 0, 0.05);
     --accent: #9478cc;
-
-    /* 主题颜色变量（默认值，运行时会被组件动态覆盖） */
-    --theme-primary: #9478cc;
-    --theme-dark: #7d60b8;
-    --theme-light: #b89ff0;
-    --theme-rgba: rgba(148, 120, 204, 0.35);
-    --theme-rgba-light: rgba(148, 120, 204, 0.08);
-    --theme-rgba-shadow: rgba(148, 120, 204, 0.45);
-    --theme-gradient: linear-gradient(135deg, #9478cc, #7d60b8);
-    --theme-gradient-nav: linear-gradient(90deg, #7d60b8 0%, #9478cc 60%, #b89ff0 100%);
-    --theme-gradient-nav-dark: linear-gradient(90deg, #4a3660 0%, #5a4670 60%, #6a5680 100%);
-    --theme-text-dark: #b89ff0;
-    --theme-icon-dark: #b89ff0;
-
-    /* 导航栏元素 - 暗色模式（默认值） */
-    --theme-nav-icon-bg: rgba(125, 96, 184, 0.3);
-    --theme-nav-icon-border: rgba(125, 96, 184, 0.5);
-    --theme-nav-btn-bg: rgba(125, 96, 184, 0.2);
-    --theme-nav-btn-border: rgba(125, 96, 184, 0.35);
-    --theme-nav-btn-hover: rgba(148, 120, 204, 0.3);
-    --theme-nav-text: rgba(255, 255, 255, 0.85);
-
-    /* 菜单 hover 背景色 */
-    --theme-bg-hover: rgba(148, 120, 204, 0.08);
-    --theme-bg-hover-dark: rgba(148, 120, 204, 0.12);
-    --theme-bg-open: rgba(148, 120, 204, 0.12);
-    --theme-bg-open-dark: rgba(148, 120, 204, 0.16);
-
-    /* 暗色模式下的背景色 */
-    --theme-bg-hover-dark-mode: rgba(148, 120, 204, 0.15);
-    --theme-bg-hover-dark-mode-dark: rgba(148, 120, 204, 0.20);
-    --theme-bg-open-dark-mode: rgba(148, 120, 204, 0.20);
-    --theme-bg-open-dark-mode-dark: rgba(148, 120, 204, 0.25);
-
-    /* 标签页背景色（亮色模式） */
-    --theme-tab-border: rgba(148, 120, 204, 0.2);
-    --theme-tab-bg: rgba(148, 120, 204, 0.05);
-    --theme-tab-text: #9478cc;
-    --theme-tab-hover-bg: rgba(148, 120, 204, 0.1);
-
-    /* 标签页背景色（暗色模式） */
-    --theme-tab-border-dark: rgba(148, 120, 204, 0.3);
-    --theme-tab-bg-dark: rgba(148, 120, 204, 0.15);
-    --theme-tab-text-dark: rgba(148, 120, 204, 0.7);
-    --theme-tab-hover-bg-dark: rgba(148, 120, 204, 0.25);
 }
 
 

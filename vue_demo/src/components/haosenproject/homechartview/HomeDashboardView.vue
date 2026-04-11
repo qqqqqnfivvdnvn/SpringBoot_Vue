@@ -54,7 +54,6 @@
 </template>
 
 <script setup>
-import '@/assets/css/dark-mode.css'
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'

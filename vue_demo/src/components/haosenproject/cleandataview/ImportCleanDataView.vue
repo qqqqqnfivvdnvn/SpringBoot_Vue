@@ -224,23 +224,23 @@ const submitFile = async () => {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
 
-    if ( data.code === 200) {
+    if (data.code === 200) {
       uploadResult.value = {
         success: true,
-        message:   data.data.message || '清洗数据推送成功',
-        details: `已成功处理${ data.data.result || 0}条清洗数据`,
+        message:   data.data?.msg || '清洗数据推送成功',
+        details: `已成功处理${ data.data?.result || 0}条清洗数据`,
       }
-      pendingCount.value += data.data.result || 0
+      pendingCount.value += data.data?.result || 0
       handleRemove()
     } else {
-      throw new Error(data.data.message || '清洗数据推送失败')
+      throw new Error(data.msg || '清洗数据推送失败')
     }
   } catch (error) {
     console.error(error)
     uploadResult.value = {
       success: false,
       message: '清洗数据推送失败',
-      details: error.response?.data?.message || error.message || '请检查文件格式并重试',
+      details: error.response?.data?.msg || error.message || '请检查文件格式并重试',
     }
   } finally {
     showResultModal.value = true

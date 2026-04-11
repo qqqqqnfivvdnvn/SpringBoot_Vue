@@ -136,7 +136,6 @@ public class HaoSenInputCleanDataServiceImpl implements HaoSenInputCleanDataServ
 
         } catch (RuntimeException e) {
             // 业务异常（如API调用失败）
-
             return ApiResponseDTO.error("清洗数据推送失败");
 
         } catch (Exception e) {
