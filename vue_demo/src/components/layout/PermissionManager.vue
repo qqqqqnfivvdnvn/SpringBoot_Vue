@@ -1,3 +1,114 @@
+<template>
+  <el-dialog
+    v-model="dialogVisible"
+    title="项目权限管理"
+    width="700px"
+    :close-on-click-modal="false"
+    @open="handleOpen"
+  >
+    <!-- 项目信息卡片 -->
+    <el-card shadow="never" class="project-info-card">
+      <template #header>
+        <div class="card-header">
+          <el-icon><Folder /></el-icon>
+          <span>项目信息</span>
+        </div>
+      </template>
+      <el-descriptions :column="2" size="default">
+        <el-descriptions-item label="项目名称" :span="2">
+          <el-tag type="primary" size="large">{{ project?.name }}</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="项目描述" :span="2">
+          {{ project?.description || '暂无描述' }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-card>
+
+    <!-- 已授权用户列表 -->
+    <el-card shadow="never" class="permission-list-card">
+      <template #header>
+        <div class="card-header">
+          <el-icon><User /></el-icon>
+          <span>已授权用户</span>
+        </div>
+      </template>
+      <el-table
+        :data="userPermissions"
+        style="width: 100%"
+        empty-text="暂无授权用户"
+      >
+        <el-table-column prop="user_id" label="用户 ID" min-width="220" />
+        <el-table-column label="权限类型" width="180">
+          <template #default="scope">
+            <el-select
+              v-model="scope.row.permission_type"
+              size="small"
+              @change="updatePermission(scope.row)"
+            >
+              <el-option label="读写" value="write" />
+              <el-option label="管理" value="admin" />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="100" fixed="right">
+          <template #default="scope">
+            <el-button
+              type="danger"
+              size="small"
+              @click="removePermission(scope.row)"
+            >
+              移除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+
+    <!-- 添加用户 -->
+    <el-card shadow="never" class="add-user-card">
+      <template #header>
+        <div class="card-header">
+          <el-icon><Plus /></el-icon>
+          <span>添加用户</span>
+        </div>
+      </template>
+      <el-form :inline="true">
+        <el-form-item label="选择用户">
+          <el-select
+            v-model="selectedUserId"
+            placeholder="请选择用户"
+            filterable
+            style="width: 200px"
+          >
+            <el-option
+              v-for="user in availableUsers"
+              :key="user.id"
+              :label="user.username"
+              :value="user.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="权限类型">
+          <el-select v-model="selectedPermission" style="width: 120px">
+            <el-option label="读写" value="write" />
+            <el-option label="管理" value="admin" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" :loading="loading" @click="addPermission">
+            <el-icon><CirclePlus /></el-icon>
+            添加
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+
+    <template #footer>
+      <el-button @click="dialogVisible = false">关闭</el-button>
+    </template>
+  </el-dialog>
+</template>
+
 <script setup>
 /* eslint-disable vue/no-unused-vars */
 /* eslint-disable no-undef */
@@ -130,3 +241,32 @@ watch(dialogVisible, (val) => {
   emit('update:visible', val)
 })
 </script>
+
+<style scoped>
+.project-info-card,
+.permission-list-card,
+.add-user-card {
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #303133;
+}
+
+:deep(.el-descriptions-item__label) {
+  font-weight: 500;
+}
+
+:deep(.el-table) {
+  font-size: 14px;
+}
+
+:deep(.el-form-item__label) {
+  font-weight: 500;
+}
+</style>
