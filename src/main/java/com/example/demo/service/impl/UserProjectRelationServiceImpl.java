@@ -19,7 +19,7 @@ public class UserProjectRelationServiceImpl implements UserProjectRelationServic
 
     @Override
     @Transactional
-    public boolean addPermission(String userId, String projectId, String permissionType, String creatorId) {
+    public boolean addPermission(String userId, String projectId, String creatorId) {
         UserProjectRelation existing = userProjectRelationMapper.findByUserAndProject(userId, projectId);
         if (existing != null) {
             return false;
@@ -28,7 +28,7 @@ public class UserProjectRelationServiceImpl implements UserProjectRelationServic
         UserProjectRelation relation = new UserProjectRelation();
         relation.setUserId(userId);
         relation.setProjectId(projectId);
-        relation.setPermissionType(permissionType);
+        relation.setHasPermission(1);
         relation.setCreatorId(creatorId);
 
         return userProjectRelationMapper.insert(relation) > 0;
@@ -42,8 +42,11 @@ public class UserProjectRelationServiceImpl implements UserProjectRelationServic
 
     @Override
     @Transactional
-    public boolean updatePermission(String userId, String projectId, String permissionType) {
-        return userProjectRelationMapper.updatePermission(userId, projectId, permissionType) > 0;
+    public boolean setPermission(String userId, String projectId, Integer hasPermission) {
+        System.out.println("=== setPermission === userId: " + userId + ", projectId: " + projectId + ", hasPermission: " + hasPermission);
+        int result = userProjectRelationMapper.setPermission(userId, projectId, hasPermission);
+        System.out.println("=== setPermission result: " + result);
+        return result > 0;
     }
 
     @Override
@@ -57,8 +60,8 @@ public class UserProjectRelationServiceImpl implements UserProjectRelationServic
     }
 
     @Override
-    public String getUserPermission(String userId, String projectId) {
+    public boolean hasPermission(String userId, String projectId) {
         UserProjectRelation relation = userProjectRelationMapper.findByUserAndProject(userId, projectId);
-        return relation != null ? relation.getPermissionType() : null;
+        return relation != null && relation.getHasPermission() != null && relation.getHasPermission() == 1;
     }
 }

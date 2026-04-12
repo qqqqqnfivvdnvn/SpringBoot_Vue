@@ -7,5 +7,6 @@ public class UserLoginDataVO {
     private String userid;
     private String username;
     private String token;
+    private String role;
 
 }

@@ -27,7 +27,6 @@ public class PermissionController {
         boolean success = userProjectRelationService.addPermission(
             dto.getUserId(),
             dto.getProjectId(),
-            dto.getPermissionType(),
             "system" // TODO: 从登录信息获取
         );
 
@@ -57,19 +56,17 @@ public class PermissionController {
     }
 
     /**
-     * 更新项目权限
+     * 设置用户项目权限（启用/禁用）
      */
-    @PostMapping("/update")
-    public ResponseEntity<ApiResponseDTO<Boolean>> updatePermission(@RequestBody ProjectPermissionDTO dto) {
-        boolean success = userProjectRelationService.updatePermission(
-            dto.getUserId(),
-            dto.getProjectId(),
-            dto.getPermissionType()
-        );
+    @PostMapping("/set")
+    public ResponseEntity<ApiResponseDTO<Boolean>> setPermission(@RequestBody ProjectPermissionDTO dto) {
+        System.out.println("=== Controller received === userId: " + dto.getUserId() + ", projectId: " + dto.getProjectId() + ", hasPermission: " + dto.getHasPermission());
+        boolean success = userProjectRelationService.setPermission(dto.getUserId(), dto.getProjectId(), dto.getHasPermission());
+        System.out.println("=== Controller result: " + success);
 
         if (success) {
             ApiResponseDTO<Boolean> response = ApiResponseDTO.success(true);
-            response.setMsg("权限已更新");
+            response.setMsg(dto.getHasPermission() != null && dto.getHasPermission() == 1 ? "权限已启用" : "权限已禁用");
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.ok(ApiResponseDTO.error("权限记录不存在"));
@@ -94,10 +91,9 @@ public class PermissionController {
         @RequestParam String userId,
         @RequestParam String projectId) {
 
-        String permission = userProjectRelationService.getUserPermission(userId, projectId);
+        boolean hasPermission = userProjectRelationService.hasPermission(userId, projectId);
         Map<String, Object> result = new HashMap<>();
-        result.put("hasPermission", permission != null);
-        result.put("permissionType", permission);
+        result.put("hasPermission", hasPermission);
 
         return ResponseEntity.ok(ApiResponseDTO.success(result));
     }

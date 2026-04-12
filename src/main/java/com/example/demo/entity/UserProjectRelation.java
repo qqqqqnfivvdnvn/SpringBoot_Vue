@@ -12,7 +12,7 @@ public class UserProjectRelation {
     private Integer id;
     private String userId;
     private String projectId;
-    private String permissionType; // write, admin
+    private Integer hasPermission;
     private String createTime;
     private String creatorId;
 }

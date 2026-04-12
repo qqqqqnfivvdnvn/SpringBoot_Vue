@@ -13,5 +13,5 @@ public class ProjectWithPermissionVO {
     private String addtime;
     private String userId;
     private String userName;
-    private String permissionType; // 当前用户对该项目的权限
+    private boolean hasPermission; // 当前用户是否有该项目权限
 }

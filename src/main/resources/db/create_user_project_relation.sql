@@ -5,7 +5,7 @@ BEGIN
         [id] INT IDENTITY(1,1) PRIMARY KEY,
         [user_id] NVARCHAR(64) NOT NULL,
         [project_id] NVARCHAR(64) NOT NULL,
-        [permission_type] NVARCHAR(20) NOT NULL DEFAULT 'write', -- write:读写，admin:管理
+        [has_permission] BIT NOT NULL DEFAULT 1, -- 1:有权限，0:无权限
         [create_time] DATETIME NOT NULL DEFAULT GETDATE(),
         [creator_id] NVARCHAR(64),
         CONSTRAINT [UK_user_project] UNIQUE ([user_id], [project_id])

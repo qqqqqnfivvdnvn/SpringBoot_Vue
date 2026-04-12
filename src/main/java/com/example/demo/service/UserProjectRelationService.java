@@ -8,15 +8,15 @@ import java.util.Map;
 
 public interface UserProjectRelationService {
 
-    boolean addPermission(String userId, String projectId, String permissionType, String creatorId);
+    boolean addPermission(String userId, String projectId, String creatorId);
 
     boolean removePermission(String userId, String projectId);
 
-    boolean updatePermission(String userId, String projectId, String permissionType);
+    boolean setPermission(String userId, String projectId, Integer hasPermission);
 
     List<UserProjectRelation> getPermissionsByUserId(String userId);
 
     List<Map<String, Object>> getPermissionsByProjectId(String projectId);
 
-    String getUserPermission(String userId, String projectId);
+    boolean hasPermission(String userId, String projectId);
 }

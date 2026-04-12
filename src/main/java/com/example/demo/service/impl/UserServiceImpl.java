@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
         responseData.setToken(token);
         responseData.setUsername(searchUser.getUsername());
         responseData.setUserid(searchUser.getId());
+        responseData.setRole(searchUser.getRole());
         ApiResponseDTO.success(responseData);
 
 

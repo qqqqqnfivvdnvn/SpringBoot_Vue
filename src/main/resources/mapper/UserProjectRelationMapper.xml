@@ -5,20 +5,25 @@
 <mapper namespace="com.example.demo.mapper.UserProjectRelationMapper">
 
     <insert id="insert" parameterType="com.example.demo.entity.UserProjectRelation">
-        INSERT INTO [haosen_project].[dbo].[user_project_relation] ([user_id], [project_id], [permission_type], [create_time], [creator_id])
-        VALUES (#{userId}, #{projectId}, #{permissionType}, GETDATE(), #{creatorId})
+        INSERT INTO [haosen_project].[dbo].[user_project_relation] ([user_id], [project_id], [has_permission], [create_time], [creator_id])
+        VALUES (#{userId}, #{projectId}, #{hasPermission}, GETDATE(), #{creatorId})
     </insert>
 
     <delete id="delete">
         DELETE FROM [haosen_project].[dbo].[user_project_relation] WHERE [user_id] = #{userId} AND [project_id] = #{projectId}
     </delete>
 
+    <update id="setPermission">
+        UPDATE [haosen_project].[dbo].[user_project_relation] SET [has_permission] = #{hasPermission, jdbcType=INTEGER}
+        WHERE [user_id] = #{userId} AND [project_id] = #{projectId}
+    </update>
+
     <select id="findByUserId" resultType="com.example.demo.entity.UserProjectRelation">
         SELECT * FROM [haosen_project].[dbo].[user_project_relation] WHERE [user_id] = #{userId} ORDER BY [create_time] DESC
     </select>
 
     <select id="findByProjectId" resultType="java.util.Map">
-        SELECT r.user_id, r.project_id, r.permission_type, r.create_time, r.creator_id, u.username
+        SELECT r.user_id AS userId, r.project_id AS projectId, r.has_permission AS hasPermission, r.create_time AS createTime, r.creator_id AS creatorId, u.username
         FROM [haosen_project].[dbo].[user_project_relation] r
         LEFT JOIN [haosen_project].[dbo].[Users] u ON r.user_id = u.id
         WHERE r.project_id = #{projectId}
@@ -28,10 +33,5 @@
     <select id="findByUserAndProject" resultType="com.example.demo.entity.UserProjectRelation">
         SELECT * FROM [haosen_project].[dbo].[user_project_relation] WHERE [user_id] = #{userId} AND [project_id] = #{projectId}
     </select>
-
-    <update id="updatePermission">
-        UPDATE [haosen_project].[dbo].[user_project_relation] SET [permission_type] = #{permissionType}
-        WHERE [user_id] = #{userId} AND [project_id] = #{projectId}
-    </update>
 
 </mapper>

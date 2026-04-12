@@ -37,22 +37,18 @@
         style="width: 100%"
         empty-text="暂无授权用户"
       >
-        <el-table-column prop="username" label="用户名" min-width="150" />
-        <el-table-column label="用户 ID" min-width="220">
+        <el-table-column prop="username" label="用户名" min-width="200" />
+        <el-table-column label="权限状态" width="180">
           <template #default="scope">
-            <el-tag size="small">{{ scope.row.user_id }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="权限类型" width="180">
-          <template #default="scope">
-            <el-select
-              v-model="scope.row.permission_type"
-              size="small"
-              @change="updatePermission(scope.row)"
-            >
-              <el-option label="读写" value="write" />
-              <el-option label="管理" value="admin" />
-            </el-select>
+            <el-switch
+              v-model="scope.row.hasPermission"
+              :active-value="1"
+              :inactive-value="0"
+              active-text="启用"
+              inactive-text="禁用"
+              inline-prompt
+              @change="togglePermission(scope.row)"
+            />
           </template>
         </el-table-column>
         <el-table-column label="操作" width="100" fixed="right">
@@ -93,12 +89,6 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="权限类型">
-          <el-select v-model="selectedPermission" style="width: 120px">
-            <el-option label="读写" value="write" />
-            <el-option label="管理" value="admin" />
-          </el-select>
-        </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="addPermission">
             <el-icon><CirclePlus /></el-icon>
@@ -133,7 +123,6 @@ const dialogVisible = ref(props.visible)
 const userPermissions = ref([])
 const availableUsers = ref([])
 const selectedUserId = ref('')
-const selectedPermission = ref('write')
 const loading = ref(false)
 
 // 获取项目权限列表
@@ -141,7 +130,12 @@ const loadPermissions = async () => {
   if (!props.project?.id) return
   try {
     const res = await axios.get(`/api/permission/project/${props.project.id}`)
+    console.log('权限列表数据:', res.data.data)
     userPermissions.value = res.data.data || []
+    // 打印每个用户的信息
+    userPermissions.value.forEach((user, index) => {
+      console.log(`用户${index}: userId=${user.userId}, username=${user.username}, hasPermission=${user.hasPermission}`)
+    })
   } catch (error) {
     ElMessage.error('获取权限列表失败：' + error.message)
   }
@@ -168,8 +162,7 @@ const addPermission = async () => {
   try {
     const res = await axios.post('/api/permission/grant', {
       projectId: props.project.id,
-      userId: selectedUserId.value,
-      permissionType: selectedPermission.value
+      userId: selectedUserId.value
     })
 
     if (res.data.code === 200) {
@@ -186,33 +179,12 @@ const addPermission = async () => {
   }
 }
 
-// 更新权限
-const updatePermission = async (row) => {
-  try {
-    const res = await axios.post('/api/permission/update', {
-      projectId: props.project.id,
-      userId: row.user_id,
-      permissionType: row.permission_type
-    })
-
-    if (res.data.code === 200) {
-      ElMessage.success('更新成功')
-    } else {
-      ElMessage.error(res.data.msg || '更新失败')
-      loadPermissions()
-    }
-  } catch (error) {
-    ElMessage.error('更新失败：' + error.message)
-    loadPermissions()
-  }
-}
-
 // 移除权限
 const removePermission = async (row) => {
   try {
     const res = await axios.post('/api/permission/revoke', {
       projectId: props.project.id,
-      userId: row.user_id
+      userId: row.userId
     })
 
     if (res.data.code === 200) {
@@ -223,6 +195,31 @@ const removePermission = async (row) => {
     }
   } catch (error) {
     ElMessage.error('移除失败：' + error.message)
+  }
+}
+
+// 切换权限状态
+const togglePermission = async (row) => {
+  console.log('切换权限 - row 完整数据:', row)
+  console.log('切换权限 - userId:', row.userId, 'username:', row.username, 'hasPermission:', row.hasPermission)
+  try {
+    const res = await axios.post('/api/permission/set', {
+      projectId: props.project.id,
+      userId: row.userId,
+      hasPermission: row.hasPermission
+    })
+
+    if (res.data.code === 200) {
+      ElMessage.success(row.hasPermission === 1 ? '权限已启用' : '权限已禁用')
+      // 重新加载数据确保状态同步
+      loadPermissions()
+    } else {
+      ElMessage.error(res.data.msg || '操作失败')
+      loadPermissions()
+    }
+  } catch (error) {
+    ElMessage.error('操作失败：' + error.message)
+    loadPermissions()
   }
 }
 
@@ -261,6 +258,15 @@ watch(dialogVisible, (val) => {
   font-weight: 600;
   font-size: 14px;
   color: #303133;
+}
+
+/* 暗色模式下标题字体变白色 */
+html.dark :deep(.card-header) {
+  color: #fff !important;
+}
+
+html.dark :deep(.el-card__header) {
+  color: #fff !important;
 }
 
 :deep(.el-descriptions-item__label) {

@@ -64,8 +64,9 @@
               <font-awesome-icon :icon="['fas', 'calendar-alt']" />
               <span>{{ project.addtime }}</span>
               <button
-                v-if="project.permissionType === 'admin' || project.permissionType === 'owner'"
+                v-if="isAdmin && project.hasPermission"
                 class="permission-btn"
+                :style="{ background: getPermissionBtnBg(project.color) }"
                 @click.stop="openPermissionManager(project)"
                 title="权限管理"
               >
@@ -76,7 +77,7 @@
         </div>
 
         <!-- 添加新项目卡片 -->
-        <div class="project-card add-card" @click="showAddProjectDialog">
+        <div v-if="isAdmin" class="project-card add-card" @click="showAddProjectDialog">
           <div class="add-card-inner">
             <div class="add-icon">
               <font-awesome-icon :icon="['fas', 'plus']" size="2x" />
@@ -180,6 +181,24 @@ const toastType = ref('success')
 const currentProject = ref(null)
 const permissionDialogVisible = ref(false)
 
+// 判断是否为管理员
+const isAdmin = computed(() => userData.value.role === 'admin')
+
+// 根据项目卡片颜色生成权限按钮背景渐变
+const getPermissionBtnBg = (color) => {
+  return `linear-gradient(135deg, ${color}, ${adjustColor(color, -20)})`
+}
+
+// 调整颜色亮度（percent 为负数时变暗，正数时变亮）
+const adjustColor = (color, percent) => {
+  const num = parseInt(color.replace('#', ''), 16)
+  const amt = Math.round(2.55 * percent)
+  const R = Math.max(0, Math.min(255, (num >> 16) + amt))
+  const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amt))
+  const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt))
+  return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1)
+}
+
 const showToastMessage = (message, type = 'success') => {
   toastMessage.value = message
   toastType.value = type
@@ -230,6 +249,7 @@ onMounted(() => {
   if (tempData) {
     try {
       userData.value = JSON.parse(tempData)
+
     } catch (e) {
       console.error('解析 userData 失败', e)
     }
@@ -244,8 +264,9 @@ const getProjects = async () => {
     const userId = userData.value.userid;
     const response = await axios.get(`/api/projects/getMyProjects?userId=${userId}`)
     projects.value = response.data.data || []
+
   } catch (error) {
-    console.error('获取项目失败:', error)
+
     showToastMessage('加载项目列表失败', 'error')
   }
 }
@@ -290,11 +311,8 @@ const showAddProjectDialog = () => {
 
 // 打开权限管理对话框
 const openPermissionManager = (project) => {
-  console.log('打开权限管理对话框:', project)
-  console.log('当前项目权限类型:', project.permissionType)
   currentProject.value = project
   permissionDialogVisible.value = true
-  console.log('对话框状态:', permissionDialogVisible.value)
 }
 
 // 添加新项目
@@ -688,7 +706,7 @@ html.dark .card-footer {
 }
 
 .permission-btn {
-  background: linear-gradient(135deg, #9d7de8, #7c5cbf);
+  background: linear-gradient(135deg, #9d7de8, #7c5cbf); /* 默认紫色，会被内联样式覆盖 */
   border: none;
   color: #fff;
   padding: 4px 8px;
@@ -703,15 +721,11 @@ html.dark .card-footer {
 
 .permission-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(124, 92, 191, 0.4);
-}
-
-html.dark .permission-btn {
-  background: linear-gradient(135deg, #334155, #1e293b);
+  filter: brightness(1.1);
 }
 
 html.dark .permission-btn:hover {
-  box-shadow: 0 2px 8px rgba(100, 116, 139, 0.4);
+  filter: brightness(1.15);
 }
 
 /* ===== 新建卡片 ===== */

@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class ProjectPermissionDTO {
     private String projectId;
     private String userId;
-    private String permissionType;
+    private Integer hasPermission;
 }

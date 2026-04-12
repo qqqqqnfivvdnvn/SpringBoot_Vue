@@ -58,11 +58,10 @@ public class ProjectsServiceImpl implements ProjectsService {
 
         int i = projectsMapper.addProject(project);
         if (i > 0) {
-            // 项目创建后自动添加创建者的管理权限
+            // 项目创建后自动添加创建者的权限
             UserProjectRelation relation = new UserProjectRelation();
             relation.setUserId(project.getUserId());
             relation.setProjectId(project.getId());
-            relation.setPermissionType("admin");
             relation.setCreatorId(project.getUserId());
             userProjectRelationMapper.insert(relation);
 
@@ -92,13 +91,14 @@ public class ProjectsServiceImpl implements ProjectsService {
                 List<Projects> allProjects = projectsMapper.findAllProjects();
                 result = allProjects.stream().map(p -> {
                     ProjectWithPermissionVO vo = convertToVO(p);
-                    vo.setPermissionType("admin");
+                    vo.setHasPermission(true);
                     return vo;
                 }).collect(Collectors.toList());
             } else {
-                // 普通用户只能看到有权限的项目
+                // 普通用户只能看到有权限的项目（has_permission = 1）
                 List<UserProjectRelation> relations = userProjectRelationMapper.findByUserId(userId);
                 Set<String> projectIds = relations.stream()
+                    .filter(r -> r.getHasPermission() != null && r.getHasPermission() == 1)
                     .map(UserProjectRelation::getProjectId)
                     .collect(Collectors.toSet());
 
@@ -113,13 +113,7 @@ public class ProjectsServiceImpl implements ProjectsService {
                     Projects project = projectsMapper.selectById(projectId);
                     if (project != null) {
                         ProjectWithPermissionVO vo = convertToVO(project);
-                        // 检查是否是创建者
-                        if (projectId.equals(project.getUserId())) {
-                            vo.setPermissionType("owner");
-                        } else {
-                            UserProjectRelation relation = userProjectRelationMapper.findByUserAndProject(userId, projectId);
-                            vo.setPermissionType(relation != null ? relation.getPermissionType() : "write");
-                        }
+                        vo.setHasPermission(true);
                         result.add(vo);
                     }
                 }
