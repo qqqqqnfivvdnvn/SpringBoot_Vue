@@ -17,6 +17,12 @@ import ImportUpdateData from '@/components/haosenproject/updatedataView/ImportUp
 import SelectCleanData from '@/components/haosenproject/cleandataview/SelectCleanDataView.vue';
 import GetRepeatData from '@/components/haosenproject/repeatdataview/GetRepeatDataView.vue';
 import GetExportHSData from "@/components/haosenproject/repeatdataview/GetExportHSDataView.vue";
+import ImportExportHSData from "@/components/haosenproject/repeatdataview/ImportExportHSDataView.vue";
+
+// 主数据项目模糊匹配
+import MdFuzzyBatchView from '@/components/maindataproject/fuzzyview/MdFuzzyBatchView.vue';
+import MdFuzzyUploadView from '@/components/maindataproject/fuzzyview/MdFuzzyUploadView.vue';
+import MdFuzzySummaryView from '@/components/maindataproject/fuzzyview/MdFuzzySummaryView.vue';
 
 import  HengRuiHome from '@/components/hengruiproject/HengRuiHome.vue';
 import BatchDataView from '@/components/hengruiproject/batchdataview/BatchDataView.vue';
@@ -207,6 +213,12 @@ const routes = [
                name: 'getExportHSData',
                component: GetExportHSData,
                meta: { requiresAuth: true } // 需要登录才能访问
+           },
+           {
+               path: 'importExportHSData',
+               name: 'importExportHSData',
+               component: ImportExportHSData,
+               meta: { requiresAuth: true } // 需要登录才能访问
            }
        ]
     },
@@ -268,6 +280,24 @@ const routes = [
                 path: 'location',
                 name: 'maindataLocationData',
                 component: MdLocationView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'fuzzyMatch/batch',
+                name: 'mdFuzzyBatchList',
+                component: MdFuzzyBatchView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'fuzzyMatch/upload',
+                name: 'mdFuzzyUpload',
+                component: MdFuzzyUploadView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'fuzzyMatch/summary',
+                name: 'mdFuzzySummary',
+                component: MdFuzzySummaryView,
                 meta: { requiresAuth: true }
             }
         ]

@@ -14,47 +14,91 @@ html.dark {
   --haosen-light-dark: #c8aff0;
 }
 
-/* 项目特定样式覆盖 */
+/* 项目特定样式覆盖 - 暗色模式使用统一的深紫色系 */
 html.dark .home-page.haosen-project {
-  background-color: #12121e;
+  background-color: #1a1625;
+}
+
+/* 亮色模式下豪森项目使用紫色系标签页 */
+html:not(.dark) .home-page.haosen-project .tab {
+  background-color: #f5f0fc !important;
+  border-color: #d5c0f0 !important;
+  color: #6a5a8a !important;
+}
+
+html:not(.dark) .home-page.haosen-project .tab:hover {
+  background-color: #f0e8fa !important;
+  color: #5a4a7a !important;
+}
+
+html:not(.dark) .home-page.haosen-project .tab.active {
+  background-color: #ffffff !important;
+  border-color: #7d60b8 !important;
+  border-bottom-color: #ffffff !important;
+  color: #6a5a8a !important;
+}
+
+html:not(.dark) .home-page.haosen-project .close-tab {
+  color: #b8a0d8 !important;
+}
+
+html:not(.dark) .home-page.haosen-project .close-tab:hover {
+  background: #e8d8f8 !important;
+  color: #5a4a7a !important;
 }
 
 html.dark .haosen-project {
   --theme-gradient-nav: linear-gradient(90deg, #1e1430 0%, #2d2048 60%, #3a2a5e 100%);
 }
 
+/* 侧边栏 - 深紫色背景 */
 html.dark aside.sidebar.haosen-sidebar {
-  background-color: #1a1a2c;
+  background-color: #1f1b2e;
   box-shadow: 3px 0 20px rgba(0, 0, 0, 0.35);
 }
 
-html.dark .content-header.haosen-content-header {
-  background-color: #1a1a2c;
+/* 内容头部 - 深紫色背景 */
+html.dark .home-page.haosen-project .content-header {
+  background-color: #1f1b2e;
   border-bottom-color: #2a2040;
   box-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
 
-html.dark .tab.haosen-tab {
+/* 标签页 - 深紫色背景 */
+html.dark .home-page.haosen-project .tab {
   background-color: #22203a;
   border-color: #38305a;
   color: #8878a8;
 }
 
-html.dark .tab.haosen-tab:hover {
+html.dark .home-page.haosen-project .tab:hover {
   background-color: #2c2850;
   color: #a898cc;
 }
 
-html.dark .tab.active.haosen-tab-active {
-  background-color: #1a1a2c;
+html.dark .home-page.haosen-project .tab.active {
+  background-color: #1f1b2e;
+  border-color: #a488dc;
   color: #b8a0e8;
 }
 
-html.dark .close-tab.haosen-close-tab {
+/* 关闭按钮 */
+html.dark .home-page.haosen-project .close-tab {
   color: #5a5080;
 }
 
-html.dark .close-tab.haosen-close-tab:hover {
+html.dark .home-page.haosen-project .close-tab:hover {
   background: #2e2a50;
   color: #a898cc;
+}
+
+/* 菜单项文字颜色 - 使用主题紫色 */
+html.dark .haosen-sidebar .menu-item,
+html.dark .haosen-sidebar .sub-menu li {
+  color: #b89ff0;
+}
+
+html.dark .haosen-sidebar .menu-item:hover,
+html.dark .haosen-sidebar .sub-menu li:hover {
+  color: #c8aff0;
 }

@@ -14,9 +14,37 @@ html.dark {
   --hengrui-light-dark: #7ac7ff;
 }
 
-/* 项目特定样式覆盖 */
+/* 项目特定样式覆盖 - 暗色模式使用统一的深蓝色系，去除紫色调 */
 html.dark .home-page.hengrui-project {
-  background-color: #12121e;
+  background-color: #121820;
+}
+
+/* 亮色模式下恒瑞项目使用蓝色系标签页，而非紫色 */
+html:not(.dark) .home-page.hengrui-project .tab {
+  background-color: #e8f4fc !important;
+  border-color: #b5d8f0 !important;
+  color: #4a6a8a !important;
+}
+
+html:not(.dark) .home-page.hengrui-project .tab:hover {
+  background-color: #e0f0fa !important;
+  color: #3a5a7a !important;
+}
+
+html:not(.dark) .home-page.hengrui-project .tab.active {
+  background-color: #ffffff !important;
+  border-color: #4a97e0 !important;
+  border-bottom-color: #ffffff !important;
+  color: #4a6a8a !important;
+}
+
+html:not(.dark) .home-page.hengrui-project .close-tab {
+  color: #90b8d8 !important;
+}
+
+html:not(.dark) .home-page.hengrui-project .close-tab:hover {
+  background: #d8ebf8 !important;
+  color: #3a5a7a !important;
 }
 
 html.dark .hengrui-project {
@@ -24,38 +52,54 @@ html.dark .hengrui-project {
   --theme-gradient: linear-gradient(135deg, #5aa7ef, #3a87d0);
 }
 
+/* 侧边栏 - 深蓝色背景 */
 html.dark aside.sidebar.hengrui-sidebar {
-  background-color: #1a1a2c;
+  background-color: #1a2230;
   box-shadow: 3px 0 20px rgba(0, 0, 0, 0.35);
 }
 
-html.dark .content-header.hengrui-content-header {
-  background-color: #1a1a2c;
+/* 内容头部 - 深蓝色背景 */
+html.dark .home-page.hengrui-project .content-header {
+  background-color: #1a2230;
   border-bottom-color: #2a3550;
   box-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
 
-html.dark .tab.hengrui-tab {
+/* 标签页 - 深蓝色背景 */
+html.dark .home-page.hengrui-project .tab {
   background-color: #1e2a40;
   border-color: #2a3550;
   color: #6a80a0;
 }
 
-html.dark .tab.hengrui-tab:hover {
+html.dark .home-page.hengrui-project .tab:hover {
   background-color: #253550;
   color: #7ac7ff;
 }
 
-html.dark .tab.active.hengrui-tab-active {
-  background-color: #1a1a2c;
+html.dark .home-page.hengrui-project .tab.active {
+  background-color: #1a2230;
+  border-color: #5aa7ef;
   color: #6ab7ff;
 }
 
-html.dark .close-tab.hengrui-close-tab {
+/* 关闭按钮 */
+html.dark .home-page.hengrui-project .close-tab {
   color: #4a5a70;
 }
 
-html.dark .close-tab.hengrui-close-tab:hover {
+html.dark .home-page.hengrui-project .close-tab:hover {
   background: #2a3550;
+  color: #7ac7ff;
+}
+
+/* 菜单项文字颜色 - 使用主题蓝色而非紫色 */
+html.dark .hengrui-sidebar .menu-item,
+html.dark .hengrui-sidebar .sub-menu li {
+  color: #a0b8d0;
+}
+
+html.dark .hengrui-sidebar .menu-item:hover,
+html.dark .hengrui-sidebar .sub-menu li:hover {
   color: #7ac7ff;
 }

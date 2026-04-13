@@ -708,6 +708,7 @@ const detailFields = {
             h.field3 === '2' ? '业务开通，但近7天未产生业务数据' :
                 h.field3 === '3' ? '业务未开通' : ''
   },
+  field4: { label: '冷链药品', value: c => c.field4 === '1' ? '是' : (c.field4 === '0' ? '否' : '') },
   remarks: { label: '备注', value: d => d.remarks },
   addtime: { label: '添加日期', value: d => d.addtime },
   updatetime: { label: '更新日期', value: d => d.updatetime },

@@ -98,6 +98,7 @@ import SelectCleanDataView from '@/components/haosenproject/cleandataview/Select
 import GetRepeatDataView from "@/components/haosenproject/repeatdataview/GetRepeatDataView.vue";
 
 import GetExportHSDataView from "@/components/haosenproject/repeatdataview/GetExportHSDataView.vue";
+import ImportExportHSDataView from "@/components/haosenproject/repeatdataview/ImportExportHSDataView.vue";
 
 import BatchDataView from "@/components/hengruiproject/batchdataview/BatchDataView.vue"
 import ImportBatchDataView from "@/components/hengruiproject/batchdataview/ImportBatchDataView.vue"
@@ -108,6 +109,10 @@ import ImportOrgRelationView from "@/components/hengruiproject/orgrelationview/I
 import MdLocationBatchView from "@/components/maindataproject/locationview/MdLocationBatchView.vue"
 import MdLocationUploadView from "@/components/maindataproject/locationview/MdLocationUploadView.vue"
 import MdLocationView from "@/components/maindataproject/locationview/MdLocationView.vue"
+
+import MdFuzzyBatchView from "@/components/maindataproject/fuzzyview/MdFuzzyBatchView.vue"
+import MdFuzzyUploadView from "@/components/maindataproject/fuzzyview/MdFuzzyUploadView.vue"
+import MdFuzzySummaryView from "@/components/maindataproject/fuzzyview/MdFuzzySummaryView.vue"
 
 import PermissionManager from "@/components/layout/PermissionManager.vue"
 
@@ -124,6 +129,7 @@ app.component('SelectCleanDataView', SelectCleanDataView)
 
 app.component('GetRepeatDataView', GetRepeatDataView)
 app.component('GetExportHSDataView', GetExportHSDataView)
+app.component('ImportExportHSDataView', ImportExportHSDataView)
 
 app.component('BatchDataView', BatchDataView)
 app.component('ImportBatchDataView', ImportBatchDataView)
@@ -134,6 +140,10 @@ app.component('ImportOrgRelationView', ImportOrgRelationView)
 app.component('MdLocationBatchView', MdLocationBatchView)
 app.component('MdLocationUploadView', MdLocationUploadView)
 app.component('MdLocationView', MdLocationView)
+
+app.component('MdFuzzyBatchView', MdFuzzyBatchView)
+app.component('MdFuzzyUploadView', MdFuzzyUploadView)
+app.component('MdFuzzySummaryView', MdFuzzySummaryView)
 
 app.component('PermissionManager', PermissionManager)
 

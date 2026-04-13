@@ -35,7 +35,7 @@
             </el-form-item>
           </div>
 
-          <!-- 操作按钮区域：查询、重置、导出、上传 -->
+          <!-- 操作按钮区域：查询、重置、导出 -->
           <div class="form-actions-wrapper">
             <div class="form-actions">
               <el-button size="small" type="primary" @click="handleSearch" :loading="loading">查询</el-button>
@@ -43,18 +43,10 @@
               <el-button size="small" type="success" @click="toExcel" :loading="exporting">
                 {{ exporting ? '导出中...' : '导出' }}
               </el-button>
-              <el-button size="small" type="warning" @click="triggerUpload" :loading="uploading">
-                <el-icon v-if="!uploading"><Upload /></el-icon>
-                {{ uploading ? '上传中...' : '上传数据' }}
+              <el-button size="small" type="warning" @click="goToUploadPage">
+                <el-icon><Upload /></el-icon>
+                上传数据
               </el-button>
-              <!-- 隐藏的文件输入框 -->
-              <input
-                ref="fileInputRef"
-                type="file"
-                accept=".xlsx,.xls"
-                style="display: none"
-                @change="handleFileChange"
-              />
             </div>
           </div>
         </el-form>
@@ -274,8 +266,6 @@ const duplicateData = reactive({
 const loading = ref(false)
 const isSaving = ref(false)
 const exporting = ref(false)
-const uploading = ref(false)
-const fileInputRef = ref(null)
 
 // ==================== 分页配置 ====================
 const pageSize = ref(20)
@@ -476,63 +466,10 @@ const toExcel = async () => {
   }
 }
 
-// ==================== 文件上传相关函数 ====================
-// 触发文件选择
-const triggerUpload = () => {
-  if (fileInputRef.value) {
-    fileInputRef.value.click()
-  }
-}
-
-// 处理文件选择变化
-const handleFileChange = async (event) => {
-  const file = event.target.files[0]
-  if (!file) return
-
-  // 验证文件类型
-  const validTypes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
-  if (!validTypes.includes(file.type) && !file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-    ElMessage.error('请选择 Excel 文件（.xlsx 或 .xls）')
-    event.target.value = ''
-    return
-  }
-
-  // 验证文件大小（限制 10MB）
-  const maxSize = 10 * 1024 * 1024
-  if (file.size > maxSize) {
-    ElMessage.error('文件大小不能超过 10MB')
-    event.target.value = ''
-    return
-  }
-
-  uploading.value = true
-  const formData = new FormData()
-  formData.append('file', file)
-
-  try {
-    const { data } = await axios.post('/api/haosen/duplicateData/uploadDuplicateData', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-
-    if (data.code === 200) {
-      ElMessage.success('上传成功')
-      fetchDuplicateData() // 刷新数据列表
-    } else {
-      ElMessage.error(data.msg || '上传失败')
-    }
-  } catch (error) {
-    console.error('上传失败:', error)
-    if (error.response?.data?.msg) {
-      ElMessage.error(error.response.data.msg)
-    } else {
-      ElMessage.error('上传失败，请稍后重试')
-    }
-  } finally {
-    uploading.value = false
-    event.target.value = '' // 清空文件选择，允许重复选择同一文件
-  }
+// ==================== 页面跳转函数 ====================
+// 跳转到上传页面
+const goToUploadPage = () => {
+  window.location.href = '/repeatData/importExportHSData'
 }
 
 // ==================== 弹窗管理函数 ====================

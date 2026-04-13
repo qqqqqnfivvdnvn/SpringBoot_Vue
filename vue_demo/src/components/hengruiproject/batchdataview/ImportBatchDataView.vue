@@ -104,9 +104,9 @@ const route = useRoute()
 
 // 主题颜色配置
 const themeColors = ref({
-  primary: '#ff9e7d',
-  dark: '#ff7d6d',
-  light: '#ffb09a'
+  primary: '#6ab7ff',
+  dark: '#4a97e0',
+  light: '#8ad7ff'
 })
 
 // 动态主题样式
@@ -139,11 +139,11 @@ function loadThemeColor() {
       light: adjustColor(hex, 20)
     }
   } else {
-    // 默认颜色：珊瑚橙
+    // 默认颜色：蓝色（与恒瑞项目主题一致）
     themeColors.value = {
-      primary: '#ff9e7d',
-      dark: '#ff7d6d',
-      light: '#ffb09a'
+      primary: '#6ab7ff',
+      dark: '#4a97e0',
+      light: '#8ad7ff'
     }
   }
 }
@@ -270,6 +270,7 @@ const submitFile = async () => {
 
 html.dark .upload-card {
   background: var(--bg-secondary, #1a1a2c);
+  border-left-color: #5aa7ef;
 }
 
 .upload-title {
@@ -292,21 +293,21 @@ html.dark .upload-card {
 }
 
 html.dark .custom-upload :deep(.el-upload-dragger) {
-  background: var(--bg-secondary, #1a1a2c);
-  border-color: #4a5568;
+  background: #121212 !important;
+  border-color: #333333 !important;
 }
 
 .custom-upload :deep(.el-upload-dragger:hover) {
-  border-color: #c0c4cc;
+  border-color: #555555;
 }
 
 .custom-upload :deep(.el-upload-dragger.is-dragover) {
-  border-color: var(--theme-primary);
-  background-color: rgba(255, 125, 109, 0.05);
+  border-color: #555555;
+  background-color: rgba(100, 100, 100, 0.05);
 }
 
 html.dark .custom-upload :deep(.el-upload-dragger.is-dragover) {
-  background-color: rgba(255, 125, 109, 0.1);
+  background-color: rgba(100, 100, 100, 0.1);
 }
 
 .upload-icon {
@@ -411,7 +412,7 @@ html.dark .file-info {
 }
 
 html.dark .template-section {
-  background: #2a2a3a;
+  background: #121212;
 }
 
 .template-section h4 {
@@ -470,5 +471,27 @@ html.dark .template-section h4 {
   :deep(.custom-result-dialog .el-dialog__body) {
     padding: 16px 20px 24px;
   }
+}
+
+/* 暗色模式下表格样式覆盖 */
+html.dark .template-section :deep(.el-descriptions) {
+  --el-descriptions-header-bg-color: #121212 !important;
+  --el-descriptions-content-bg-color: #121212 !important;
+  --el-descriptions-header-label-bg-color: #1a1a1a !important;
+  --el-descriptions-item-bg-color: #121212 !important;
+}
+
+html.dark .template-section :deep(.el-descriptions__label) {
+  background-color: #1a1a1a !important;
+  color: #e0e0e0 !important;
+}
+
+html.dark .template-section :deep(.el-descriptions__content) {
+  background-color: #121212 !important;
+  color: #d0d0d0 !important;
+}
+
+html.dark .template-section :deep(.el-descriptions__cell) {
+  border-color: #333333 !important;
 }
 </style>

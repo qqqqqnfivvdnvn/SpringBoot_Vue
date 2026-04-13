@@ -69,7 +69,8 @@ const layoutConfig = computed(() => ({
       icon: ['fas', 'feather'],
       items: [
         { title: '重复数据查看', action: 'showRepeatData', icon: ['fas', 'paper-plane'] },
-        { title: '客户确认数据', action: 'showExportHSData', icon: ['fas', 'leaf'] }
+        { title: '客户确认数据', action: 'showExportHSData', icon: ['fas', 'leaf'] },
+        { title: '确认数据上传', action: 'importExportHSData', icon: ['fas', 'upload'] }
       ]
     }
   ],
@@ -105,7 +106,10 @@ const layoutConfig = computed(() => ({
       layoutRef.value?.addTab('重复数据查看', 'GetRepeatDataView', '/repeatData/getRepeatData')
     },
     showExportHSData: () => {
-      layoutRef.value?.addTab('客户确认数据', 'GetExportHSDataView', '/repeatData/exportHSData')
+      layoutRef.value?.addTab('客户确认数据', 'GetExportHSDataView', '/repeatData/getExportHSData')
+    },
+    importExportHSData: () => {
+      layoutRef.value?.addTab('确认数据上传', 'ImportExportHSDataView', '/repeatData/importExportHSData')
     }
   }
 }))

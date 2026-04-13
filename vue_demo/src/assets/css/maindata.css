@@ -14,9 +14,37 @@ html.dark {
   --maindata-light-dark: #4f8a3f;
 }
 
-/* 项目特定样式覆盖 */
+/* 项目特定样式覆盖 - 暗色模式使用统一的深绿色系 */
 html.dark .home-page.maindata-project {
-  background-color: #12121e;
+  background-color: #121812;
+}
+
+/* 亮色模式下主数据项目也使用绿色系标签页，而非紫色 */
+html:not(.dark) .home-page.maindata-project .tab {
+  background-color: #f0f5ed !important;
+  border-color: #c5e0b5 !important;
+  color: #5a7a50 !important;
+}
+
+html:not(.dark) .home-page.maindata-project .tab:hover {
+  background-color: #e8f0e3 !important;
+  color: #4a6a40 !important;
+}
+
+html:not(.dark) .home-page.maindata-project .tab.active {
+  background-color: #ffffff !important;
+  border-color: #7da85a !important;
+  border-bottom-color: #ffffff !important;
+  color: #5a7a50 !important;
+}
+
+html:not(.dark) .home-page.maindata-project .close-tab {
+  color: #9ab890 !important;
+}
+
+html:not(.dark) .home-page.maindata-project .close-tab:hover {
+  background: #e0ead8 !important;
+  color: #4a6a40 !important;
 }
 
 html.dark .maindata-project {
@@ -24,38 +52,66 @@ html.dark .maindata-project {
   --theme-gradient: linear-gradient(135deg, #3d6b2f, #2d5222);
 }
 
+/* 侧边栏 - 深绿色背景 */
 html.dark aside.sidebar.maindata-sidebar {
   background-color: #1a2a18;
   box-shadow: 3px 0 20px rgba(0, 0, 0, 0.35);
 }
 
-html.dark .content-header.maindata-content-header {
+/* 内容头部 - 深绿色背景 */
+html.dark .home-page.maindata-project .content-header {
   background-color: #1a2a18;
   border-bottom-color: #2a3520;
   box-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
 
-html.dark .tab.maindata-tab {
-  background-color: #1e2a18;
-  border-color: #2a3520;
-  color: #6a8060;
+/* 标签页 - 深绿色背景 (覆盖 AdminLayout.vue 中的通用紫色样式) */
+html.dark .home-page.maindata-project .tab,
+html.dark.maindata-project .tab {
+  background-color: #1e2a18 !important;
+  border-color: #2a3520 !important;
+  color: #6a8060 !important;
 }
 
-html.dark .tab.maindata-tab:hover {
-  background-color: #253520;
-  color: #7dc163;
+html.dark .home-page.maindata-project .tab:hover,
+html.dark.maindata-project .tab:hover {
+  background-color: #253520 !important;
+  color: #7dc163 !important;
 }
 
-html.dark .tab.active.maindata-tab-active {
-  background-color: #1a2a18;
-  color: #7dc163;
+html.dark .home-page.maindata-project .tab.active,
+html.dark.maindata-project .tab.active {
+  background-color: #1a2a18 !important;
+  border-color: #3d6b2f !important;
+  border-bottom-color: #1a2a18 !important;
+  color: #7dc163 !important;
 }
 
-html.dark .close-tab.maindata-close-tab {
-  color: #4a5a40;
+html.dark .home-page.maindata-project .close-tab,
+html.dark.maindata-project .close-tab {
+  color: #4a5a40 !important;
 }
 
-html.dark .close-tab.maindata-close-tab:hover {
-  background: #2a3520;
+html.dark .home-page.maindata-project .close-tab:hover,
+html.dark.maindata-project .close-tab:hover {
+  background: #2a3520 !important;
+  color: #7dc163 !important;
+}
+
+/* 内容头部区域也使用绿色系 */
+html.dark .home-page.maindata-project .content-header,
+html.dark.maindata-project .content-header {
+  background-color: #1e2a18 !important;
+  border-bottom-color: #2a3520 !important;
+}
+
+/* 菜单项文字颜色 - 使用主题绿色而非紫色 */
+html.dark .maindata-sidebar .menu-item,
+html.dark .maindata-sidebar .sub-menu li {
+  color: #a0c080;
+}
+
+html.dark .maindata-sidebar .menu-item:hover,
+html.dark .maindata-sidebar .sub-menu li:hover {
   color: #7dc163;
 }

@@ -608,10 +608,12 @@ html.dark aside.sidebar {
   box-shadow: 3px 0 20px rgba(0, 0, 0, 0.35);
 }
 
+/* 恒瑞项目 - 深蓝色系侧边栏 */
 html.dark aside.sidebar.hengrui-sidebar {
-  background-color: #1a1a2c;
+  background-color: #1a2230;
 }
 
+/* 主数据项目 - 暗绿色系侧边栏 */
 html.dark aside.sidebar.maindata-sidebar {
   background-color: #1a2a18;
 }
@@ -885,6 +887,18 @@ html.dark .content-header {
   box-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
 
+/* 恒瑞项目 - 蓝色系内容头 */
+html.dark .hengrui-project .content-header {
+  background-color: #1a2230;
+  border-bottom-color: #2a3550;
+}
+
+/* 主数据项目 - 绿色系内容头 */
+html.dark .maindata-project .content-header {
+  background-color: #1a2a18;
+  border-bottom-color: #2a4030;
+}
+
 .tabs-container {
   overflow-x: auto;
   scrollbar-width: none;
@@ -945,10 +959,10 @@ html.dark .tab:hover {
 }
 
 html.dark .tab.active {
-  background-color: #1a1a2c;
+  background-color: #1a2230;
   border-color: var(--theme-primary);
-  border-bottom: 2px solid #1a1a2c;
-  color: var(--theme-text-dark);
+  border-bottom: 2px solid #1a2230;
+  color: var(--theme-primary);
 }
 
 .tab-title {

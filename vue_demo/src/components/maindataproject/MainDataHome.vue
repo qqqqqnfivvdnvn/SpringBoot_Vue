@@ -37,6 +37,16 @@ const layoutConfig = computed(() => ({
         { title: '文件上传', action: 'showUpload', icon: ['fas', 'upload'] },
         { title: '汇总数据', action: 'showLocationData', icon: ['fas', 'database'] }
       ]
+    },
+    {
+      key: 'fuzzyMatch',
+      title: '机构模糊匹配',
+      icon: ['fas', 'search'],
+      items: [
+        { title: '批次列表', action: 'fuzzyBatchList', icon: ['fas', 'list'] },
+        { title: '文件上传', action: 'fuzzyUpload', icon: ['fas', 'upload'] },
+        { title: '汇总数据', action: 'fuzzySummary', icon: ['fas', 'table'] }
+      ]
     }
   ],
   defaultView: 'MdLocationBatchView',
@@ -51,6 +61,15 @@ const layoutConfig = computed(() => ({
     },
     showLocationData: () => {
       layoutRef.value?.addTab('汇总数据', 'MdLocationView', '/maindata/location')
+    },
+    fuzzyBatchList: () => {
+      layoutRef.value?.addTab('批次列表', 'MdFuzzyBatchView', '/maindata/fuzzyMatch/batch')
+    },
+    fuzzyUpload: () => {
+      layoutRef.value?.addTab('文件上传', 'MdFuzzyUploadView', '/maindata/fuzzyMatch/upload')
+    },
+    fuzzySummary: () => {
+      layoutRef.value?.addTab('汇总数据', 'MdFuzzySummaryView', '/maindata/fuzzyMatch/summary')
     }
   }
 }))
