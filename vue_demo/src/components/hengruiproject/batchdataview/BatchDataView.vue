@@ -148,7 +148,7 @@ const batchData = reactive({
   isLastPage: true
 })
 
-// 格式化日期：年 - 月 - 日 - 时 - 分 - 秒
+// 格式化日期：年 - 月 - 日 时：分：秒
 const formatDate = (row, column, cellValue) => {
   if (!cellValue) return ''
   const date = new Date(cellValue)
@@ -158,7 +158,7 @@ const formatDate = (row, column, cellValue) => {
   const hours = String(date.getHours()).padStart(2, '0')
   const minutes = String(date.getMinutes()).padStart(2, '0')
   const seconds = String(date.getSeconds()).padStart(2, '0')
-  return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
 const fetchBatchData = async () => {
