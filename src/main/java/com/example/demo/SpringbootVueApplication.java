@@ -4,13 +4,11 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableTransactionManagement // 启用事务管理
-@EnableAsync // 启用异步处理
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
-@MapperScan("com.example.demo.mapper") // 扫描mapper
+@MapperScan("com.example.demo.mapper") // 扫描 mapper
 
 public class SpringbootVueApplication {
 

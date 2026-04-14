@@ -17,7 +17,9 @@ import com.example.demo.vo.MdFuzzyMatchSummaryVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,7 +32,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -48,11 +53,14 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
     @Value("${file.upload-dir:/tmp}/fuzzy_file")
     private String uploadDir;
 
-    // 异步处理线程池（批次处理）
-    private final ExecutorService batchExecutorService = Executors.newFixedThreadPool(5);
+    // 注入 Spring 管理的线程池
+    @Autowired
+    @Qualifier("batchExecutor")
+    private Executor batchExecutorService;
 
-    // 单条数据匹配线程池（10 个线程）
-    private final ExecutorService matchExecutorService = Executors.newFixedThreadPool(10);
+    @Autowired
+    @Qualifier("matchExecutor")
+    private Executor matchExecutorService;
 
     @Override
     public ApiResponseDTO<PageInfo<MdFuzzyMatchBatch>> getBatchList(MdFuzzyMatchBatchConditionDTO condition, int pageNum, int pageSize) {
@@ -165,24 +173,48 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
         // 使用 CountDownLatch 等待所有线程完成
         CountDownLatch latch = new CountDownLatch(dataList.size());
 
-        // 处理每条数据（多线程）
-        for (FuzzyMatchData data : dataList) {
-            matchExecutorService.submit(() -> {
-                try {
-                    MdFuzzyMatchSummary summary = fuzzyMatch(batchId, data);
-                    if (summary != null) {
-                        mdFuzzyMatchMapper.insertSummary(summary);
-                        successCount.incrementAndGet();
-                    } else {
+        // 使用 ThreadPoolTaskExecutor 提交任务
+        if (matchExecutorService instanceof ThreadPoolTaskExecutor) {
+            ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) matchExecutorService;
+            // 处理每条数据（多线程）
+            for (FuzzyMatchData data : dataList) {
+                taskExecutor.execute(() -> {
+                    try {
+                        MdFuzzyMatchSummary summary = fuzzyMatch(batchId, data);
+                        if (summary != null) {
+                            mdFuzzyMatchMapper.insertSummary(summary);
+                            successCount.incrementAndGet();
+                        } else {
+                            failCount.incrementAndGet();
+                        }
+                    } catch (Exception e) {
                         failCount.incrementAndGet();
+                        errorMessages.add("ID: " + data.getId() + " 处理失败：" + e.getMessage());
+                    } finally {
+                        latch.countDown();
                     }
-                } catch (Exception e) {
-                    failCount.incrementAndGet();
-                    errorMessages.add("ID: " + data.getId() + " 处理失败：" + e.getMessage());
-                } finally {
-                    latch.countDown();
-                }
-            });
+                });
+            }
+        } else {
+            // 兼容处理：直接使用 Executor
+            for (FuzzyMatchData data : dataList) {
+                matchExecutorService.execute(() -> {
+                    try {
+                        MdFuzzyMatchSummary summary = fuzzyMatch(batchId, data);
+                        if (summary != null) {
+                            mdFuzzyMatchMapper.insertSummary(summary);
+                            successCount.incrementAndGet();
+                        } else {
+                            failCount.incrementAndGet();
+                        }
+                    } catch (Exception e) {
+                        failCount.incrementAndGet();
+                        errorMessages.add("ID: " + data.getId() + " 处理失败：" + e.getMessage());
+                    } finally {
+                        latch.countDown();
+                    }
+                });
+            }
         }
 
         // 等待所有匹配完成

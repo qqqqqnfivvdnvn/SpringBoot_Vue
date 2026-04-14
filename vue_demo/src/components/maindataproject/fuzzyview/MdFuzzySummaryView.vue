@@ -61,7 +61,7 @@
                   </el-link>
                 </template>
               </el-table-column>
-              <el-table-column prop="originalProvince" label="省份" min-width="80" />
+              <el-table-column prop="originalProvince" label="省份" min-width="100" show-overflow-tooltip />
               <el-table-column prop="originalName" label="名称" min-width="150" show-overflow-tooltip />
               <el-table-column prop="keyid" label="keyid" min-width="120">
                 <template #default="{ row }">
@@ -72,9 +72,9 @@
               </el-table-column>
               <el-table-column prop="name" label="标准名称" min-width="150" show-overflow-tooltip />
               <el-table-column prop="namehistory" label="历史名称" min-width="150" show-overflow-tooltip />
-              <el-table-column prop="province" label="省" min-width="80" />
-              <el-table-column prop="cityname" label="市" min-width="80" />
-              <el-table-column prop="areaname" label="区" min-width="80" />
+              <el-table-column prop="province" label="省" min-width="80" show-overflow-tooltip />
+              <el-table-column prop="cityname" label="市" min-width="80" show-overflow-tooltip/>
+              <el-table-column prop="areaname" label="区" min-width="80" show-overflow-tooltip/>
               <el-table-column prop="address" label="地址" min-width="200" show-overflow-tooltip />
               <el-table-column prop="principal" label="负责人" min-width="80" />
               <el-table-column prop="legalperson" label="法人" min-width="80" />

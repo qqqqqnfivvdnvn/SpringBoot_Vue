@@ -27,7 +27,7 @@ public class HrBatchAsyncService {
     @Autowired
     private HrBatchStatusService batchStatusService;
 
-    @Async
+    @Async("batchExecutor")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processBatchData(String batchId, String filePath, String originalFilename) {
         try {

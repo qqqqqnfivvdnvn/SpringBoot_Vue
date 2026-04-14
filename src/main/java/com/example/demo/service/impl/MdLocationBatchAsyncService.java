@@ -35,7 +35,7 @@ public class MdLocationBatchAsyncService {
     /**
      * 异步处理批次数据
      */
-    @Async
+    @Async("batchExecutor")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processBatchData(String batchId, String filePath, String originalFilename) {
         try {

@@ -32,7 +32,7 @@ public class ProvinceCityAreaAbbreviationUtil {
     public void init() {
         try {
             // 从 Excel 文件读取数据
-            ClassPathResource resource = new ClassPathResource("省市区简称.xlsx");
+            ClassPathResource resource = new ClassPathResource("province_city_area_short.xlsx");
             if (resource.exists()) {
                 try (InputStream inputStream = resource.getInputStream()) {
                     EasyExcel.read(inputStream, new RegionAbbreviationReadListener())
@@ -250,15 +250,15 @@ public class ProvinceCityAreaAbbreviationUtil {
                     continue;
                 }
 
-                if ("省".equals(headerName)) {
+                if ("province".equals(headerName)) {
                     province = value;
                 } else if ("province_short".equals(headerName)) {
                     provinceShort = value;
-                } else if ("市".equals(headerName)) {
+                } else if ("city".equals(headerName)) {
                     city = value;
                 } else if ("city_short".equals(headerName)) {
                     cityShort = value;
-                } else if ("区县".equals(headerName)) {
+                } else if ("area".equals(headerName)) {
                     area = value;
                 } else if ("area_short".equals(headerName)) {
                     areaShort = value;
