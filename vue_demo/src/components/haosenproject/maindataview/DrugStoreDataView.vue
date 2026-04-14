@@ -710,8 +710,8 @@ const detailFields = {
   },
   field4: { label: '冷链药品', value: c => c.field4 === '1' ? '是' : (c.field4 === '0' ? '否' : '') },
   remarks: { label: '备注', value: d => d.remarks },
-  addtime: { label: '添加日期', value: d => d.addtime },
-  updatetime: { label: '更新日期', value: d => d.updatetime },
+  addtime: { label: '添加日期', value: d => formatDateTime(d.addtime) },
+  updatetime: { label: '更新日期', value: d => formatDateTime(d.updatetime) },
   status: {
     label: '状态',
     value: d => getStatusText(d.status),
@@ -728,6 +728,19 @@ const getStatusText = (status) => {
 const getStatusType = (status) => {
   const map = { '1': 'success', '2': 'danger', '3': 'info', '4': 'danger', '5': 'warning' }
   return map[status] || 'info'
+}
+
+// ==================== 日期时间格式化工具：YYYY-MM-DD HH:mm:ss ====================
+const formatDateTime = (dateTime) => {
+  if (!dateTime) return ''
+  const date = new Date(dateTime)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
 // ==================== 数据加载相关函数 ====================
@@ -1270,10 +1283,24 @@ onMounted(() => {
 .content-wrapper {
   flex: 1;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .table-view {
+  flex: 1;
   height: 100%;
+  overflow: hidden;
+}
+
+:deep(.el-table) {
+  height: 100%;
+  width: 100%;
+}
+
+:deep(.el-table__body-wrapper) {
+  height: 100%;
+  overflow: auto;
 }
 
 .card-view {

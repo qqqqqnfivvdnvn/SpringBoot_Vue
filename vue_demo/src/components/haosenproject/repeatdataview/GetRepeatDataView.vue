@@ -316,11 +316,17 @@ const getOrgTypeType = (orgType) => {
   return map[orgType] || 'info'
 }
 
-// ==================== 日期格式化工具函数 ====================
+// ==================== 日期格式化工具函数：YYYY-MM-DD HH:mm:ss ====================
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
-  // 处理 "2026-02-12 10:59:53.87237" 格式
-  return dateStr.split('.')[0] || dateStr
+  const date = new Date(dateStr)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
 // ==================== 详情弹窗字段配置 ====================
@@ -659,10 +665,24 @@ onMounted(() => {
 .content-wrapper {
   flex: 1;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .table-view {
+  flex: 1;
   height: 100%;
+  overflow: hidden;
+}
+
+:deep(.el-table) {
+  height: 100%;
+  width: 100%;
+}
+
+:deep(.el-table__body-wrapper) {
+  height: 100%;
+  overflow: auto;
 }
 
 .card-view {

@@ -52,7 +52,7 @@
           <h4>文件格式要求：</h4>
           <el-descriptions :column="1" border size="small">
             <el-descriptions-item label="必需字段">
-              id、省份、名称、地址
+              id、省份、名称
             </el-descriptions-item>
             <el-descriptions-item label="文件格式">
               .xlsx 或 .xls

@@ -56,20 +56,26 @@
                 fit
                 resizable
             >
-              <el-table-column prop="batchId" label="批次 ID" show-overflow-tooltip />
-              <el-table-column prop="originalFilename" label="文件名称" width="200" show-overflow-tooltip />
-              <el-table-column prop="createTime" label="创建时间" width="160" :formatter="formatDate" />
-              <el-table-column prop="updateTime" label="更新时间" width="160" :formatter="formatDate" />
-              <el-table-column prop="statusDesc" label="状态" width="100">
+              <el-table-column prop="batchId" label="批次 ID" min-width="150" show-overflow-tooltip>
+                <template #default="{ row }">
+                  <el-link type="primary" :underline="false" @click="copyText(row.batchId)" :disabled="!row.batchId">
+                    {{ row.batchId }}
+                  </el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="originalFilename" label="文件名称" min-width="200" show-overflow-tooltip />
+              <el-table-column prop="createTime" label="创建时间" min-width="160" :formatter="formatDate" />
+              <el-table-column prop="updateTime" label="更新时间" min-width="160" :formatter="formatDate" />
+              <el-table-column prop="statusDesc" label="状态" min-width="100">
                 <template #default="{ row }">
                   <el-tag :type="row.status === 1 ? 'success' : row.status === 2 ? 'danger' : 'warning'" effect="dark" size="small">
                     {{ row.statusDesc }}
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="message" label="处理信息" width="200" show-overflow-tooltip />
-              <el-table-column prop="dataCount" label="数据条数" width="100" align="center" />
-              <el-table-column label="操作" width="120" fixed="right">
+              <el-table-column prop="message" label="处理信息" min-width="200" show-overflow-tooltip />
+              <el-table-column prop="dataCount" label="数据条数" min-width="100" align="center" />
+              <el-table-column label="操作" min-width="120" fixed="right">
                 <template #default="{ row }">
                   <el-button
                       size="small"
@@ -147,6 +153,42 @@ const batchData = reactive({
   isFirstPage: true,
   isLastPage: true
 })
+
+// 文本复制函数
+const copyText = async (text) => {
+  if (!text) return
+
+  const textToCopy = String(text)
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(textToCopy)
+      ElMessage.success('已复制')
+      return
+    }
+
+    const textArea = document.createElement('textarea')
+    textArea.value = textToCopy
+    textArea.style.position = 'fixed'
+    textArea.style.left = '-9999px'
+    textArea.style.top = '0'
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+
+    const successful = document.execCommand('copy')
+    document.body.removeChild(textArea)
+
+    if (successful) {
+      ElMessage.success('已复制')
+    } else {
+      ElMessage.error('复制失败')
+    }
+  } catch (err) {
+    console.error('复制失败:', err)
+    ElMessage.error('复制失败')
+  }
+}
 
 // 格式化日期：年 - 月 - 日 时：分：秒
 const formatDate = (row, column, cellValue) => {
@@ -345,14 +387,24 @@ onMounted(() => {
 .content-wrapper {
   flex: 1;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .table-view {
+  flex: 1;
   height: 100%;
+  overflow: hidden;
 }
 
 :deep(.el-table) {
   height: 100%;
+  width: 100%;
+}
+
+:deep(.el-table__body-wrapper) {
+  height: 100%;
+  overflow: auto;
 }
 
 .no-data-container {

@@ -65,8 +65,8 @@
                 <span class="menu-item-text" v-if="!isSidebarCollapsed">{{ menu.title }}</span>
                 <span class="menu-arrow" v-if="!isSidebarCollapsed">
                   <font-awesome-icon
-                    :icon="openMenus[menu.key] ? ['fas', 'chevron-down'] : ['fas', 'chevron-right']"
-                    size="xs"
+                      :icon="openMenus[menu.key] ? ['fas', 'chevron-down'] : ['fas', 'chevron-right']"
+                      size="xs"
                   />
                 </span>
               </div>
@@ -142,7 +142,7 @@ const props = defineProps({
     required: true,
     validator: (value) => {
       return value.brandTitle && value.menus && value.defaultView &&
-             value.lightThemeColors && value.darkThemeColors && value.actions
+          value.lightThemeColors && value.darkThemeColors && value.actions
     }
   }
 })
@@ -155,10 +155,10 @@ const route = useRoute()
 const themeColors = ref({ ...props.config.lightThemeColors })
 
 const openMenus = reactive(
-  props.config.menus.reduce((acc, menu) => {
-    acc[menu.key] = false
-    return acc
-  }, {})
+    props.config.menus.reduce((acc, menu) => {
+      acc[menu.key] = false
+      return acc
+    }, {})
 )
 
 const showToast = ref(false)
@@ -223,8 +223,8 @@ const currentViewComponent = computed(() => currentView.value)
 function hexToRgb(hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
   return result
-    ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
-    : '106, 183, 255'
+      ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+      : '106, 183, 255'
 }
 
 function adjustColor(hex, percent) {
@@ -588,8 +588,8 @@ aside.sidebar {
   box-shadow: 3px 0 16px var(--theme-rgba-light);
   padding: 16px 10px;
   transition: transform 0.25s cubic-bezier(0.4,0,0.2,1),
-              width 0.25s cubic-bezier(0.4,0,0.2,1),
-              background-color 0.3s;
+  width 0.25s cubic-bezier(0.4,0,0.2,1),
+  background-color 0.3s;
   position: fixed;
   top: 58px;
   bottom: 0;

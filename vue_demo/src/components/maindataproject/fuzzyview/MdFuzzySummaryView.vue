@@ -47,16 +47,39 @@
                 fit
                 resizable
             >
-              <el-table-column prop="originalId" label="原始ID" width="200" />
-              <el-table-column prop="batchId" label="批次ID" width="200" show-overflow-tooltip />
-              <el-table-column prop="originalProvince" label="原始省份" width="100" />
-              <el-table-column prop="originalName" label="原始名称" width="200" show-overflow-tooltip />
-              <el-table-column prop="originalAddress" label="原始地址" width="200" show-overflow-tooltip />
-              <el-table-column prop="keyid" label="匹配keyid" width="120" />
-              <el-table-column prop="name" label="匹配名称" width="150" show-overflow-tooltip />
-              <el-table-column prop="remark" label="匹配说明" width="310" show-overflow-tooltip />
-              <el-table-column prop="createTime" label="创建时间" width="180" :formatter="formatDate" />
-              <el-table-column prop="updateTime" label="更新时间" width="180" :formatter="formatDate" />
+              <el-table-column prop="originalId" label="id" min-width="200">
+                <template #default="{ row }">
+                  <el-link type="primary" :underline="false" @click="copyText(row.originalId)" :disabled="!row.originalId">
+                    {{ row.originalId }}
+                  </el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="batchId" label="批次 ID" min-width="150" show-overflow-tooltip>
+                <template #default="{ row }">
+                  <el-link type="primary" :underline="false" @click="copyText(row.batchId)" :disabled="!row.batchId">
+                    {{ row.batchId }}
+                  </el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="originalProvince" label="省份" min-width="80" />
+              <el-table-column prop="originalName" label="名称" min-width="150" show-overflow-tooltip />
+              <el-table-column prop="keyid" label="keyid" min-width="120">
+                <template #default="{ row }">
+                  <el-link type="primary" :underline="false" @click="copyText(row.keyid)" :disabled="!row.keyid">
+                    {{ row.keyid }}
+                  </el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="name" label="标准名称" min-width="150" show-overflow-tooltip />
+              <el-table-column prop="namehistory" label="历史名称" min-width="150" show-overflow-tooltip />
+              <el-table-column prop="province" label="省" min-width="80" />
+              <el-table-column prop="cityname" label="市" min-width="80" />
+              <el-table-column prop="areaname" label="区" min-width="80" />
+              <el-table-column prop="address" label="地址" min-width="200" show-overflow-tooltip />
+              <el-table-column prop="principal" label="负责人" min-width="80" />
+              <el-table-column prop="legalperson" label="法人" min-width="80" />
+              <el-table-column prop="sign_status" label="登记状态" min-width="80" />
+              <el-table-column prop="status" label="大库状态" min-width="80" />
             </el-table>
 
             <div v-else class="no-data-container">
@@ -177,17 +200,40 @@ const handleJumpPage = () => {
   }
 }
 
-// 格式化日期
-const formatDate = (row, column, cellValue) => {
-  if (!cellValue) return ''
-  const date = new Date(cellValue)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-  const seconds = String(date.getSeconds()).padStart(2, '0')
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+// 文本复制函数
+const copyText = async (text) => {
+  if (!text) return
+
+  const textToCopy = String(text)
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(textToCopy)
+      ElMessage.success('已复制')
+      return
+    }
+
+    const textArea = document.createElement('textarea')
+    textArea.value = textToCopy
+    textArea.style.position = 'fixed'
+    textArea.style.left = '-9999px'
+    textArea.style.top = '0'
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+
+    const successful = document.execCommand('copy')
+    document.body.removeChild(textArea)
+
+    if (successful) {
+      ElMessage.success('已复制')
+    } else {
+      ElMessage.error('复制失败')
+    }
+  } catch (err) {
+    console.error('复制失败:', err)
+    ElMessage.error('复制失败')
+  }
 }
 
 onMounted(() => {
@@ -297,14 +343,24 @@ onMounted(() => {
 .content-wrapper {
   flex: 1;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .table-view {
+  flex: 1;
   height: 100%;
+  overflow: hidden;
 }
 
 :deep(.el-table) {
   height: 100%;
+  width: 100%;
+}
+
+:deep(.el-table__body-wrapper) {
+  height: 100%;
+  overflow: auto;
 }
 
 .no-data-container {

@@ -11,7 +11,7 @@ import com.example.demo.dto.MdFuzzyMatchFileMessageDTO;
 import com.example.demo.entity.MdFuzzyMatchBatch;
 import com.example.demo.entity.MdFuzzyMatchSummary;
 import com.example.demo.mapper.MdFuzzyMatchMapper;
-import com.example.demo.matcher.MdFuzzyMatcher;
+import com.example.demo.utils.MdFuzzyMatcher;
 import com.example.demo.service.MdFuzzyMatchService;
 import com.example.demo.vo.MdFuzzyMatchSummaryVO;
 import com.github.pagehelper.PageHelper;
@@ -31,6 +31,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 主数据模糊匹配 Service 实现
@@ -47,8 +48,11 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
     @Value("${file.upload-dir:/tmp}/fuzzy_file")
     private String uploadDir;
 
-    // 异步处理线程池
-    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
+    // 异步处理线程池（批次处理）
+    private final ExecutorService batchExecutorService = Executors.newFixedThreadPool(5);
+
+    // 单条数据匹配线程池（10 个线程）
+    private final ExecutorService matchExecutorService = Executors.newFixedThreadPool(10);
 
     @Override
     public ApiResponseDTO<PageInfo<MdFuzzyMatchBatch>> getBatchList(MdFuzzyMatchBatchConditionDTO condition, int pageNum, int pageSize) {
@@ -137,7 +141,7 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
                 e.printStackTrace();
                 mdFuzzyMatchMapper.updateBatchStatus(batchId, 2, "处理失败：" + e.getMessage());
             }
-        }, executorService);
+        }, batchExecutorService);
     }
 
     /**
@@ -154,29 +158,43 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
                 .sheet()
                 .doRead();
 
-        int successCount = 0;
-        int failCount = 0;
-        StringBuilder errorMsg = new StringBuilder();
+        AtomicInteger successCount = new AtomicInteger(0);
+        AtomicInteger failCount = new AtomicInteger(0);
+        List<String> errorMessages = new CopyOnWriteArrayList<>();
 
-        // 处理每条数据
+        // 使用 CountDownLatch 等待所有线程完成
+        CountDownLatch latch = new CountDownLatch(dataList.size());
+
+        // 处理每条数据（多线程）
         for (FuzzyMatchData data : dataList) {
-            try {
-                MdFuzzyMatchSummary summary = fuzzyMatch(batchId, data);
-                if (summary != null) {
-                    mdFuzzyMatchMapper.insertSummary(summary);
-                    successCount++;
-                } else {
-                    failCount++;
+            matchExecutorService.submit(() -> {
+                try {
+                    MdFuzzyMatchSummary summary = fuzzyMatch(batchId, data);
+                    if (summary != null) {
+                        mdFuzzyMatchMapper.insertSummary(summary);
+                        successCount.incrementAndGet();
+                    } else {
+                        failCount.incrementAndGet();
+                    }
+                } catch (Exception e) {
+                    failCount.incrementAndGet();
+                    errorMessages.add("ID: " + data.getId() + " 处理失败：" + e.getMessage());
+                } finally {
+                    latch.countDown();
                 }
-            } catch (Exception e) {
-                failCount++;
-                errorMsg.append("ID: ").append(data.getId()).append(" 处理失败：").append(e.getMessage()).append("; ");
-            }
+            });
         }
 
-        String message = String.format("处理完成：成功 %d 条，失败 %d 条", successCount, failCount);
-        if (errorMsg.length() > 0 && errorMsg.length() <= 500) {
-            message += "; 详情：" + errorMsg.toString();
+        // 等待所有匹配完成
+        latch.await();
+
+        // 汇总结果
+        String message = String.format("处理完成：成功 %d 条，失败 %d 条", successCount.get(), failCount.get());
+        if (!errorMessages.isEmpty()) {
+            String errorMsg = String.join("; ", errorMessages);
+            if (errorMsg.length() <= 500) {
+                message += "; 详情：" + errorMsg;
+            }
         }
 
         mdFuzzyMatchMapper.updateBatchStatus(batchId, 1, message);
@@ -188,14 +206,12 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
     private MdFuzzyMatchSummary fuzzyMatch(String batchId, FuzzyMatchData data) {
         String originalProvince = data.getProvince();
         String originalName = data.getName();
-        String originalAddress = data.getAddress();
 
         MdFuzzyMatchSummary summary = new MdFuzzyMatchSummary();
         summary.setBatchId(batchId);
         summary.setOriginalId(data.getId());
         summary.setOriginalProvince(originalProvince);
         summary.setOriginalName(originalName);
-        summary.setOriginalAddress(originalAddress);
         summary.setCreateTime(LocalDateTime.now());
         summary.setUpdateTime(LocalDateTime.now());
 
@@ -239,16 +255,34 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
                 return ApiResponseDTO.error("没有数据可导出");
             }
 
+            // 将 Entity 转换为 VO
+            List<MdFuzzyMatchSummaryVO> voList = new ArrayList<>();
+            for (MdFuzzyMatchSummary summary : summaryList) {
+                MdFuzzyMatchSummaryVO vo = new MdFuzzyMatchSummaryVO();
+                vo.setOriginalId(summary.getOriginalId());
+                vo.setOriginalProvince(summary.getOriginalProvince());
+                vo.setOriginalName(summary.getOriginalName());
+                vo.setKeyid(summary.getKeyid());
+                vo.setName(summary.getName());
+                vo.setNamehistory(summary.getNamehistory());
+                vo.setProvince(summary.getProvince());
+                vo.setCityname(summary.getCityname());
+                vo.setAreaname(summary.getAreaname());
+                vo.setAddress(summary.getAddress());
+                vo.setPrincipal(summary.getPrincipal());
+                vo.setLegalperson(summary.getLegalperson());
+                vo.setSign_status(summary.getSign_status());
+                vo.setStatus(summary.getStatus());
+                voList.add(vo);
+            }
+
             // 使用 EasyExcel 导出
-            byte[] bytes;
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                 EasyExcel.write(baos, MdFuzzyMatchSummaryVO.class)
                         .sheet("模糊匹配结果")
-                        .doWrite(summaryList);
-                bytes = baos.toByteArray();
+                        .doWrite(voList);
+                return ApiResponseDTO.success(baos.toByteArray());
             }
-
-            return ApiResponseDTO.success(bytes);
         } catch (Exception e) {
             e.printStackTrace();
             return ApiResponseDTO.error("导出失败：" + e.getMessage());
@@ -294,12 +328,13 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
                     data.setProvince(value);
                 } else if ("名称".equals(headerName) || "name".equalsIgnoreCase(headerName)) {
                     data.setName(value);
-                } else if ("地址".equals(headerName) || "address".equalsIgnoreCase(headerName)) {
-                    data.setAddress(value);
                 }
             }
 
-            if (data.getId() != null && !data.getId().isEmpty()) {
+            // 校验：必须包含 id、省份、名称
+            if (data.getId() != null && !data.getId().isEmpty()
+                && data.getProvince() != null && !data.getProvince().isEmpty()
+                && data.getName() != null && !data.getName().isEmpty()) {
                 resultList.add(data);
             }
         }
@@ -317,7 +352,6 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
         private String id;
         private String province;
         private String name;
-        private String address;
 
         public String getId() { return id; }
         public void setId(String id) { this.id = id; }
@@ -325,7 +359,5 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
         public void setProvince(String province) { this.province = province; }
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
-        public String getAddress() { return address; }
-        public void setAddress(String address) { this.address = address; }
     }
 }

@@ -100,11 +100,11 @@ import GetRepeatDataView from "@/components/haosenproject/repeatdataview/GetRepe
 import GetExportHSDataView from "@/components/haosenproject/repeatdataview/GetExportHSDataView.vue";
 import ImportExportHSDataView from "@/components/haosenproject/repeatdataview/ImportExportHSDataView.vue";
 
-import BatchDataView from "@/components/hengruiproject/batchdataview/BatchDataView.vue"
-import ImportBatchDataView from "@/components/hengruiproject/batchdataview/ImportBatchDataView.vue"
-import MonitoringDataView from "@/components/hengruiproject/monitoringdataview/MonitoringDataView.vue"
-import OrgRelationView from "@/components/hengruiproject/orgrelationview/OrgRelationView.vue"
-import ImportOrgRelationView from "@/components/hengruiproject/orgrelationview/ImportOrgRelationView.vue"
+import HrBatchDataView from "@/components/hengruiproject/batchdataview/HrBatchDataView.vue"
+import HrImportBatchDataView from "@/components/hengruiproject/batchdataview/HrImportBatchDataView.vue"
+import HrMonitoringDataView from "@/components/hengruiproject/monitoringdataview/HrMonitoringDataView.vue"
+import HrOrgRelationView from "@/components/hengruiproject/orgrelationview/HrOrgRelationView.vue"
+import HrImportOrgRelationView from "@/components/hengruiproject/orgrelationview/HrImportOrgRelationView.vue"
 
 import MdLocationBatchView from "@/components/maindataproject/locationview/MdLocationBatchView.vue"
 import MdLocationUploadView from "@/components/maindataproject/locationview/MdLocationUploadView.vue"
@@ -131,11 +131,11 @@ app.component('GetRepeatDataView', GetRepeatDataView)
 app.component('GetExportHSDataView', GetExportHSDataView)
 app.component('ImportExportHSDataView', ImportExportHSDataView)
 
-app.component('BatchDataView', BatchDataView)
-app.component('ImportBatchDataView', ImportBatchDataView)
-app.component('MonitoringDataView', MonitoringDataView)
-app.component('OrgRelationView', OrgRelationView)
-app.component('ImportOrgRelationView', ImportOrgRelationView)
+app.component('HrBatchDataView', HrBatchDataView)
+app.component('HrImportBatchDataView', HrImportBatchDataView)
+app.component('HrMonitoringDataView', HrMonitoringDataView)
+app.component('HrOrgRelationView', HrOrgRelationView)
+app.component('HrImportOrgRelationView', HrImportOrgRelationView)
 
 app.component('MdLocationBatchView', MdLocationBatchView)
 app.component('MdLocationUploadView', MdLocationUploadView)

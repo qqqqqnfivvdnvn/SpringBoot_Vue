@@ -25,11 +25,11 @@ import MdFuzzyUploadView from '@/components/maindataproject/fuzzyview/MdFuzzyUpl
 import MdFuzzySummaryView from '@/components/maindataproject/fuzzyview/MdFuzzySummaryView.vue';
 
 import  HengRuiHome from '@/components/hengruiproject/HengRuiHome.vue';
-import BatchDataView from '@/components/hengruiproject/batchdataview/BatchDataView.vue';
-import ImportBatchDataView from '@/components/hengruiproject/batchdataview/ImportBatchDataView.vue';
-import MonitoringDataView from '@/components/hengruiproject/monitoringdataview/MonitoringDataView.vue';
-import OrgRelationView from '@/components/hengruiproject/orgrelationview/OrgRelationView.vue';
-import ImportOrgRelationView from '@/components/hengruiproject/orgrelationview/ImportOrgRelationView.vue';
+import HrBatchDataView from '@/components/hengruiproject/batchdataview/HrBatchDataView.vue';
+import HrImportBatchDataView from '@/components/hengruiproject/batchdataview/HrImportBatchDataView.vue';
+import HrMonitoringDataView from '@/components/hengruiproject/monitoringdataview/HrMonitoringDataView.vue';
+import HrOrgRelationView from '@/components/hengruiproject/orgrelationview/HrOrgRelationView.vue';
+import HrImportOrgRelationView from '@/components/hengruiproject/orgrelationview/HrImportOrgRelationView.vue';
 
 // 主数据项目
 import MainDataHome from '@/components/maindataproject/MainDataHome.vue';
@@ -230,31 +230,31 @@ const routes = [
             {
                 path: 'batch',
                 name: 'batchData',
-                component: BatchDataView,
+                component: HrBatchDataView,
                 meta: { requiresAuth: true }
             },
             {
                 path: 'importBatch',
                 name: 'importBatch',
-                component: ImportBatchDataView,
+                component: HrImportBatchDataView,
                 meta: { requiresAuth: true }
             },
             {
                 path: 'monitoring',
                 name: 'monitoringData',
-                component: MonitoringDataView,
+                component: HrMonitoringDataView,
                 meta: { requiresAuth: true }
             },
             {
                 path: 'relation',
                 name: 'relationData',
-                component: OrgRelationView,
+                component: HrOrgRelationView,
                 meta: { requiresAuth: true }
             },
             {
                 path: 'importRelation',
                 name: 'importRelation',
-                component: ImportOrgRelationView,
+                component: HrImportOrgRelationView,
                 meta: { requiresAuth: true }
             }
         ]

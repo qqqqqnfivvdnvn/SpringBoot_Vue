@@ -57,22 +57,34 @@
                 fit
                 resizable
             >
-              <el-table-column prop="id" label="id" show-overflow-tooltip />
-              <el-table-column prop="batchId" label="批次 ID" show-overflow-tooltip />
-              <el-table-column prop="originalName" label="原始名称" width="150" show-overflow-tooltip />
-              <el-table-column prop="originalProvince" label="原始省份" width="100" show-overflow-tooltip />
-              <el-table-column prop="originalAddress" label="原始地址" width="200" show-overflow-tooltip />
-              <el-table-column prop="province" label="省份" width="100" show-overflow-tooltip />
-              <el-table-column prop="city" label="城市" width="100" show-overflow-tooltip />
-              <el-table-column prop="areaName" label="区县名称" width="100" show-overflow-tooltip />
-              <el-table-column prop="areaId" label="区县编码" width="100" show-overflow-tooltip />
-              <el-table-column prop="lngLat" label="经纬度" width="150" show-overflow-tooltip>
+              <el-table-column prop="id" label="id" min-width="120" show-overflow-tooltip>
+                <template #default="{ row }">
+                  <el-link type="primary" :underline="false" @click="copyText(row.id)" :disabled="!row.id">
+                    {{ row.id }}
+                  </el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="batchId" label="批次 ID" min-width="150" show-overflow-tooltip>
+                <template #default="{ row }">
+                  <el-link type="primary" :underline="false" @click="copyText(row.batchId)" :disabled="!row.batchId">
+                    {{ row.batchId }}
+                  </el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="originalName" label="原始名称" min-width="150" show-overflow-tooltip />
+              <el-table-column prop="originalProvince" label="原始省份" min-width="100" show-overflow-tooltip />
+              <el-table-column prop="originalAddress" label="原始地址" min-width="200" show-overflow-tooltip />
+              <el-table-column prop="province" label="省份" min-width="100" show-overflow-tooltip />
+              <el-table-column prop="city" label="城市" min-width="100" show-overflow-tooltip />
+              <el-table-column prop="areaName" label="区县名称" min-width="100" show-overflow-tooltip />
+              <el-table-column prop="areaId" label="区县编码" min-width="100" show-overflow-tooltip />
+              <el-table-column prop="lngLat" label="经纬度" min-width="150" show-overflow-tooltip>
                 <template #default="{ row }">
                   <span v-if="row.lngLat">{{ row.lngLat }}</span>
                   <span v-else style="color: #999">未匹配</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="createTime" label="创建时间" width="160" :formatter="formatDate" />
+              <el-table-column prop="createTime" label="创建时间" min-width="160" :formatter="formatDate" />
             </el-table>
 
             <div v-else class="no-data-container">
@@ -137,6 +149,42 @@ const locationData = reactive({
   isFirstPage: true,
   isLastPage: true
 })
+
+// 文本复制函数
+const copyText = async (text) => {
+  if (!text) return
+
+  const textToCopy = String(text)
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(textToCopy)
+      ElMessage.success('已复制')
+      return
+    }
+
+    const textArea = document.createElement('textarea')
+    textArea.value = textToCopy
+    textArea.style.position = 'fixed'
+    textArea.style.left = '-9999px'
+    textArea.style.top = '0'
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+
+    const successful = document.execCommand('copy')
+    document.body.removeChild(textArea)
+
+    if (successful) {
+      ElMessage.success('已复制')
+    } else {
+      ElMessage.error('复制失败')
+    }
+  } catch (err) {
+    console.error('复制失败:', err)
+    ElMessage.error('复制失败')
+  }
+}
 
 // 格式化日期
 const formatDate = (row, column, cellValue) => {
@@ -335,14 +383,24 @@ onMounted(() => {
 .content-wrapper {
   flex: 1;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .table-view {
+  flex: 1;
   height: 100%;
+  overflow: hidden;
 }
 
 :deep(.el-table) {
   height: 100%;
+  width: 100%;
+}
+
+:deep(.el-table__body-wrapper) {
+  height: 100%;
+  overflow: auto;
 }
 
 .no-data-container {

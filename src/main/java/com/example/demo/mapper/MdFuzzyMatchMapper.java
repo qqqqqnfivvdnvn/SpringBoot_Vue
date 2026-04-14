@@ -6,6 +6,7 @@ import com.example.demo.entity.MdFuzzyMatchBatch;
 import com.example.demo.entity.MdFuzzyMatchSummary;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.MapKey;
 
 import java.util.List;
 import java.util.Map;
@@ -48,20 +49,24 @@ public interface MdFuzzyMatchMapper {
     /**
      * 根据省份和名称模糊匹配医院（精确匹配）
      */
+    @MapKey("keyid")
     List<Map<String, Object>> matchHospitalByProvinceAndName(@Param("province") String province, @Param("namePattern") String namePattern);
 
     /**
      * 根据省份和名称模糊匹配医院（包含历史名称）
      */
+    @MapKey("keyid")
     List<Map<String, Object>> matchHospitalWithHistory(@Param("province") String province, @Param("namePattern") String namePattern);
 
     /**
      * 根据省份和名称模糊匹配商业公司
      */
+    @MapKey("key_id")
     List<Map<String, Object>> matchCompanyByProvinceAndName(@Param("province") String province, @Param("namePattern") String namePattern);
 
     /**
      * 根据省份和名称模糊匹配商业公司（精确匹配，拆分后的名称）
      */
+    @MapKey("key_id")
     List<Map<String, Object>> matchCompanyByProvinceAndSplitName(@Param("province") String province, @Param("namePattern") String namePattern);
 }

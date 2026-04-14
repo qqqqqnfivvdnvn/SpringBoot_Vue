@@ -8,8 +8,10 @@ import com.example.demo.entity.MdFuzzyMatchBatch;
 import com.example.demo.entity.MdFuzzyMatchSummary;
 import com.example.demo.service.MdFuzzyMatchService;
 import com.github.pagehelper.PageInfo;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -68,9 +72,18 @@ public class MdFuzzyMatchController {
      * 导出批次数据
      */
     @GetMapping("/exportBatch")
-    @ResponseBody
-    public ResponseEntity<ApiResponseDTO<byte[]>> exportBatch(
-            @RequestParam String batchId) {
-        return ResponseEntity.ok(mdFuzzyMatchService.exportBatch(batchId));
+    public ResponseEntity<byte[]> exportBatch(@RequestParam String batchId) {
+        ApiResponseDTO<byte[]> response = mdFuzzyMatchService.exportBatch(batchId);
+
+        if (response.getCode() != 200) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment",
+                URLEncoder.encode("模糊匹配结果_" + batchId + "_" + System.currentTimeMillis() + ".xlsx", StandardCharsets.UTF_8).replace("+", "%20"));
+
+        return ResponseEntity.ok().headers(headers).body(response.getData());
     }
 }

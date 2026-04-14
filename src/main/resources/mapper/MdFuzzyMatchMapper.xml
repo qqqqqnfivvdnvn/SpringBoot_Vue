@@ -88,6 +88,15 @@
         <result column="original_address" property="originalAddress" />
         <result column="keyid" property="keyid" />
         <result column="name" property="name" />
+        <result column="namehistory" property="namehistory" />
+        <result column="province" property="province" />
+        <result column="cityname" property="cityname" />
+        <result column="areaname" property="areaname" />
+        <result column="address" property="address" />
+        <result column="principal" property="principal" />
+        <result column="legalperson" property="legalperson" />
+        <result column="sign_status" property="sign_status" />
+        <result column="qcc_status" property="status" />
         <result column="remark" property="remark" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
@@ -95,42 +104,40 @@
 
     <!-- 查询汇总数据列表 -->
     <select id="getSummaryList" resultMap="MdFuzzyMatchSummaryResultMap">
-        SELECT
-            batch_id,
-            id,
-            original_province,
-            original_name,
-            original_address,
-            keyid,
-            name,
-            remark,
-            create_time,
-            update_time
-        FROM haosen_project..md_fuzzy_match_summary
+        SELECT a.id, a.original_province, a.original_name, a.original_address, a.keyid, a.remark, a.batch_id, a.create_time, a.update_time,
+               b.name, b.namehistory, b.province, b.cityname, b.areaname, b.address, b.legalperson, b.principal, b.sign_status, b.qcc_status
+        FROM haosen_project..md_fuzzy_match_summary a
+        LEFT JOIN (
+            SELECT keyid, name, namehistory, province, cityname, areaname, address, legalperson, principal, null sign_status, status qcc_status
+            FROM HospitalInfo..hospital
+            UNION ALL
+            SELECT key_id, name, history_name, province, city_name, area_name, address, oper_name, null principal, qcc_status sign_status, status
+            FROM HospitalInfo..company
+        ) b ON a.keyid = b.keyid
         <where>
             <if test="batchId != null and batchId != ''">
-                AND batch_id = #{batchId}
+                AND a.batch_id = #{batchId}
             </if>
             <if test="originalId != null and originalId != ''">
-                AND id = #{originalId}
+                AND a.id = #{originalId}
             </if>
             <if test="originalProvince != null and originalProvince != ''">
-                AND original_province = #{originalProvince}
+                AND a.original_province = #{originalProvince}
             </if>
             <if test="originalName != null and originalName != ''">
-                AND original_name LIKE CONCAT('%', #{originalName}, '%')
+                AND a.original_name LIKE CONCAT('%', #{originalName}, '%')
             </if>
             <if test="originalAddress != null and originalAddress != ''">
-                AND original_address LIKE CONCAT('%', #{originalAddress}, '%')
+                AND a.original_address LIKE CONCAT('%', #{originalAddress}, '%')
             </if>
             <if test="keyid != null and keyid != ''">
-                AND keyid = #{keyid}
+                AND a.keyid = #{keyid}
             </if>
             <if test="name != null and name != ''">
-                AND name LIKE CONCAT('%', #{name}, '%')
+                AND b.name LIKE CONCAT('%', #{name}, '%')
             </if>
         </where>
-        ORDER BY create_time DESC
+        ORDER BY a.create_time DESC
     </select>
 
     <!-- 根据省份和名称模糊匹配医院（精确匹配） -->

@@ -15,6 +15,15 @@ public class MdFuzzyMatchSummary {
     private String originalAddress;
     private String keyid;
     private String name;
+    private String namehistory;
+    private String province;
+    private String cityname;
+    private String areaname;
+    private String address;
+    private String principal;
+    private String legalperson;
+    private String sign_status;
+    private String status;
     private String remark;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
