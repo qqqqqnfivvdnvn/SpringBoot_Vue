@@ -1297,6 +1297,10 @@ html.dark .company-data-view,
   font-size: 14px;
 }
 
+:deep(.el-table th.el-table__cell) {
+  font-weight: 600;
+}
+
 :deep(.el-table__body-wrapper) {
   height: 100%;
   overflow: auto;

@@ -684,6 +684,10 @@ html.dark .hospital-data-view,
   font-size: 14px;
 }
 
+:deep(.el-table th.el-table__cell) {
+  font-weight: 600;
+}
+
 html.dark :deep(.el-table) {
   background-color: var(--el-bg-color, #1a1a2c) !important;
 }
