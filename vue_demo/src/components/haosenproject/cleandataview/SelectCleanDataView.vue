@@ -17,7 +17,7 @@
               <el-input v-model="searchForm.originalName" placeholder="请输入原始名称" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
             </el-form-item>
             <el-form-item label="DataId">
-              <el-input v-model="searchForm.dataId" placeholder="请输入DataId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+              <el-input v-model="searchForm.dataId" placeholder="请输入 DataId" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
             </el-form-item>
             <el-form-item label="原始省份">
               <el-input v-model="searchForm.originalProvince" placeholder="请输入原始省份" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
@@ -118,32 +118,32 @@
 
                 <template #default="{ row }">
                   <template v-if="index < 3">
-                    <!-- 前3列为可复制的链接：batchCode, dataId, dataCode -->
+                    <!-- 前 3 列为可复制的链接：batchCode, dataId, dataCode -->
                     <el-link type="primary" :underline="false" @click="copyText(row[columns[index].prop])" :disabled="!row[columns[index].prop]">
                       {{ row[columns[index].prop] }}
                     </el-link>
                   </template>
                   <template v-else-if="index === 3">
-                    <!-- 第4列为数据类型 -->
+                    <!-- 第 4 列为数据类型 -->
                     {{ row.dataType === '1' ? '存量' : row.dataType === '2' ? '增量' : '未知' }}
                   </template>
                   <template v-else-if="index === 4">
-                    <!-- 第5列为原始省份 -->
+                    <!-- 第 5 列为原始省份 -->
                     {{ row[columns[index].prop] }}
                   </template>
                   <template v-else-if="index === 5">
-                    <!-- 第6列为可复制的原始名称 -->
+                    <!-- 第 6 列为可复制的原始名称 -->
                     <el-link type="primary" :underline="false" @click="copyText(row[columns[index].prop])">
                       {{ row[columns[index].prop] }}
                     </el-link>
                   </template>
                   <template v-else-if="index < 8">
-                    <!-- 6-7列为普通文本：originalAddress, companyName -->
+                    <!-- 6-7 列为普通文本：originalAddress, companyName -->
                     {{ row[columns[index].prop] }}
                   </template>
 
                   <template v-else-if="index === 10">
-                    <!-- 第10列为是否多批次 -->
+                    <!-- 第 10 列为是否多批次 -->
                     <el-tag :type="getStatusTagType(row.duplicateFlag, 'duplicateFlag')" size="small">
                       {{ getDuplicateFlagStatus(row.duplicateFlag) }}
                     </el-tag>
@@ -151,8 +151,8 @@
                   </template>
 
                   <template v-else-if="index < 11">
-                    <!-- 8-9列为状态标签：batchStatus, cleanStatus -->
-                    <el-tag 
+                    <!-- 8-9 列为状态标签：batchStatus, cleanStatus -->
+                    <el-tag
                       :type="index === 8 ? getStatusTagType(row.batchStatus, 'batchStatus') : getStatusTagType(row.cleanStatus, 'cleanStatus')"
                       size="small"
                     >
@@ -211,9 +211,6 @@
                         <el-tag :type="getStatusTagType(item.batchStatus)" size="small" effect="dark">
                           {{ formatStatus(item.batchStatus) }}
                         </el-tag>
-                        <!--                        <el-tag :type="getCleanStatusTagType(item.cleanStatus)" size="small" effect="dark" style="margin-left: 4px;">-->
-                        <!--                          {{ formatCleanStatus(item.cleanStatus) }}-->
-                        <!--                        </el-tag>-->
                       </div>
                     </div>
                   </template>
@@ -280,9 +277,9 @@
               下一页
             </el-button>
             <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
-              <el-option :value="20" label="每页20条" />
-              <el-option :value="40" label="每页40条" />
-              <el-option :value="60" label="每页60条" />
+              <el-option :value="20" label="每页 20 条" />
+              <el-option :value="40" label="每页 40 条" />
+              <el-option :value="60" label="每页 60 条" />
             </el-select>
           </div>
         </div>
@@ -382,11 +379,11 @@
               <el-form-item label="标准名称"><el-input v-model="currentCleanDetail.name"   /></el-form-item>
               <el-form-item label="历史名称"><el-input v-model="currentCleanDetail.nameHistory"   /></el-form-item>
               <el-form-item label="省"><el-input v-model="currentCleanDetail.province"   /></el-form-item>
-              <el-form-item label="省ID"><el-input v-model="currentCleanDetail.provinceId"  /></el-form-item>
+              <el-form-item label="省 ID"><el-input v-model="currentCleanDetail.provinceId"  /></el-form-item>
               <el-form-item label="市"><el-input v-model="currentCleanDetail.city"   /></el-form-item>
-              <el-form-item label="市ID"><el-input v-model="currentCleanDetail.cityId"   /></el-form-item>
+              <el-form-item label="市 ID"><el-input v-model="currentCleanDetail.cityId"   /></el-form-item>
               <el-form-item label="区县"><el-input v-model="currentCleanDetail.area"  /></el-form-item>
-              <el-form-item label="区县ID"><el-input v-model="currentCleanDetail.areaId"   /></el-form-item>
+              <el-form-item label="区县 ID"><el-input v-model="currentCleanDetail.areaId"   /></el-form-item>
               <el-form-item label="地址"><el-input v-model="currentCleanDetail.address" /></el-form-item>
               <el-form-item label="等级">
                 <el-select v-model="currentCleanDetail.level" :disabled="isFieldDisabled('level')">
@@ -411,7 +408,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="类别"><el-input v-model="currentCleanDetail.classify"   /></el-form-item>
-              <el-form-item label="总分院kid"><el-input v-model="currentCleanDetail.generalBranchKid" :disabled="isFieldDisabled('generalBranchKid')" /></el-form-item>
+              <el-form-item label="总分院 kid"><el-input v-model="currentCleanDetail.generalBranchKid" :disabled="isFieldDisabled('generalBranchKid')" /></el-form-item>
               <el-form-item label="总分院名称"><el-input v-model="currentCleanDetail.generalBranchName" :disabled="isFieldDisabled('generalBranchName')" /></el-form-item>
               <el-form-item label="是否军队医院">
                 <el-select v-model="currentCleanDetail.militaryHos" :disabled="isFieldDisabled('militaryHos')">
@@ -432,7 +429,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="经营范围"><el-input v-model="currentCleanDetail.scope" :disabled="isFieldDisabled('scope')" /></el-form-item>
-              <el-form-item label="总分店kid"><el-input v-model="currentCleanDetail.mainBranchKid" :disabled="isFieldDisabled('mainBranchKid')" /></el-form-item>
+              <el-form-item label="总分店 kid"><el-input v-model="currentCleanDetail.mainBranchKid" :disabled="isFieldDisabled('mainBranchKid')" /></el-form-item>
               <el-form-item label="总分店名称"><el-input v-model="currentCleanDetail.mainBranchName" :disabled="isFieldDisabled('mainBranchName')" /></el-form-item>
               <el-form-item label="成立日期"><el-input v-model="currentCleanDetail.createDate" :disabled="isFieldDisabled('createDate')" /></el-form-item>
               <el-form-item label="注册资金"><el-input v-model="currentCleanDetail.registCapi" :disabled="isFieldDisabled('registCapi')" /></el-form-item>
@@ -641,21 +638,21 @@ const formatCleanStatus = (cleanStatus) => {
 const getStatusTagType = (status, type = 'batchStatus') => {
   // 根据不同类型返回相应的标签类型
   if (type === 'batchStatus') {
-    // 清洗状态: 1-待清洗(warning)，2-已清洗(success)
+    // 清洗状态：1-待清洗 (warning)，2-已清洗 (success)
     switch (status) {
       case 1: return 'warning'
       case 2: return 'success'
       default: return ''
     }
   } else if (type === 'cleanStatus') {
-    // 抽取状态: 0-待抽取(warning)，1-已抽取(success)
+    // 抽取状态：0-待抽取 (warning)，1-已抽取 (success)
     switch (status) {
       case 0: return 'warning'
       case 1: return 'success'
       default: return ''
     }
   } else if (type === 'duplicateFlag') {
-    // 是否多批次: '1'-是(danger)，'2'-否(success)
+    // 是否多批次：'1'-是 (danger)，'2'-否 (success)
     if (status === '1') {
       return 'danger'   // 是 - 红色
     } else if (status === '2') {
@@ -664,7 +661,7 @@ const getStatusTagType = (status, type = 'batchStatus') => {
       return ''
     }
   }
-  
+
   // 默认处理数字状态值
   switch (status) {
     case 0:
@@ -774,10 +771,10 @@ const handlePageSizeChange = () => {
 // ==================== 文本复制工具函数 ====================
 const copyText = async (text) => {
   if (!text) return
-  
+
   // 将文本转换为字符串
   const textToCopy = String(text)
-  
+
   try {
     // 优先使用现代 Clipboard API
     if (navigator.clipboard && window.isSecureContext) {
@@ -785,7 +782,7 @@ const copyText = async (text) => {
       ElMessage.success('已复制')
       return
     }
-    
+
     // 降级方案：使用传统的 execCommand
     const textArea = document.createElement('textarea')
     textArea.value = textToCopy
@@ -795,10 +792,10 @@ const copyText = async (text) => {
     document.body.appendChild(textArea)
     textArea.focus()
     textArea.select()
-    
+
     const successful = document.execCommand('copy')
     document.body.removeChild(textArea)
-    
+
     if (successful) {
       ElMessage.success('已复制')
     } else {
@@ -883,7 +880,7 @@ const saveChanges = async () => {
 const findDaKuData = async () => {
   if (isFinding.value) return
   if (!currentCleanDetail.value.keyid) {
-    ElMessage.warning('请先输入keyid')
+    ElMessage.warning('请先输入 keyid')
     return
   }
   isFinding.value = true
@@ -965,11 +962,11 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: min(1250px, 95vw);
+  max-width: min(1600px, 95vw);
   margin: 0 auto;
-  background: var(--bg-secondary, #ffffff);
+  background: #ffffff;
   overflow: hidden;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* ==================== 整合容器样式 ==================== */
@@ -980,88 +977,18 @@ onMounted(() => {
   height: 100%;
   overflow: hidden;
   margin: 8px;
-  border: 1px solid #ebeef5;
+  border: 1px solid var(--el-border-color-light, #ebeef5);
   border-radius: 6px;
-  background: #fff;
+  background: var(--el-bg-color, #fff);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
-
-/* 顶部操作区域 */
-.top-operation-area {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 14px 18px 0;
-  background: #ffffff;
-  border-bottom: 1px solid #ebeef5;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  border-radius: 6px 6px 0 0;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-/* 搜索条件盒子 */
-.search-conditions-box {
-  width: 100%;
-  margin-bottom: 16px;
-}
-
-/* 操作按钮盒子 */
-.action-buttons-box {
-  width: 100%;
-  background: #ffffff;
-  border-radius: 4px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-}
-
-.action-buttons-content {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 16px;
-
-}
-
-.view-toggle {
-  margin-left: auto;
-}
-
-/* 搜索表单样式 */
-.search-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 8px;
-  align-items: end;
-}
-
-.search-form :deep(.el-form-item) {
-  margin-bottom: 0 !important;
-  flex: 1 1 180px;
-}
-
-/* ==================== 响应式布局适配 ==================== */
-/* 2K屏幕优化 */
-@media (min-width: 2000px) and (max-width: 2600px) {
-  .appeal-data-view {
-    max-width: min(1860px, 90vw);
-  }
-}
-
-/* 超宽屏幕 */
-@media (min-width: 2600px) {
-  .appeal-data-view {
-    max-width: min(2400px, 95vw);
-  }
-}
-
 
 /* ==================== 搜索区域样式 ==================== */
 .fixed-search {
   flex-shrink: 0;
   padding: 14px 18px 10px;
-  background: var(--bg-secondary, #ffffff);
-  border-bottom: 1px solid #ebeef5;
+  background: var(--el-bg-color, #ffffff);
+  border-bottom: 1px solid var(--el-border-color-light, #ebeef5);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border-radius: 6px 6px 0 0;
 }
@@ -1069,7 +996,6 @@ onMounted(() => {
 .search-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
 
 /* 搜索条件区域 */
@@ -1082,36 +1008,36 @@ onMounted(() => {
 
 .search-form :deep(.el-form-item) {
   margin-bottom: 0 !important;
-  flex: 1 1 180px;
-  min-width: 180px;
+  flex: 1 1 200px;
+  min-width: 200px;
 }
 
-/* 按钮区域整体容器 - 用于靠右对齐 */
+.search-form :deep(.el-form-item__label),
+.search-form :deep(.el-input__inner) {
+  font-size: 14px !important;
+  color: #606266;
+}
+
 .form-actions-wrapper {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  margin-top: 10px;
 }
 
-/* 按钮本身容器 */
 .form-actions {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
 }
 
-/* 视图切换按钮组微调 */
 .view-toggle {
-  margin-left: 8px;
+  margin-left: 16px;
 }
 
-
-
-/* 数据内容区域 */
+/* ==================== 数据内容区域 ==================== */
 .data-content {
   flex: 1;
+  height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1120,22 +1046,36 @@ onMounted(() => {
 .content-wrapper {
   flex: 1;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .table-view {
+  flex: 1;
   height: 100%;
 }
 
+:deep(.el-table) {
+  font-size: 14px !important;
+}
+
+:deep(.el-table th.el-table__cell) {
+  background-color: var(--el-table-header-bg-color, #f8f9fb);
+  color: var(--el-text-color-primary, #303133);
+  font-weight: 600;
+  height: 48px;
+}
+
+/* ==================== 卡片视图样式 ==================== */
 .card-view {
-  height: 100%;
-  overflow-y: auto;
-  padding: 16px;
+  flex: 1;
+  overflow: hidden;
 }
 
 .appeal-card {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  font-size: 14px;
+  margin-bottom: 16px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -1146,46 +1086,36 @@ onMounted(() => {
 
 .card-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #ebeef5;
+  justify-content: space-between;
 }
 
 .card-title {
-  font-size: 14px;
-  font-weight: bold;
-  max-width: 70%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: 600;
+  font-size: 15px;
+  color: #303133;
 }
 
-.status-badges {
-  display: flex;
-  align-items: center;
-}
-
-.appeal-remark {
-  margin-left: 8px;
+.card-header :deep(.el-tag) {
+  flex-shrink: 0;
 }
 
 .card-body {
-  flex: 1;
-  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .card-item {
-  margin-bottom: 8px;
-  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
 }
 
 .card-item .label {
-  color: #606266;
-  font-weight: 500;
-  margin-right: 6px;
-  min-width: 60px;
-  display: inline-block;
+  color: #909399;
+  min-width: 70px;
 }
 
 .card-footer {
@@ -1195,12 +1125,12 @@ onMounted(() => {
   border-top: 1px solid #f0f0f0;
 }
 
-/* 分页区域 */
+/* ==================== 分页区域样式 ==================== */
 .fixed-pagination {
   flex-shrink: 0;
-  background: var(--bg-secondary, #ffffff);
+  background: var(--el-bg-color, #ffffff);
   padding: 12px;
-  border-top: 1px solid var(--bg-secondary, #ffffff);
+  border-top: 1px solid var(--el-border-color-light, #ebeef5);
   box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
@@ -1215,32 +1145,148 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
-  color: #606266;
+  font-size: 14px;
+  color: var(--el-text-color-regular, #606266);
 }
 
 .page-input {
-  width: 80px;
+  width: 90px !important;
+  margin: 0 8px;
 }
 
-.page-info {
+.page-input :deep(.el-input__wrapper) {
+  padding-left: 10px;
+  padding-right: 35px;
+}
+
+.page-btn {
+  border-radius: 4px;
+  padding: 0 15px;
+  height: 32px;
   font-size: 12px;
-  color: #606266;
-  min-width: 220px;
-  text-align: center;
+}
+
+.size-select {
+  width: 110px !important;
+  font-size: 12px;
+}
+
+.page-total {
+  margin-left: 4px;
 }
 
 .no-data-container {
   height: 100%;
   display: flex;
   align-items: center;
-  background: var(--bg-secondary, #ffffff);
   justify-content: center;
+}
+
+/* ==================== 响应式适配 ==================== */
+@media (min-width: 2000px) {
+  .appeal-data-view { max-width: min(1920px, 95vw); }
+}
+
+@media (min-width: 2600px) {
+  .appeal-data-view { max-width: min(2560px, 95vw); }
+}
+
+/* ==================== 暗色模式样式 ==================== */
+html.dark .appeal-data-view,
+.dark .appeal-data-view {
+  background: var(--el-bg-color, #1a1a2c);
+}
+
+.dark .integrated-container {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .fixed-search {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .search-form :deep(.el-form-item__label) {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .search-form :deep(.el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+.dark .search-form :deep(.el-picker__wrapper),
+.dark .search-form :deep(.el-date-editor .el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+.dark :deep(.el-table) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+}
+
+.dark :deep(.el-table__header tr),
+.dark :deep(.el-table__header tr th.el-table__cell),
+.dark :deep(.el-table thead tr th) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark :deep(.el-table__body tr.el-table__row > td),
+.dark :deep(.el-table tbody tr td.el-table__cell) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark :deep(.el-table--striped .el-table__body tr.el-table__row--striped td) {
+  background-color: var(--el-fill-color-lighter, #232330) !important;
+}
+
+.dark :deep(.el-table__body tr:hover > td) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+}
+
+.dark .fixed-pagination {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-top-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .page-jumper {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .appeal-card {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .card-header {
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .card-title {
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+}
+
+.dark .card-item .label {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
+}
+
+.dark .card-item {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .no-data-container :deep(.el-empty__description) {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
 }
 
 
 
-/* 详情弹窗样式 */
+/* ==================== 详情弹窗样式 ==================== */
 .detail-container {
   max-height: 60vh;
   overflow-y: auto;
@@ -1256,18 +1302,18 @@ onMounted(() => {
 .detail-row label {
   min-width: 160px;
   font-weight: 600;
-
   line-height: 1.5;
+  color: var(--el-text-color-regular, #606266);
 }
 
 .detail-row span {
   flex: 1;
   word-break: break-word;
   line-height: 1.5;
-
+  color: var(--el-text-color-regular, #606266);
 }
 
-/* 申诉弹窗整体 */
+/* ==================== 申诉处理弹窗样式 ==================== */
 .update-dialog :deep(.el-dialog) {
   display: flex;
   flex-direction: column;
@@ -1280,7 +1326,6 @@ onMounted(() => {
   font-size: 18px;
   font-weight: 600;
   width: 100%;
-
 }
 
 .custom-dialog-title-clean {
@@ -1288,20 +1333,19 @@ onMounted(() => {
   font-size: 18px;
   font-weight: 600;
   width: 100%;
-
 }
-
 
 .update-dialog :deep(.el-dialog__header) {
   padding: 16px 24px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid var(--el-border-color-light, #ebeef5);
+  background: var(--el-bg-color, #ffffff);
 }
 
 .dialog-fixed-header {
   flex-shrink: 0;
   padding: 14px 24px;
-  background: var(--bg-color, var(--bg-secondary, #ffffff));
-  border-bottom: 1px solid #ebeef5;
+  background: var(--el-bg-color, #ffffff);
+  border-bottom: 1px solid var(--el-border-color-light, #ebeef5);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -1315,8 +1359,6 @@ onMounted(() => {
   align-items: center;
   flex: 1;
 }
-
-
 
 .header-actions {
   display: flex;
@@ -1353,7 +1395,7 @@ onMounted(() => {
   overflow: hidden;
 }
 
-/* 操作下拉菜单样式 */
+/* ==================== 操作下拉菜单样式 ==================== */
 .action-dropdown {
   vertical-align: top;
 }
@@ -1439,13 +1481,161 @@ onMounted(() => {
   font-weight: 500;
 }
 
-/* 与HospitalDataView.vue保持一致的颜色设置 */
 .detail-item .menu-icon {
   color: var(--el-color-primary);
 }
 .update-item .menu-icon {
   color: var(--el-color-success);
 }
+
+/* ==================== 暗色主题适配 ==================== */
+html.dark .appeal-data-view,
+.dark .appeal-data-view {
+  background: var(--el-bg-color, #1a1a2c);
+}
+
+html.dark .integrated-container,
+.dark .integrated-container {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+html.dark .fixed-search,
+.dark .fixed-search {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .search-form :deep(.el-form-item__label) {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+html.dark .search-form :deep(.el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+html.dark .search-form :deep(.el-picker__wrapper),
+html.dark .search-form :deep(.el-date-editor .el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+html.dark :deep(.el-table) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+}
+
+html.dark :deep(.el-table__header tr),
+html.dark :deep(.el-table__header tr th.el-table__cell),
+html.dark :deep(.el-table thead tr th) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark :deep(.el-table__body tr.el-table__row > td),
+html.dark :deep(.el-table tbody tr td.el-table__cell) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark :deep(.el-table--striped .el-table__body tr.el-table__row--striped td) {
+  background-color: var(--el-fill-color-lighter, #232330) !important;
+}
+
+html.dark :deep(.el-table__body tr:hover > td) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+}
+
+html.dark .fixed-pagination,
+.dark .fixed-pagination {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-top-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .page-jumper,
+.dark .page-jumper {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+html.dark .appeal-card,
+.dark .appeal-card {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .card-header,
+.dark .card-header {
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .card-title,
+.dark .card-title {
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+}
+
+html.dark .card-item .label,
+.dark .card-item .label {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
+}
+
+html.dark .card-item,
+.dark .card-item {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+html.dark .card-footer,
+.dark .card-footer {
+  border-top-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .detail-row label,
+.dark .detail-row label {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+html.dark .detail-row span,
+.dark .detail-row span {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+html.dark .update-dialog :deep(.el-dialog),
+.dark .update-dialog :deep(.el-dialog) {
+  background: var(--el-bg-color, #1a1a2c) !important;
+}
+
+html.dark .update-dialog :deep(.el-dialog__header),
+.dark .update-dialog :deep(.el-dialog__header) {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .dialog-fixed-header,
+.dark .dialog-fixed-header {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .no-data-container :deep(.el-empty__description),
+.dark .no-data-container :deep(.el-empty__description) {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .action-dropdown-menu {
+    background-color: var(--el-bg-color-overlay);
+    border: 1px solid var(--el-border-color);
+  }
+
+  .dropdown-item:hover {
+    background-color: var(--el-color-primary-light-9);
+    transform: translateX(4px);
+  }
+
+  .menu-text {
+    color: var(--el-text-color-primary);
+  }
+}
 </style>
-
-
