@@ -1155,11 +1155,17 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: min(1250px, 95vw);
+  max-width: min(1600px, 95vw);
   margin: 0 auto;
-  background: var(--bg-secondary, #ffffff);
+  background: #ffffff;
   overflow: hidden;
-  font-size: 12px;
+  font-size: 14px;
+}
+
+/* 暗色模式支持 */
+html.dark .hospital-data-view,
+.dark .hospital-data-view {
+  background: var(--el-bg-color, #1a1a2c);
 }
 
 /* ==================== 整合容器样式 ==================== */
@@ -1170,9 +1176,9 @@ onMounted(() => {
   height: 100%;
   overflow: hidden;
   margin: 8px;
-  border: 1px solid #ebeef5;
+  border: 1px solid var(--el-border-color-light, #ebeef5);
   border-radius: 6px;
-  background: #fff;
+  background: var(--el-bg-color, #fff);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
@@ -1195,8 +1201,8 @@ onMounted(() => {
 .fixed-search {
   flex-shrink: 0;
   padding: 14px 18px 10px;
-  background: var(--bg-secondary, #ffffff);
-  border-bottom: 1px solid #ebeef5;
+  background: var(--el-bg-color, #ffffff);
+  border-bottom: 1px solid var(--el-border-color-light, #ebeef5);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border-radius: 6px 6px 0 0;
 }
@@ -1210,6 +1216,7 @@ onMounted(() => {
 /* 搜索条件区域 */
 .search-conditions {
   display: flex;
+  background: var(--el-bg-color, #ffffff);
   flex-wrap: wrap;
   gap: 12px 8px;
   align-items: flex-end;
@@ -1217,8 +1224,8 @@ onMounted(() => {
 
 .search-form :deep(.el-form-item) {
   margin-bottom: 0 !important;
-  flex: 1 1 180px;
-  min-width: 180px;
+  flex: 1 1 200px;
+  min-width: 200px;
 }
 
 /* ==================== 操作按钮区域样式 ==================== */
@@ -1282,6 +1289,7 @@ onMounted(() => {
 :deep(.el-table) {
   height: 100%;
   width: 100%;
+  font-size: 14px;
 }
 
 :deep(.el-table__body-wrapper) {
@@ -1301,6 +1309,16 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--el-bg-color, #ffffff);
+}
+
+.hospital-card :deep(.el-card__header) {
+  background: var(--el-bg-color, #ffffff);
+  border-bottom: 1px solid var(--el-border-color-light, #ebeef5);
+}
+
+.hospital-card :deep(.el-card__body) {
+  background: var(--el-bg-color, #ffffff);
 }
 
 .hospital-card:hover {
@@ -1313,16 +1331,17 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding-bottom: 8px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid var(--el-border-color-light, #ebeef5);
 }
 
 .card-title {
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
   max-width: 70%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: var(--el-text-color-primary, #303133);
 }
 
 .card-body {
@@ -1333,11 +1352,12 @@ onMounted(() => {
 .card-item {
   margin-bottom: 8px;
   line-height: 1.5;
+  color: var(--el-text-color-regular, #606266);
 }
 
 .card-item .label {
-  color: #606266;
-  font-weight: 500;
+  color: var(--el-text-color-secondary, #606266);
+  font-weight: 600;
   margin-right: 6px;
   min-width: 60px;
   display: inline-block;
@@ -1347,15 +1367,15 @@ onMounted(() => {
   margin-top: auto;
   text-align: right;
   padding-top: 12px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--el-border-color-lighter, #f0f0f0);
 }
 
 /* ==================== 分页区域样式 ==================== */
 .fixed-pagination {
   flex-shrink: 0;
-  background: var(--bg-secondary, #ffffff);
+  background: var(--el-bg-color, #ffffff);
   padding: 12px;
-  border-top: 1px solid var(--bg-secondary, #ffffff);
+  border-top: 1px solid var(--el-border-color-light, #ebeef5);
   box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
@@ -1376,8 +1396,8 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
-  color: #606266;
+  font-size: 14px;
+  color: var(--el-text-color-regular, #606266);
 }
 
 .page-input {
@@ -1385,8 +1405,8 @@ onMounted(() => {
 }
 
 .page-info {
-  font-size: 12px;
-  color: #606266;
+  font-size: 14px;
+  color: var(--el-text-color-regular, #606266);
   min-width: 220px;
   text-align: center;
 }
@@ -1395,7 +1415,7 @@ onMounted(() => {
   height: 100%;
   display: flex;
   align-items: center;
-  background: var(--bg-secondary, #ffffff);
+  background: var(--el-bg-color, #ffffff);
   justify-content: center;
 }
 
@@ -1415,7 +1435,7 @@ onMounted(() => {
 .detail-row label {
   min-width: 160px;
   font-weight: 600;
-
+  color: var(--el-text-color-primary, #303133);
   line-height: 1.5;
 }
 
@@ -1423,7 +1443,7 @@ onMounted(() => {
   flex: 1;
   word-break: break-word;
   line-height: 1.5;
-
+  color: var(--el-text-color-regular, #606266);
 }
 
 /* ==================== 数据处理弹窗样式 ==================== */
@@ -1454,14 +1474,15 @@ onMounted(() => {
 
 .update-dialog :deep(.el-dialog__header) {
   padding: 16px 24px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid var(--el-border-color-light, #ebeef5);
+  background: var(--el-bg-color, #ffffff);
 }
 
 .dialog-fixed-header {
   flex-shrink: 0;
   padding: 14px 24px;
-  background: var(--bg-secondary, #ffffff);
-  border-bottom: 1px solid #ebeef5;
+  background: var(--el-bg-color, #ffffff);
+  border-bottom: 1px solid var(--el-border-color-light, #ebeef5);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -1496,7 +1517,7 @@ onMounted(() => {
   width: 8px;
 }
 .dialog-scroll-body::-webkit-scrollbar-thumb {
-  background: #c0c4cc;
+  background: var(--el-border-color, #c0c4cc);
   border-radius: 4px;
 }
 .dialog-scroll-body::-webkit-scrollbar-track {
@@ -1609,6 +1630,161 @@ onMounted(() => {
 }
 
 /* ==================== 暗色主题适配 ==================== */
+html.dark .hospital-data-view,
+.dark .hospital-data-view {
+  background: var(--el-bg-color, #1a1a2c);
+}
+
+html.dark .integrated-container,
+.dark .integrated-container {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+html.dark .fixed-search,
+.dark .fixed-search {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .search-form :deep(.el-form-item__label) {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+html.dark .search-form :deep(.el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+html.dark .search-form :deep(.el-picker__wrapper),
+html.dark .search-form :deep(.el-date-editor .el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+html.dark :deep(.el-table) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+}
+
+html.dark :deep(.el-table__header tr),
+html.dark :deep(.el-table__header tr th.el-table__cell),
+html.dark :deep(.el-table thead tr th) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark :deep(.el-table__body tr.el-table__row > td),
+html.dark :deep(.el-table tbody tr td.el-table__cell) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark :deep(.el-table--striped .el-table__body tr.el-table__row--striped td) {
+  background-color: var(--el-fill-color-lighter, #232330) !important;
+}
+
+html.dark :deep(.el-table__body tr:hover > td) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+}
+
+html.dark .fixed-pagination,
+.dark .fixed-pagination {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-top-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .page-jumper,
+.dark .page-jumper {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+html.dark .page-info,
+.dark .page-info {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+html.dark .hospital-card,
+.dark .hospital-card {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .hospital-card :deep(.el-card__header),
+.dark .hospital-card :deep(.el-card__header) {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .hospital-card :deep(.el-card__body),
+.dark .hospital-card :deep(.el-card__body) {
+  background: var(--el-bg-color, #1a1a2c) !important;
+}
+
+html.dark .card-header,
+.dark .card-header {
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .card-title,
+.dark .card-title {
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+}
+
+html.dark .card-item,
+.dark .card-item {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+html.dark .card-item .label,
+.dark .card-item .label {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
+}
+
+html.dark .card-footer,
+.dark .card-footer {
+  border-top-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .detail-row label,
+.dark .detail-row label {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+html.dark .detail-row span,
+.dark .detail-row span {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+html.dark .update-dialog :deep(.el-dialog),
+.dark .update-dialog :deep(.el-dialog) {
+  background: var(--el-bg-color, #1a1a2c) !important;
+}
+
+html.dark .update-dialog :deep(.el-dialog__header),
+.dark .update-dialog :deep(.el-dialog__header) {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .dialog-fixed-header,
+.dark .dialog-fixed-header {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+html.dark .no-data-container,
+.dark .no-data-container {
+  background: var(--el-bg-color, #1a1a2c) !important;
+}
+
+html.dark .no-data-container :deep(.el-empty__description),
+.dark .no-data-container :deep(.el-empty__description) {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .action-dropdown-menu {
     background-color: var(--el-bg-color-overlay);
