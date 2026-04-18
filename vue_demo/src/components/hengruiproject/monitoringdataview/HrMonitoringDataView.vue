@@ -50,23 +50,10 @@
               <el-button size="small" type="success" @click="toExcel" :loading="exporting">
                 {{ exporting ? '导出中...' : '导出' }}
               </el-button>
+
               <el-button-group size="small" class="view-toggle">
-                <el-button
-                    :type="viewMode === 'table' ? 'primary' : 'default'"
-                    size="small"
-                    @click="viewMode = 'table'"
-                    title="表格视图"
-                >
-                  <el-icon><Grid /></el-icon>
-                </el-button>
-                <el-button
-                    :type="viewMode === 'card' ? 'primary' : 'default'"
-                    size="small"
-                    @click="viewMode = 'card'"
-                    title="卡片视图"
-                >
-                  <el-icon><CopyDocument /></el-icon>
-                </el-button>
+                <el-button :type="viewMode === 'table' ? 'primary' : 'default'" @click="viewMode = 'table'" title="表格视图"><el-icon><Grid /></el-icon></el-button>
+                <el-button :type="viewMode === 'card' ? 'primary' : 'default'" @click="viewMode = 'card'" title="卡片视图"><el-icon><CopyDocument /></el-icon></el-button>
               </el-button-group>
             </div>
           </div>
@@ -74,54 +61,59 @@
       </div>
 
       <!-- ==================== 数据展示区域：表格/卡片视图 ==================== -->
-      <div class="data-content">
-        <div class="content-wrapper" v-loading="loading">
-          <!-- 表格视图：显示详细数据列表 -->
-          <div v-if="viewMode === 'table'" class="table-view">
-            <el-table
-                v-if="monitoringData.list?.length"
-                :data="monitoringData.list"
-                height="100%"
-                stripe
-                border
-                fit
-                resizable
-            >
-              <el-table-column prop="serialNo" label="序号" min-width="60" />
-              <el-table-column prop="productName" label="商品名" min-width="120" show-overflow-tooltip />
-              <el-table-column prop="productId" label="商品ID" min-width="100" show-overflow-tooltip />
-              <el-table-column prop="genericName" label="通用名" min-width="120" show-overflow-tooltip />
-              <el-table-column prop="platform" label="平台" min-width="80" />
-              <el-table-column prop="specification" label="规格" min-width="100" show-overflow-tooltip />
-              <el-table-column prop="onlineStorePrice" label="网店价格" min-width="80" />
-              <el-table-column prop="boxQuantity" label="盒数" min-width="70" />
-              <el-table-column prop="unitPricePerBox" label="单盒价" min-width="70" />
-              <el-table-column prop="storeName" label="店铺名称" min-width="150" show-overflow-tooltip />
-              <el-table-column prop="businessLicenseName" label="营业执照名称" min-width="150" show-overflow-tooltip />
-              <el-table-column prop="province" label="省" min-width="75" />
-              <el-table-column prop="city" label="市" min-width="75" />
-              <el-table-column prop="salesVolume" label="销量" min-width="80" show-overflow-tooltip />
-              <el-table-column prop="keyId" label="KeyID" min-width="100" show-overflow-tooltip>
-                <template #default="{ row }">
-                  <el-link type="primary" :underline="false" @click="copyText(row.keyId)" :disabled="!row.keyId">
-                    {{ row.keyId }}
-                  </el-link>
-                </template>
-              </el-table-column>
-              <el-table-column prop="name" label="标准名称" min-width="120" show-overflow-tooltip />
-              <el-table-column prop="address" label="地址" min-width="150" show-overflow-tooltip />
-              <el-table-column prop="remarks" label="备注" min-width="100" show-overflow-tooltip />
-            </el-table>
-
-            <div v-else class="no-data-container">
-              <el-empty description="没有找到匹配的数据" :image-size="120" />
-            </div>
+      <div class="data-content" v-loading="loading">
+        <!-- 表格视图 -->
+        <div v-if="viewMode === 'table'" class="table-container">
+          <el-table
+              v-if="monitoringData.list?.length"
+              :data="monitoringData.list"
+              height="100%"
+              stripe
+              border
+              fit
+              resizable
+          >
+            <el-table-column prop="serialNo" label="序号" min-width="60" />
+            <el-table-column prop="batchId" label="批次 ID" min-width="100" show-overflow-tooltip>
+              <template #default="{ row }">
+                <el-link type="primary" :underline="false" @click="copyText(row.batchId)" :disabled="!row.batchId">
+                  {{ row.batchId }}
+                </el-link>
+              </template>
+            </el-table-column>
+            <el-table-column prop="productName" label="商品名" min-width="120" show-overflow-tooltip />
+            <el-table-column prop="productId" label="商品 ID" min-width="80" show-overflow-tooltip />
+            <el-table-column prop="genericName" label="通用名" min-width="120" show-overflow-tooltip />
+            <el-table-column prop="platform" label="平台" min-width="80" />
+            <el-table-column prop="specification" label="规格" min-width="100" show-overflow-tooltip />
+            <el-table-column prop="onlineStorePrice" label="网店价格" min-width="90" />
+            <el-table-column prop="boxQuantity" label="盒数" min-width="70" />
+            <el-table-column prop="unitPricePerBox" label="单盒价" min-width="70" />
+            <el-table-column prop="storeName" label="店铺名称" min-width="150" show-overflow-tooltip />
+            <el-table-column prop="businessLicenseName" label="营业执照名称" min-width="150" show-overflow-tooltip />
+            <el-table-column prop="province" label="省" min-width="75" />
+            <el-table-column prop="city" label="市" min-width="75" />
+            <el-table-column prop="salesVolume" label="销量" min-width="80" show-overflow-tooltip />
+            <el-table-column prop="keyId" label="KeyID" min-width="100" show-overflow-tooltip>
+              <template #default="{ row }">
+                <el-link type="primary" :underline="false" @click="copyText(row.keyId)" :disabled="!row.keyId">
+                  {{ row.keyId }}
+                </el-link>
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" label="标准名称" min-width="120" show-overflow-tooltip />
+            <el-table-column prop="address" label="地址" min-width="150" show-overflow-tooltip />
+            <el-table-column prop="remarks" label="备注" min-width="100" show-overflow-tooltip />
+          </el-table>
+          <div v-else class="no-data-container">
+            <el-empty description="没有找到匹配的数据" :image-size="120" />
           </div>
+        </div>
 
-          <!-- 卡片视图：以卡片形式展示数据，适合浏览 -->
-          <div v-else class="card-view">
-            <el-empty v-if="!monitoringData.list?.length" description="没有找到匹配的数据" :image-size="120" class="no-data-container" />
-            <el-row :gutter="20" v-else>
+        <!-- 卡片视图 -->
+        <div v-else class="card-container">
+          <el-scrollbar>
+            <el-row :gutter="20" style="margin: 0; padding: 16px;">
               <el-col v-for="item in monitoringData.list" :key="item.id" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
                 <el-card class="monitoring-card" shadow="hover">
                   <template #header>
@@ -131,7 +123,13 @@
                     </div>
                   </template>
                   <div class="card-body">
-                    <div class="card-item"><span class="label">商品ID：</span>{{ item.productId }}</div>
+                    <div class="card-item"><span class="label">商品 ID：</span>{{ item.productId }}</div>
+                    <div class="card-item">
+                      <span class="label">批次 ID：</span>
+                      <el-link type="primary" :underline="false" @click="copyText(item.batchId)" :disabled="!item.batchId">
+                        {{ item.batchId }}
+                      </el-link>
+                    </div>
                     <div class="card-item"><span class="label">通用名：</span>{{ item.genericName }}</div>
                     <div class="card-item"><span class="label">规格：</span>{{ item.specification }}</div>
                     <div class="card-item"><span class="label">价格：</span>¥{{ item.onlineStorePrice }}</div>
@@ -147,37 +145,53 @@
                 </el-card>
               </el-col>
             </el-row>
-          </div>
+            <el-empty v-if="!monitoringData.list?.length" description="没有找到匹配的数据" />
+          </el-scrollbar>
         </div>
+      </div>
 
-        <!-- 分页组件：固定在底部 -->
-        <div class="fixed-pagination" v-if="monitoringData.list?.length">
-          <div class="pagination-content">
-            <el-button size="small" plain :disabled="monitoringData.isFirstPage" @click="pageNumber > 1 && (pageNumber--, fetchMonitoringData())">
-              上一页
-            </el-button>
-            <div class="page-jumper">
-              <span>跳转到</span>
-              <el-input-number
-                  v-model="jumpPageNumber"
-                  :min="1"
-                  :max="monitoringData.pages"
-                  size="small"
-                  controls-position="right"
-                  @change="handleJumpPage"
-                  class="page-input"
-              />
-              <span>页，共 {{ monitoringData.pages }} 页 ({{ monitoringData.total }} 条)</span>
-            </div>
-            <el-button size="small" plain :disabled="monitoringData.isLastPage" @click="pageNumber < monitoringData.pages && (pageNumber++, fetchMonitoringData())">
-              下一页
-            </el-button>
-            <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
-              <el-option :value="20" label="每页 20 条" />
-              <el-option :value="40" label="每页 40 条" />
-              <el-option :value="60" label="每页 60 条" />
-            </el-select>
+      <!-- ==================== 分页组件：固定在底部 ==================== -->
+      <div class="fixed-pagination" v-if="monitoringData.list?.length">
+        <div class="pagination-content">
+          <el-button
+              size="small"
+              plain
+              class="page-btn"
+              :disabled="monitoringData.isFirstPage"
+              @click="pageNumber > 1 && (pageNumber--, fetchMonitoringData())"
+          >
+            上一页
+          </el-button>
+
+          <div class="page-jumper">
+            <span>跳转到</span>
+            <el-input-number
+                v-model="jumpPageNumber"
+                :min="1"
+                :max="monitoringData.pages"
+                size="small"
+                controls-position="right"
+                @change="handleJumpPage"
+                class="page-input"
+            />
+            <span class="page-total">页，共 {{ monitoringData.pages }} 页 ({{ monitoringData.total }} 条)</span>
           </div>
+
+          <el-button
+              size="small"
+              plain
+              class="page-btn"
+              :disabled="monitoringData.isLastPage"
+              @click="pageNumber < monitoringData.pages && (pageNumber++, fetchMonitoringData())"
+          >
+            下一页
+          </el-button>
+
+          <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
+            <el-option :value="20" label="每页 20 条" />
+            <el-option :value="40" label="每页 40 条" />
+            <el-option :value="60" label="每页 60 条" />
+          </el-select>
         </div>
       </div>
     </div>
@@ -200,38 +214,23 @@ const jumpPageNumber = ref(1)
 const viewMode = ref('table')
 
 const searchForm = reactive({
-  batchId: '',
-  productName: '',
-  name: '',
-  businessLicenseName: '',
-  keyId: '',
-  province: '',
-  address: '',
-  createTime: ''
+  batchId: '', productName: '', name: '', businessLicenseName: '',
+  keyId: '', province: '', address: '', createTime: ''
 })
 
 const monitoringData = reactive({
-  list: [],
-  pageNum: 1,
-  pages: 1,
-  total: 0,
-  isFirstPage: true,
-  isLastPage: true
+  list: [], pageNum: 1, pages: 1, total: 0, isFirstPage: true, isLastPage: true
 })
 
-// 文本复制函数
 const copyText = async (text) => {
   if (!text) return
-
   const textToCopy = String(text)
-
   try {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(textToCopy)
       ElMessage.success('已复制')
       return
     }
-
     const textArea = document.createElement('textarea')
     textArea.value = textToCopy
     textArea.style.position = 'fixed'
@@ -240,10 +239,8 @@ const copyText = async (text) => {
     document.body.appendChild(textArea)
     textArea.focus()
     textArea.select()
-
     const successful = document.execCommand('copy')
     document.body.removeChild(textArea)
-
     if (successful) {
       ElMessage.success('已复制')
     } else {
@@ -258,18 +255,8 @@ const copyText = async (text) => {
 const fetchMonitoringData = async () => {
   loading.value = true
   try {
-    const params = {
-      pageNum: pageNumber.value,
-      pageSize: pageSize.value,
-      ...searchForm
-    }
-
-
-
+    const params = { pageNum: pageNumber.value, pageSize: pageSize.value, ...searchForm }
     const response = await axios.get('/api/hengrui/monitoring/getDataList', { params })
-
-
-
     if (response.data.code === 200 && response.data.data) {
       const page = response.data.data
       monitoringData.list = page.list || []
@@ -304,6 +291,7 @@ const handleJumpPage = () => {
   }
 }
 
+// 重置搜索条件
 const resetSearch = () => {
   searchForm.batchId = ''
   searchForm.productName = ''
@@ -326,23 +314,20 @@ const handlePageSizeChange = () => {
 const toExcel = async () => {
   exporting.value = true
   try {
-    const params = { ...searchForm }
-
     const response = await axios.get('/api/hengrui/monitoring/exportData', {
-      params,
+      params: searchForm,
       responseType: 'blob'
     })
-
+    // 【微调1】显式指定 MIME 类型，更严谨
     const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-    const downloadUrl = window.URL.createObjectURL(blob)
+    const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
-    link.href = downloadUrl
+    link.href = url
     link.download = `恒瑞数据汇总_${new Date().getTime()}.xlsx`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-    window.URL.revokeObjectURL(downloadUrl)
-
+    window.URL.revokeObjectURL(url)  // 【微调2】显式释放内存
     ElMessage.success('导出成功')
   } catch (error) {
     console.error('导出失败:', error)
@@ -353,28 +338,25 @@ const toExcel = async () => {
 }
 
 onMounted(() => {
-  // 从路由参数获取批次 ID
-  if (route.query.batchId) {
-    searchForm.batchId = route.query.batchId
-  }
+  if (route.query.batchId) searchForm.batchId = route.query.batchId
   fetchMonitoringData()
 })
 </script>
 
 <style scoped>
-/* ==================== 页面整体布局 ==================== */
+/* ==================== 1. 基础布局 ==================== */
 .monitoring-data-view {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: min(1250px, 95vw);
+  /* 【微调3】恢复宽屏宽度，从 1250px 改回 1600px */
+  max-width: min(1600px, 95vw);
   margin: 0 auto;
-  background: var(--bg-secondary, #ffffff);
+  background: #ffffff;
   overflow: hidden;
-  font-size: 12px;
+  font-size: 14px;
 }
 
-/* ==================== 整合容器样式 ==================== */
 .integrated-container {
   flex: 1;
   display: flex;
@@ -388,26 +370,11 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* ==================== 响应式布局适配 ==================== */
-/* 2K 屏幕优化 */
-@media (min-width: 2000px) and (max-width: 2600px) {
-  .monitoring-data-view {
-    max-width: min(1860px, 90vw);
-  }
-}
-
-/* 超宽屏幕 */
-@media (min-width: 2600px) {
-  .monitoring-data-view {
-    max-width: min(2400px, 95vw);
-  }
-}
-
-/* ==================== 搜索区域样式 ==================== */
+/* ==================== 2. 搜索区域 ==================== */
 .fixed-search {
   flex-shrink: 0;
   padding: 14px 18px 10px;
-  background: var(--bg-secondary, #ffffff);
+  background: #fff;
   border-bottom: 1px solid #ebeef5;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border-radius: 6px 6px 0 0;
@@ -416,7 +383,6 @@ onMounted(() => {
 .search-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
 
 /* 搜索条件区域 */
@@ -429,121 +395,63 @@ onMounted(() => {
 
 .search-form :deep(.el-form-item) {
   margin-bottom: 0 !important;
-  flex: 1 1 180px;
-  min-width: 180px;
+  flex: 1 1 200px;
+  min-width: 200px;
 }
 
-/* ==================== 操作按钮区域样式 ==================== */
+.search-form :deep(.el-form-item__label),
+.search-form :deep(.el-input__inner) {
+  font-size: 14px !important;
+  color: #606266;
+}
+
 .form-actions-wrapper {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  margin-top: 10px;
 }
 
 .form-actions {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
 }
 
 .view-toggle {
-  margin-left: 8px;
+  margin-left: 16px;
 }
 
-/* ==================== 数据内容区域样式 ==================== */
+/* ==================== 3. 数据展示区域 ==================== */
 .data-content {
   flex: 1;
+  height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.content-wrapper {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.table-view {
+.table-container {
   flex: 1;
   height: 100%;
-  overflow: hidden;
 }
 
 :deep(.el-table) {
-  height: 100%;
-  width: 100%;
+  font-size: 14px !important;
 }
 
-:deep(.el-table__body-wrapper) {
-  height: 100%;
-  overflow: auto;
+:deep(.el-table th.el-table__cell) {
+  background-color: var(--el-table-header-bg-color, #f8f9fb);
+  color: var(--el-text-color-primary, #303133);
+  font-weight: 600;
+  height: 48px;
 }
 
-.card-view {
-  height: 100%;
-  overflow-y: auto;
-  padding: 16px;
-}
-
-/* ==================== 卡片视图样式 ==================== */
-.monitoring-card {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.monitoring-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #ebeef5;
-}
-
-.card-title {
-  font-size: 14px;
-  font-weight: bold;
-  max-width: 70%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card-body {
-  flex: 1;
-  margin: 12px 0;
-}
-
-.card-item {
-  margin-bottom: 8px;
-  line-height: 1.5;
-}
-
-.card-item .label {
-  color: #606266;
-  font-weight: 500;
-  margin-right: 6px;
-  min-width: 60px;
-  display: inline-block;
-}
-
-/* ==================== 分页区域样式 ==================== */
+/* ==================== 4. 分页区域 ==================== */
 .fixed-pagination {
   flex-shrink: 0;
-  background: var(--bg-secondary, #ffffff);
+  background: #fff;
   padding: 12px;
-  border-top: 1px solid var(--bg-secondary, #ffffff);
-  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+  border-top: 1px solid #ebeef5;
   text-align: center;
 }
 
@@ -556,27 +464,197 @@ onMounted(() => {
 .page-jumper {
   display: flex;
   align-items: center;
-  gap: 8px;
   font-size: 12px;
   color: #606266;
 }
 
 .page-input {
-  width: 80px;
+  width: 90px !important;
+  margin: 0 8px;
 }
 
-.page-info {
+.page-input :deep(.el-input__wrapper) {
+  padding-left: 10px;
+  padding-right: 35px;
+}
+
+.page-btn {
+  border-radius: 4px;
+  padding: 0 15px;
+  height: 32px;
   font-size: 12px;
-  color: #606266;
-  min-width: 220px;
-  text-align: center;
+}
+
+.size-select {
+  width: 110px !important;
+  font-size: 12px;
+}
+
+.page-total {
+  margin-left: 4px;
+}
+
+/* ==================== 5. 卡片视图 ==================== */
+.card-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+.monitoring-card {
+  height: 100%;
+  font-size: 14px;
+  margin-bottom: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.monitoring-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #303133;
+}
+
+.card-header :deep(.el-tag) {
+  flex-shrink: 0;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+}
+
+.card-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.card-item .label {
+  color: #909399;
+  min-width: 80px;
+  flex-shrink: 0;
 }
 
 .no-data-container {
   height: 100%;
   display: flex;
   align-items: center;
-  background: var(--bg-secondary, #ffffff);
   justify-content: center;
+}
+
+/* ==================== 6. 响应式适配 ==================== */
+@media (min-width: 2000px) {
+  .monitoring-data-view { max-width: min(1920px, 95vw); }
+}
+
+@media (min-width: 2600px) {
+  .monitoring-data-view { max-width: min(2560px, 95vw); }
+}
+
+/* ==================== 7. 暗色模式样式 ==================== */
+html.dark .monitoring-data-view,
+.dark .monitoring-data-view {
+  background: var(--el-bg-color, #1a1a2c);
+}
+
+.dark .integrated-container {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .fixed-search {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .search-form :deep(.el-form-item__label) {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .search-form :deep(.el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+.dark .search-form :deep(.el-picker__wrapper),
+.dark .search-form :deep(.el-date-editor .el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+.dark :deep(.el-table) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+}
+
+.dark :deep(.el-table__header tr),
+.dark :deep(.el-table__header tr th.el-table__cell),
+.dark :deep(.el-table thead tr th) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark :deep(.el-table__body tr.el-table__row > td),
+.dark :deep(.el-table tbody tr td.el-table__cell) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark :deep(.el-table--striped .el-table__body tr.el-table__row--striped td) {
+  background-color: var(--el-fill-color-lighter, #232330) !important;
+}
+
+.dark :deep(.el-table__body tr:hover > td) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+}
+
+.dark .fixed-pagination {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-top-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .page-jumper {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .monitoring-card {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .card-header {
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .card-title {
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+}
+
+.dark .card-item .label {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
+}
+
+.dark .card-item {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .no-data-container :deep(.el-empty__description) {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
 }
 </style>

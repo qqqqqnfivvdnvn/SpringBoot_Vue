@@ -31,7 +31,7 @@
             <img :src="avatarUrl" alt="用户头像" />
             <span class="status-dot"></span>
           </div>
-          <span class="username">管理员</span>
+          <span class="username">{{ userName }}</span>
         </div>
         <div class="divider-v"></div>
         <button class="logout-button" @click="handleLogout">
@@ -151,6 +151,24 @@ const props = defineProps({
 const avatarUrl = avatarImg
 const router = useRouter()
 const route = useRoute()
+
+const userName = ref('')
+
+// 获取用户信息
+function loadUserInfo() {
+  const userDataStr = localStorage.getItem('user') || sessionStorage.getItem('userData')
+  if (userDataStr) {
+    try {
+      const userData = JSON.parse(userDataStr)
+      userName.value = userData.username || '用户'
+    } catch (e) {
+      console.error('解析 userData 失败', e)
+      userName.value = '用户'
+    }
+  } else {
+    userName.value = '用户'
+  }
+}
 
 const themeColors = ref({ ...props.config.lightThemeColors })
 
@@ -382,6 +400,7 @@ defineExpose({
 // ============ 生命周期 ============
 onMounted(() => {
   loadThemeColor()
+  loadUserInfo()
   window.addEventListener('themeChanged', updateThemeForDarkMode)
 })
 </script>

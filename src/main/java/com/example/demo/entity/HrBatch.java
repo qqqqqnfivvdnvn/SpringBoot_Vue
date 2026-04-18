@@ -14,4 +14,5 @@ public class HrBatch {
     private Integer status; // 0 处理中 1 已处理 2 处理失败
     private String originalFilename; // 原始文件名
     private String message; // 处理状态信息（成功/失败消息）
+    private Integer fileCount; // 文件中实际的条数
 }

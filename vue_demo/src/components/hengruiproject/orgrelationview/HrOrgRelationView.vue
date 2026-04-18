@@ -126,7 +126,7 @@
         <!-- 分页组件：固定在底部 -->
         <div class="fixed-pagination" v-if="relationData.list?.length">
           <div class="pagination-content">
-            <el-button size="small" plain :disabled="relationData.isFirstPage" @click="pageNumber > 1 && (pageNumber--, fetchRelationData())">
+            <el-button size="small" plain class="page-btn" :disabled="relationData.isFirstPage" @click="pageNumber > 1 && (pageNumber--, fetchRelationData())">
               上一页
             </el-button>
             <div class="page-jumper">
@@ -140,12 +140,12 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ relationData.pages }} 页 ({{ relationData.total }} 条)</span>
+              <span class="page-total">页，共 {{ relationData.pages }} 页 ({{ relationData.total }} 条)</span>
             </div>
-            <el-button size="small" plain :disabled="relationData.isLastPage" @click="pageNumber < relationData.pages && (pageNumber++, fetchRelationData())">
+            <el-button size="small" plain class="page-btn" :disabled="relationData.isLastPage" @click="pageNumber < relationData.pages && (pageNumber++, fetchRelationData())">
               下一页
             </el-button>
-            <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
+            <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
               <el-option :value="20" label="每页 20 条" />
               <el-option :value="40" label="每页 40 条" />
               <el-option :value="60" label="每页 60 条" />
@@ -496,19 +496,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ==================== 页面整体布局 ==================== */
+/* ==================== 1. 基础布局 ==================== */
 .org-relation-view {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: min(1250px, 95vw);
+  max-width: min(1600px, 95vw);
   margin: 0 auto;
-  background: var(--bg-secondary, #ffffff);
+  background: #ffffff;
   overflow: hidden;
-  font-size: 12px;
+  font-size: 14px;
 }
 
-/* ==================== 整合容器样式 ==================== */
 .integrated-container {
   flex: 1;
   display: flex;
@@ -522,26 +521,11 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* ==================== 响应式布局适配 ==================== */
-/* 2K 屏幕优化 */
-@media (min-width: 2000px) and (max-width: 2600px) {
-  .org-relation-view {
-    max-width: min(1860px, 90vw);
-  }
-}
-
-/* 超宽屏幕 */
-@media (min-width: 2600px) {
-  .org-relation-view {
-    max-width: min(2400px, 95vw);
-  }
-}
-
-/* ==================== 搜索区域样式 ==================== */
+/* ==================== 2. 搜索区域 ==================== */
 .fixed-search {
   flex-shrink: 0;
   padding: 14px 18px 10px;
-  background: var(--bg-secondary, #ffffff);
+  background: #fff;
   border-bottom: 1px solid #ebeef5;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border-radius: 6px 6px 0 0;
@@ -550,7 +534,6 @@ onMounted(() => {
 .search-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
 
 /* 搜索条件区域 */
@@ -563,30 +546,33 @@ onMounted(() => {
 
 .search-form :deep(.el-form-item) {
   margin-bottom: 0 !important;
-  flex: 1 1 180px;
-  min-width: 180px;
+  flex: 1 1 200px;
+  min-width: 200px;
 }
 
-/* ==================== 操作按钮区域样式 ==================== */
+.search-form :deep(.el-form-item__label),
+.search-form :deep(.el-input__inner) {
+  font-size: 14px !important;
+  color: #606266;
+}
+
 .form-actions-wrapper {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  margin-top: 10px;
 }
 
 .form-actions {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
 }
 
 .view-toggle {
-  margin-left: 8px;
+  margin-left: 16px;
 }
 
-/* ==================== 数据内容区域样式 ==================== */
+/* ==================== 3. 数据内容区域 ==================== */
 .data-content {
   flex: 1;
   display: flex;
@@ -610,6 +596,7 @@ onMounted(() => {
 :deep(.el-table) {
   height: 100%;
   width: 100%;
+  font-size: 14px !important;
 }
 
 :deep(.el-table__body-wrapper) {
@@ -617,18 +604,34 @@ onMounted(() => {
   overflow: auto;
 }
 
+:deep(.el-table th.el-table__cell) {
+  background-color: var(--el-table-header-bg-color, #f8f9fb);
+  color: var(--el-text-color-primary, #303133);
+  font-weight: 600;
+  height: 48px;
+}
+
+:deep(.el-table--border .el-table__inner-wrapper:before),
+:deep(.el-table--border .el-table__inner-wrapper:after) {
+  background-color: var(--el-table-border-color);
+  content: "";
+  position: absolute;
+  z-index: calc(var(--el-table-index) + 2);
+}
+
 .card-view {
-  height: 100%;
+  flex: 1;
   overflow-y: auto;
   padding: 16px;
 }
 
-/* ==================== 卡片视图样式 ==================== */
+/* ==================== 4. 卡片视图样式 ==================== */
 .relation-card {
   height: 100%;
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 16px;
 }
 
 .relation-card:hover {
@@ -645,29 +648,42 @@ onMounted(() => {
 }
 
 .card-title {
-  font-size: 14px;
-  font-weight: bold;
+  font-size: 15px;
+  font-weight: 600;
+  color: #303133;
   max-width: 70%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.card-header :deep(.el-tag) {
+  flex-shrink: 0;
+}
+
 .card-body {
   flex: 1;
   margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
 }
 
 .card-item {
-  margin-bottom: 8px;
-  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: break-all;
 }
 
 .card-item .label {
-  color: #606266;
+  color: #909399;
   font-weight: 500;
-  margin-right: 6px;
-  min-width: 60px;
+  flex-shrink: 0;
+  min-width: 80px;
   display: inline-block;
 }
 
@@ -679,13 +695,12 @@ onMounted(() => {
   margin-top: auto;
 }
 
-/* ==================== 分页区域样式 ==================== */
+/* ==================== 5. 分页区域 ==================== */
 .fixed-pagination {
   flex-shrink: 0;
-  background: var(--bg-secondary, #ffffff);
+  background: #fff;
   padding: 12px;
-  border-top: 1px solid var(--bg-secondary, #ffffff);
-  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+  border-top: 1px solid #ebeef5;
   text-align: center;
 }
 
@@ -698,27 +713,153 @@ onMounted(() => {
 .page-jumper {
   display: flex;
   align-items: center;
-  gap: 8px;
   font-size: 12px;
   color: #606266;
 }
 
 .page-input {
-  width: 80px;
+  width: 90px !important;
+  margin: 0 8px;
 }
 
-.page-info {
+.page-input :deep(.el-input__wrapper) {
+  padding-left: 10px;
+  padding-right: 35px;
+}
+
+.page-btn {
+  border-radius: 4px;
+  padding: 0 15px;
+  height: 32px;
   font-size: 12px;
-  color: #606266;
-  min-width: 220px;
-  text-align: center;
+}
+
+.page-total {
+  margin-left: 4px;
+}
+
+.size-select {
+  width: 110px !important;
+  font-size: 12px;
 }
 
 .no-data-container {
   height: 100%;
   display: flex;
   align-items: center;
-  background: var(--bg-secondary, #ffffff);
   justify-content: center;
+  background: var(--bg-secondary, #ffffff);
+}
+
+/* ==================== 6. 响应式适配 ==================== */
+/* 2K 屏幕优化 */
+@media (min-width: 2000px) and (max-width: 2600px) {
+  .org-relation-view {
+    max-width: min(1920px, 95vw);
+  }
+}
+
+/* 超宽屏幕 */
+@media (min-width: 2600px) {
+  .org-relation-view {
+    max-width: min(2560px, 95vw);
+  }
+}
+
+/* ==================== 7. 暗色模式样式 ==================== */
+html.dark .org-relation-view,
+.dark .org-relation-view {
+  background: var(--el-bg-color, #1a1a2c);
+}
+
+.dark .integrated-container {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .fixed-search {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .search-form :deep(.el-form-item__label) {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .search-form :deep(.el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+.dark .search-form :deep(.el-picker__wrapper),
+.dark .search-form :deep(.el-date-editor .el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+.dark :deep(.el-table) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+}
+
+.dark :deep(.el-table__header tr),
+.dark :deep(.el-table__header tr th.el-table__cell),
+.dark :deep(.el-table thead tr th) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark :deep(.el-table__body tr.el-table__row > td),
+.dark :deep(.el-table tbody tr td.el-table__cell) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark :deep(.el-table--striped .el-table__body tr.el-table__row--striped td) {
+  background-color: var(--el-fill-color-lighter, #232330) !important;
+}
+
+.dark :deep(.el-table__body tr:hover > td) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+}
+
+.dark .fixed-pagination {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-top-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .page-jumper {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .relation-card {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .card-header {
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .card-title {
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+}
+
+.dark .card-item {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .card-item .label {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
+}
+
+.dark .card-footer {
+  border-top-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .no-data-container :deep(.el-empty__description) {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
 }
 </style>

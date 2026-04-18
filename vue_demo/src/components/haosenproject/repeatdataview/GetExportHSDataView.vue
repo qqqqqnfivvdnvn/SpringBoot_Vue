@@ -35,37 +35,38 @@
             </el-form-item>
           </div>
 
-          <!-- 操作按钮区域：查询、重置、导出 -->
+          <!-- 操作按钮区域：查询、重置、视图切换 -->
           <div class="form-actions-wrapper">
             <div class="form-actions">
               <el-button size="small" type="primary" @click="handleSearch" :loading="loading">查询</el-button>
               <el-button size="small" @click="resetSearch">重置</el-button>
-              <el-button size="small" type="success" @click="toExcel" :loading="exporting">
-                {{ exporting ? '导出中...' : '导出' }}
-              </el-button>
-              <el-button size="small" type="warning" @click="goToUploadPage">
-                <el-icon><Upload /></el-icon>
-                上传数据
-              </el-button>
+
+              <el-button-group size="small" class="view-toggle">
+                <el-button :type="viewMode === 'table' ? 'primary' : 'default'" @click="viewMode = 'table'" title="表格视图">
+                  <el-icon><Grid /></el-icon>
+                </el-button>
+                <el-button :type="viewMode === 'card' ? 'primary' : 'default'" @click="viewMode = 'card'" title="卡片视图">
+                  <el-icon><CopyDocument /></el-icon>
+                </el-button>
+              </el-button-group>
             </div>
           </div>
         </el-form>
       </div>
 
-      <!-- ==================== 数据展示区域：表格视图 ==================== -->
-      <div class="data-content">
-        <div class="content-wrapper" v-loading="loading">
-          <!-- 表格视图：显示详细数据列表 -->
-          <div class="table-view">
-            <el-table
-                v-if="duplicateData.list?.length"
-                :data="duplicateData.list"
-                height="100%"
-                stripe
-                border
-                fit
-                resizable
-            >
+      <!-- ==================== 数据展示区域：表格/卡片视图 ==================== -->
+      <div class="data-content" v-loading="loading">
+        <!-- 表格视图 -->
+        <div v-if="viewMode === 'table'" class="table-container">
+          <el-table
+              v-if="duplicateData.list?.length"
+              :data="duplicateData.list"
+              height="100%"
+              stripe
+              border
+              fit
+              resizable
+          >
               <el-table-column
                   v-for="(col, index) in columns"
                   :key="index"
@@ -129,37 +130,87 @@
             <div v-else class="no-data-container">
               <el-empty description="没有找到匹配的数据" :image-size="120" />
             </div>
-          </div>
         </div>
 
-        <!-- 分页组件：固定在底部 -->
-        <div class="fixed-pagination" v-if="duplicateData.list?.length">
-          <div class="pagination-content">
-            <el-button size="small" plain :disabled="!duplicateData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchDuplicateData())">
-              上一页
-            </el-button>
-            <div class="page-jumper">
-              <span>跳转到</span>
-              <el-input-number
-                v-model="jumpPageNumber"
-                :min="1"
-                :max="duplicateData.pages"
-                size="small"
-                controls-position="right"
-                @change="handleJumpPage"
-                class="page-input"
-              />
-              <span>页，共 {{ duplicateData.pages }} 页 ({{ duplicateData.total }} 条)</span>
-            </div>
-            <el-button size="small" plain :disabled="!duplicateData.hasNextPage" @click="pageNumber < duplicateData.pages && (pageNumber++, fetchDuplicateData())">
-              下一页
-            </el-button>
-            <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
-              <el-option :value="20" label="每页20条" />
-              <el-option :value="40" label="每页40条" />
-              <el-option :value="60" label="每页60条" />
-            </el-select>
+        <!-- 卡片视图 -->
+        <div v-else class="card-container">
+          <el-scrollbar>
+            <el-row :gutter="20" style="margin: 0; padding: 16px;">
+              <el-col v-for="item in duplicateData.list" :key="item.dataId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+                <el-card class="export-card" shadow="hover">
+                  <template #header>
+                    <div class="card-header">
+                      <span class="card-title">{{ item.originalName }}</span>
+                      <el-tag :type="getOrgTypeType(item.orgType)" size="small">{{ item.orgType }}</el-tag>
+                    </div>
+                  </template>
+                  <div class="card-body">
+                    <div class="card-item"><span class="label">机构类型：</span>{{ item.orgType }}</div>
+                    <div class="card-item"><span class="label">dataId：</span><el-link type="primary" :underline="false" @click="copyText(item.dataId)">{{ item.dataId }}</el-link></div>
+                    <div class="card-item"><span class="label">原始编码：</span><el-link type="primary" :underline="false" @click="copyText(item.dataCode)">{{ item.dataCode }}</el-link></div>
+                    <div class="card-item"><span class="label">keyId：</span><el-link type="primary" :underline="false" @click="copyText(item.keyid)">{{ item.keyid }}</el-link></div>
+                    <div class="card-item"><span class="label">省份：</span>{{ item.province }}</div>
+                    <div class="card-item"><span class="label">标准名称：</span><el-link type="primary" :underline="false" @click="copyText(item.name)">{{ item.name }}</el-link></div>
+                    <div class="card-item"><span class="label">豪森编码：</span><el-link type="primary" :underline="false" @click="copyText(item.hsCode)">{{ item.hsCode }}</el-link></div>
+                    <div class="card-item"><span class="label">地址：</span>{{ item.address }}</div>
+                    <div class="card-item"><span class="label">添加时间：</span>{{ formatDate(item.addtime) }}</div>
+                  </div>
+                  <div class="card-footer">
+                    <el-dropdown size="small" @command="handleCommand" class="action-dropdown">
+                      <el-button type="primary" size="small" class="action-button">
+                        <el-icon class="action-icon"><Operation /></el-icon>
+                        操作
+                        <el-icon class="arrow-icon"><ArrowDown /></el-icon>
+                      </el-button>
+                      <template #dropdown>
+                        <el-dropdown-menu class="action-dropdown-menu">
+                          <el-dropdown-item :command="{action: 'detail', row: item}" class="dropdown-item detail-item">
+                            <el-icon class="menu-icon"><Search /></el-icon>
+                            <span class="menu-text">详情查看</span>
+                          </el-dropdown-item>
+                          <el-dropdown-item :command="{action: 'update', row: item}" class="dropdown-item update-item">
+                            <el-icon class="menu-icon"><EditPen /></el-icon>
+                            <span class="menu-text">数据管理</span>
+                          </el-dropdown-item>
+                        </el-dropdown-menu>
+                      </template>
+                    </el-dropdown>
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+            <el-empty v-if="!duplicateData.list?.length" description="没有找到匹配的数据" />
+          </el-scrollbar>
+        </div>
+      </div>
+
+      <!-- 分页 -->
+      <div class="fixed-pagination" v-if="duplicateData.list?.length">
+        <div class="pagination-content">
+          <el-button size="small" plain :disabled="!duplicateData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchDuplicateData())">
+            上一页
+          </el-button>
+          <div class="page-jumper">
+            <span>跳转到</span>
+            <el-input-number
+              v-model="jumpPageNumber"
+              :min="1"
+              :max="duplicateData.pages"
+              size="small"
+              controls-position="right"
+              @change="handleJumpPage"
+              class="page-input"
+            />
+            <span class="page-total">页，共 {{ duplicateData.pages }} 页 ({{ duplicateData.total }} 条)</span>
           </div>
+          <el-button size="small" plain :disabled="!duplicateData.hasNextPage" @click="pageNumber < duplicateData.pages && (pageNumber++, fetchDuplicateData())">
+            下一页
+          </el-button>
+          <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
+            <el-option :value="20" label="每页 20 条" />
+            <el-option :value="40" label="每页 40 条" />
+            <el-option :value="60" label="每页 60 条" />
+          </el-select>
         </div>
       </div>
     </div>
@@ -218,10 +269,10 @@
         </el-form-item>
         <el-form-item label="选择状态" :rules="[{ required: true, message: '请选择状态', trigger: 'change' }]">
           <el-select v-model="statusForm.status" placeholder="请选择状态" style="width: 100%;">
-            <el-option label="正常" value="1" />
-            <el-option label="作废" value="2" />
+            <el-option label="数据正常" value="1" />
+            <el-option label="数据作废" value="2" />
             <el-option label="无法清洗" value="3" />
-            <el-option label="豪森禁用客户" value="4" />
+            <el-option label="禁用客户" value="4" />
             <el-option label="重复数据" value="5" />
           </el-select>
         </el-form-item>
@@ -248,7 +299,7 @@
 // ==================== 依赖导入 ====================
 import '@/assets/css/dark-mode.css'
 import { ref, reactive, onMounted } from 'vue'
-import { Search, EditPen, Operation, ArrowDown, Upload } from '@element-plus/icons-vue'
+import { Search, EditPen, Operation, ArrowDown, Grid, CopyDocument } from '@element-plus/icons-vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
@@ -265,7 +316,9 @@ const duplicateData = reactive({
 // ==================== 加载状态管理 ====================
 const loading = ref(false)
 const isSaving = ref(false)
-const exporting = ref(false)
+
+// ==================== 视图模式 ====================
+const viewMode = ref('table')
 
 // ==================== 分页配置 ====================
 const pageSize = ref(20)
@@ -441,41 +494,6 @@ const handleJumpPage = () => {
     pageNumber.value = jumpPageNumber.value
     fetchDuplicateData()
   }
-}
-
-// ==================== 数据导出函数 ====================
-// 导出Excel文件
-const toExcel = async () => {
-  if (exporting.value) return
-  exporting.value = true
-  try {
-    const params = Object.fromEntries(
-        Object.entries(searchForm).filter(([, value]) => value !== '' && value !== null && value !== undefined)
-    )
-    const { data: jsonBlob } = await axios.get('/api/haosen/duplicateData/exportDuplicateData', { params, responseType: 'blob' })
-    const jsonText = await jsonBlob.text()
-    const { data: base64 } = JSON.parse(jsonText)
-    const byteChars = atob(base64)
-    const byteNums = new Uint8Array(byteChars.length)
-    for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i)
-    const excelBlob = new Blob([byteNums], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-    const url = URL.createObjectURL(excelBlob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `豪森需要确认的编码数据导出_${new Date().toLocaleDateString()}.xlsx`
-    link.click()
-    URL.revokeObjectURL(url)
-  } catch {
-    ElMessage.error('导出失败')
-  } finally {
-    exporting.value = false
-  }
-}
-
-// ==================== 页面跳转函数 ====================
-// 跳转到上传页面
-const goToUploadPage = () => {
-  window.location.href = '/repeatData/importExportHSData'
 }
 
 // ==================== 弹窗管理函数 ====================
@@ -660,22 +678,15 @@ html.dark .hospital-data-view,
 /* ==================== 数据内容区域样式 ==================== */
 .data-content {
   flex: 1;
+  height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.content-wrapper {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.table-view {
+.table-container {
   flex: 1;
   height: 100%;
-  overflow: hidden;
 }
 
 :deep(.el-table) {
@@ -684,8 +695,61 @@ html.dark .hospital-data-view,
   font-size: 14px;
 }
 
+/* 修复表格边框粗细不一致问题 */
+:deep(.el-table--border .el-table__inner-wrapper:before),
+:deep(.el-table--border .el-table__inner-wrapper:after) {
+  background-color: var(--el-table-border-color);
+  content: "";
+  position: absolute;
+  z-index: calc(var(--el-table-index) + 2);
+}
+
 :deep(.el-table th.el-table__cell) {
+  background-color: var(--el-table-header-bg-color, #f8f9fb);
+  color: var(--el-text-color-primary, #303133);
   font-weight: 600;
+  height: 48px;
+}
+
+/* ==================== 卡片视图样式 ==================== */
+.card-container {
+  height: 100%;
+  overflow: hidden;
+}
+
+.export-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--el-bg-color, #ffffff);
+}
+
+.export-card :deep(.el-card__header) {
+  background: var(--el-bg-color, #ffffff);
+  border-bottom: 1px solid var(--el-border-color-light, #ebeef5);
+}
+
+.export-card :deep(.el-card__body) {
+  background: var(--el-bg-color, #ffffff);
+}
+
+.export-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-footer {
+  margin-top: auto;
+  text-align: right;
+  padding-top: 12px;
+  border-top: 1px solid var(--el-border-color-light, #f0f0f0);
 }
 
 html.dark :deep(.el-table) {
@@ -739,13 +803,24 @@ html.dark :deep(.el-table__body tr:hover > td) {
 .page-jumper {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  font-size: 12px;
   color: var(--el-text-color-regular, #606266);
+  white-space: nowrap;
 }
 
 .page-input {
-  width: 80px;
+  width: 90px !important;
+  margin: 0 4px;
+}
+
+.page-input :deep(.el-input__wrapper) {
+  padding-left: 10px;
+  padding-right: 35px;
+}
+
+.page-total {
+  margin-left: 4px;
+  white-space: nowrap;
 }
 
 .page-info {

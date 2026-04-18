@@ -39,85 +39,120 @@
             <div class="form-actions">
               <el-button size="small" type="primary" @click="handleSearch" :loading="loading">查询</el-button>
               <el-button size="small" @click="resetSearch">重置</el-button>
+              <el-button-group size="small" class="view-toggle">
+                <el-button :type="viewMode === 'table' ? 'primary' : 'default'" @click="viewMode = 'table'" title="表格视图"><el-icon><Grid /></el-icon></el-button>
+                <el-button :type="viewMode === 'card' ? 'primary' : 'default'" @click="viewMode = 'card'" title="卡片视图"><el-icon><CopyDocument /></el-icon></el-button>
+              </el-button-group>
             </div>
           </div>
         </el-form>
       </div>
 
       <!-- 数据区域 -->
-      <div class="data-content">
-        <div class="content-wrapper" v-loading="loading">
-          <div class="table-view">
-            <el-table
-                v-if="batchData.list?.length"
-                :data="batchData.list"
-                height="100%"
-                stripe
-                border
-                fit
-                resizable
-            >
-              <el-table-column prop="batchId" label="批次 ID" min-width="150" show-overflow-tooltip>
-                <template #default="{ row }">
-                  <el-link type="primary" :underline="false" @click="copyText(row.batchId)" :disabled="!row.batchId">
-                    {{ row.batchId }}
-                  </el-link>
-                </template>
-              </el-table-column>
-              <el-table-column prop="originalFilename" label="文件名称" min-width="200" show-overflow-tooltip />
-              <el-table-column prop="createTime" label="创建时间" min-width="160" :formatter="formatDate" />
-              <el-table-column prop="updateTime" label="更新时间" min-width="160" :formatter="formatDate" />
-              <el-table-column prop="statusDesc" label="状态" min-width="100">
-                <template #default="{ row }">
-                  <el-tag :type="row.status === 1 ? 'success' : row.status === 2 ? 'danger' : 'warning'" effect="dark" size="small">
-                    {{ row.statusDesc }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="message" label="处理信息" min-width="200" show-overflow-tooltip />
-              <el-table-column label="操作" min-width="120" fixed="right">
-                <template #default="{ row }">
-                  <el-button
-                      size="small"
-                      type="success"
-                      @click="toExcel(row)"
-                      :loading="isExporting(row.batchId)"
-                  >
-                    {{ isExporting(row.batchId) ? '导出中...' : '导出' }}
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
+      <div class="data-content" v-loading="loading">
+        <!-- 表格视图 -->
+        <div v-if="viewMode === 'table'" class="table-view">
+          <el-table
+              v-if="batchData.list?.length"
+              :data="batchData.list"
+              height="100%"
+              stripe
+              border
+              fit
+              resizable
+          >
+            <el-table-column prop="batchId" label="批次 ID" min-width="150" show-overflow-tooltip>
+              <template #default="{ row }">
+                <el-link type="primary" :underline="false" @click="copyText(row.batchId)" :disabled="!row.batchId">
+                  {{ row.batchId }}
+                </el-link>
+              </template>
+            </el-table-column>
+            <el-table-column prop="originalFilename" label="文件名称" min-width="200" show-overflow-tooltip />
+            <el-table-column prop="createTime" label="创建时间" min-width="160" :formatter="formatDate" />
+            <el-table-column prop="updateTime" label="更新时间" min-width="160" :formatter="formatDate" />
+            <el-table-column prop="statusDesc" label="状态" min-width="100">
+              <template #default="{ row }">
+                <el-tag :type="row.status === 1 ? 'success' : row.status === 2 ? 'danger' : 'warning'" effect="dark" size="small">
+                  {{ row.statusDesc }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="message" label="处理信息" min-width="200" show-overflow-tooltip />
+            <el-table-column label="操作" min-width="120" fixed="right">
+              <template #default="{ row }">
+                <el-button
+                    size="small"
+                    type="success"
+                    @click="toExcel(row)"
+                    :loading="isExporting(row.batchId)"
+                >
+                  {{ isExporting(row.batchId) ? '导出中...' : '导出' }}
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
 
-            <div v-else class="no-data-container">
-              <el-empty description="没有找到匹配的批次数据" :image-size="120" />
-            </div>
+          <div v-else class="no-data-container">
+            <el-empty description="没有找到匹配的批次数据" :image-size="120" />
           </div>
         </div>
 
-        <!-- 分页 -->
-        <div class="fixed-pagination" v-if="batchData.list?.length">
-          <div class="pagination-content">
-            <el-button size="small" plain :disabled="batchData.isFirstPage" @click="pageNumber > 1 && (pageNumber--, fetchBatchData())">
-              上一页
-            </el-button>
-            <div class="page-jumper">
-              <span>跳转到</span>
-              <el-input-number
-                v-model="jumpPageNumber"
-                :min="1"
-                :max="batchData.pages"
-                size="small"
-                controls-position="right"
-                @change="handleJumpPage"
-                class="page-input"
-              />
-              <span>页，共 {{ batchData.pages }} 页 ({{ batchData.total }} 条)</span>
-            </div>
-            <el-button size="small" plain :disabled="batchData.isLastPage" @click="pageNumber < batchData.pages && (pageNumber++, fetchBatchData())">
-              下一页
-            </el-button>
+        <!-- 卡片视图 -->
+        <div v-else class="card-container">
+          <el-scrollbar>
+            <el-row :gutter="20" style="margin: 0; padding: 16px;">
+              <el-col v-for="item in batchData.list" :key="item.batchId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+                <el-card class="batch-card" shadow="hover">
+                  <template #header>
+                    <div class="card-header">
+                      <span class="card-title">{{ item.originalFilename }}</span>
+                      <el-tag :type="item.status === 1 ? 'success' : item.status === 2 ? 'danger' : 'warning'" effect="dark" size="small">{{ item.statusDesc }}</el-tag>
+                    </div>
+                  </template>
+                  <div class="card-body">
+                    <div class="card-item"><span class="label">批次 ID：</span><el-link type="primary" :underline="false" @click="copyText(item.batchId)">{{ item.batchId }}</el-link></div>
+                    <div class="card-item"><span class="label">文件名称：</span>{{ item.originalFilename }}</div>
+                    <div class="card-item"><span class="label">创建时间：</span>{{ formatDateValue(item.createTime) }}</div>
+                    <div class="card-item"><span class="label">更新时间：</span>{{ formatDateValue(item.updateTime) }}</div>
+                    <div class="card-item"><span class="label">状态：</span>{{ item.statusDesc }}</div>
+                    <div class="card-item"><span class="label">处理信息：</span>{{ item.message }}</div>
+                  </div>
+                  <div class="card-footer">
+                    <el-button size="small" type="success" @click="toExcel(item)" :loading="isExporting(item.batchId)">
+                      {{ isExporting(item.batchId) ? '导出中...' : '导出' }}
+                    </el-button>
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+            <el-empty v-if="!batchData.list?.length" description="没有找到匹配的批次数据" />
+          </el-scrollbar>
+        </div>
+      </div>
+
+      <!-- 分页 -->
+      <div class="fixed-pagination" v-if="batchData.list?.length">
+        <div class="pagination-content">
+          <el-button size="small" plain class="page-btn" :disabled="batchData.isFirstPage" @click="pageNumber > 1 && (pageNumber--, fetchBatchData())">
+            上一页
+          </el-button>
+          <div class="page-jumper">
+            <span>跳转到</span>
+            <el-input-number
+              v-model="jumpPageNumber"
+              :min="1"
+              :max="batchData.pages"
+              size="small"
+              controls-position="right"
+              @change="handleJumpPage"
+              class="page-input"
+            />
+            <span class="page-total">页，共 {{ batchData.pages }} 页 ({{ batchData.total }} 条)</span>
           </div>
+          <el-button size="small" plain class="page-btn" :disabled="batchData.isLastPage" @click="pageNumber < batchData.pages && (pageNumber++, fetchBatchData())">
+            下一页
+          </el-button>
         </div>
       </div>
     </div>
@@ -128,12 +163,14 @@
 import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import { Grid, CopyDocument } from '@element-plus/icons-vue'
 
 const loading = ref(false)
 const exportingRows = ref(new Set())
 const pageNumber = ref(1)
 const pageSize = ref(20)
 const jumpPageNumber = ref(1)
+const viewMode = ref('table')
 
 const isExporting = (batchId) => exportingRows.value.has(batchId)
 
@@ -157,6 +194,19 @@ const batchData = reactive({
 const formatDate = (row, column, cellValue) => {
   if (!cellValue) return ''
   const date = new Date(cellValue)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+// 格式化日期值（用于卡片视图）
+const formatDateValue = (dateTimeStr) => {
+  if (!dateTimeStr) return ''
+  const date = new Date(dateTimeStr)
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -290,19 +340,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ==================== 页面整体布局 ==================== */
+/* ==================== 1. 基础布局 ==================== */
 .md-fuzzy-batch-view {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: min(1250px, 95vw);
+  max-width: min(1600px, 95vw);
   margin: 0 auto;
-  background: var(--bg-secondary, #ffffff);
+  background: #ffffff;
   overflow: hidden;
-  font-size: 12px;
+  font-size: 14px;
 }
 
-/* ==================== 整合容器样式 ==================== */
 .integrated-container {
   flex: 1;
   display: flex;
@@ -316,26 +365,11 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* ==================== 响应式布局适配 ==================== */
-/* 2K 屏幕优化 */
-@media (min-width: 2000px) and (max-width: 2600px) {
-  .md-fuzzy-batch-view {
-    max-width: min(1860px, 90vw);
-  }
-}
-
-/* 超宽屏幕 */
-@media (min-width: 2600px) {
-  .md-fuzzy-batch-view {
-    max-width: min(2400px, 95vw);
-  }
-}
-
-/* ==================== 搜索区域样式 ==================== */
+/* ==================== 2. 搜索区域 ==================== */
 .fixed-search {
   flex-shrink: 0;
   padding: 14px 18px 10px;
-  background: var(--bg-secondary, #ffffff);
+  background: #fff;
   border-bottom: 1px solid #ebeef5;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border-radius: 6px 6px 0 0;
@@ -344,9 +378,9 @@ onMounted(() => {
 .search-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
 
+/* 搜索条件区域 */
 .search-conditions {
   display: flex;
   flex-wrap: wrap;
@@ -356,37 +390,39 @@ onMounted(() => {
 
 .search-form :deep(.el-form-item) {
   margin-bottom: 0 !important;
-  flex: 1 1 180px;
-  min-width: 180px;
+  flex: 1 1 200px;
+  min-width: 200px;
+}
+
+.search-form :deep(.el-form-item__label),
+.search-form :deep(.el-input__inner) {
+  font-size: 14px !important;
+  color: #606266;
 }
 
 .form-actions-wrapper {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  margin-top: 10px;
 }
 
 .form-actions {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
 }
 
-/* ==================== 数据内容区域样式 ==================== */
+.view-toggle {
+  margin-left: 16px;
+}
+
+/* ==================== 3. 数据内容区域 ==================== */
 .data-content {
   flex: 1;
+  height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-.content-wrapper {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
 .table-view {
@@ -398,28 +434,114 @@ onMounted(() => {
 :deep(.el-table) {
   height: 100%;
   width: 100%;
+  font-size: 14px !important;
 }
 
-:deep(.el-table__body-wrapper) {
-  height: 100%;
-  overflow: auto;
+:deep(.el-table th.el-table__cell) {
+  background-color: var(--el-table-header-bg-color, #f8f9fb);
+  color: var(--el-text-color-primary, #303133);
+  font-weight: 600;
+  height: 48px;
+}
+
+/* 修复表格边框粗细不一致问题 */
+:deep(.el-table--border .el-table__inner-wrapper:before),
+:deep(.el-table--border .el-table__inner-wrapper:after) {
+  background-color: var(--el-table-border-color);
+  content: "";
+  position: absolute;
+  z-index: calc(var(--el-table-index) + 2);
 }
 
 .no-data-container {
   height: 100%;
   display: flex;
   align-items: center;
-  background: var(--bg-secondary, #ffffff);
   justify-content: center;
+  background: var(--bg-secondary, #ffffff);
 }
 
-/* ==================== 分页区域样式 ==================== */
+/* 卡片视图样式 */
+.card-container {
+  flex: 1;
+  overflow: auto;
+}
+
+.batch-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.batch-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #303133;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-header :deep(.el-tag) {
+  flex-shrink: 0;
+}
+
+.card-body {
+  flex: 1;
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+}
+
+.card-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.card-item .label {
+  color: #909399;
+  font-weight: 500;
+  flex-shrink: 0;
+  min-width: 80px;
+  display: inline-block;
+}
+
+.card-footer {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: auto;
+}
+
+/* ==================== 4. 分页区域 ==================== */
 .fixed-pagination {
   flex-shrink: 0;
-  background: var(--bg-secondary, #ffffff);
+  background: #fff;
   padding: 12px;
-  border-top: 1px solid var(--bg-secondary, #ffffff);
-  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+  border-top: 1px solid #ebeef5;
   text-align: center;
 }
 
@@ -432,19 +554,140 @@ onMounted(() => {
 .page-jumper {
   display: flex;
   align-items: center;
-  gap: 8px;
   font-size: 12px;
   color: #606266;
 }
 
 .page-input {
-  width: 80px;
+  width: 90px !important;
+  margin: 0 8px;
 }
 
-.page-info {
+.page-input :deep(.el-input__wrapper) {
+  padding-left: 10px;
+  padding-right: 35px;
+}
+
+.page-btn {
+  border-radius: 4px;
+  padding: 0 15px;
+  height: 32px;
   font-size: 12px;
-  color: #606266;
-  min-width: 220px;
-  text-align: center;
+}
+
+.page-total {
+  margin-left: 4px;
+}
+
+/* ==================== 5. 响应式适配 ==================== */
+/* 2K 屏幕优化 */
+@media (min-width: 2000px) and (max-width: 2600px) {
+  .md-fuzzy-batch-view {
+    max-width: min(1920px, 95vw);
+  }
+}
+
+/* 超宽屏幕 */
+@media (min-width: 2600px) {
+  .md-fuzzy-batch-view {
+    max-width: min(2560px, 95vw);
+  }
+}
+
+/* ==================== 6. 暗色模式样式 ==================== */
+html.dark .md-fuzzy-batch-view,
+.dark .md-fuzzy-batch-view {
+  background: var(--el-bg-color, #1a1a2c);
+}
+
+.dark .integrated-container {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .fixed-search {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .search-form :deep(.el-form-item__label) {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .search-form :deep(.el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+.dark .search-form :deep(.el-picker__wrapper),
+.dark .search-form :deep(.el-date-editor .el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+.dark :deep(.el-table) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+}
+
+.dark :deep(.el-table__header tr),
+.dark :deep(.el-table__header tr th.el-table__cell),
+.dark :deep(.el-table thead tr th) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark :deep(.el-table__body tr.el-table__row > td),
+.dark :deep(.el-table tbody tr td.el-table__cell) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark :deep(.el-table--striped .el-table__body tr.el-table__row--striped td) {
+  background-color: var(--el-fill-color-lighter, #232330) !important;
+}
+
+.dark :deep(.el-table__body tr:hover > td) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+}
+
+.dark .fixed-pagination {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-top-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .page-jumper {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .no-data-container :deep(.el-empty__description) {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
+}
+
+.dark .batch-card {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .card-header {
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .card-title {
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+}
+
+.dark .card-item {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .card-item .label {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
+}
+
+.dark .card-footer {
+  border-top-color: var(--el-border-color, #3a3a4a) !important;
 }
 </style>

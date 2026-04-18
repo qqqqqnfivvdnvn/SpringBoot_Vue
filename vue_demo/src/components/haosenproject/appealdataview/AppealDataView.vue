@@ -82,19 +82,17 @@
         </el-form>
       </div>
       <!-- 数据区域 -->
-      <div class="data-content">
-        <div class="content-wrapper" v-loading="loading">
-          <!-- 表格视图 -->
-          <div v-if="viewMode === 'table'" class="table-view">
-            <el-table
-                v-if="appealData.list?.length"
-                :data="appealData.list"
-                height="100%"
-                stripe
-                border
-                fit
-                resizable
-            >
+      <div class="data-content" v-loading="loading">
+        <div v-if="viewMode === 'table'" class="table-container">
+          <el-table
+              v-if="appealData.list?.length"
+              :data="appealData.list"
+              height="100%"
+              stripe
+              border
+              fit
+              resizable
+          >
               <el-table-column
                   v-for="(col, index) in columns"
                   :key="index"
@@ -150,11 +148,10 @@
             <div v-else class="no-data-container">
               <el-empty description="没有找到匹配的数据" :image-size="120" />
             </div>
+        </div>
 
-          </div>
-
-          <!-- 卡片视图 -->
-          <div v-else class="card-view">
+        <!-- 卡片视图 -->
+        <div v-else class="card-view">
             <el-empty v-if="!appealData.list?.length" description="没有找到匹配的数据" :image-size="120" class="no-data-container" />
             <el-row :gutter="20" v-else>
               <el-col v-for="appeal in appealData.list" :key="appeal.dataId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
@@ -206,7 +203,6 @@
                 </el-card>
               </el-col>
             </el-row>
-          </div>
         </div>
 
         <!-- 分页 -->
@@ -226,12 +222,12 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ appealData.pages }} 页 ({{ appealData.total }} 条)</span>
+              <span class="page-total">页，共 {{ appealData.pages }} 页 ({{ appealData.total }} 条)</span>
             </div>
             <el-button size="small" plain :disabled="!appealData.hasNextPage" @click="pageNumber < appealData.pages && (pageNumber++, fetchAppealData())">
               下一页
             </el-button>
-            <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
+            <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
               <el-option :value="20" label="每页20条" />
               <el-option :value="40" label="每页40条" />
               <el-option :value="60" label="每页60条" />
@@ -722,6 +718,7 @@ const toExcel = async () => {
     link.download = `豪森申诉数据_${new Date().toLocaleDateString()}.xlsx`
     link.click()
     URL.revokeObjectURL(url)
+
   } catch {
     ElMessage.error('导出失败')
   } finally {
@@ -867,11 +864,11 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: min(1250px, 95vw);
+  max-width: min(1600px, 95vw);
   margin: 0 auto;
-  background: var(--bg-secondary, #ffffff);
+  background: #ffffff;
   overflow: hidden;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* ==================== 整合容器样式 ==================== */
@@ -962,7 +959,7 @@ onMounted(() => {
 .fixed-search {
   flex-shrink: 0;
   padding: 14px 18px 10px;
-  background: var(--bg-secondary, #ffffff);
+  background: #fff;
   border-bottom: 1px solid #ebeef5;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border-radius: 6px 6px 0 0;
@@ -971,7 +968,6 @@ onMounted(() => {
 .search-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
 
 /* 搜索条件区域 */
@@ -984,29 +980,30 @@ onMounted(() => {
 
 .search-form :deep(.el-form-item) {
   margin-bottom: 0 !important;
-  flex: 1 1 180px;
-  min-width: 180px;
+  flex: 1 1 200px;
+  min-width: 200px;
 }
 
-/* 按钮区域整体容器 - 用于靠右对齐 */
+.search-form :deep(.el-form-item__label),
+.search-form :deep(.el-input__inner) {
+  font-size: 14px !important;
+  color: #606266;
+}
+
 .form-actions-wrapper {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  margin-top: 10px;
 }
 
-/* 按钮本身容器 */
 .form-actions {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
 }
 
-/* 视图切换按钮组微调 */
 .view-toggle {
-  margin-left: 8px;
+  margin-left: 16px;
 }
 
 
@@ -1014,32 +1011,35 @@ onMounted(() => {
 /* ==================== 数据内容区域样式 ==================== */
 .data-content {
   flex: 1;
+  height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.content-wrapper {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.table-view {
+.table-container {
   flex: 1;
   height: 100%;
-  overflow: hidden;
 }
 
 :deep(.el-table) {
-  height: 100%;
-  width: 100%;
+  font-size: 14px !important;
 }
 
-:deep(.el-table__body-wrapper) {
-  height: 100%;
-  overflow: auto;
+/* 修复表格边框粗细不一致问题 */
+:deep(.el-table--border .el-table__inner-wrapper:before),
+:deep(.el-table--border .el-table__inner-wrapper:after) {
+  background-color: var(--el-table-border-color);
+  content: "";
+  position: absolute;
+  z-index: calc(var(--el-table-index) + 2);
+}
+
+:deep(.el-table th.el-table__cell) {
+  background-color: var(--el-table-header-bg-color, #f8f9fb);
+  color: var(--el-text-color-primary, #303133);
+  font-weight: 600;
+  height: 48px;
 }
 
 /* ==================== 卡片视图样式 ==================== */
@@ -1051,8 +1051,8 @@ onMounted(() => {
 
 .appeal-card {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  font-size: 14px;
+  margin-bottom: 16px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -1063,40 +1063,40 @@ onMounted(() => {
 
 .card-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #ebeef5;
+  justify-content: space-between;
 }
 
 .card-title {
-  font-size: 14px;
-  font-weight: bold;
-  max-width: 70%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: 600;
+  font-size: 15px;
+  color: #303133;
 }
 
-.appeal-remark {
-  margin-left: 8px;
+.card-header :deep(.el-tag) {
+  flex-shrink: 0;
 }
 
 .card-body {
-  flex: 1;
-  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
 }
 
 .card-item {
-  margin-bottom: 8px;
-  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: break-all;
 }
 
 .card-item .label {
-  color: #606266;
-  font-weight: 500;
-  margin-right: 6px;
-  min-width: 60px;
+  color: #909399;
+  flex-shrink: 0;
+  min-width: 80px;
   display: inline-block;
 }
 
@@ -1110,10 +1110,9 @@ onMounted(() => {
 /* ==================== 分页区域样式 ==================== */
 .fixed-pagination {
   flex-shrink: 0;
-  background: var(--bg-secondary, #ffffff);
+  background: #fff;
   padding: 12px;
-  border-top: 1px solid var(--bg-secondary, #ffffff);
-  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+  border-top: 1px solid #ebeef5;
   text-align: center;
 }
 
@@ -1126,28 +1125,151 @@ onMounted(() => {
 .page-jumper {
   display: flex;
   align-items: center;
-  gap: 8px;
   font-size: 12px;
   color: #606266;
 }
 
 .page-input {
-  width: 80px;
+  width: 90px !important;
+  margin: 0 8px;
 }
 
-.page-info {
+.page-input :deep(.el-input__wrapper) {
+  padding-left: 10px;
+  padding-right: 35px;
+}
+
+.page-btn {
+  border-radius: 4px;
+  padding: 0 15px;
+  height: 32px;
   font-size: 12px;
-  color: #606266;
-  min-width: 220px;
-  text-align: center;
+}
+
+.size-select {
+  width: 110px !important;
+  font-size: 12px;
+}
+
+.page-total {
+  margin-left: 4px;
 }
 
 .no-data-container {
   height: 100%;
   display: flex;
   align-items: center;
-  background: var(--bg-secondary, #ffffff);
   justify-content: center;
+}
+
+/* ==================== 响应式适配 ==================== */
+@media (min-width: 2000px) {
+  .appeal-data-view { max-width: min(1920px, 95vw); }
+}
+
+@media (min-width: 2600px) {
+  .appeal-data-view { max-width: min(2560px, 95vw); }
+}
+
+/* ==================== 暗色模式样式 ==================== */
+html.dark .appeal-data-view,
+.dark .appeal-data-view {
+  background: var(--el-bg-color, #1a1a2c);
+}
+
+.dark .integrated-container {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .fixed-search {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .search-form :deep(.el-form-item__label) {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .search-form :deep(.el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+.dark .search-form :deep(.el-picker__wrapper),
+.dark .search-form :deep(.el-date-editor .el-input__wrapper) {
+  background-color: var(--el-input-bg-color, #2a2a3a) !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
+}
+
+.dark :deep(.el-table) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+}
+
+.dark :deep(.el-table__header tr),
+.dark :deep(.el-table__header tr th.el-table__cell),
+.dark :deep(.el-table thead tr th) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark :deep(.el-table__body tr.el-table__row > td),
+.dark :deep(.el-table tbody tr td.el-table__cell) {
+  background-color: var(--el-bg-color, #1a1a2c) !important;
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark :deep(.el-table--striped .el-table__body tr.el-table__row--striped td) {
+  background-color: var(--el-fill-color-lighter, #232330) !important;
+}
+
+.dark :deep(.el-table__body tr:hover > td) {
+  background-color: var(--el-fill-color-light, #2a2a3a) !important;
+}
+
+/* 表格边框伪元素颜色 - 暗色模式 */
+.dark :deep(.el-table--border:before),
+.dark :deep(.el-table--border:after),
+.dark :deep(.el-table--border .el-table__inner-wrapper:before),
+.dark :deep(.el-table--border .el-table__inner-wrapper:after) {
+  background-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .fixed-pagination {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-top-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .page-jumper {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .appeal-card {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .card-header {
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .card-title {
+  color: var(--el-text-color-regular, #e0e0e0) !important;
+}
+
+.dark .card-item .label {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
+}
+
+.dark .card-item {
+  color: var(--el-text-color-regular, #d0d0d0) !important;
+}
+
+.dark .no-data-container :deep(.el-empty__description) {
+  color: var(--el-text-color-secondary, #a0a0a0) !important;
 }
 
 
@@ -1214,7 +1336,7 @@ onMounted(() => {
 .dialog-fixed-header {
   flex-shrink: 0;
   padding: 14px 24px;
-  background: var(--bg-secondary, #ffffff);
+  background: #fff;
   border-bottom: 1px solid #ebeef5;
   position: sticky;
   top: 0;

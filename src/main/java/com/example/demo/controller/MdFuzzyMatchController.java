@@ -86,4 +86,23 @@ public class MdFuzzyMatchController {
 
         return ResponseEntity.ok().headers(headers).body(response.getData());
     }
+
+    /**
+     * 导出汇总数据
+     */
+    @GetMapping("/exportSummary")
+    public ResponseEntity<byte[]> exportSummary(MdFuzzyMatchConditionDTO condition) {
+        ApiResponseDTO<byte[]> response = mdFuzzyMatchService.exportSummary(condition);
+
+        if (response.getCode() != 200) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment",
+                URLEncoder.encode("模糊匹配汇总_" + System.currentTimeMillis() + ".xlsx", StandardCharsets.UTF_8).replace("+", "%20"));
+
+        return ResponseEntity.ok().headers(headers).body(response.getData());
+    }
 }

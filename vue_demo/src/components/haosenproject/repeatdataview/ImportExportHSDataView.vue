@@ -314,7 +314,7 @@ html.dark .custom-upload :deep(.el-upload-dragger.is-dragover) {
 }
 
 html.dark .upload-icon {
-  color: var(--theme-light);
+  color: #9ca3af;
 }
 
 .upload-text {
@@ -335,7 +335,7 @@ html.dark .upload-text {
 }
 
 html.dark .upload-btn {
-  color: var(--theme-light);
+  color: #9ca3af;
 }
 
 .upload-btn:hover {

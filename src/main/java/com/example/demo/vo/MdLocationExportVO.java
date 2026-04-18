@@ -24,19 +24,19 @@ public class MdLocationExportVO {
     @ExcelProperty("高德省份")
     private String provName;
 
-    @ExcelProperty("高德省 id")
+    @ExcelProperty("高德省id")
     private String provId;
 
     @ExcelProperty("高德市")
     private String cityName;
 
-    @ExcelProperty("高德市 id")
+    @ExcelProperty("高德市id")
     private String cityId;
 
     @ExcelProperty("高德区县")
     private String countyName;
 
-    @ExcelProperty("高德区县 id")
+    @ExcelProperty("高德区县id")
     private String countyId;
 
     @ExcelProperty("经纬度")

@@ -10,6 +10,7 @@
         <result column="status" property="status"/>
         <result column="status_desc" property="statusDesc"/>
         <result column="data_count" property="dataCount"/>
+        <result column="file_count" property="fileCount"/>
         <result column="original_filename" property="originalFilename"/>
         <result column="message" property="message"/>
     </resultMap>
@@ -22,6 +23,7 @@
             b.status,
             b.original_filename,
             b.message,
+            b.file_count,
             CASE b.status
                 WHEN 0 THEN '处理中'
                 WHEN 1 THEN '已处理'
@@ -45,7 +47,7 @@
                 AND b.create_time &lt;= #{condition.endTime}
             </if>
         </where>
-        GROUP BY b.batch_id, b.create_time, b.update_time, b.status, b.original_filename, b.message
+        GROUP BY b.batch_id, b.create_time, b.update_time, b.status, b.original_filename, b.message, b.file_count
         ORDER BY b.create_time DESC
     </select>
 
@@ -57,6 +59,7 @@
             status,
             original_filename,
             message,
+            file_count,
             CASE status
                 WHEN 0 THEN '处理中'
                 WHEN 1 THEN '已处理'
@@ -68,8 +71,8 @@
     </select>
 
     <insert id="insert" parameterType="com.example.demo.entity.HrBatch">
-        INSERT INTO haosen_project..hr_batch (batch_id, create_time, update_time, status, original_filename, message)
-        VALUES (#{batchId}, #{createTime}, #{updateTime}, #{status}, #{originalFilename}, #{message})
+        INSERT INTO haosen_project..hr_batch (batch_id, create_time, update_time, status, original_filename, message, file_count)
+        VALUES (#{batchId}, #{createTime}, #{updateTime}, #{status}, #{originalFilename}, #{message}, #{fileCount})
     </insert>
 
     <update id="updateStatus">
@@ -81,6 +84,12 @@
     <update id="updateStatusWithMessage">
         UPDATE haosen_project..hr_batch
         SET status = #{status}, message = #{message}, update_time = GETDATE()
+        WHERE batch_id = #{batchId}
+    </update>
+
+    <update id="updateFileCount">
+        UPDATE haosen_project..hr_batch
+        SET file_count = #{fileCount}, update_time = GETDATE()
         WHERE batch_id = #{batchId}
     </update>
 

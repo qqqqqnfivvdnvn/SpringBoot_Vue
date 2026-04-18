@@ -281,7 +281,7 @@ html.dark .upload-card {
 }
 
 .custom-upload :deep(.el-upload-dragger) {
-  border: 1px dashed #dcdfe6;
+  border: 1px dashed var(--theme-primary);
   border-radius: 3px;
   padding: 20px 12px;
   text-align: center;
@@ -317,7 +317,7 @@ html.dark .custom-upload :deep(.el-upload-dragger.is-dragover) {
 }
 
 html.dark .upload-icon {
-  color: var(--theme-light);
+  color: #9ca3af;
 }
 
 .upload-text {
@@ -338,7 +338,7 @@ html.dark .upload-text {
 }
 
 html.dark .upload-btn {
-  color: var(--theme-light);
+  color: #9ca3af;
 }
 
 .upload-btn:hover {

@@ -24,6 +24,8 @@ public interface HrMonitoringDataMapper {
 
     int deleteByBatchId(@Param("batchId") String batchId);
 
+    int deleteAllTemp();
+
     void transferFromTemp(@Param("batchId") String batchId);
 
     List<HrMonitoringData> selectByBatchId(@Param("batchId") String batchId);

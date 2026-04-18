@@ -180,6 +180,10 @@
         DELETE FROM haosen_project..hr_monitoring_data_tmp WHERE batch_id = #{batchId}
     </delete>
 
+    <delete id="deleteAllTemp">
+        TRUNCATE TABLE haosen_project..hr_monitoring_data_tmp
+    </delete>
+
     <select id="selectByBatchId" resultMap="HrMonitoringDataResultMap">
         SELECT *
         FROM haosen_project..hr_monitoring_data
@@ -202,6 +206,31 @@
 
     <update id="transferFromTemp">
         <![CDATA[
+        -- 更新对应的表的地址
+        UPDATE haosen_project..hr_org_relation
+        SET
+            address = a.address,
+            update_time = GETDATE()
+            FROM HospitalInfo..company a
+        WHERE
+            hr_org_relation.key_id = a.key_id
+          AND (hr_org_relation.address <> a.address
+           OR (hr_org_relation.address IS NULL AND a.address IS NOT NULL)
+           OR (hr_org_relation.address IS NOT NULL AND a.address IS NULL));
+
+
+        UPDATE haosen_project..hr_org_relation
+        SET
+            address = a.address,
+            update_time = GETDATE()
+            FROM HospitalInfo..hospital a
+        WHERE
+            hr_org_relation.key_id = a.keyid
+          AND (hr_org_relation.address <> a.address
+           OR (hr_org_relation.address IS NULL AND a.address IS NOT NULL)
+           OR (hr_org_relation.address IS NOT NULL AND a.address IS NULL));
+
+
         -- 步骤 1: 更新临时表的标准化省份
         UPDATE haosen_project..hr_monitoring_data_tmp
         SET standardized_province = a.省

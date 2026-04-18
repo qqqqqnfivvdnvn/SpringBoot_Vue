@@ -42,8 +42,8 @@
             </el-form-item>
             <el-form-item label="状态" v-if="showMoreFilters">
               <el-select v-model="searchForm.status" placeholder="请选择状态" clearable @clear="handleSearch" style="width: 120px;">
-                <el-option label="正常" value="1" />
-                <el-option label="作废" value="2" />
+                <el-option label="数据正常" value="1" />
+                <el-option label="数据作废" value="2" />
                 <el-option label="无法清洗" value="3" />
                 <el-option label="禁用客户" value="4" />
                 <el-option label="重复数据" value="5" />
@@ -116,18 +116,17 @@
         </el-form>
       </div>
       <!-- 数据区域 -->
-      <div class="data-content">
-        <div class="content-wrapper" v-loading="loading">
-          <!-- 表格视图 -->
-          <div v-if="viewMode === 'table'" class="table-view">
-            <el-table
-                v-if="drugstoreData.list?.length"
-                :data="drugstoreData.list"
-                height="100%"
-                stripe
-                border
-                fit
-            >
+      <div class="data-content" v-loading="loading">
+        <div v-if="viewMode === 'table'" class="table-container">
+          <el-table
+              v-if="drugstoreData.list?.length"
+              :data="drugstoreData.list"
+              height="100%"
+              stripe
+              border
+              fit
+              resizable
+          >
               <el-table-column
                   v-for="(col, index) in columns"
                   :key="index"
@@ -201,10 +200,10 @@
             <div v-else class="no-data-container">
               <el-empty description="没有找到匹配的药店数据" :image-size="120" />
             </div>
-          </div>
+        </div>
 
-          <!-- 卡片视图 -->
-          <div v-else class="card-view">
+        <!-- 卡片视图 -->
+        <div v-else class="card-view">
             <el-empty v-if="!drugstoreData.list?.length" description="没有找到匹配的药店数据" class="no-data-container" />
             <el-row :gutter="20" v-else>
               <el-col v-for="drugstore in drugstoreData.list" :key="drugstore.dataId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
@@ -270,7 +269,6 @@
                 </el-card>
               </el-col>
             </el-row>
-          </div>
         </div>
 
         <!-- 分页 -->
@@ -290,12 +288,12 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ drugstoreData.pages }} 页 ({{ drugstoreData.total }} 条)</span>
+              <span class="page-total">页，共 {{ drugstoreData.pages }} 页 ({{ drugstoreData.total }} 条)</span>
             </div>
             <el-button size="small" plain :disabled="!drugstoreData.hasNextPage" @click="pageNumber < drugstoreData.pages && (pageNumber++, fetchDrugStoreData())">
               下一页
             </el-button>
-            <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
+            <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
               <el-option :value="20" label="每页20条" />
               <el-option :value="40" label="每页40条" />
               <el-option :value="60" label="每页60条" />
@@ -481,10 +479,10 @@
 
         <el-form-item label="选择状态">
           <el-select v-model="statusForm.status" placeholder="请选择状态" style="width: 100%;">
-            <el-option label="正常" value="1" />
-            <el-option label="作废" value="2" />
+            <el-option label="数据正常" value="1" />
+            <el-option label="数据作废" value="2" />
             <el-option label="无法清洗" value="3" />
-            <el-option label="豪森禁用客户" value="4" />
+            <el-option label="禁用客户" value="4" />
             <el-option label="重复数据" value="5" />
           </el-select>
         </el-form-item>
@@ -1282,22 +1280,15 @@ html.dark .drugstore-data-view,
 /* 数据内容区域 */
 .data-content {
   flex: 1;
+  height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.content-wrapper {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.table-view {
+.table-container {
   flex: 1;
   height: 100%;
-  overflow: hidden;
 }
 
 :deep(.el-table) {
@@ -1306,13 +1297,20 @@ html.dark .drugstore-data-view,
   font-size: 14px;
 }
 
-:deep(.el-table th.el-table__cell) {
-  font-weight: 600;
+/* 修复表格边框粗细不一致问题 */
+:deep(.el-table--border .el-table__inner-wrapper:before),
+:deep(.el-table--border .el-table__inner-wrapper:after) {
+  background-color: var(--el-table-border-color);
+  content: "";
+  position: absolute;
+  z-index: calc(var(--el-table-index) + 2);
 }
 
-:deep(.el-table__body-wrapper) {
-  height: 100%;
-  overflow: auto;
+:deep(.el-table th.el-table__cell) {
+  background-color: var(--el-table-header-bg-color, #f8f9fb);
+  color: var(--el-text-color-primary, #303133);
+  font-weight: 600;
+  height: 48px;
 }
 
 .card-view {
@@ -1364,19 +1362,21 @@ html.dark .drugstore-data-view,
 .card-body {
   flex: 1;
   margin: 12px 0;
+  overflow: auto;
 }
 
 .card-item {
   margin-bottom: 8px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--el-text-color-regular, #606266);
+  word-break: break-all;
 }
 
 .card-item .label {
   color: var(--el-text-color-secondary, #606266);
   font-weight: 600;
-  margin-right: 6px;
-  min-width: 60px;
+  flex-shrink: 0;
+  min-width: 80px;
   display: inline-block;
 }
 
@@ -1403,12 +1403,44 @@ html.dark .drugstore-data-view,
   gap: 16px;
 }
 
+.page-jumper {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #606266;
+}
+
+.page-input {
+  width: 90px !important;
+  margin: 0 8px;
+}
+
+.page-input :deep(.el-input__wrapper) {
+  padding-left: 10px;
+  padding-right: 35px;
+}
+
+.page-btn {
+  border-radius: 4px;
+  padding: 0 15px;
+  height: 32px;
+  font-size: 12px;
+}
+
+.size-select {
+  width: 110px !important;
+  font-size: 12px;
+}
+
+.page-total {
+  margin-left: 4px;
+}
+
 .page-info {
   font-size: 14px;
   color: var(--el-text-color-regular, #606266);
   min-width: 220px;
   text-align: center;
-
 }
 
 .no-data-container {
@@ -1693,6 +1725,14 @@ html.dark :deep(.el-table--striped .el-table__body tr.el-table__row--striped td)
 
 html.dark :deep(.el-table__body tr:hover > td) {
   background-color: var(--el-fill-color-light, #2a2a3a) !important;
+}
+
+/* 表格边框伪元素颜色 - 暗色模式 */
+.dark :deep(.el-table--border:before),
+.dark :deep(.el-table--border:after),
+.dark :deep(.el-table--border .el-table__inner-wrapper:before),
+.dark :deep(.el-table--border .el-table__inner-wrapper:after) {
+  background-color: var(--el-border-color, #3a3a4a) !important;
 }
 
 html.dark .fixed-pagination,

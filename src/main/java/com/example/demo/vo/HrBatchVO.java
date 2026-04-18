@@ -16,6 +16,7 @@ public class HrBatchVO {
     private Integer status;
     private String statusDesc;
     private Long dataCount;
+    private Integer fileCount; // 文件中实际的条数
     private String originalFilename; // 原始文件名
     private String message; // 处理状态信息（成功/失败消息）
 }

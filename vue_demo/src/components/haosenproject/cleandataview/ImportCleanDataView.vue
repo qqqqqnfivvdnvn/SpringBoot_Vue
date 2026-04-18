@@ -281,7 +281,7 @@ html.dark .upload-card {
 }
 
 .custom-upload :deep(.el-upload-dragger) {
-  border: 1px dashed #dcdfe6;
+  border: 1px dashed var(--theme-primary);
   border-radius: 3px;
   padding: 20px 12px;
   text-align: center;
@@ -294,20 +294,25 @@ html.dark .upload-card {
 
 html.dark .custom-upload :deep(.el-upload-dragger) {
   background: #121212 !important;
-  border-color: #333333 !important;
+  border-color: #3a3a3a !important;
 }
 
 .custom-upload :deep(.el-upload-dragger:hover) {
-  border-color: #555555;
+  border-color: var(--theme-dark);
 }
 
 .custom-upload :deep(.el-upload-dragger.is-dragover) {
-  border-color: #555555;
-  background-color: rgba(100, 100, 100, 0.05);
+  border-color: var(--theme-dark);
+  background-color: rgba(148, 120, 204, 0.05);
+}
+
+html.dark .custom-upload :deep(.el-upload-dragger:hover) {
+  border-color: #4a4a4a;
 }
 
 html.dark .custom-upload :deep(.el-upload-dragger.is-dragover) {
-  background-color: rgba(100, 100, 100, 0.1);
+  border-color: #4a4a4a;
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .upload-icon {
@@ -317,7 +322,7 @@ html.dark .custom-upload :deep(.el-upload-dragger.is-dragover) {
 }
 
 html.dark .upload-icon {
-  color: var(--theme-light);
+  color: #9ca3af;
 }
 
 .upload-text {
@@ -338,7 +343,7 @@ html.dark .upload-text {
 }
 
 html.dark .upload-btn {
-  color: var(--theme-light);
+  color: #9ca3af;
 }
 
 .upload-btn:hover {

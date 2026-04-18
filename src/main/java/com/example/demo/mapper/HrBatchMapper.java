@@ -25,4 +25,6 @@ public interface HrBatchMapper {
     int updateStatus(@Param("batchId") String batchId, @Param("status") Integer status);
 
     int updateStatusWithMessage(@Param("batchId") String batchId, @Param("status") Integer status, @Param("message") String message);
+
+    int updateFileCount(@Param("batchId") String batchId, @Param("fileCount") int fileCount);
 }

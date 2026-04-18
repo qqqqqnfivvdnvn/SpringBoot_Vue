@@ -35,4 +35,9 @@ public interface MdFuzzyMatchService {
      * 导出批次数据
      */
     ApiResponseDTO<byte[]> exportBatch(String batchId);
+
+    /**
+     * 导出汇总数据
+     */
+    ApiResponseDTO<byte[]> exportSummary(MdFuzzyMatchConditionDTO condition);
 }

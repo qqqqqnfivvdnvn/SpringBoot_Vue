@@ -321,6 +321,49 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
         }
     }
 
+    @Override
+    public ApiResponseDTO<byte[]> exportSummary(MdFuzzyMatchConditionDTO condition) {
+        try {
+            List<MdFuzzyMatchSummary> summaryList = mdFuzzyMatchMapper.getSummaryList(condition);
+
+            if (summaryList == null || summaryList.isEmpty()) {
+                return ApiResponseDTO.error("没有数据可导出");
+            }
+
+            // 将 Entity 转换为 VO
+            List<MdFuzzyMatchSummaryVO> voList = new ArrayList<>();
+            for (MdFuzzyMatchSummary summary : summaryList) {
+                MdFuzzyMatchSummaryVO vo = new MdFuzzyMatchSummaryVO();
+                vo.setOriginalId(summary.getOriginalId());
+                vo.setOriginalProvince(summary.getOriginalProvince());
+                vo.setOriginalName(summary.getOriginalName());
+                vo.setKeyid(summary.getKeyid());
+                vo.setName(summary.getName());
+                vo.setNamehistory(summary.getNamehistory());
+                vo.setProvince(summary.getProvince());
+                vo.setCityname(summary.getCityname());
+                vo.setAreaname(summary.getAreaname());
+                vo.setAddress(summary.getAddress());
+                vo.setPrincipal(summary.getPrincipal());
+                vo.setLegalperson(summary.getLegalperson());
+                vo.setSign_status(summary.getSign_status());
+                vo.setStatus(summary.getStatus());
+                voList.add(vo);
+            }
+
+            // 使用 EasyExcel 导出
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                EasyExcel.write(baos, MdFuzzyMatchSummaryVO.class)
+                        .sheet("模糊匹配汇总")
+                        .doWrite(voList);
+                return ApiResponseDTO.success(baos.toByteArray());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseDTO.error("导出失败：" + e.getMessage());
+        }
+    }
+
     /**
      * 模糊匹配数据监听器
      */

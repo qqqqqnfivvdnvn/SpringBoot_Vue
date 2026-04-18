@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 
 import com.example.demo.entity.HrMonitoringData;
+import com.example.demo.mapper.HrBatchMapper;
 import com.example.demo.mapper.HrMonitoringDataMapper;
 import com.example.demo.utils.ExcelHeaderValidator;
 import com.example.demo.utils.ReaderExcel;
@@ -23,6 +24,9 @@ public class HrBatchAsyncService {
 
     @Autowired
     private HrMonitoringDataMapper monitoringDataMapper;
+
+    @Autowired
+    private HrBatchMapper batchMapper;
 
     @Autowired
     private HrBatchStatusService batchStatusService;
@@ -55,7 +59,7 @@ public class HrBatchAsyncService {
             }
 
             // 3. 清空临时表
-            monitoringDataMapper.deleteByBatchId(batchId);
+            monitoringDataMapper.deleteAllTemp();
 
             // 4. 转换数据并插入临时表
             List<HrMonitoringData> insertList = new ArrayList<>();
@@ -101,11 +105,15 @@ public class HrBatchAsyncService {
                 monitoringDataMapper.batchInsert(subList);
             }
 
-            // 5. 执行数据转移（包含复杂的 SQL 逻辑）、同步比对关系、更新批次状态为已处理
-            // 这三个操作在同一个 SQL 事务中原子性执行
+            // 5. 执行数据转移（包含复杂的 SQL 逻辑）
             monitoringDataMapper.transferFromTemp(batchId);
 
+            // 6. 更新文件条数（在所有数据处理完成后执行）
+            int fileCount = dataList.size();
+            batchMapper.updateFileCount(batchId, fileCount);
+
         } catch (Exception e) {
+            System.out.println("处理失败：" + e.getMessage());
             // 处理失败，使用独立事务更新状态为 2（避免被主事务回滚）
             String errorMsg = e.getMessage();
             // 截取简短的错误信息（最多 100 字符）

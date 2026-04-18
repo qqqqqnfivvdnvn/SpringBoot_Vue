@@ -91,19 +91,18 @@
         </el-form>
       </div>
       <!-- 数据区域 -->
-      <div class="data-content">
-        <div class="content-wrapper" v-loading="loading">
-          <!-- 表格视图 -->
-          <div v-if="viewMode === 'table'" class="table-view">
-            <el-table
-                v-if="cleanData.list?.length"
-                :data="cleanData.list"
-                height="100%"
-                stripe
-                border
-                fit
-                resizable
-            >
+      <div class="data-content" v-loading="loading">
+        <!-- 表格视图 -->
+        <div v-if="viewMode === 'table'" class="table-container">
+          <el-table
+              v-if="cleanData.list?.length"
+              :data="cleanData.list"
+              height="100%"
+              stripe
+              border
+              fit
+              resizable
+          >
               <el-table-column
                   v-for="(col, index) in columns"
                   :key="index"
@@ -191,15 +190,14 @@
             <div v-else class="no-data-container">
               <el-empty description="没有找到匹配的数据" :image-size="120" />
             </div>
+        </div>
 
-          </div>
-
-          <!-- 卡片视图 -->
-          <div v-else class="card-view">
+        <!-- 卡片视图 -->
+        <div v-else class="card-view">
             <el-empty v-if="!cleanData.list?.length" description="没有找到匹配的数据" :image-size="120" class="no-data-container" />
             <el-row :gutter="20" v-else>
               <el-col v-for="item in cleanData.list" :key="item.dataId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-                <el-card class="appeal-card" shadow="hover">
+                <el-card class="clean-data-card" shadow="hover">
                   <template #header>
                     <div class="card-header">
                       <div class="card-title">
@@ -208,7 +206,7 @@
                         </el-link>
                       </div>
                       <div class="status-badges">
-                        <el-tag :type="getStatusTagType(item.batchStatus)" size="small" effect="dark">
+                        <el-tag :type="getStatusTagType(item.batchStatus, 'batchStatus')" size="small" effect="dark">
                           {{ formatStatus(item.batchStatus) }}
                         </el-tag>
                       </div>
@@ -221,6 +219,7 @@
                     <div class="card-item"><span class="label">数据类型：</span>{{ item.dataType === '1' ? '存量' : item.dataType === '2' ? '增量' : '未知' }}</div>
                     <div class="card-item"><span class="label">原始省份：</span>{{ item.originalProvince }}</div>
                     <div class="card-item"><span class="label">原始地址：</span>{{ item.originalAddress }}</div>
+                    <div class="card-item"><span class="label">经销商：</span>{{ item.companyName }}</div>
                     <div class="card-item"><span class="label">豪森编码：</span>{{ item.haosenCode }}</div>
                     <div class="card-item"><span class="label">添加时间：</span>{{ formatDateTime(item.addTime) }}</div>
                   </div>
@@ -251,7 +250,6 @@
                 </el-card>
               </el-col>
             </el-row>
-          </div>
         </div>
 
         <!-- 分页 -->
@@ -276,7 +274,7 @@
             <el-button size="small" plain :disabled="!cleanData.hasNextPage" @click="pageNumber < cleanData.pages && (pageNumber++, fetchCleanData())">
               下一页
             </el-button>
-            <el-select v-model="pageSize" size="small" style="width: 110px;" @change="handlePageSizeChange">
+            <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
               <el-option :value="20" label="每页 20 条" />
               <el-option :value="40" label="每页 40 条" />
               <el-option :value="60" label="每页 60 条" />
@@ -1043,14 +1041,7 @@ onMounted(() => {
   overflow: hidden;
 }
 
-.content-wrapper {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.table-view {
+.table-container {
   flex: 1;
   height: 100%;
 }
@@ -1066,20 +1057,39 @@ onMounted(() => {
   height: 48px;
 }
 
+:deep(.el-table--border .el-table__inner-wrapper:before),
+:deep(.el-table--border .el-table__inner-wrapper:after) {
+  background-color: var(--el-table-border-color);
+  content: "";
+  position: absolute;
+  z-index: calc(var(--el-table-index) + 2);
+}
+
 /* ==================== 卡片视图样式 ==================== */
 .card-view {
-  flex: 1;
-  overflow: hidden;
-}
-
-.appeal-card {
   height: 100%;
-  font-size: 14px;
-  margin-bottom: 16px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow-y: auto;
+  padding: 16px;
 }
 
-.appeal-card:hover {
+.clean-data-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--el-bg-color, #ffffff);
+}
+
+.clean-data-card :deep(.el-card__header) {
+  background: var(--el-bg-color, #ffffff);
+  border-bottom: 1px solid var(--el-border-color-light, #ebeef5);
+}
+
+.clean-data-card :deep(.el-card__body) {
+  background: var(--el-bg-color, #ffffff);
+}
+
+.clean-data-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -1104,18 +1114,23 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow: auto;
 }
 
 .card-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   font-size: 14px;
+  line-height: 1.6;
+  word-break: break-all;
 }
 
 .card-item .label {
   color: #909399;
-  min-width: 70px;
+  flex-shrink: 0;
+  min-width: 80px;
+  display: inline-block;
 }
 
 .card-footer {
@@ -1259,9 +1274,18 @@ html.dark .appeal-data-view,
   color: var(--el-text-color-regular, #d0d0d0) !important;
 }
 
-.dark .appeal-card {
+.dark .clean-data-card {
   background: var(--el-bg-color, #1a1a2c) !important;
   border-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .clean-data-card :deep(.el-card__header) {
+  background: var(--el-bg-color, #1a1a2c) !important;
+  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
+}
+
+.dark .clean-data-card :deep(.el-card__body) {
+  background: var(--el-bg-color, #1a1a2c) !important;
 }
 
 .dark .card-header {
@@ -1486,141 +1510,6 @@ html.dark .appeal-data-view,
 }
 .update-item .menu-icon {
   color: var(--el-color-success);
-}
-
-/* ==================== 暗色主题适配 ==================== */
-html.dark .appeal-data-view,
-.dark .appeal-data-view {
-  background: var(--el-bg-color, #1a1a2c);
-}
-
-html.dark .integrated-container,
-.dark .integrated-container {
-  background: var(--el-bg-color, #1a1a2c) !important;
-  border-color: var(--el-border-color, #3a3a4a) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
-}
-
-html.dark .fixed-search,
-.dark .fixed-search {
-  background: var(--el-bg-color, #1a1a2c) !important;
-  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
-}
-
-html.dark .search-form :deep(.el-form-item__label) {
-  color: var(--el-text-color-regular, #d0d0d0) !important;
-}
-
-html.dark .search-form :deep(.el-input__wrapper) {
-  background-color: var(--el-input-bg-color, #2a2a3a) !important;
-  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
-}
-
-html.dark .search-form :deep(.el-picker__wrapper),
-html.dark .search-form :deep(.el-date-editor .el-input__wrapper) {
-  background-color: var(--el-input-bg-color, #2a2a3a) !important;
-  box-shadow: 0 0 0 1px var(--el-input-border-color, #3a3a4a) inset !important;
-}
-
-html.dark :deep(.el-table) {
-  background-color: var(--el-bg-color, #1a1a2c) !important;
-}
-
-html.dark :deep(.el-table__header tr),
-html.dark :deep(.el-table__header tr th.el-table__cell),
-html.dark :deep(.el-table thead tr th) {
-  background-color: var(--el-fill-color-light, #2a2a3a) !important;
-  color: var(--el-text-color-regular, #e0e0e0) !important;
-  border-color: var(--el-border-color, #3a3a4a) !important;
-}
-
-html.dark :deep(.el-table__body tr.el-table__row > td),
-html.dark :deep(.el-table tbody tr td.el-table__cell) {
-  background-color: var(--el-bg-color, #1a1a2c) !important;
-  color: var(--el-text-color-regular, #d0d0d0) !important;
-  border-color: var(--el-border-color, #3a3a4a) !important;
-}
-
-html.dark :deep(.el-table--striped .el-table__body tr.el-table__row--striped td) {
-  background-color: var(--el-fill-color-lighter, #232330) !important;
-}
-
-html.dark :deep(.el-table__body tr:hover > td) {
-  background-color: var(--el-fill-color-light, #2a2a3a) !important;
-}
-
-html.dark .fixed-pagination,
-.dark .fixed-pagination {
-  background: var(--el-bg-color, #1a1a2c) !important;
-  border-top-color: var(--el-border-color, #3a3a4a) !important;
-}
-
-html.dark .page-jumper,
-.dark .page-jumper {
-  color: var(--el-text-color-regular, #d0d0d0) !important;
-}
-
-html.dark .appeal-card,
-.dark .appeal-card {
-  background: var(--el-bg-color, #1a1a2c) !important;
-  border-color: var(--el-border-color, #3a3a4a) !important;
-}
-
-html.dark .card-header,
-.dark .card-header {
-  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
-}
-
-html.dark .card-title,
-.dark .card-title {
-  color: var(--el-text-color-regular, #e0e0e0) !important;
-}
-
-html.dark .card-item .label,
-.dark .card-item .label {
-  color: var(--el-text-color-secondary, #a0a0a0) !important;
-}
-
-html.dark .card-item,
-.dark .card-item {
-  color: var(--el-text-color-regular, #d0d0d0) !important;
-}
-
-html.dark .card-footer,
-.dark .card-footer {
-  border-top-color: var(--el-border-color, #3a3a4a) !important;
-}
-
-html.dark .detail-row label,
-.dark .detail-row label {
-  color: var(--el-text-color-regular, #d0d0d0) !important;
-}
-
-html.dark .detail-row span,
-.dark .detail-row span {
-  color: var(--el-text-color-regular, #d0d0d0) !important;
-}
-
-html.dark .update-dialog :deep(.el-dialog),
-.dark .update-dialog :deep(.el-dialog) {
-  background: var(--el-bg-color, #1a1a2c) !important;
-}
-
-html.dark .update-dialog :deep(.el-dialog__header),
-.dark .update-dialog :deep(.el-dialog__header) {
-  background: var(--el-bg-color, #1a1a2c) !important;
-  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
-}
-
-html.dark .dialog-fixed-header,
-.dark .dialog-fixed-header {
-  background: var(--el-bg-color, #1a1a2c) !important;
-  border-bottom-color: var(--el-border-color, #3a3a4a) !important;
-}
-
-html.dark .no-data-container :deep(.el-empty__description),
-.dark .no-data-container :deep(.el-empty__description) {
-  color: var(--el-text-color-secondary, #a0a0a0) !important;
 }
 
 @media (prefers-color-scheme: dark) {
