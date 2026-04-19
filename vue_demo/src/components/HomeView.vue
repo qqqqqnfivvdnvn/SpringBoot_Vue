@@ -262,7 +262,7 @@ onMounted(() => {
 const getProjects = async () => {
   try {
     const userId = userData.value.userid;
-    const response = await axios.get(`/api/projects/getMyProjects?userId=${userId}`)
+    const response = await axios.get(`/api/projects/getmyprojects?userId=${userId}`)
     projects.value = response.data.data || []
 
   } catch (error) {
@@ -323,7 +323,7 @@ const addNewProject = async () => {
   }
 
   try {
-    await axios.post('/api/projects/addProject', {
+    await axios.post('/api/projects/addproject', {
       name: newProject.value.name.trim(),
       description: newProject.value.description,
       icon: newProject.value.icon,

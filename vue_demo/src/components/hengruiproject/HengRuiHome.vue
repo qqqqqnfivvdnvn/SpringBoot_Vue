@@ -60,16 +60,16 @@ const layoutConfig = computed(() => ({
   darkThemeColors,
   actions: {
     showBatchData: () => {
-      layoutRef.value?.addTab('批次列表', 'HrBatchDataView', '/hengrui/matchedaddress/batchData')
+      layoutRef.value?.addTab('批次列表', 'HrBatchDataView', '/hengrui/matchedaddress/batchdata')
     },
     importBatchData: () => {
-      layoutRef.value?.addTab('批次导入', 'HrImportBatchDataView', '/hengrui/matchedaddress/importBatch')
+      layoutRef.value?.addTab('批次导入', 'HrImportBatchDataView', '/hengrui/matchedaddress/importbatch')
     },
     showMonitoringData: () => {
-      layoutRef.value?.addTab('数据汇总', 'HrMonitoringDataView', '/hengrui/matchedaddress/monitoringData')
+      layoutRef.value?.addTab('数据汇总', 'HrMonitoringDataView', '/hengrui/matchedaddress/monitoringdata')
     },
     showRelationData: () => {
-      layoutRef.value?.addTab('比对关系', 'HrOrgRelationView', '/hengrui/matchedaddress/relationData')
+      layoutRef.value?.addTab('比对关系', 'HrOrgRelationView', '/hengrui/matchedaddress/relationdata')
     },
     importRelationData: () => {
       layoutRef.value?.addTab('关系导入', 'HrImportOrgRelationView', '/hengrui/matchedaddress/importrelation')

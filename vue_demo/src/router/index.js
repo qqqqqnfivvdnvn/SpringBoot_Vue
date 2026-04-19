@@ -93,27 +93,27 @@ const routes = [
 
 
     {
-        path: '/getCleanBarData',
-        name: 'getCleanBarData',
+        path: '/getcleanbardata',
+        name: 'getcleanbardata',
         component: BarData,
         meta: { requiresAuth: true } // 需要登录才能访问
     },
     {
-        path: '/getMainPieData',
-        name: 'getMainPieData',
+        path: '/getmainpiedata',
+        name: 'getmainpiedata',
         component: MainData,
         meta: {requiresAuth: true} // 需要登录才能访问
     },
     {
-        path: '/getBranchBarData',
-        name: 'getBranchBarData',
+        path: '/getbranchbardata',
+        name: 'getbranchbardata',
         component: BranchBar,
         meta: { requiresAuth: true } // 需要登录才能访问
     },
 
     {
-        path: '/homeDashboard',
-        name: 'homeDashboard',
+        path: '/homedashboard',
+        name: 'homedashboard',
         component: HomeDashboard,
         meta: { requiresAuth: true } // 需要登录才能访问
     },
@@ -124,19 +124,19 @@ const routes = [
         children: [
             {
                 path: 'hospital',
-                name: 'hospitalData',
+                name: 'hospitaldata',
                 component: HospitalData,
                 meta: { requiresAuth: true } // 需要登录才能访问
             },
             {
                 path: 'drugstore',
-                name: 'drugStoreData',
+                name: 'drugstoredata',
                 component: DrugStoreData,
                 meta: { requiresAuth: true } // 需要登录才能访问
             },
             {
                 path: 'company',
-                name: 'CompanyData',
+                name: 'companydata',
                 component: CompanyData,
                 meta: { requiresAuth: true } // 需要登录才能访问
             }
@@ -145,19 +145,19 @@ const routes = [
     },
 
     {
-        path: '/appealData',
+        path: '/appealdata',
         name: 'AppealData',
-        redirect: '/appealData/list',
+        redirect: '/appealdata/list',
         children: [
             {
                 path: 'list',
-                name: 'appealDataList',
+                name: 'appealdatalist',
                 component: AppealDataView,
                 meta: { requiresAuth: true }
             },
             {
-                path: 'importAppealData',
-                name: 'importAppealData',
+                path: 'importappealdata',
+                name: 'importappealdata',
                 component: ImportAppealData,
                 meta: { requiresAuth: true }
             }
@@ -165,18 +165,18 @@ const routes = [
     },
 
     {
-        path: '/cleanData',
+        path: '/cleandata',
         name: 'CleanData',
         children: [
             {
-                path: 'importCleanData',
-                name: 'importCleanData',
+                path: 'importcleandata',
+                name: 'importcleandata',
                 component: ImportCleanData,
                 meta: { requiresAuth: true } // 需要登录才能访问
             },
             {
-                path: 'selectCleanData',
-                name: 'selectCleanData',
+                path: 'selectcleandata',
+                name: 'selectcleandata',
                 component: SelectCleanData,
                 meta: { requiresAuth: true } // 需要登录才能访问
             },
@@ -185,12 +185,12 @@ const routes = [
     },
 
     {
-        path: '/updateData',
+        path: '/updatedata',
         name: 'UpdateData',
         children: [
             {
-                path: 'importUpdateData',
-                name: 'importUpdateData',
+                path: 'importupdatedata',
+                name: 'importupdatedata',
                 component: ImportUpdateData,
                 meta: { requiresAuth: true } // 需要登录才能访问
             }
@@ -199,24 +199,24 @@ const routes = [
     },
 
     {
-        path: '/repeatData',
+        path: '/repeatdata',
         name: 'RepeatData',
         children: [
            {
-               path: 'getRepeatData',
-               name: 'getRepeatData',
+               path: 'getrepeatdata',
+               name: 'getrepeatdata',
                component: GetRepeatData,
                meta: { requiresAuth: true } // 需要登录才能访问
            },
            {
-               path: 'getExportHSData',
-               name: 'getExportHSData',
+               path: 'getexporthsdata',
+               name: 'getexporthsdata',
                component: GetExportHSData,
                meta: { requiresAuth: true } // 需要登录才能访问
            },
            {
-               path: 'importExportHSData',
-               name: 'importExportHSData',
+               path: 'importexporthsdata',
+               name: 'importexporthsdata',
                component: ImportExportHSData,
                meta: { requiresAuth: true } // 需要登录才能访问
            }
@@ -226,29 +226,29 @@ const routes = [
     {
         path: '/hengrui/matchedaddress',
         name: 'HengRuiMatchedAddress',
-        redirect: '/hengrui/matchedaddress/batchData',
+        redirect: '/hengrui/matchedaddress/batchdata',
         children: [
             {
-                path: 'batchData',
-                name: 'batchData',
+                path: 'batchdata',
+                name: 'batchdata',
                 component: HrBatchDataView,
                 meta: { requiresAuth: true }
             },
             {
-                path: 'importBatch',
-                name: 'importBatch',
+                path: 'importbatch',
+                name: 'importbatch',
                 component: HrImportBatchDataView,
                 meta: { requiresAuth: true }
             },
             {
-                path: 'monitoringData',
-                name: 'monitoringData',
+                path: 'monitoringdata',
+                name: 'monitoringdata',
                 component: HrMonitoringDataView,
                 meta: { requiresAuth: true }
             },
             {
-                path: 'relationData',
-                name: 'relationData',
+                path: 'relationdata',
+                name: 'relationdata',
                 component: HrOrgRelationView,
                 meta: { requiresAuth: true }
             },
@@ -264,23 +264,23 @@ const routes = [
     {
         path: '/maindata/location',
         name: 'MainDataLocation',
-        redirect: '/maindata/location/batchData',
+        redirect: '/maindata/location/batchdata',
         children: [
             {
-                path: 'batchData',
-                name: 'maindataBatchData',
+                path: 'batchdata',
+                name: 'maindatabatchdata',
                 component: MdLocationBatchView,
                 meta: { requiresAuth: true }
             },
             {
                 path: 'upload',
-                name: 'maindataUpload',
+                name: 'maindataupload',
                 component: MdLocationUploadView,
                 meta: { requiresAuth: true }
             },
             {
-                path: 'dataList',
-                name: 'maindataLocationData',
+                path: 'datalist',
+                name: 'maindatalocationdata',
                 component: MdLocationView,
                 meta: { requiresAuth: true }
             }

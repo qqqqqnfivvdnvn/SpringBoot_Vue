@@ -17,7 +17,7 @@ public class ProjectsController {
     private ProjectsService projectsService;
 
 
-    @PostMapping("/addProject")
+    @PostMapping("/addproject")
     public ResponseEntity<ApiResponseDTO<Projects>> addProject(@RequestBody Projects project){
         System.out.println(project);
         ApiResponseDTO<Projects> response = projectsService.addProject(project);
@@ -28,7 +28,7 @@ public class ProjectsController {
     /**
      * 获取当前用户有权限的项目列表（带权限信息）
      */
-    @GetMapping("/getMyProjects")
+    @GetMapping("/getmyprojects")
     public ResponseEntity<ApiResponseDTO<List<ProjectWithPermissionVO>>> getMyProjects(@RequestParam String userId) {
         ApiResponseDTO<List<ProjectWithPermissionVO>> response = projectsService.getProjectsForUser(userId);
         return ResponseEntity.ok(response);
@@ -37,7 +37,7 @@ public class ProjectsController {
     /**
      * 获取所有项目（管理员专用）
      */
-    @GetMapping("/getAllProjects")
+    @GetMapping("/getallprojects")
     public ResponseEntity<ApiResponseDTO<List<Projects>>> getAllProjects() {
         ApiResponseDTO<List<Projects>> response = projectsService.getAllProjects();
         return ResponseEntity.ok(response);
