@@ -16,7 +16,7 @@ import java.util.List;
 
 @Controller
 
-@RequestMapping("/haosen/homeData")
+@RequestMapping("/haosen/homedata")
 
 
 public class HaoSenHomeDataController {
@@ -24,29 +24,29 @@ public class HaoSenHomeDataController {
     private HaoSenHomeDataService homeDataService;
 
 
-    @PostMapping("/getHomeData")
+    @PostMapping("/gethomedata")
     public ResponseEntity<ApiResponseDTO<HaoSenDetailsDataVO>> getDataCount() {
         return ResponseEntity.ok(homeDataService.getDataDetails());
     }
 
-    @PostMapping("/getCleanBarData")
+    @PostMapping("/getcleanbardata")
     public ResponseEntity<ApiResponseDTO<List<HaoSenBarDataVO>>> getCleanBarData() {
         return ResponseEntity.ok(homeDataService.getCleanBarData());
     }
 
-    @PostMapping("/getMainPieData")
+    @PostMapping("/getmainpiedata")
     public ResponseEntity<ApiResponseDTO<List<PieDataVO>>> getMainPieData() {
         return ResponseEntity.ok(homeDataService.getMainPieData());
 
     }
 
-    @PostMapping("/getBranchBarData")
+    @PostMapping("/getbranchbardata")
     public ResponseEntity<ApiResponseDTO<List<PieDataVO>>> getBranchBarData() {
         return ResponseEntity.ok(homeDataService.getBranchBarData());
 
     }
 
-    @PostMapping("/getAppealUpdateData")
+    @PostMapping("/getappealupdatedata")
     public ResponseEntity<ApiResponseDTO<List<HaoSenAppealUpdateDataVO>>> getAppealUpdateData() {
         return ResponseEntity.ok(homeDataService.getAppealUpdateData());
 

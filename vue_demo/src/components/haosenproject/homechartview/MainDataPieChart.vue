@@ -58,7 +58,7 @@ const fetchChartData = async () => {
   }
 
   try {
-    const response = await axios.post('/api/haosen/homeData/getMainPieData');
+    const response = await axios.post('/api/haosen/homedata/getmainpiedata');
     if (response.data.code === 200) {
       chartData = response.data.data.map(item => ({
         name: item.name,

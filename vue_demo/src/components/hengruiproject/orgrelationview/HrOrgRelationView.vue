@@ -327,7 +327,7 @@ const fetchRelationData = async () => {
       ...searchForm
     }
 
-    const response = await axios.get('/api/hengrui/relation/getRelationList', { params })
+    const response = await axios.get('/api/hengrui/matchedaddress/getrelationlist', { params })
 
     if (response.data.code === 200 && response.data.data) {
       const page = response.data.data
@@ -382,7 +382,7 @@ const toExcel = async () => {
   exporting.value = true
   try {
     const params = { ...searchForm }
-    const response = await axios.get('/api/hengrui/relation/exportRelation', {
+    const response = await axios.get('/api/hengrui/matchedaddress/exportrelation', {
       params,
       responseType: 'blob'
     })
@@ -427,7 +427,7 @@ const addRelation = () => {
 const submitAdd = async () => {
   submitting.value = true
   try {
-    const response = await axios.post('/api/hengrui/relation/add', addForm)
+    const response = await axios.post('/api/hengrui/matchedaddress/addrelation', addForm)
 
     if (response.data.code === 200) {
       ElMessage.success('添加成功')
@@ -447,7 +447,7 @@ const submitAdd = async () => {
 const submitEdit = async () => {
   submitting.value = true
   try {
-    const response = await axios.post('/api/hengrui/relation/update', editForm)
+    const response = await axios.post('/api/hengrui/matchedaddress/updaterelation', editForm)
 
     if (response.data.code === 200) {
       ElMessage.success('更新成功')
@@ -472,7 +472,7 @@ const deleteRelation = async (row) => {
       type: 'warning'
     })
 
-    const response = await axios.post('/api/hengrui/relation/delete', null, {
+    const response = await axios.post('/api/hengrui/matchedaddress/deleterelation', null, {
       params: { businessLicenseName: row.businessLicenseName }
     })
 

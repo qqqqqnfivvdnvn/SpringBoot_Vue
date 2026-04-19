@@ -79,7 +79,7 @@ const cleanCount = ref({
 // 获取首页数据
 const fetchHomeData = async () => {
   try {
-    const response = await axios.post('/api/haosen/homeData/getHomeData')
+    const response = await axios.post('/api/haosen/homedata/gethomedata')
     if (response.data.code === 200) {
       cleanCount.value = response.data.data
     } else {

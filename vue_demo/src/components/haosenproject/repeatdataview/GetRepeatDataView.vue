@@ -452,7 +452,7 @@ const fetchDuplicateData = async () => {
           Object.entries(searchForm).filter(([, value]) => value !== '' && value !== null && value !== undefined)
       )
     }
-    const { data } = await axios.get('/api/haosen/duplicateData/getDuplicateData', { params })
+    const { data } = await axios.get('/api/haosen/duplicatedata/getduplicatedata', { params })
     if (data.code === 200) {
       Object.assign(duplicateData, data.data)
       pageNumber.value = data.data.pageNum
@@ -488,7 +488,7 @@ const handleDuplicate = async () => {
 
   isDealing.value = true
   try {
-    const { data } = await axios.get('/api/haosen/duplicateData/updateDuplicateData')
+    const { data } = await axios.get('/api/haosen/duplicatedata/updateduplicatedata')
     if (data.code === 200) {
       ElMessage.success('重复数据处理成功')
       fetchDuplicateData()
@@ -598,7 +598,7 @@ const saveChanges = async () => {
       institutionType: orgTypeMap[currentUpdateDuplicate.value.orgType] || 'hospital'
     }
 
-    const { data } = await axios.post('/api/haosen/updateData/updateInstitutionStatus', payload)
+    const { data } = await axios.post('/api/haosen/updatedata/updateinstitutionstatus', payload)
     if (data.code === 200) {
       ElMessage.success('状态更新成功')
       closeUpdateModal()

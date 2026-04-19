@@ -16,14 +16,14 @@ import java.util.Map;
 
 
 @Controller
-@RequestMapping("/haosen/updateData")
+@RequestMapping("/haosen/updatedata")
 public class HaoSenInputUpdateDataController {
 
     //    导入更新数据
     @Autowired
     private HaoSenUpdateDataService haoSenUpdateDataService;
 
-    @PostMapping("/importUpdateData")
+    @PostMapping("/importupdatedata")
     public ResponseEntity<ApiResponseDTO<HaoSenFileMessageDTO>> importAppealData(@RequestParam("file") MultipartFile file) {
 
         return ResponseEntity.ok(haoSenUpdateDataService.uploadUpdateFile(file));
@@ -33,7 +33,7 @@ public class HaoSenInputUpdateDataController {
 
 
     //    单条页面查询医院、药店大库数据
-    @GetMapping ("/findDaKuData")
+    @GetMapping("/finddakupdata")
     public ResponseEntity<ApiResponseDTO<HaoSenOrganizationVO>> findDaKuData(@RequestParam("keyid") String keyid)  {
         return ResponseEntity.ok(haoSenUpdateDataService.findDaKuData(keyid));
 
@@ -42,7 +42,7 @@ public class HaoSenInputUpdateDataController {
 
 
     //单条页面更新医院、药店、商业 数据，推送接口更新数据
-    @PostMapping("/OneUpdateHaoSenData")
+    @PostMapping("/oneupdatehaosendata")
     public ResponseEntity<ApiResponseDTO<HaoSenFileMessageDTO>> OneUpdateHaoSenData(@RequestBody HaoSenOrganizationVO haoSenOrganization ) {
 
         return ResponseEntity.ok(haoSenUpdateDataService.updateOneUpdateData(haoSenOrganization));
@@ -54,7 +54,7 @@ public class HaoSenInputUpdateDataController {
 
 
     //更新医院、药店、商业的状态 status 相关字段 status  1 正常,2 作废,3 无法清洗,4 豪森禁用客户,5 重复数据
-    @PostMapping("/updateInstitutionStatus")
+    @PostMapping("/updateinstitutionstatus")
     public ResponseEntity<ApiResponseDTO<Integer>> updateInstitutionStatus(@RequestBody HaoSenUpdateStatusDTO haoSenUpdateStatusDTO ) {
 
         return ResponseEntity.ok(haoSenUpdateDataService.updateInstitutionType(haoSenUpdateStatusDTO));
@@ -63,7 +63,7 @@ public class HaoSenInputUpdateDataController {
     }
 
 
-    @PostMapping("/deleteInstitutionData")
+    @PostMapping("/deleteinstitutiondata")
     public ResponseEntity<ApiResponseDTO<Integer>> deleteInstitutionData( @RequestBody Map<String, String> params) {
         return ResponseEntity.ok(haoSenUpdateDataService.deleteInstitutionData(params));
     }

@@ -25,11 +25,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
- * 主数据模糊匹配 Controller
+ * 主数据项目 - 模糊匹配 Controller
  */
 @Controller
-@RequestMapping("/maindata/fuzzyMatch")
-public class MdFuzzyMatchController {
+@RequestMapping("/maindata/fuzzymatch")
+public class MainDataFuzzyMatchController {
 
     @Autowired
     private MdFuzzyMatchService mdFuzzyMatchService;
@@ -37,7 +37,7 @@ public class MdFuzzyMatchController {
     /**
      * 获取批次列表
      */
-    @GetMapping("/getBatchList")
+    @GetMapping("/getbatchlist")
     @ResponseBody
     public ResponseEntity<ApiResponseDTO<PageInfo<MdFuzzyMatchBatch>>> getBatchList(
             MdFuzzyMatchBatchConditionDTO condition,
@@ -49,7 +49,7 @@ public class MdFuzzyMatchController {
     /**
      * 上传文件进行模糊匹配
      */
-    @PostMapping("/uploadFile")
+    @PostMapping("/uploadfile")
     @ResponseBody
     public ResponseEntity<ApiResponseDTO<MdFuzzyMatchFileMessageDTO>> uploadFile(
             @RequestParam("file") MultipartFile file) {
@@ -59,7 +59,7 @@ public class MdFuzzyMatchController {
     /**
      * 获取汇总数据列表
      */
-    @GetMapping("/getSummaryList")
+    @GetMapping("/getsummarylist")
     @ResponseBody
     public ResponseEntity<ApiResponseDTO<PageInfo<MdFuzzyMatchSummary>>> getSummaryList(
             MdFuzzyMatchConditionDTO condition,
@@ -71,7 +71,7 @@ public class MdFuzzyMatchController {
     /**
      * 导出批次数据
      */
-    @GetMapping("/exportBatch")
+    @GetMapping("/exportbatch")
     public ResponseEntity<byte[]> exportBatch(@RequestParam String batchId) {
         ApiResponseDTO<byte[]> response = mdFuzzyMatchService.exportBatch(batchId);
 
@@ -90,7 +90,7 @@ public class MdFuzzyMatchController {
     /**
      * 导出汇总数据
      */
-    @GetMapping("/exportSummary")
+    @GetMapping("/exportsummary")
     public ResponseEntity<byte[]> exportSummary(MdFuzzyMatchConditionDTO condition) {
         ApiResponseDTO<byte[]> response = mdFuzzyMatchService.exportSummary(condition);
 

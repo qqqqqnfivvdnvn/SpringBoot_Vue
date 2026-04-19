@@ -221,7 +221,7 @@ const submitFile = async () => {
     const formData = new FormData()
     formData.append('file', selectedFile.value)
 
-    const {data} = await axios.post('/api/hengrui/batch/uploadFile', formData, {
+    const {data} = await axios.post('/api/hengrui/matchedaddress/uploadfile', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
 

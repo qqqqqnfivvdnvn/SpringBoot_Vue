@@ -221,7 +221,7 @@ const submitFile = async () => {
     const formData = new FormData()
     formData.append('file', selectedFile.value)
 
-    const {data} = await axios.post('/api/maindata/fuzzyMatch/uploadFile', formData, {
+    const {data} = await axios.post('/api/maindata/fuzzymatch/uploadfile', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
 

@@ -286,7 +286,7 @@ const fetchBatchData = async () => {
       ...searchForm
     }
 
-    const response = await axios.get('/api/hengrui/batch/getBatchList', { params })
+    const response = await axios.get('/api/hengrui/matchedaddress/getbatchlist', { params })
 
     if (response.data.code === 200 && response.data.data) {
       const page = response.data.data
@@ -335,7 +335,7 @@ const toExcel = async (row) => {
   exportingRows.value.add(row.batchId)  // 添加当前行到导出集合
   try {
     const params = { batchId: row.batchId }
-    const response = await axios.get('/api/hengrui/batch/exportBatch', {
+    const response = await axios.get('/api/hengrui/matchedaddress/exportbatch', {
       params,
       responseType: 'blob'
     })

@@ -256,7 +256,7 @@ const fetchMonitoringData = async () => {
   loading.value = true
   try {
     const params = { pageNum: pageNumber.value, pageSize: pageSize.value, ...searchForm }
-    const response = await axios.get('/api/hengrui/monitoring/getDataList', { params })
+    const response = await axios.get('/api/hengrui/matchedaddress/getdatalist', { params })
     if (response.data.code === 200 && response.data.data) {
       const page = response.data.data
       monitoringData.list = page.list || []
@@ -314,7 +314,7 @@ const handlePageSizeChange = () => {
 const toExcel = async () => {
   exporting.value = true
   try {
-    const response = await axios.get('/api/hengrui/monitoring/exportData', {
+    const response = await axios.get('/api/hengrui/matchedaddress/exportdata', {
       params: searchForm,
       responseType: 'blob'
     })

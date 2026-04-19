@@ -103,7 +103,7 @@ const initChart = async() => {
 
   let data;
   try {
-    const response = await axios.post('/api/haosen/homeData/getBranchBarData');
+    const response = await axios.post('/api/haosen/homedata/getbranchbardata');
     if (response.data.code === 200){
       data = response.data.data;
     }

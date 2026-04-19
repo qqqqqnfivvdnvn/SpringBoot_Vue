@@ -261,7 +261,7 @@ const fetchBatchData = async () => {
       ...searchForm
     }
 
-    const response = await axios.get('/api/maindata/batch/getBatchList', { params })
+    const response = await axios.get('/api/maindata/location/getbatchlist', { params })
 
     if (response.data.code === 200 && response.data.data) {
       const page = response.data.data
@@ -310,7 +310,7 @@ const toExcel = async (row) => {
   exportingRows.value.add(row.batchId)
   try {
     const params = { batchId: row.batchId }
-    const response = await axios.get('/api/maindata/batch/exportBatch', {
+    const response = await axios.get('/api/maindata/location/exportbatch', {
       params,
       responseType: 'blob'
     })

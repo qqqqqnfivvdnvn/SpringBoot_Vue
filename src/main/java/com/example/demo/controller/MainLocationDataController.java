@@ -20,11 +20,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 主数据项目 Controller
+ * 主数据项目 - 地理位置 Controller
  */
 @Controller
-@RequestMapping("/maindata")
-public class MainDataController {
+@RequestMapping("/maindata/location")
+public class MainLocationDataController {
 
     @Autowired
     private MdLocationBatchService batchService;
@@ -35,7 +35,7 @@ public class MainDataController {
     /**
      * 功能 1：批次管理 - 获取批次列表
      */
-    @GetMapping("/batch/getBatchList")
+    @GetMapping("/getbatchlist")
     public ResponseEntity<ApiResponseDTO<PageInfo<MdLocationBatchVO>>> getBatchList(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "20") int pageSize,
@@ -46,7 +46,7 @@ public class MainDataController {
     /**
      * 功能 1：批次管理 - 上传文件
      */
-    @PostMapping("/batch/uploadFile")
+    @PostMapping("/uploadfile")
     public ResponseEntity<ApiResponseDTO<?>> uploadFile(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(batchService.uploadBatchFile(file));
     }
@@ -54,7 +54,7 @@ public class MainDataController {
     /**
      * 功能 1：批次管理 - 导出批次数据
      */
-    @GetMapping("/batch/exportBatch")
+    @GetMapping("/exportbatch")
     public ResponseEntity<byte[]> exportBatch(
             @RequestParam(required = false) String batchId) {
         // 批次导出实际是导出地理位置数据
@@ -79,7 +79,7 @@ public class MainDataController {
     /**
      * 功能 2：数据汇总 - 获取数据列表
      */
-    @GetMapping("/location/getDataList")
+    @GetMapping("/getdatalist")
     public ResponseEntity<ApiResponseDTO<PageInfo<MdLocationExportVO>>> getDataList(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "20") int pageSize,
@@ -90,7 +90,7 @@ public class MainDataController {
     /**
      * 功能 2：数据汇总 - 导出数据
      */
-    @GetMapping("/location/exportData")
+    @GetMapping("/exportdata")
     public ResponseEntity<byte[]> exportData(MdLocationConditionDTO condition) {
         ApiResponseDTO<byte[]> response = locationService.exportDataExcel(condition);
 

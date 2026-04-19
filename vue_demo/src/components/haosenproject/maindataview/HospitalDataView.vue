@@ -803,7 +803,7 @@ const fetchHospitalData = async () => {
           Object.entries(searchForm).filter(([, value]) => value !== '' && value !== null && value !== undefined)
       )
     }
-    const { data } = await axios.get('/api/haosen/mainData/getHospitalData', { params })
+    const { data } = await axios.get('/api/haosen/maindata/gethospitaldata', { params })
     if (data.code === 200) {
       Object.assign(hospitalData, data.data)
       pageNumber.value = data.data.pageNum
@@ -874,7 +874,7 @@ const toExcel = async () => {
     const params = Object.fromEntries(
         Object.entries(searchForm).filter(([, value]) => value !== '' && value !== null && value !== undefined)
     )
-    const { data: jsonBlob } = await axios.get('/api/haosen/mainData/exportHospitalData', { params, responseType: 'blob' })
+    const { data: jsonBlob } = await axios.get('/api/haosen/maindata/exporthospitaldata', { params, responseType: 'blob' })
     const jsonText = await jsonBlob.text()
     const { data: base64 } = JSON.parse(jsonText)
     const byteChars = atob(base64)
@@ -941,7 +941,7 @@ const confirmUpdateStatus = async () => {
       remark: statusForm.remark || null,
       institutionType: 'hospital'
     }
-    const { data } = await axios.post('/api/haosen/updateData/updateInstitutionStatus', payload)
+    const { data } = await axios.post('/api/haosen/updatedata/updateinstitutionstatus', payload)
     if (data.code === 200) {
       ElMessage.success('状态更新成功')
       showStatusModal.value = false
@@ -985,7 +985,7 @@ const showDeleteDialog = (row) => {
 // 执行删除操作
 const confirmDelete = async (row) => {
   try {
-    const { data } = await axios.post('/api/haosen/updateData/deleteInstitutionData', {
+    const { data } = await axios.post('/api/haosen/updatedata/deleteinstitutiondata', {
       dataId: row.dataId,
       institutionType: 'hospital'
     })
@@ -1058,7 +1058,7 @@ const saveChanges = async () => {
   if (isSaving.value) return
   isSaving.value = true
   try {
-    const { data } = await axios.post('/api/haosen/updateData/OneUpdateHaoSenData', currentUpdateHospital.value)
+    const { data } = await axios.post('/api/haosen/updatedata/oneupdatehaosendata', currentUpdateHospital.value)
     if (data.code === 200) {
       ElMessage.success('提交更新成功')
       closeUpdateModal()
@@ -1082,7 +1082,7 @@ const findDaKuData = async () => {
   }
   isFinding.value = true
   try {
-    const { data } = await axios.get('/api/haosen/updateData/findDaKuData', { params: { keyid: currentUpdateHospital.value.keyid } })
+    const { data } = await axios.get('/api/haosen/updatedata/finddakupdata', { params: { keyid: currentUpdateHospital.value.keyid } })
     if (data.code === 200 && data.data) {
       const protectedFields = {
         batchCode: currentUpdateHospital.value.batchCode,
@@ -1122,7 +1122,7 @@ const handleRepush = async () => {
 
   isPushing.value = true
   try {
-    const { data } = await axios.post('/api/haosen/appealData/handleAppealData', currentUpdateHospital.value)
+    const { data } = await axios.post('/api/haosen/appealdata/handleappealdata', currentUpdateHospital.value)
     if (data.code === 200) {
       ElMessage.success('重新推送成功')
       closeUpdateModal()

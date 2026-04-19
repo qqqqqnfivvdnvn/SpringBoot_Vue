@@ -258,7 +258,7 @@ const fetchData = async () => {
       ...searchForm
     }
 
-    const response = await axios.get('/api/maindata/location/getDataList', { params })
+    const response = await axios.get('/api/maindata/location/getdatalist', { params })
 
     if (response.data.code === 200 && response.data.data) {
       const page = response.data.data
@@ -308,7 +308,7 @@ const exportData = async () => {
   exporting.value = true
   try {
     const params = { ...searchForm }
-    const response = await axios.get('/api/maindata/location/exportData', {
+    const response = await axios.get('/api/maindata/location/exportdata', {
       params,
       responseType: 'blob'
     })

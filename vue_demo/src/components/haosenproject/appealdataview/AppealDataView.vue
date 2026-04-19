@@ -604,7 +604,7 @@ const fetchAppealData = async () => {
       )
     }
 
-    const { data } = await axios.get('/api/haosen/appealData/getAppealData', { params })
+    const { data } = await axios.get('/api/haosen/appealdata/getappealdata', { params })
     if (data.code === 200) {
       Object.assign(appealData, data.data)
       pageNumber.value = data.data.pageNum
@@ -705,7 +705,7 @@ const toExcel = async () => {
         Object.entries(searchForm).filter(([, value]) => value !== '' && value !== null && value !== undefined)
     )
 
-    const { data: jsonBlob } = await axios.get('/api/haosen/appealData/exportAppealData', { params, responseType: 'blob' })
+    const { data: jsonBlob } = await axios.get('/api/haosen/appealdata/exportappealdata', { params, responseType: 'blob' })
     const jsonText = await jsonBlob.text()
     const { data: base64 } = JSON.parse(jsonText)
     const byteChars = atob(base64)
@@ -772,7 +772,7 @@ const saveChanges = async () => {
   if (isSaving.value) return
   isSaving.value = true
   try {
-    const { data } = await axios.post('/api/haosen/appealData/handleAppealData', currentAppealDetail.value)
+    const { data } = await axios.post('/api/haosen/appealdata/handleappealdata', currentAppealDetail.value)
     if (data.code === 200) {
       ElMessage.success('提交申诉成功')
       closeAppealModal()
@@ -795,7 +795,7 @@ const findDaKuData = async () => {
   }
   isFinding.value = true
   try {
-    const { data } = await axios.get('/api/haosen/updateData/findDaKuData', { params: { keyid: currentAppealDetail.value.keyid } })
+    const { data } = await axios.get('/api/haosen/updatedata/finddakupdata', { params: { keyid: currentAppealDetail.value.keyid } })
     if (data.code === 200 && data.data != null) {
       // 先保存原始不可编辑字段
       const protectedFields = {

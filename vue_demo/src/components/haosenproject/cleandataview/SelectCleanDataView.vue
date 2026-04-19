@@ -714,7 +714,7 @@ const fetchCleanData = async () => {
       )
     }
 
-    const { data } = await axios.get('/api/haosen/cleanData/selectCleanData', { params })
+    const { data } = await axios.get('/api/haosen/cleandata/selectcleandata', { params })
 
     if (data.code === 200) {
       Object.assign(cleanData, data.data)
@@ -815,7 +815,7 @@ const toExcel = async () => {
     const params = Object.fromEntries(
         Object.entries(searchForm).filter(([, value]) => value !== '' && value !== null && value !== undefined)
     )
-    const { data: jsonBlob } = await axios.get('/api/haosen/cleanData/exportCleanData', { params, responseType: 'blob' })
+    const { data: jsonBlob } = await axios.get('/api/haosen/cleandata/exportcleandata', { params, responseType: 'blob' })
     const jsonText = await jsonBlob.text()
     const { data: base64 } = JSON.parse(jsonText)
     const byteChars = atob(base64)
@@ -859,7 +859,7 @@ const saveChanges = async () => {
   if (isSaving.value) return
   isSaving.value = true
   try {
-    const { data } = await axios.post('/api/haosen/cleanData/handleCleanData', currentCleanDetail.value)
+    const { data } = await axios.post('/api/haosen/cleandata/handlecleandata', currentCleanDetail.value)
     if (data.code === 200) {
       ElMessage.success('推送清洗成功')
       closeCleanModal()
@@ -883,7 +883,7 @@ const findDaKuData = async () => {
   }
   isFinding.value = true
   try {
-    const { data } = await axios.get('/api/haosen/updateData/findDaKuData', { params: { keyid: currentCleanDetail.value.keyid } })
+    const { data } = await axios.get('/api/haosen/updatedata/finddakupdata', { params: { keyid: currentCleanDetail.value.keyid } })
     if (data.code === 200 && data.data != null) {
       // 先保存原始不可编辑字段
       const protectedFields = {

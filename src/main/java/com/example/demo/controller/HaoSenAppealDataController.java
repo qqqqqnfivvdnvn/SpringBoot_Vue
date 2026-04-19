@@ -22,14 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 
-@RequestMapping("/haosen/appealData")
+@RequestMapping("/haosen/appealdata")
 public class HaoSenAppealDataController {
 
     @Autowired
     private HaoSenAppealDataService appealDataService;
 
     // 获取申诉数据
-    @GetMapping("/getAppealData")
+    @GetMapping("/getappealdata")
     public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganizationVO>>> getAppealData(@RequestParam(defaultValue = "1") int pageNum,
                                                                                         @RequestParam(defaultValue = "10") int pageSize, HaoSenAppealConditionDTO condition) {
         ApiResponseDTO<PageInfo<HaoSenOrganizationVO>> appealData = appealDataService.getAppealData(condition,pageNum,pageSize );
@@ -38,7 +38,7 @@ public class HaoSenAppealDataController {
 
 
     // 导出申诉数据
-    @GetMapping("/exportAppealData")
+    @GetMapping("/exportappealdata")
     public ResponseEntity<ApiResponseDTO<byte[]>> exportAppealData(HaoSenAppealConditionDTO condition) {
         // 获取申诉数据
         ApiResponseDTO<byte[]> apiResponseDTO = appealDataService.exportAppealDataExcel(condition);
@@ -48,7 +48,7 @@ public class HaoSenAppealDataController {
 
 
     // 导入申诉数据
-    @PostMapping("/importAppealData")
+    @PostMapping("/importappealdata")
     public ResponseEntity<ApiResponseDTO<HaoSenFileMessageDTO>> importAppealData(@RequestParam("file") MultipartFile file) {
         ApiResponseDTO<HaoSenFileMessageDTO> apiResponseDTO = appealDataService.uploadAppealFile(file);
         return ResponseEntity.ok(apiResponseDTO);
@@ -57,7 +57,7 @@ public class HaoSenAppealDataController {
 
 
     //页面上单条处理申诉数据 ，推送申诉数据
-    @PostMapping("/handleAppealData")
+    @PostMapping("/handleappealdata")
     public ResponseEntity<ApiResponseDTO<HaoSenFileMessageDTO>> handleAppealData(@RequestBody HaoSenOrganizationVO haoSenOrganizationVO) {
 
         ApiResponseDTO<HaoSenFileMessageDTO> apiResponseDTO = appealDataService.handleAppealData(haoSenOrganizationVO);

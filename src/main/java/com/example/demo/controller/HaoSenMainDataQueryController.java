@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 
-@RequestMapping("/haosen/mainData")
+@RequestMapping("/haosen/maindata")
 
 public class HaoSenMainDataQueryController {
 
@@ -25,7 +25,7 @@ public class HaoSenMainDataQueryController {
     private HaoSenMainDataQueryService mainDataQueryService;
 
 
-    @GetMapping("/getHospitalData")
+    @GetMapping("/gethospitaldata")
     public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganizationVO>>> getHospital(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "20") int pageSize,
@@ -39,7 +39,7 @@ public class HaoSenMainDataQueryController {
     }
 
     //    医疗机构数据导出接口
-    @GetMapping("/exportHospitalData")
+    @GetMapping("/exporthospitaldata")
     public ResponseEntity<ApiResponseDTO<byte[]>> exportHospitalData(@ModelAttribute HaoSenHospitalConditionDTO hospitalCondition) {
 
 
@@ -48,7 +48,7 @@ public class HaoSenMainDataQueryController {
     }
 
 
-    @GetMapping("/getDrugStoreData")
+    @GetMapping("/getdrugstoredata")
     public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganizationVO>>> getDrugStore(@RequestParam(defaultValue = "1") int pageNum,
                                                                                        @RequestParam(defaultValue = "20") int pageSize,
                                                                                        @ModelAttribute HaoSenDrugStoreConditionDTO drugStoreCondition) {
@@ -58,7 +58,7 @@ public class HaoSenMainDataQueryController {
     }
 
 
-    @GetMapping("/exportDrugStoreData")
+    @GetMapping("/exportdrugstoredata")
     public ResponseEntity<ApiResponseDTO<byte[]>> exportDrugStoreData(@ModelAttribute  HaoSenDrugStoreConditionDTO drugStoreCondition) {
 
         return ResponseEntity.ok(mainDataQueryService.exportDrugStoreList(drugStoreCondition));
@@ -67,7 +67,7 @@ public class HaoSenMainDataQueryController {
     }
 
 
-    @GetMapping("/getCompanyData")
+    @GetMapping("/getcompanydata")
     public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenOrganizationVO>>> getCompany(@RequestParam(defaultValue = "1") int pageNum,
                                                                                      @RequestParam(defaultValue = "20") int pageSize,
                                                                                      @ModelAttribute HaoSenCompanyConditionDTO companyCondition) {
@@ -79,7 +79,7 @@ public class HaoSenMainDataQueryController {
     }
 
 
-    @GetMapping("/exportCompanyData")
+    @GetMapping("/exportcompanydata")
     public ResponseEntity<ApiResponseDTO<byte[]>> exportCompanyData(@ModelAttribute  HaoSenCompanyConditionDTO companyCondition) {
 
         return ResponseEntity.ok(mainDataQueryService.exportCompanyData(companyCondition));

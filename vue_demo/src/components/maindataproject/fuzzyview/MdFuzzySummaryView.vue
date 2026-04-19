@@ -196,7 +196,7 @@ const fetchSummaryData = async () => {
       pageSize: pageSize.value,
       ...searchForm
     }
-    const response = await axios.get('/api/maindata/fuzzyMatch/getSummaryList', { params })
+    const response = await axios.get('/api/maindata/fuzzymatch/getsummarylist', { params })
 
     if (response.data.code === 200 && response.data.data) {
       const page = response.data.data
@@ -285,7 +285,7 @@ const toExcel = async () => {
   try {
     const params = { ...searchForm }
 
-    const response = await axios.get('/api/maindata/fuzzyMatch/exportSummary', {
+    const response = await axios.get('/api/maindata/fuzzymatch/exportsummary', {
       params,
       responseType: 'blob'
     })

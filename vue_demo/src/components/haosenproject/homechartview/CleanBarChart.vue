@@ -112,7 +112,7 @@ const initChart = async () => {
   });
 
   try {
-    const response = await axios.post('/api/haosen/homeData/getCleanBarData');
+    const response = await axios.post('/api/haosen/homedata/getcleanbardata');
 
     if (response.data.code === 200) {
       const backendData = response.data.data;

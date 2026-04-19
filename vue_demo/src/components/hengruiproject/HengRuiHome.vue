@@ -60,19 +60,19 @@ const layoutConfig = computed(() => ({
   darkThemeColors,
   actions: {
     showBatchData: () => {
-      layoutRef.value?.addTab('批次列表', 'HrBatchDataView', '/hengrui/batch')
+      layoutRef.value?.addTab('批次列表', 'HrBatchDataView', '/hengrui/matchedaddress/batchData')
     },
     importBatchData: () => {
-      layoutRef.value?.addTab('批次导入', 'HrImportBatchDataView', '/hengrui/importBatch')
+      layoutRef.value?.addTab('批次导入', 'HrImportBatchDataView', '/hengrui/matchedaddress/importBatch')
     },
     showMonitoringData: () => {
-      layoutRef.value?.addTab('数据汇总', 'HrMonitoringDataView', '/hengrui/monitoring')
+      layoutRef.value?.addTab('数据汇总', 'HrMonitoringDataView', '/hengrui/matchedaddress/monitoringData')
     },
     showRelationData: () => {
-      layoutRef.value?.addTab('比对关系', 'HrOrgRelationView', '/hengrui/relation')
+      layoutRef.value?.addTab('比对关系', 'HrOrgRelationView', '/hengrui/matchedaddress/relationData')
     },
     importRelationData: () => {
-      layoutRef.value?.addTab('关系导入', 'HrImportOrgRelationView', '/hengrui/importRelation')
+      layoutRef.value?.addTab('关系导入', 'HrImportOrgRelationView', '/hengrui/matchedaddress/importrelation')
     }
   }
 }))

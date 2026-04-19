@@ -453,7 +453,7 @@ const fetchDuplicateData = async () => {
           Object.entries(searchForm).filter(([, value]) => value !== '' && value !== null && value !== undefined)
       )
     }
-    const { data } = await axios.get('/api/haosen/duplicateData/getDuplicateDataByCondition', { params })
+    const { data } = await axios.get('/api/haosen/duplicatedata/getduplicatedatabycondition', { params })
     if (data.code === 200) {
       Object.assign(duplicateData, data.data)
       pageNumber.value = data.data.pageNum
@@ -559,7 +559,7 @@ const saveChanges = async () => {
       institutionType: orgTypeMap[currentUpdateDuplicate.value.orgType] || 'hospital'
     }
 
-    const { data } = await axios.post('/api/haosen/updateData/updateInstitutionStatus', payload)
+    const { data } = await axios.post('/api/haosen/updatedata/updateinstitutionstatus', payload)
     if (data.code === 200) {
       ElMessage.success('状态更新成功')
       closeUpdateModal()

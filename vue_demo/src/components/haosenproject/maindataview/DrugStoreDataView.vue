@@ -753,7 +753,7 @@ const fetchDrugStoreData = async () => {
           Object.entries(searchForm).filter(([, value]) => value !== '' && value !== null && value !== undefined)
       )
     }
-    const { data } = await axios.get('/api/haosen/mainData/getDrugStoreData', { params })
+    const { data } = await axios.get('/api/haosen/maindata/getdrugstoredata', { params })
     if (data.code === 200) {
       Object.assign(drugstoreData, data.data)
       pageNumber.value = data.data.pageNum
@@ -871,7 +871,7 @@ const toExcel = async () => {
     const params = Object.fromEntries(
         Object.entries(searchForm).filter(([, value]) => value !== '' && value !== null && value !== undefined)
     )
-    const { data: jsonBlob } = await axios.get('/api/haosen/mainData/exportDrugStoreData', { params, responseType: 'blob' })
+    const { data: jsonBlob } = await axios.get('/api/haosen/maindata/exportdrugstoredata', { params, responseType: 'blob' })
     const jsonText = await jsonBlob.text()
     const { data: base64 } = JSON.parse(jsonText)
     const byteChars = atob(base64)
@@ -941,7 +941,7 @@ const saveChanges = async () => {
   if (isSaving.value) return
   isSaving.value = true
   try {
-    const { data } = await axios.post('/api/haosen/updateData/OneUpdateHaoSenData', currentUpdateDrugStore.value)
+    const { data } = await axios.post('/api/haosen/updatedata/oneupdatehaosendata', currentUpdateDrugStore.value)
     if (data.code === 200) {
       ElMessage.success('提交更新成功')
       closeUpdateModal()
@@ -965,7 +965,7 @@ const findDaKuData = async () => {
   }
   isFinding.value = true
   try {
-    const { data } = await axios.get('/api/haosen/updateData/findDaKuData', { params: { keyid: currentUpdateDrugStore.value.keyid } })
+    const { data } = await axios.get('/api/haosen/updatedata/finddakupdata', { params: { keyid: currentUpdateDrugStore.value.keyid } })
     if (data.code === 200 && data.data) {
       // 先保存原始不可编辑字段
       const protectedFields = {
@@ -1023,7 +1023,7 @@ const handleRepush = async () => {
 
   isPushing.value = true
   try {
-    const { data } = await axios.post('/api/haosen/appealData/handleAppealData', currentUpdateDrugStore.value)
+    const { data } = await axios.post('/api/haosen/appealdata/handleappealdata', currentUpdateDrugStore.value)
     
     if (data.code === 200) {
       // const appealMessage = data.data?.appealMessage || '推送成功'
@@ -1105,7 +1105,7 @@ const showDeleteDialog = (row) => {
 const confirmDelete = async (row) => {
   try {
     // 调用删除API（demo接口）
-    const { data } = await axios.post('/api/haosen/updateData/deleteInstitutionData', {
+    const { data } = await axios.post('/api/haosen/updatedata/deleteinstitutiondata', {
       dataId: row.dataId,
       institutionType: 'drugStore'
     })
@@ -1140,7 +1140,7 @@ const confirmUpdateStatus = async () => {
       institutionType: 'drugStore'
     }
 
-    const { data } = await axios.post('/api/haosen/updateData/updateInstitutionStatus', payload)
+    const { data } = await axios.post('/api/haosen/updatedata/updateinstitutionstatus', payload)
     console.log('状态更新响应:', data)
     if (data.code === 200) {
       ElMessage.success('状态更新成功')

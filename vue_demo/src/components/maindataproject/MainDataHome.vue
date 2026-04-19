@@ -54,22 +54,22 @@ const layoutConfig = computed(() => ({
   darkThemeColors,
   actions: {
     showBatchList: () => {
-      layoutRef.value?.addTab('批次列表', 'MdLocationBatchView', '/maindata/batch')
+      layoutRef.value?.addTab('批次列表', 'MdLocationBatchView', '/maindata/location/batchData')
     },
     showUpload: () => {
-      layoutRef.value?.addTab('文件上传', 'MdLocationUploadView', '/maindata/upload')
+      layoutRef.value?.addTab('文件上传', 'MdLocationUploadView', '/maindata/location/upload')
     },
     showLocationData: () => {
-      layoutRef.value?.addTab('汇总数据', 'MdLocationView', '/maindata/location')
+      layoutRef.value?.addTab('汇总数据', 'MdLocationView', '/maindata/location/dataList')
     },
     fuzzyBatchList: () => {
-      layoutRef.value?.addTab('批次列表', 'MdFuzzyBatchView', '/maindata/fuzzyMatch/batch')
+      layoutRef.value?.addTab('批次列表', 'MdFuzzyBatchView', '/maindata/fuzzymatch/batch')
     },
     fuzzyUpload: () => {
-      layoutRef.value?.addTab('文件上传', 'MdFuzzyUploadView', '/maindata/fuzzyMatch/upload')
+      layoutRef.value?.addTab('文件上传', 'MdFuzzyUploadView', '/maindata/fuzzymatch/upload')
     },
     fuzzySummary: () => {
-      layoutRef.value?.addTab('汇总数据', 'MdFuzzySummaryView', '/maindata/fuzzyMatch/summary')
+      layoutRef.value?.addTab('汇总数据', 'MdFuzzySummaryView', '/maindata/fuzzymatch/summary')
     }
   }
 }))

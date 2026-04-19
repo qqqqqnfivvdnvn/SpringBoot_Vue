@@ -224,11 +224,12 @@ const routes = [
     },
 
     {
-        path: '/hengrui',
-        name: 'HengRui',
+        path: '/hengrui/matchedaddress',
+        name: 'HengRuiMatchedAddress',
+        redirect: '/hengrui/matchedaddress/batchData',
         children: [
             {
-                path: 'batch',
+                path: 'batchData',
                 name: 'batchData',
                 component: HrBatchDataView,
                 meta: { requiresAuth: true }
@@ -240,20 +241,20 @@ const routes = [
                 meta: { requiresAuth: true }
             },
             {
-                path: 'monitoring',
+                path: 'monitoringData',
                 name: 'monitoringData',
                 component: HrMonitoringDataView,
                 meta: { requiresAuth: true }
             },
             {
-                path: 'relation',
+                path: 'relationData',
                 name: 'relationData',
                 component: HrOrgRelationView,
                 meta: { requiresAuth: true }
             },
             {
-                path: 'importRelation',
-                name: 'importRelation',
+                path: 'importrelation',
+                name: 'importrelation',
                 component: HrImportOrgRelationView,
                 meta: { requiresAuth: true }
             }
@@ -261,11 +262,12 @@ const routes = [
     },
 
     {
-        path: '/maindata',
-        name: 'MainData',
+        path: '/maindata/location',
+        name: 'MainDataLocation',
+        redirect: '/maindata/location/batchData',
         children: [
             {
-                path: 'batch',
+                path: 'batchData',
                 name: 'maindataBatchData',
                 component: MdLocationBatchView,
                 meta: { requiresAuth: true }
@@ -277,25 +279,31 @@ const routes = [
                 meta: { requiresAuth: true }
             },
             {
-                path: 'location',
+                path: 'dataList',
                 name: 'maindataLocationData',
                 component: MdLocationView,
                 meta: { requiresAuth: true }
-            },
+            }
+        ]
+    },
+    {
+        path: '/maindata/fuzzymatch',
+        name: 'MainDataFuzzyMatch',
+        children: [
             {
-                path: 'fuzzyMatch/batch',
+                path: 'batch',
                 name: 'mdFuzzyBatchList',
                 component: MdFuzzyBatchView,
                 meta: { requiresAuth: true }
             },
             {
-                path: 'fuzzyMatch/upload',
+                path: 'upload',
                 name: 'mdFuzzyUpload',
                 component: MdFuzzyUploadView,
                 meta: { requiresAuth: true }
             },
             {
-                path: 'fuzzyMatch/summary',
+                path: 'summary',
                 name: 'mdFuzzySummary',
                 component: MdFuzzySummaryView,
                 meta: { requiresAuth: true }

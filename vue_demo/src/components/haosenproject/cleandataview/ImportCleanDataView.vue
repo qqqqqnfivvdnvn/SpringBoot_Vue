@@ -220,7 +220,7 @@ const submitFile = async () => {
     const formData = new FormData()
     formData.append('file', selectedFile.value)
 
-    const {data} = await axios.post('/api/haosen/cleanData/importCleanData', formData, {
+    const {data} = await axios.post('/api/haosen/cleandata/importcleandata', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
 

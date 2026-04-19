@@ -101,7 +101,7 @@ const initChart = async () => {
     devicePixelRatio: window.devicePixelRatio > 1 ? 2 : 1
   });
 
-  const response = await axios.post('/api/haosen/homeData/getAppealUpdateData'); // 替换为你的后端 API 地址
+  const response = await axios.post('/api/haosen/homedata/getappealupdatedata'); // 替换为你的后端 API 地址
   let data;
   try {
     if (response.data.code === 200) {

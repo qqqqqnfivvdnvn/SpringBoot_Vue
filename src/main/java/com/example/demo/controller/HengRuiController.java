@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
  * 恒瑞项目 Controller
  */
 @Controller
-@RequestMapping("/hengrui")
+@RequestMapping("/hengrui/matchedaddress")
 public class HengRuiController {
 
     @Autowired
@@ -41,7 +41,7 @@ public class HengRuiController {
     /**
      * 功能 1：批次管理 - 获取批次列表
      */
-    @GetMapping("/batch/getBatchList")
+    @GetMapping("/getbatchlist")
     public ResponseEntity<ApiResponseDTO<PageInfo<HrBatchVO>>> getBatchList(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "20") int pageSize,
@@ -52,7 +52,7 @@ public class HengRuiController {
     /**
      * 功能 1：批次管理 - 上传文件
      */
-    @PostMapping("/batch/uploadFile")
+    @PostMapping("/uploadfile")
     public ResponseEntity<ApiResponseDTO<?>> uploadFile(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(batchService.uploadBatchFile(file));
     }
@@ -60,7 +60,7 @@ public class HengRuiController {
     /**
      * 功能 1：批次管理 - 导出批次数据
      */
-    @GetMapping("/batch/exportBatch")
+    @GetMapping("/exportbatch")
     public ResponseEntity<byte[]> exportBatch(@RequestParam String batchId) {
         HrBatchConditionDTO condition = new HrBatchConditionDTO();
         condition.setBatchId(batchId);
@@ -82,7 +82,7 @@ public class HengRuiController {
     /**
      * 功能 2：数据汇总 - 获取数据列表
      */
-    @GetMapping("/monitoring/getDataList")
+    @GetMapping("/getdatalist")
     public ResponseEntity<ApiResponseDTO<PageInfo<HrMonitoringDataVO>>> getDataList(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "20") int pageSize,
@@ -93,7 +93,7 @@ public class HengRuiController {
     /**
      * 功能 2：数据汇总 - 导出数据
      */
-    @GetMapping("/monitoring/exportData")
+    @GetMapping("/exportdata")
     public ResponseEntity<byte[]> exportData(HrMonitoringDataConditionDTO condition) {
         ApiResponseDTO<byte[]> response = monitoringDataService.exportDataExcel(condition);
 
@@ -112,7 +112,7 @@ public class HengRuiController {
     /**
      * 功能 3：数据比对关系 - 获取关系列表
      */
-    @GetMapping("/relation/getRelationList")
+    @GetMapping("/getrelationlist")
     public ResponseEntity<ApiResponseDTO<PageInfo<HrOrgRelationVO>>> getRelationList(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "20") int pageSize,
@@ -123,7 +123,7 @@ public class HengRuiController {
     /**
      * 功能 3：数据比对关系 - 删除关系
      */
-    @PostMapping("/relation/delete")
+    @PostMapping("/deleterelation")
     public ResponseEntity<ApiResponseDTO<String>> deleteRelation(@RequestParam String businessLicenseName) {
         return ResponseEntity.ok(orgRelationService.deleteRelation(businessLicenseName));
     }
@@ -131,7 +131,7 @@ public class HengRuiController {
     /**
      * 功能 3：数据比对关系 - 更新关系
      */
-    @PostMapping("/relation/update")
+    @PostMapping("/updaterelation")
     public ResponseEntity<ApiResponseDTO<String>> updateRelation(@RequestBody HrOrgRelationVO relation) {
         return ResponseEntity.ok(orgRelationService.updateRelation(relation));
     }
@@ -139,7 +139,7 @@ public class HengRuiController {
     /**
      * 功能 3：数据比对关系 - 新增关系
      */
-    @PostMapping("/relation/add")
+    @PostMapping("/addrelation")
     public ResponseEntity<ApiResponseDTO<String>> addRelation(@RequestBody HrOrgRelationVO relation) {
         return ResponseEntity.ok(orgRelationService.addRelation(relation));
     }
@@ -147,7 +147,7 @@ public class HengRuiController {
     /**
      * 功能 3：数据比对关系 - 导出关系数据
      */
-    @GetMapping("/relation/exportRelation")
+    @GetMapping("/exportrelation")
     public ResponseEntity<byte[]> exportRelation(HrOrgRelationConditionDTO condition) {
         ApiResponseDTO<byte[]> response = orgRelationService.exportRelationExcel(condition);
 
@@ -166,7 +166,7 @@ public class HengRuiController {
     /**
      * 功能 3：数据比对关系 - 导入关系数据
      */
-    @PostMapping("/relation/importRelation")
+    @PostMapping("/importrelation")
     public ResponseEntity<ApiResponseDTO<String>> importRelation(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(orgRelationService.importRelationExcel(file));
     }

@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 
-@RequestMapping("/haosen/cleanData")
+@RequestMapping("/haosen/cleandata")
 public class HaoSenInputCleanDataController {
 
     @Autowired
@@ -24,7 +24,7 @@ public class HaoSenInputCleanDataController {
 
 
 //    导入清洗数据
-    @PostMapping("/importCleanData")
+    @PostMapping("/importcleandata")
     public ResponseEntity<ApiResponseDTO<HaoSenFileMessageDTO>> importCleanData(@RequestParam("file") MultipartFile file) {
         ApiResponseDTO<HaoSenFileMessageDTO> haoSenFileMessageDTOApiResponseDTO = inputCleanDataService.uploadUpdateFile(file);
 
@@ -33,7 +33,7 @@ public class HaoSenInputCleanDataController {
     }
 
 //    查询清洗数据
-    @GetMapping("/selectCleanData")
+    @GetMapping("/selectcleandata")
     public ResponseEntity<ApiResponseDTO<PageInfo<HaoSenCleanDataVO>>> selectCleanData(@RequestParam(defaultValue = "1") int pageNum,
                                                                                        @RequestParam(defaultValue = "20") int pageSize,
                                                                                        @ModelAttribute HaoSenCleanConditionDTO CleanCondition) {
@@ -44,7 +44,7 @@ public class HaoSenInputCleanDataController {
     }
 
 //    单条数据清洗
-    @PostMapping("/handleCleanData")
+    @PostMapping("/handlecleandata")
     public ResponseEntity<ApiResponseDTO<HaoSenFileMessageDTO>> handleCleanData(@RequestBody HaoSenOrganizationVO haoSenOrganization) {
         ApiResponseDTO<HaoSenFileMessageDTO> haoSenFileMessageDTOApiResponseDTO = inputCleanDataService.cleanHaoSenData(haoSenOrganization);
         return ResponseEntity.ok(haoSenFileMessageDTOApiResponseDTO);
@@ -52,7 +52,7 @@ public class HaoSenInputCleanDataController {
 
 
 //   清洗数据导出Excel
-    @GetMapping("/exportCleanData")
+    @GetMapping("/exportcleandata")
     public ResponseEntity<ApiResponseDTO<byte[]>> exportCleanData(@ModelAttribute  HaoSenCleanConditionDTO condition) {
 
         ApiResponseDTO<byte[]> byteApiResponseDTO = inputCleanDataService.exportCleanDataList(condition);
