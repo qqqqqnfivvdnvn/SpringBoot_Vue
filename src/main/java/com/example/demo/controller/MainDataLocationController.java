@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Controller
 @RequestMapping("/maindata/location")
-public class MainLocationDataController {
+public class MainDataLocationController {
 
     @Autowired
     private MdLocationBatchService batchService;
