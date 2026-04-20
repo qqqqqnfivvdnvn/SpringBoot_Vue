@@ -79,37 +79,37 @@ const layoutConfig = computed(() => ({
   darkThemeColors,
   actions: {
     showHospitalData: () => {
-      layoutRef.value?.addTab('医院主数据', 'HospitalDataView', '/dataBase/hospital')
+      layoutRef.value?.addTab('医院主数据', 'HospitalDataView', '/haosen/database/hospital')
     },
     showDrugStoreData: () => {
-      layoutRef.value?.addTab('药店主数据', 'DrugStoreDataView', '/dataBase/drugstore')
+      layoutRef.value?.addTab('药店主数据', 'DrugStoreDataView', '/haosen/database/drugstore')
     },
     companyDataView: () => {
-      layoutRef.value?.addTab('商业主数据', 'CompanyDataView', '/dataBase/company')
+      layoutRef.value?.addTab('商业主数据', 'CompanyDataView', '/haosen/database/company')
     },
     showAppealData: () => {
-      layoutRef.value?.addTab('申诉数据', 'AppealDataView', '/appealData/appealData')
+      layoutRef.value?.addTab('申诉数据', 'AppealDataView', '/haosen/appealdata/list')
     },
     importAppealData: () => {
-      layoutRef.value?.addTab('申诉提交', 'ImportAppealDataView', '/appealData/importAppealData')
+      layoutRef.value?.addTab('申诉提交', 'ImportAppealDataView', '/haosen/appealdata/importappealdata')
     },
     selectCleanData: () => {
-      layoutRef.value?.addTab('清洗查看', 'SelectCleanDataView', '/cleanData/selectCleanData')
+      layoutRef.value?.addTab('清洗查看', 'SelectCleanDataView', '/haosen/cleandata/selectcleandata')
     },
     importCleanData: () => {
-      layoutRef.value?.addTab('清洗提交', 'ImportCleanDataView', '/cleanData/ImportCleanData')
+      layoutRef.value?.addTab('清洗提交', 'ImportCleanDataView', '/haosen/cleandata/importcleandata')
     },
     importUpdateData: () => {
-      layoutRef.value?.addTab('更新提交', 'ImportUpdateDataView', '/updateData/importUpdateData')
+      layoutRef.value?.addTab('更新提交', 'ImportUpdateDataView', '/haosen/updatedata/importupdatedata')
     },
     showRepeatData: () => {
-      layoutRef.value?.addTab('重复数据查看', 'GetRepeatDataView', '/repeatData/getRepeatData')
+      layoutRef.value?.addTab('重复数据查看', 'GetRepeatDataView', '/haosen/repeatdata/getrepeatdata')
     },
     showExportHSData: () => {
-      layoutRef.value?.addTab('客户确认数据', 'GetExportHSDataView', '/repeatData/getExportHSData')
+      layoutRef.value?.addTab('客户确认数据', 'GetExportHSDataView', '/haosen/repeatdata/getexporthsdata')
     },
     importExportHSData: () => {
-      layoutRef.value?.addTab('确认数据上传', 'ImportExportHSDataView', '/repeatData/importExportHSData')
+      layoutRef.value?.addTab('确认数据上传', 'ImportExportHSDataView', '/haosen/repeatdata/importexporthsdata')
     }
   }
 }))

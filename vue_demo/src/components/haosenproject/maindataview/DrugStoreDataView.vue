@@ -269,16 +269,17 @@
                 </el-card>
               </el-col>
             </el-row>
-        </div>
+      </div>
+    </div>
 
-        <!-- 分页 -->
-        <div class="fixed-pagination" v-if="drugstoreData.list?.length">
-          <div class="pagination-content">
-            <el-button size="small" plain :disabled="!drugstoreData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchDrugStoreData())">
-              上一页
-            </el-button>
-            <div class="page-jumper">
-              <span>跳转到</span>
+    <!-- 分页 -->
+    <div class="fixed-pagination" v-if="drugstoreData.list?.length">
+        <div class="pagination-content">
+          <el-button size="small" plain class="page-btn" :disabled="!drugstoreData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchDrugStoreData())">
+            上一页
+          </el-button>
+          <div class="page-jumper">
+              <span class="page-total">跳转到</span>
               <el-input-number
                 v-model="jumpPageNumber"
                 :min="1"
@@ -290,7 +291,7 @@
               />
               <span class="page-total">页，共 {{ drugstoreData.pages }} 页 ({{ drugstoreData.total }} 条)</span>
             </div>
-            <el-button size="small" plain :disabled="!drugstoreData.hasNextPage" @click="pageNumber < drugstoreData.pages && (pageNumber++, fetchDrugStoreData())">
+            <el-button size="small" plain class="page-btn" :disabled="!drugstoreData.hasNextPage" @click="pageNumber < drugstoreData.pages && (pageNumber++, fetchDrugStoreData())">
               下一页
             </el-button>
             <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
@@ -300,7 +301,6 @@
             </el-select>
           </div>
         </div>
-      </div>
     </div>
 
     <!-- 详情弹窗 -->

@@ -112,7 +112,9 @@
         <!-- 内容视图 -->
         <div class="content-body">
           <transition name="fade" mode="out-in">
-            <component :is="currentViewComponent" :key="currentView" />
+            <div :key="currentView" style="height: 100%; width: 100%;">
+              <component :is="resolvedComponent" />
+            </div>
           </transition>
         </div>
       </div>
@@ -131,9 +133,11 @@
 <script setup>
 import '@/assets/css/dark-mode.css'
 import avatarImg from '@/assets/img/avatar-modified.png'
-import { ref, computed, onMounted, reactive } from 'vue'
+import { ref, computed, onMounted, reactive, getCurrentInstance } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
+
+const instance = getCurrentInstance()
 
 // ============ Props ============
 const props = defineProps({
@@ -187,6 +191,14 @@ const tabs = ref([])
 const currentView = ref(props.config.defaultView)
 const isDarkMode = ref(document.documentElement.classList.contains('dark'))
 
+// 解析全局组件
+const resolvedComponent = computed(() => {
+  const componentName = currentView.value
+  // 从 app 的全局组件注册表中查找
+  const app = instance?.appContext?.app
+  return app?.component(componentName) || null
+})
+
 // ============ 计算属性 ============
 const homePageClass = computed(() => {
   // 根据 brandTitle 生成项目特定的类名
@@ -234,8 +246,6 @@ const themeStyle = computed(() => {
 
   return style
 })
-
-const currentViewComponent = computed(() => currentView.value)
 
 // ============ 工具函数 ============
 function hexToRgb(hex) {

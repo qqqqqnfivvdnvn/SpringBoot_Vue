@@ -274,11 +274,12 @@
               </el-col>
             </el-row>
         </div>
+      </div>
 
-        <!-- 分页 -->
-        <div class="fixed-pagination" v-if="companyData.list?.length">
+      <!-- 分页 -->
+      <div class="fixed-pagination" v-if="companyData.list?.length">
           <div class="pagination-content">
-            <el-button size="small" plain :disabled="!companyData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchCompanyData())">
+            <el-button size="small" plain class="page-btn" :disabled="!companyData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchCompanyData())">
               上一页
             </el-button>
             <div class="page-jumper">
@@ -292,9 +293,9 @@
                 @change="handleJumpPage"
                 class="page-input"
               />
-              <span>页，共 {{ companyData.pages }} 页 ({{ companyData.total }} 条)</span>
+              <span class="page-total">页，共 {{ companyData.pages }} 页 ({{ companyData.total }} 条)</span>
             </div>
-            <el-button size="small" plain :disabled="!companyData.hasNextPage" @click="pageNumber < companyData.pages && (pageNumber++, fetchCompanyData())">
+            <el-button size="small" plain class="page-btn" :disabled="!companyData.hasNextPage" @click="pageNumber < companyData.pages && (pageNumber++, fetchCompanyData())">
               下一页
             </el-button>
             <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
@@ -304,7 +305,6 @@
             </el-select>
           </div>
         </div>
-      </div>
     </div>
 
     <!-- 详情弹窗 -->
@@ -1270,22 +1270,15 @@ html.dark .company-data-view,
 /* 数据内容区域 */
 .data-content {
   flex: 1;
+  height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.content-wrapper {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.table-view {
+.table-container {
   flex: 1;
   height: 100%;
-  overflow: hidden;
 }
 
 :deep(.el-table) {
@@ -1387,10 +1380,9 @@ html.dark .company-data-view,
 /* 分页区域 */
 .fixed-pagination {
   flex-shrink: 0;
-  background: var(--el-bg-color, #ffffff);
+  background: #fff;
   padding: 12px;
-  border-top: 1px solid var(--el-border-color-light, #ebeef5);
-  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+  border-top: 1px solid #ebeef5;
   text-align: center;
 }
 
@@ -1403,20 +1395,34 @@ html.dark .company-data-view,
 .page-jumper {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: var(--el-text-color-regular, #606266);
+  font-size: 12px;
+  color: #606266;
 }
 
 .page-input {
-  width: 80px;
+  width: 90px !important;
+  margin: 0 8px;
 }
 
-.page-info {
-  font-size: 14px;
-  color: var(--el-text-color-regular, #606266);
-  min-width: 220px;
-  text-align: center;
+.page-input :deep(.el-input__wrapper) {
+  padding-left: 10px;
+  padding-right: 35px;
+}
+
+.page-btn {
+  border-radius: 4px;
+  padding: 0 15px;
+  height: 32px;
+  font-size: 12px;
+}
+
+.size-select {
+  width: 110px !important;
+  font-size: 12px;
+}
+
+.page-total {
+  margin-left: 4px;
 }
 
 .no-data-container {
@@ -1720,11 +1726,6 @@ html.dark .fixed-pagination,
 
 html.dark .page-jumper,
 .dark .page-jumper {
-  color: var(--el-text-color-regular, #d0d0d0) !important;
-}
-
-html.dark .page-info,
-.dark .page-info {
   color: var(--el-text-color-regular, #d0d0d0) !important;
 }
 

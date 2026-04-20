@@ -229,7 +229,7 @@ const submitFile = async () => {
       uploadResult.value = {
         success: true,
         message: '批次文件上传成功',
-        details: '文件已提交到后台处理，正在调用高德地图 API 获取地理位置信息。请稍后在批次列表中查看处理状态。',
+        details: '文件已提交到后台处理，您可以关闭页面或继续其他操作。请稍后在批次列表中查看处理状态。',
       }
       handleRemove()
     } else {

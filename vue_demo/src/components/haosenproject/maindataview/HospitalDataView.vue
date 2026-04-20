@@ -275,35 +275,35 @@
               </el-col>
             </el-row>
         </div>
+      </div>
 
-        <!-- 分页组件：固定在底部 -->
-        <div class="fixed-pagination" v-if="hospitalData.list?.length">
-          <div class="pagination-content">
-            <el-button size="small" plain :disabled="!hospitalData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchHospitalData())">
-              上一页
-            </el-button>
-            <div class="page-jumper">
-              <span>跳转到</span>
-              <el-input-number
-                v-model="jumpPageNumber"
-                :min="1"
-                :max="hospitalData.pages"
-                size="small"
-                controls-position="right"
-                @change="handleJumpPage"
-                class="page-input"
-              />
-              <span class="page-total">页，共 {{ hospitalData.pages }} 页 ({{ hospitalData.total }} 条)</span>
-            </div>
-            <el-button size="small" plain :disabled="!hospitalData.hasNextPage" @click="pageNumber < hospitalData.pages && (pageNumber++, fetchHospitalData())">
-              下一页
-            </el-button>
-            <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
-              <el-option :value="20" label="每页20条" />
-              <el-option :value="40" label="每页40条" />
-              <el-option :value="60" label="每页60条" />
-            </el-select>
+      <!-- 分页 -->
+      <div class="fixed-pagination" v-if="hospitalData.list?.length">
+        <div class="pagination-content">
+          <el-button size="small" plain class="page-btn" :disabled="!hospitalData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchHospitalData())">
+            上一页
+          </el-button>
+          <div class="page-jumper">
+            <span class="page-total">跳转到</span>
+            <el-input-number
+              v-model="jumpPageNumber"
+              :min="1"
+              :max="hospitalData.pages"
+              size="small"
+              controls-position="right"
+              @change="handleJumpPage"
+              class="page-input"
+            />
+            <span class="page-total">页，共 {{ hospitalData.pages }} 页 ({{ hospitalData.total }} 条)</span>
           </div>
+          <el-button size="small" plain class="page-btn" :disabled="!hospitalData.hasNextPage" @click="pageNumber < hospitalData.pages && (pageNumber++, fetchHospitalData())">
+            下一页
+          </el-button>
+          <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
+            <el-option :value="20" label="每页 20 条" />
+            <el-option :value="40" label="每页 40 条" />
+            <el-option :value="60" label="每页 60 条" />
+          </el-select>
         </div>
       </div>
     </div>

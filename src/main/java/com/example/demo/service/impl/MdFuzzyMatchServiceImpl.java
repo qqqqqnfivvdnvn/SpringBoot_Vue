@@ -12,6 +12,7 @@ import com.example.demo.entity.MdFuzzyMatchBatch;
 import com.example.demo.entity.MdFuzzyMatchSummary;
 import com.example.demo.mapper.MdFuzzyMatchMapper;
 import com.example.demo.utils.MdFuzzyMatcher;
+import com.example.demo.utils.ExcelHeaderValidator;
 import com.example.demo.service.MdFuzzyMatchService;
 import com.example.demo.vo.MdFuzzyMatchSummaryVO;
 import com.github.pagehelper.PageHelper;
@@ -156,9 +157,20 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
      * 处理文件进行模糊匹配
      */
     private void processFile(String batchId, String filePath) throws Exception {
+        // 1. 验证 Excel 表头
+        List<String> expectedHeaders = Arrays.asList("id", "省份", "名称");
+        ExcelHeaderValidator.HeaderValidationResult validationResult =
+                ExcelHeaderValidator.validate(filePath, expectedHeaders);
+
+        // 如果表头验证失败，更新 message 并返回
+        if (!validationResult.isValid()) {
+            mdFuzzyMatchMapper.updateBatchStatus(batchId, 2, "表头验证失败：" + validationResult.getMessage());
+            return;
+        }
+
         List<FuzzyMatchData> dataList = new ArrayList<>();
 
-        // 读取 Excel 文件
+        // 2. 读取 Excel 文件
         EasyExcel.read(filePath, new FuzzyMatchReadListener(dataList))
                 .autoCloseStream(true)
                 .ignoreEmptyRow(true)
@@ -397,21 +409,16 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
                 String headerName = headerMap.get(entry.getKey());
                 String value = entry.getValue() != null ? entry.getValue().trim() : "";
 
-                if ("id".equalsIgnoreCase(headerName) || "ID".equals(headerName)) {
+                if ("id".equals(headerName)) {
                     data.setId(value);
-                } else if ("省份".equals(headerName) || "province".equalsIgnoreCase(headerName)) {
+                } else if ("省份".equals(headerName)) {
                     data.setProvince(value);
-                } else if ("名称".equals(headerName) || "name".equalsIgnoreCase(headerName)) {
+                } else if ("名称".equals(headerName)) {
                     data.setName(value);
                 }
             }
 
-            // 校验：必须包含 id、省份、名称
-            if (data.getId() != null && !data.getId().isEmpty()
-                && data.getProvince() != null && !data.getProvince().isEmpty()
-                && data.getName() != null && !data.getName().isEmpty()) {
-                resultList.add(data);
-            }
+            resultList.add(data);
         }
 
         @Override

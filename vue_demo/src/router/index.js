@@ -6,18 +6,18 @@ import HaoSenHome from '@/components/haosenproject/HaoSenHome.vue';
 import BarData from '@/components/haosenproject/homechartview/CleanBarChart.vue';
 import MainData from '@/components/haosenproject/homechartview/MainDataPieChart.vue';
 import BranchBar from '@/components/haosenproject/homechartview/BranchBarChart.vue';
-import HospitalData from '@/components/haosenproject/maindataview/HospitalDataView.vue';
-import HomeDashboard from '@/components/haosenproject/homechartview/HomeDashboardView.vue';
-import DrugStoreData from '@/components/haosenproject/maindataview/DrugStoreDataView.vue';
-import CompanyData from '@/components/haosenproject/maindataview/CompanyDataView.vue';
+import HospitalDataView from '@/components/haosenproject/maindataview/HospitalDataView.vue';
+import HomeDashboardView from '@/components/haosenproject/homechartview/HomeDashboardView.vue';
+import DrugStoreDataView from '@/components/haosenproject/maindataview/DrugStoreDataView.vue';
+import CompanyDataView from '@/components/haosenproject/maindataview/CompanyDataView.vue';
 import AppealDataView from '@/components/haosenproject/appealdataview/AppealDataView.vue';
-import ImportAppealData from '@/components/haosenproject/appealdataview/ImportAppealDataView.vue';
-import ImportCleanData from '@/components/haosenproject/cleandataview/ImportCleanDataView.vue';
-import ImportUpdateData from '@/components/haosenproject/updatedataView/ImportUpdateDataView.vue';
-import SelectCleanData from '@/components/haosenproject/cleandataview/SelectCleanDataView.vue';
-import GetRepeatData from '@/components/haosenproject/repeatdataview/GetRepeatDataView.vue';
-import GetExportHSData from "@/components/haosenproject/repeatdataview/GetExportHSDataView.vue";
-import ImportExportHSData from "@/components/haosenproject/repeatdataview/ImportExportHSDataView.vue";
+import ImportAppealDataView from '@/components/haosenproject/appealdataview/ImportAppealDataView.vue';
+import ImportCleanDataView from '@/components/haosenproject/cleandataview/ImportCleanDataView.vue';
+import ImportUpdateDataView from '@/components/haosenproject/updatedataView/ImportUpdateDataView.vue';
+import SelectCleanDataView from '@/components/haosenproject/cleandataview/SelectCleanDataView.vue';
+import GetRepeatDataView from '@/components/haosenproject/repeatdataview/GetRepeatDataView.vue';
+import GetExportHSDataView from "@/components/haosenproject/repeatdataview/GetExportHSDataView.vue";
+import ImportExportHSDataView from "@/components/haosenproject/repeatdataview/ImportExportHSDataView.vue";
 
 // 主数据项目模糊匹配
 import MdFuzzyBatchView from '@/components/maindataproject/fuzzyview/MdFuzzyBatchView.vue';
@@ -93,61 +93,60 @@ const routes = [
 
 
     {
-        path: '/getcleanbardata',
+        path: '/haosen/getcleanbardata',
         name: 'getcleanbardata',
         component: BarData,
         meta: { requiresAuth: true } // 需要登录才能访问
     },
     {
-        path: '/getmainpiedata',
+        path: '/haosen/getmainpiedata',
         name: 'getmainpiedata',
         component: MainData,
         meta: {requiresAuth: true} // 需要登录才能访问
     },
     {
-        path: '/getbranchbardata',
+        path: '/haosen/getbranchbardata',
         name: 'getbranchbardata',
         component: BranchBar,
         meta: { requiresAuth: true } // 需要登录才能访问
     },
 
     {
-        path: '/homedashboard',
+        path: '/haosen/homedashboard',
         name: 'homedashboard',
-        component: HomeDashboard,
-        meta: { requiresAuth: true } // 需要登录才能访问
+        component: HomeDashboardView,
+        meta: { requiresAuth: true }
     },
 
     {
-        path: '/database',
+        path: '/haosen/database',
         name: 'Database',
         children: [
             {
                 path: 'hospital',
                 name: 'hospitaldata',
-                component: HospitalData,
-                meta: { requiresAuth: true } // 需要登录才能访问
+                component: HospitalDataView,
+                meta: { requiresAuth: true }
             },
             {
                 path: 'drugstore',
                 name: 'drugstoredata',
-                component: DrugStoreData,
-                meta: { requiresAuth: true } // 需要登录才能访问
+                component: DrugStoreDataView,
+                meta: { requiresAuth: true }
             },
             {
                 path: 'company',
                 name: 'companydata',
-                component: CompanyData,
-                meta: { requiresAuth: true } // 需要登录才能访问
+                component: CompanyDataView,
+                meta: { requiresAuth: true }
             }
-
         ]
     },
 
     {
-        path: '/appealdata',
+        path: '/haosen/appealdata',
         name: 'AppealData',
-        redirect: '/appealdata/list',
+        redirect: '/haosen/appealdata/list',
         children: [
             {
                 path: 'list',
@@ -158,40 +157,40 @@ const routes = [
             {
                 path: 'importappealdata',
                 name: 'importappealdata',
-                component: ImportAppealData,
+                component: ImportAppealDataView,
                 meta: { requiresAuth: true }
             }
         ]
     },
 
     {
-        path: '/cleandata',
+        path: '/haosen/cleandata',
         name: 'CleanData',
         children: [
             {
                 path: 'importcleandata',
                 name: 'importcleandata',
-                component: ImportCleanData,
-                meta: { requiresAuth: true } // 需要登录才能访问
+                component: ImportCleanDataView,
+                meta: { requiresAuth: true }
             },
             {
                 path: 'selectcleandata',
                 name: 'selectcleandata',
-                component: SelectCleanData,
-                meta: { requiresAuth: true } // 需要登录才能访问
+                component: SelectCleanDataView,
+                meta: { requiresAuth: true }
             },
 
         ] // 需要登录才能访问
     },
 
     {
-        path: '/updatedata',
+        path: '/haosen/updatedata',
         name: 'UpdateData',
         children: [
             {
                 path: 'importupdatedata',
                 name: 'importupdatedata',
-                component: ImportUpdateData,
+                component: ImportUpdateDataView,
                 meta: { requiresAuth: true } // 需要登录才能访问
             }
 
@@ -199,26 +198,26 @@ const routes = [
     },
 
     {
-        path: '/repeatdata',
+        path: '/haosen/repeatdata',
         name: 'RepeatData',
         children: [
            {
                path: 'getrepeatdata',
                name: 'getrepeatdata',
-               component: GetRepeatData,
-               meta: { requiresAuth: true } // 需要登录才能访问
+               component: GetRepeatDataView,
+               meta: { requiresAuth: true }
            },
            {
                path: 'getexporthsdata',
                name: 'getexporthsdata',
-               component: GetExportHSData,
-               meta: { requiresAuth: true } // 需要登录才能访问
+               component: GetExportHSDataView,
+               meta: { requiresAuth: true }
            },
            {
                path: 'importexporthsdata',
                name: 'importexporthsdata',
-               component: ImportExportHSData,
-               meta: { requiresAuth: true } // 需要登录才能访问
+               component: ImportExportHSDataView,
+               meta: { requiresAuth: true }
            }
        ]
     },

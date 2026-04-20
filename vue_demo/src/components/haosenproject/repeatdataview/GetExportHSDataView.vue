@@ -187,11 +187,11 @@
       <!-- 分页 -->
       <div class="fixed-pagination" v-if="duplicateData.list?.length">
         <div class="pagination-content">
-          <el-button size="small" plain :disabled="!duplicateData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchDuplicateData())">
+          <el-button size="small" plain class="page-btn" :disabled="!duplicateData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchDuplicateData())">
             上一页
           </el-button>
           <div class="page-jumper">
-            <span>跳转到</span>
+            <span class="page-total">跳转到</span>
             <el-input-number
               v-model="jumpPageNumber"
               :min="1"
@@ -203,7 +203,7 @@
             />
             <span class="page-total">页，共 {{ duplicateData.pages }} 页 ({{ duplicateData.total }} 条)</span>
           </div>
-          <el-button size="small" plain :disabled="!duplicateData.hasNextPage" @click="pageNumber < duplicateData.pages && (pageNumber++, fetchDuplicateData())">
+          <el-button size="small" plain class="page-btn" :disabled="!duplicateData.hasNextPage" @click="pageNumber < duplicateData.pages && (pageNumber++, fetchDuplicateData())">
             下一页
           </el-button>
           <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">

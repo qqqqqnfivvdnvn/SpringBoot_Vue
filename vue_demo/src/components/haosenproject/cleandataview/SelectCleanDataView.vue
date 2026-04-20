@@ -252,36 +252,38 @@
             </el-row>
         </div>
 
-        <!-- 分页 -->
-        <div class="fixed-pagination" v-if="cleanData.list?.length">
-          <div class="pagination-content">
-            <el-button size="small" plain :disabled="!cleanData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchCleanData())">
-              上一页
-            </el-button>
-            <div class="page-jumper">
-              <span>跳转到</span>
-              <el-input-number
-                v-model="jumpPageNumber"
-                :min="1"
-                :max="cleanData.pages"
-                size="small"
-                controls-position="right"
-                @change="handleJumpPage"
-                class="page-input"
-              />
-              <span>页，共 {{ cleanData.pages }} 页 ({{ cleanData.total }} 条)</span>
-            </div>
-            <el-button size="small" plain :disabled="!cleanData.hasNextPage" @click="pageNumber < cleanData.pages && (pageNumber++, fetchCleanData())">
-              下一页
-            </el-button>
-            <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
-              <el-option :value="20" label="每页 20 条" />
-              <el-option :value="40" label="每页 40 条" />
-              <el-option :value="60" label="每页 60 条" />
-            </el-select>
+      </div>
+
+      <!-- 分页 -->
+      <div class="fixed-pagination" v-if="cleanData.list?.length">
+        <div class="pagination-content">
+          <el-button size="small" plain class="page-btn" :disabled="!cleanData.hasPreviousPage" @click="pageNumber > 1 && (pageNumber--, fetchCleanData())">
+            上一页
+          </el-button>
+          <div class="page-jumper">
+            <span class="page-total">跳转到</span>
+            <el-input-number
+              v-model="jumpPageNumber"
+              :min="1"
+              :max="cleanData.pages"
+              size="small"
+              controls-position="right"
+              @change="handleJumpPage"
+              class="page-input"
+            />
+            <span class="page-total">页，共 {{ cleanData.pages }} 页 ({{ cleanData.total }} 条)</span>
           </div>
+          <el-button size="small" plain class="page-btn" :disabled="!cleanData.hasNextPage" @click="pageNumber < cleanData.pages && (pageNumber++, fetchCleanData())">
+            下一页
+          </el-button>
+          <el-select v-model="pageSize" size="small" class="size-select" @change="handlePageSizeChange">
+            <el-option :value="20" label="每页 20 条" />
+            <el-option :value="40" label="每页 40 条" />
+            <el-option :value="60" label="每页 60 条" />
+          </el-select>
         </div>
       </div>
+    </div>
     </div>
 
     <!-- 详情弹窗 -->
@@ -440,7 +442,6 @@
         </el-form>
       </div>
     </el-dialog>
-  </div>
 </template>
 
 <script setup>
@@ -640,14 +641,14 @@ const getStatusTagType = (status, type = 'batchStatus') => {
     switch (status) {
       case 1: return 'warning'
       case 2: return 'success'
-      default: return ''
+      default: return 'info'
     }
   } else if (type === 'cleanStatus') {
     // 抽取状态：0-待抽取 (warning)，1-已抽取 (success)
     switch (status) {
       case 0: return 'warning'
       case 1: return 'success'
-      default: return ''
+      default: return 'info'
     }
   } else if (type === 'duplicateFlag') {
     // 是否多批次：'1'-是 (danger)，'2'-否 (success)
@@ -656,7 +657,7 @@ const getStatusTagType = (status, type = 'batchStatus') => {
     } else if (status === '2') {
       return 'success'   // 否 - 绿色
     } else {
-      return ''
+      return 'info'
     }
   }
 
@@ -670,7 +671,7 @@ const getStatusTagType = (status, type = 'batchStatus') => {
     case '2':
     case 3:
     case '3': return 'success'   // 已完成状态 - 绿色
-    default: return ''
+    default: return 'info'   // 默认返回 info，避免 el-tag 验证失败
   }
 }
 
