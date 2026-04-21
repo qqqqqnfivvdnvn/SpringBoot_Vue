@@ -9,6 +9,7 @@ import lombok.Data;
 public class MdFuzzyMatchBatchConditionDTO {
     private String batchId;
     private Integer status;
+    private String dataType; // hospital: 医院 drugstore: 药店
     private String startTime;
     private String endTime;
 }

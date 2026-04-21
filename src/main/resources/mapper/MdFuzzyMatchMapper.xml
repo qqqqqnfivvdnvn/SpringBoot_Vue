@@ -9,6 +9,7 @@
         INSERT INTO haosen_project..md_fuzzy_match_batch (
             batch_id,
             status,
+            data_type,
             original_filename,
             message,
             create_time,
@@ -16,6 +17,7 @@
         ) VALUES (
             #{batchId},
             #{status},
+            #{dataType},
             #{originalFilename},
             #{message},
             #{createTime},
@@ -42,6 +44,9 @@
             <if test="status != null">
                 AND status = #{status}
             </if>
+            <if test="dataType != null and dataType != ''">
+                AND data_type = #{dataType}
+            </if>
             <if test="startTime != null and startTime != ''">
                 AND create_time &gt;= #{startTime}
             </if>
@@ -56,6 +61,7 @@
     <insert id="insertSummary" parameterType="com.example.demo.entity.MdFuzzyMatchSummary">
         INSERT INTO haosen_project..md_fuzzy_match_summary (
             batch_id,
+            data_type,
             id,
             original_province,
             original_name,
@@ -67,6 +73,7 @@
             update_time
         ) VALUES (
             #{batchId},
+            #{dataType},
             #{originalId},
             #{originalProvince},
             #{originalName},
@@ -82,6 +89,7 @@
     <!-- 查询汇总数据列表 -->
     <resultMap id="MdFuzzyMatchSummaryResultMap" type="com.example.demo.entity.MdFuzzyMatchSummary">
         <result column="batch_id" property="batchId" />
+        <result column="data_type" property="dataType" />
         <result column="id" property="originalId" />
         <result column="original_province" property="originalProvince" />
         <result column="original_name" property="originalName" />
@@ -104,7 +112,7 @@
 
     <!-- 查询汇总数据列表 -->
     <select id="getSummaryList" resultMap="MdFuzzyMatchSummaryResultMap">
-        SELECT a.id, a.original_province, a.original_name, a.original_address, a.keyid, a.remark, a.batch_id, a.create_time, a.update_time,
+        SELECT a.id, a.original_province, a.original_name, a.original_address, a.keyid, a.remark, a.batch_id, a.data_type, a.create_time, a.update_time,
                b.name, b.namehistory, b.province, b.cityname, b.areaname, b.address, b.legalperson, b.principal, b.sign_status, b.qcc_status
         FROM haosen_project..md_fuzzy_match_summary a
         LEFT JOIN (
@@ -117,6 +125,9 @@
         <where>
             <if test="batchId != null and batchId != ''">
                 AND a.batch_id = #{batchId}
+            </if>
+            <if test="dataType != null and dataType != ''">
+                AND a.data_type = #{dataType}
             </if>
             <if test="originalId != null and originalId != ''">
                 AND a.id = #{originalId}
@@ -142,7 +153,7 @@
 
     <!-- 根据省份和名称模糊匹配医院（精确匹配） -->
     <select id="matchHospitalByProvinceAndName" resultType="map">
-        SELECT keyid, name
+        SELECT TOP 2 keyid, name
         FROM HospitalInfo..hospital
         WHERE status = 1
         <if test="province != null and province != ''">
@@ -153,7 +164,7 @@
 
     <!-- 根据省份和名称模糊匹配医院（包含历史名称） -->
     <select id="matchHospitalWithHistory" resultType="map">
-        SELECT keyid, name
+        SELECT TOP 2 keyid, name
         FROM HospitalInfo..hospital
         WHERE status = 1
         <if test="province != null and province != ''">
@@ -164,7 +175,7 @@
 
     <!-- 根据省份和名称模糊匹配商业公司（包含历史名称） -->
     <select id="matchCompanyByProvinceAndName" resultType="map">
-        SELECT key_id, name
+        SELECT TOP 2 key_id, name
         FROM HospitalInfo..company
         WHERE status = 1
         <if test="province != null and province != ''">
@@ -175,7 +186,7 @@
 
     <!-- 根据省份和名称模糊匹配商业公司（精确匹配，拆分后的名称） -->
     <select id="matchCompanyByProvinceAndSplitName" resultType="map">
-        SELECT key_id, name
+        SELECT TOP 2 key_id, name
         FROM HospitalInfo..company
         WHERE status = 1
         <if test="province != null and province != ''">

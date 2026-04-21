@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Data
 public class MdFuzzyMatchSummary {
     private String batchId;
+    private String dataType; // hospital: 医院 drugstore: 药店
     private String originalId;
     private String originalProvince;
     private String originalName;

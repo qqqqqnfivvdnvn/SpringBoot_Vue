@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class MdFuzzyMatchConditionDTO {
     private String batchId;
+    private String dataType; // hospital: 医院 drugstore: 药店
     private String originalId;
     private String originalProvince;
     private String originalName;

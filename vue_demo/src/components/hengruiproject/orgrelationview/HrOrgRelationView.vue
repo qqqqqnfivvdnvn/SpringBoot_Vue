@@ -68,7 +68,13 @@
                 fit
                 resizable
             >
-              <el-table-column prop="businessLicenseName" label="营业执照名称" min-width="180" show-overflow-tooltip />
+              <el-table-column prop="businessLicenseName" label="营业执照名称" min-width="180" show-overflow-tooltip>
+              <template #default="{ row }">
+                <el-link type="primary" :underline="false" @click="copyText(row.businessLicenseName)" :disabled="!row.businessLicenseName">
+                  {{ row.businessLicenseName }}
+                </el-link>
+              </template>
+            </el-table-column>
               <el-table-column prop="province" label="省份" min-width="80" show-overflow-tooltip/>
               <el-table-column prop="keyId" label="KeyID" min-width="120" show-overflow-tooltip>
                 <template #default="{ row }">
@@ -107,7 +113,11 @@
                     </div>
                   </template>
                   <div class="card-body">
-                    <div class="card-item"><span class="label">营业执照：</span>{{ item.businessLicenseName }}</div>
+                    <div class="card-item"><span class="label">营业执照：</span>
+                    <el-link type="primary" :underline="false" @click="copyText(item.businessLicenseName)" :disabled="!item.businessLicenseName">
+                      {{ item.businessLicenseName }}
+                    </el-link>
+                  </div>
                     <div class="card-item"><span class="label">KeyID：</span>{{ item.keyId }}</div>
                     <div class="card-item"><span class="label">地址：</span>{{ item.address }}</div>
                     <div class="card-item"><span class="label">创建时间：</span>{{ formatDateTimeValue(item.addTime) }}</div>
@@ -853,6 +863,10 @@ html.dark .org-relation-view,
 
 .dark .card-item .label {
   color: var(--el-text-color-secondary, #a0a0a0) !important;
+}
+
+.dark .card-item :deep(.el-link) {
+  color: var(--el-color-primary, #90be6d) !important;
 }
 
 .dark .card-footer {

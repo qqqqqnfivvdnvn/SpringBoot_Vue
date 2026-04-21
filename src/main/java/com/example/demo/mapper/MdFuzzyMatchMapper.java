@@ -33,6 +33,7 @@ public interface MdFuzzyMatchMapper {
      */
     List<MdFuzzyMatchBatch> getBatchList(@Param("batchId") String batchId,
                                           @Param("status") Integer status,
+                                          @Param("dataType") String dataType,
                                           @Param("startTime") String startTime,
                                           @Param("endTime") String endTime);
 

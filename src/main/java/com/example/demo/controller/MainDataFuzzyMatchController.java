@@ -47,13 +47,33 @@ public class MainDataFuzzyMatchController {
     }
 
     /**
-     * 上传文件进行模糊匹配
+     * 上传文件进行模糊匹配 - 医院专用
      */
-    @PostMapping("/uploadfile")
+    @PostMapping("/upload/hospital")
     @ResponseBody
-    public ResponseEntity<ApiResponseDTO<MdFuzzyMatchFileMessageDTO>> uploadFile(
+    public ResponseEntity<ApiResponseDTO<MdFuzzyMatchFileMessageDTO>> uploadHospitalFile(
             @RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(mdFuzzyMatchService.uploadFile(file));
+        return ResponseEntity.ok(mdFuzzyMatchService.uploadHospitalFile(file));
+    }
+
+    /**
+     * 上传文件进行模糊匹配 - 药店专用
+     */
+    @PostMapping("/upload/drugstore")
+    @ResponseBody
+    public ResponseEntity<ApiResponseDTO<MdFuzzyMatchFileMessageDTO>> uploadDrugStoreFile(
+            @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(mdFuzzyMatchService.uploadDrugStoreFile(file));
+    }
+
+    /**
+     * 上传文件进行模糊匹配 - 机构专用（不区分类型）
+     */
+    @PostMapping("/upload/organization")
+    @ResponseBody
+    public ResponseEntity<ApiResponseDTO<MdFuzzyMatchFileMessageDTO>> uploadOrganizationFile(
+            @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(mdFuzzyMatchService.uploadOrganizationFile(file));
     }
 
     /**

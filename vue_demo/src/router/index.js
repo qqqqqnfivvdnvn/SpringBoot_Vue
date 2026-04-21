@@ -23,6 +23,8 @@ import ImportExportHSDataView from "@/components/haosenproject/repeatdataview/Im
 import MdFuzzyBatchView from '@/components/maindataproject/fuzzyview/MdFuzzyBatchView.vue';
 import MdFuzzyUploadView from '@/components/maindataproject/fuzzyview/MdFuzzyUploadView.vue';
 import MdFuzzySummaryView from '@/components/maindataproject/fuzzyview/MdFuzzySummaryView.vue';
+import MdHospitalUploadView from '@/components/maindataproject/fuzzyview/MdHospitalUploadView.vue';
+import MdDrugStoreUploadView from '@/components/maindataproject/fuzzyview/MdDrugStoreUploadView.vue';
 
 import  HengRuiHome from '@/components/hengruiproject/HengRuiHome.vue';
 import HrBatchDataView from '@/components/hengruiproject/batchdataview/HrBatchDataView.vue';
@@ -298,6 +300,24 @@ const routes = [
             {
                 path: 'upload',
                 name: 'mdFuzzyUpload',
+                component: MdFuzzyUploadView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'hospital-upload',
+                name: 'mdHospitalUpload',
+                component: MdHospitalUploadView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'drugstore-upload',
+                name: 'mdDrugStoreUpload',
+                component: MdDrugStoreUploadView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'org-upload',
+                name: 'mdFuzzyOrgUpload',
                 component: MdFuzzyUploadView,
                 meta: { requiresAuth: true }
             },

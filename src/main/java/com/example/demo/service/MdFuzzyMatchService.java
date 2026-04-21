@@ -24,7 +24,22 @@ public interface MdFuzzyMatchService {
     /**
      * 上传文件进行模糊匹配
      */
-    ApiResponseDTO<MdFuzzyMatchFileMessageDTO> uploadFile(MultipartFile file);
+    ApiResponseDTO<MdFuzzyMatchFileMessageDTO> uploadFile(MultipartFile file, String dataType);
+
+    /**
+     * 上传文件进行模糊匹配 - 医院专用
+     */
+    ApiResponseDTO<MdFuzzyMatchFileMessageDTO> uploadHospitalFile(MultipartFile file);
+
+    /**
+     * 上传文件进行模糊匹配 - 药店专用
+     */
+    ApiResponseDTO<MdFuzzyMatchFileMessageDTO> uploadDrugStoreFile(MultipartFile file);
+
+    /**
+     * 上传文件进行模糊匹配 - 机构专用（不区分类型）
+     */
+    ApiResponseDTO<MdFuzzyMatchFileMessageDTO> uploadOrganizationFile(MultipartFile file);
 
     /**
      * 获取汇总数据列表

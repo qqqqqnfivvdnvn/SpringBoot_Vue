@@ -44,7 +44,9 @@ const layoutConfig = computed(() => ({
       icon: ['fas', 'search'],
       items: [
         { title: '批次列表', action: 'fuzzyBatchList', icon: ['fas', 'list'] },
-        { title: '文件上传', action: 'fuzzyUpload', icon: ['fas', 'upload'] },
+        { title: '医院上传', action: 'hospitalUpload', icon: ['fas', 'hospital'] },
+        { title: '药店上传', action: 'drugStoreUpload', icon: ['fas', 'store'] },
+        { title: '机构上传', action: 'orgUpload', icon: ['fas', 'building'] },
         { title: '汇总数据', action: 'fuzzySummary', icon: ['fas', 'table'] }
       ]
     }
@@ -65,8 +67,14 @@ const layoutConfig = computed(() => ({
     fuzzyBatchList: () => {
       layoutRef.value?.addTab('批次列表', 'MdFuzzyBatchView', '/maindata/fuzzymatch/batch')
     },
-    fuzzyUpload: () => {
-      layoutRef.value?.addTab('文件上传', 'MdFuzzyUploadView', '/maindata/fuzzymatch/upload')
+    hospitalUpload: () => {
+      layoutRef.value?.addTab('医院上传', 'MdHospitalUploadView', '/maindata/fuzzymatch/hospital-upload')
+    },
+    drugStoreUpload: () => {
+      layoutRef.value?.addTab('药店上传', 'MdDrugStoreUploadView', '/maindata/fuzzymatch/drugstore-upload')
+    },
+    orgUpload: () => {
+      layoutRef.value?.addTab('机构上传', 'MdFuzzyUploadView', '/maindata/fuzzymatch/org-upload')
     },
     fuzzySummary: () => {
       layoutRef.value?.addTab('汇总数据', 'MdFuzzySummaryView', '/maindata/fuzzymatch/summary')

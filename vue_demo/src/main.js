@@ -69,7 +69,8 @@ import {
     faList,
     faUpload,
     faExchangeAlt,
-    faMapMarkedAlt
+    faMapMarkedAlt,
+    faBuilding
 }
     from '@fortawesome/free-solid-svg-icons'
 
@@ -83,7 +84,7 @@ library.add(faHospital,faStore,faUniversity,faSignOutAlt,faSignInAlt,faAngleDoub
     faAngleDoubleRight,faUser,faUserPlus,faUserShield,faCheckCircle,faExclamationCircle,faTimesCircle,faShieldAlt,faRocket,faDatabase,faTrash,faClock,faThList,faSynagogue,faStoreAlt,faHospitalAlt,faFileAlt,faBookReader,faCat,
     faProjectDiagram,faChartLine,faLaptopCode,faUsers,faBook,faSearch,faStar,faCalendarAlt,faPlusCircle,faEraser,faSnowman,faOilCan,
     faFlag,faFileUpload,faPaw,faFeather,faPaperPlane,faLeaf,faPlus,faHome,faChevronRight,faArrowLeft,faChevronDown,faTimes,faBriefcase,
-    faTable,faLayerGroup,faLink,faList,faUpload,faExchangeAlt,faMapMarkedAlt)
+    faTable,faLayerGroup,faLink,faList,faUpload,faExchangeAlt,faMapMarkedAlt,faBuilding)
 
 import HomeDashboardView from '@/components/haosenproject/homechartview/HomeDashboardView.vue'
 import HospitalDataView from '@/components/haosenproject/maindataview/HospitalDataView.vue'
@@ -113,6 +114,8 @@ import MdLocationView from "@/components/maindataproject/locationview/MdLocation
 import MdFuzzyBatchView from "@/components/maindataproject/fuzzyview/MdFuzzyBatchView.vue"
 import MdFuzzyUploadView from "@/components/maindataproject/fuzzyview/MdFuzzyUploadView.vue"
 import MdFuzzySummaryView from "@/components/maindataproject/fuzzyview/MdFuzzySummaryView.vue"
+import MdHospitalUploadView from "@/components/maindataproject/fuzzyview/MdHospitalUploadView.vue"
+import MdDrugStoreUploadView from "@/components/maindataproject/fuzzyview/MdDrugStoreUploadView.vue"
 
 import PermissionManager from "@/components/layout/PermissionManager.vue"
 
@@ -144,6 +147,8 @@ app.component('MdLocationView', MdLocationView)
 app.component('MdFuzzyBatchView', MdFuzzyBatchView)
 app.component('MdFuzzyUploadView', MdFuzzyUploadView)
 app.component('MdFuzzySummaryView', MdFuzzySummaryView)
+app.component('MdHospitalUploadView', MdHospitalUploadView)
+app.component('MdDrugStoreUploadView', MdDrugStoreUploadView)
 
 app.component('PermissionManager', PermissionManager)
 

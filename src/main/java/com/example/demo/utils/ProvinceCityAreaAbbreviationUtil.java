@@ -15,6 +15,38 @@ import java.util.*;
 /**
  * 省市区简称工具类
  * 从 Excel 文件读取省市区简称数据
+ *
+ * Excel 数据格式：
+ * | province | province_short | city | city_short | area | area_short |
+ * |----------|----------------|------|------------|------|------------|
+ * | 河北省   | 河北           | 石家庄市 | 石家庄 | 长安区 | 长安 |
+ * | 河北省   | 河北           | 石家庄市 | 石家庄 | 藁城区 | 藁城 |
+ * | 广东省   | 广东           | 深圳市   | 深圳   | 南山区 | 南山 |
+ *
+ * 数据结构：
+ * - PROVINCE_TO_SHORT: province -> province_short（如：河北省 -> 河北）
+ * - PROVINCE_NAMES: 所有省份名称集合
+ * - PROVINCE_CITY_TO_SHORT: province_short -> {city -> city_short}（如：河北 -> {石家庄市 -> 石家庄}）
+ * - PROVINCE_AREA_TO_SHORT: province_short -> {area -> area_short}（如：河北 -> {长安区 -> 长安}）
+ *
+ * 替换逻辑（需要传入省份参数）：
+ * 第一轮：全称 -> 简称
+ *   1. 替换省份全称 -> 简称（如：河北省 -> 河北）
+ *   2. 替换城市全称 -> 简称（只替换指定省份的城市，如：石家庄市 -> 石家庄）
+ *   3. 替换区县全称 -> 简称（只替换指定省份的区县，如：长安区 -> 长安）
+ *
+ * 第二轮：简称 -> 空
+ *   1. 替换省份简称 -> 空（如：河北 -> 空）
+ *   2. 替换城市简称 -> 空（只替换指定省份的城市，如：石家庄 -> 空）
+ *   3. 替换区县简称 -> 空（只替换指定省份的区县，如：长安 -> 空）
+ *
+ * 示例：
+ *   originalName = "河北石家庄长安某某医院", province = "河北省"
+ *   第一轮后："河北石家庄长安某某医院" -> "河北石家庄长安某某医院"（省市区已在名称中）
+ *   实际替换：河北省石家庄市 -> 河北 -> 河北石家庄 -> 河北石家庄长安
+ *   第二轮后："某某医院"
+ *
+ * 注意：只有在传入省份参数时，才会替换该省份对应的城市和区县简称
  */
 @Component
 public class ProvinceCityAreaAbbreviationUtil {
@@ -23,10 +55,10 @@ public class ProvinceCityAreaAbbreviationUtil {
     private static final Map<String, String> PROVINCE_TO_SHORT = new HashMap<>();
     // 省名集合
     private static final Set<String> PROVINCE_NAMES = new HashSet<>();
-    // 城市简称映射
-    private static final Map<String, String> CITY_TO_SHORT = new HashMap<>();
-    // 区县全称 -> 简称映射
-    private static final Map<String, String> AREA_TO_SHORT = new HashMap<>();
+    // 省份简称 -> 该省的城市简称映射
+    private static final Map<String, Map<String, String>> PROVINCE_CITY_TO_SHORT = new HashMap<>();
+    // 省份简称 -> 该省的区县简称映射
+    private static final Map<String, Map<String, String>> PROVINCE_AREA_TO_SHORT = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -45,75 +77,133 @@ public class ProvinceCityAreaAbbreviationUtil {
             }
         } catch (IOException e) {
             System.err.println("读取省市区简称 Excel 文件失败：" + e.getMessage());
-            // 如果文件读取失败，使用默认数据
-            initDefaultData();
         }
     }
 
     /**
-     * 初始化默认数据（当 Excel 文件读取失败时使用）
-     */
-    private void initDefaultData() {
-        // 直辖市
-        PROVINCE_TO_SHORT.put("北京市", "京");
-        PROVINCE_TO_SHORT.put("天津市", "津");
-        PROVINCE_TO_SHORT.put("上海市", "沪");
-        PROVINCE_TO_SHORT.put("重庆市", "渝");
-        PROVINCE_NAMES.addAll(PROVINCE_TO_SHORT.keySet());
-
-        // 省份
-        String[][] provinces = {
-            {"河北省", "冀"}, {"山西省", "晋"}, {"辽宁省", "辽"}, {"吉林省", "吉"},
-            {"黑龙江省", "黑"}, {"江苏省", "苏"}, {"浙江省", "浙"}, {"安徽省", "皖"},
-            {"福建省", "闽"}, {"江西省", "赣"}, {"山东省", "鲁"}, {"河南省", "豫"},
-            {"湖北省", "鄂"}, {"湖南省", "湘"}, {"广东省", "粤"}, {"海南省", "琼"},
-            {"四川省", "川"}, {"贵州省", "黔"}, {"云南省", "云"}, {"陕西省", "陕"},
-            {"甘肃省", "甘"}, {"青海省", "青"}, {"台湾省", "台"},
-            {"内蒙古自治区", "蒙"}, {"广西壮族自治区", "桂"}, {"西藏自治区", "藏"},
-            {"宁夏回族自治区", "宁"}, {"新疆维吾尔自治区", "新"}, {"香港特别行政区", "港"},
-            {"澳门特别行政区", "澳"}
-        };
-
-        for (String[] province : provinces) {
-            if (!PROVINCE_TO_SHORT.containsKey(province[0])) {
-                PROVINCE_TO_SHORT.put(province[0], province[1]);
-                PROVINCE_NAMES.add(province[0]);
-            }
-        }
-    }
-
-    /**
-     * 替换名称中的省市区简称
+     * 替换名称中的省市区简称（带省份参数，只替换该省份的省市区）
+     *
+     * 替换顺序：
+     * 第一轮：全称 -> 简称（省级 -> 市级 -> 区级）
+     *   1. 替换省份全称 -> 简称（如：河北省 -> 河北）
+     *   2. 替换城市全称 -> 简称（只替换指定省份的城市，如：石家庄市 -> 石家庄）
+     *   3. 替换区县全称 -> 简称（只替换指定省份的区县，按长度降序优先替换长的）
+     *
+     * 第二轮：简称 -> 空（省级 -> 市级 -> 区级）
+     *   1. 替换省份简称 -> 空（如：河北 -> 空）
+     *   2. 替换城市简称 -> 空（只替换指定省份的城市，如：石家庄 -> 空）
+     *   3. 替换区县简称 -> 空（只替换指定省份的区县，按简称长度降序）
+     *
+     * 示例：
+     *   originalName = "河北省石家庄市赞皇县某某医院", province = "河北省"
+     *   第一轮：河北省 -> 河北，石家庄市 -> 石家庄，赞皇县 -> 赞皇
+     *   结果："河北石家庄赞皇某某医院"
+     *   第二轮：河北 -> 空，石家庄 -> 空，赞皇 -> 空
+     *   结果："某某医院"
+     *
      * @param originalName 原始名称
+     * @param province 省份名称（如：河北省），为空时不替换城市和区县简称
      * @return 替换后的名称
      */
-    public static String replaceRegionAbbreviations(String originalName) {
+    public static String replaceRegionAbbreviations(String originalName, String province) {
         if (originalName == null || originalName.trim().isEmpty()) {
             return originalName;
         }
 
         String result = originalName;
 
-        // 替换省份
+        // ==================== 第一轮：替换全称 ====================
+        // 1. 替换省份全称 → 简称
         for (Map.Entry<String, String> entry : PROVINCE_TO_SHORT.entrySet()) {
-            if (result.contains(entry.getKey())) {
-                result = result.replace(entry.getKey(), entry.getValue());
+            String fullName = entry.getKey();  // 如：广东省
+            String shortName = entry.getValue(); // 如：粤
+            if (result.contains(fullName)) {
+                result = result.replace(fullName, shortName);
             }
         }
 
-        // 替换城市
-        for (Map.Entry<String, String> entry : CITY_TO_SHORT.entrySet()) {
-            if (result.contains(entry.getKey())) {
-                result = result.replace(entry.getKey(), entry.getValue());
+        // 2. 替换城市全称 → 简称（只替换指定省份的城市）
+        if (province != null && !province.trim().isEmpty()) {
+            // 获取省份简称
+            String provinceShort = PROVINCE_TO_SHORT.get(province);
+            if (provinceShort == null) {
+                // 尝试匹配：如"广东" -> "粤"
+                for (Map.Entry<String, String> entry : PROVINCE_TO_SHORT.entrySet()) {
+                    if (entry.getKey().contains(province) || province.contains(entry.getKey())) {
+                        provinceShort = entry.getValue();
+                        break;
+                    }
+                }
+            }
+
+            // 根据省份简称获取该省的城市映射
+            if (provinceShort != null && PROVINCE_CITY_TO_SHORT.containsKey(provinceShort)) {
+                Map<String, String> cityMap = PROVINCE_CITY_TO_SHORT.get(provinceShort);
+                for (Map.Entry<String, String> entry : cityMap.entrySet()) {
+                    String fullName = entry.getKey();  // 如：深圳市
+                    String shortName = entry.getValue(); // 如：深
+                    if (result.contains(fullName)) {
+                        result = result.replace(fullName, shortName);
+                    }
+                }
+            }
+
+            // 3. 替换区县全称 → 简称（只替换指定省份的区县，按长度降序，优先替换长的）
+            if (provinceShort != null && PROVINCE_AREA_TO_SHORT.containsKey(provinceShort)) {
+                List<Map.Entry<String, String>> areaList = new ArrayList<>(PROVINCE_AREA_TO_SHORT.get(provinceShort).entrySet());
+                areaList.sort((a, b) -> b.getKey().length() - a.getKey().length());
+                for (Map.Entry<String, String> entry : areaList) {
+                    String fullName = entry.getKey();  // 如：南山区
+                    String shortName = entry.getValue(); // 如：南
+                    if (result.contains(fullName)) {
+                        result = result.replace(fullName, shortName);
+                    }
+                }
             }
         }
 
-        // 替换区县（按长度降序，优先替换长的）
-        List<Map.Entry<String, String>> areaList = new ArrayList<>(AREA_TO_SHORT.entrySet());
-        areaList.sort((a, b) -> b.getKey().length() - a.getKey().length());
-        for (Map.Entry<String, String> entry : areaList) {
-            if (result.contains(entry.getKey())) {
-                result = result.replace(entry.getKey(), entry.getValue());
+        // ==================== 第二轮：替换简称 ====================
+        // 1. 替换省份简称 → 去除（如：粤 → 空）
+        for (Map.Entry<String, String> entry : PROVINCE_TO_SHORT.entrySet()) {
+            String shortName = entry.getValue(); // 如：粤
+            if (result.contains(shortName)) {
+                result = result.replace(shortName, "");
+            }
+        }
+
+        // 2. 替换城市简称 → 去除（只替换指定省份的城市）
+        if (province != null && !province.trim().isEmpty()) {
+            String provinceShort = PROVINCE_TO_SHORT.get(province);
+            if (provinceShort == null) {
+                for (Map.Entry<String, String> entry : PROVINCE_TO_SHORT.entrySet()) {
+                    if (entry.getKey().contains(province) || province.contains(entry.getKey())) {
+                        provinceShort = entry.getValue();
+                        break;
+                    }
+                }
+            }
+
+            // 根据省份简称获取该省的城市映射
+            if (provinceShort != null && PROVINCE_CITY_TO_SHORT.containsKey(provinceShort)) {
+                Map<String, String> cityMap = PROVINCE_CITY_TO_SHORT.get(provinceShort);
+                for (Map.Entry<String, String> entry : cityMap.entrySet()) {
+                    String shortName = entry.getValue(); // 如：深
+                    if (result.contains(shortName)) {
+                        result = result.replace(shortName, "");
+                    }
+                }
+            }
+
+            // 3. 替换区县简称 → 去除（只替换指定省份的区县，按长度降序）
+            if (provinceShort != null && PROVINCE_AREA_TO_SHORT.containsKey(provinceShort)) {
+                List<Map.Entry<String, String>> areaShortList = new ArrayList<>(PROVINCE_AREA_TO_SHORT.get(provinceShort).entrySet());
+                areaShortList.sort((a, b) -> b.getValue().length() - a.getValue().length());
+                for (Map.Entry<String, String> entry : areaShortList) {
+                    String shortName = entry.getValue(); // 如：南
+                    if (result.contains(shortName)) {
+                        result = result.replace(shortName, "");
+                    }
+                }
             }
         }
 
@@ -167,46 +257,66 @@ public class ProvinceCityAreaAbbreviationUtil {
     }
 
     /**
-     * 获取城市简称
+     * 获取城市简称（根据省份）
+     * @param province 省份全称或简称
      * @param city 城市全称
      * @return 城市简称
      */
-    public static String getCityAbbreviation(String city) {
+    public static String getCityAbbreviation(String province, String city) {
         if (city == null || city.trim().isEmpty()) {
             return city;
         }
-        String trimmedCity = city.trim();
-        if (CITY_TO_SHORT.containsKey(trimmedCity)) {
-            return CITY_TO_SHORT.get(trimmedCity);
+        if (province == null || province.trim().isEmpty()) {
+            return city;
         }
-        // 包含匹配
-        for (Map.Entry<String, String> entry : CITY_TO_SHORT.entrySet()) {
-            String cityName = entry.getKey();
-            if (cityName.contains(trimmedCity) || trimmedCity.contains(cityName)) {
-                return entry.getValue();
+
+        // 获取省份简称
+        String provinceShort = getProvinceAbbreviation(province);
+
+        // 根据省份简称获取该省的城市映射
+        if (provinceShort != null && PROVINCE_CITY_TO_SHORT.containsKey(provinceShort)) {
+            Map<String, String> cityMap = PROVINCE_CITY_TO_SHORT.get(provinceShort);
+            if (cityMap.containsKey(city)) {
+                return cityMap.get(city);
+            }
+            // 包含匹配
+            for (Map.Entry<String, String> entry : cityMap.entrySet()) {
+                if (entry.getKey().contains(city) || city.contains(entry.getKey())) {
+                    return entry.getValue();
+                }
             }
         }
         return city;
     }
 
     /**
-     * 获取区县简称
+     * 获取区县简称（根据省份）
+     * @param province 省份全称或简称
      * @param area 区县全称
      * @return 区县简称
      */
-    public static String getAreaAbbreviation(String area) {
+    public static String getAreaAbbreviation(String province, String area) {
         if (area == null || area.trim().isEmpty()) {
             return area;
         }
-        String trimmedArea = area.trim();
-        if (AREA_TO_SHORT.containsKey(trimmedArea)) {
-            return AREA_TO_SHORT.get(trimmedArea);
+        if (province == null || province.trim().isEmpty()) {
+            return area;
         }
-        // 包含匹配
-        for (Map.Entry<String, String> entry : AREA_TO_SHORT.entrySet()) {
-            String areaName = entry.getKey();
-            if (areaName.contains(trimmedArea) || trimmedArea.contains(areaName)) {
-                return entry.getValue();
+
+        // 获取省份简称
+        String provinceShort = getProvinceAbbreviation(province);
+
+        // 根据省份简称获取该省的区县映射
+        if (provinceShort != null && PROVINCE_AREA_TO_SHORT.containsKey(provinceShort)) {
+            Map<String, String> areaMap = PROVINCE_AREA_TO_SHORT.get(provinceShort);
+            if (areaMap.containsKey(area)) {
+                return areaMap.get(area);
+            }
+            // 包含匹配
+            for (Map.Entry<String, String> entry : areaMap.entrySet()) {
+                if (entry.getKey().contains(area) || area.contains(entry.getKey())) {
+                    return entry.getValue();
+                }
             }
         }
         return area;
@@ -271,22 +381,22 @@ public class ProvinceCityAreaAbbreviationUtil {
                 PROVINCE_NAMES.add(province);
             }
 
-            // 城市映射
-            if (city != null && cityShort != null && !cityShort.isEmpty()) {
-                CITY_TO_SHORT.put(city, cityShort);
+            // 城市映射（按省份分组）
+            if (city != null && cityShort != null && !cityShort.isEmpty() && provinceShort != null) {
+                PROVINCE_CITY_TO_SHORT.computeIfAbsent(provinceShort, k -> new HashMap<>()).put(city, cityShort);
             }
 
-            // 区县映射
-            if (area != null && areaShort != null && !areaShort.isEmpty()) {
-                AREA_TO_SHORT.put(area, areaShort);
+            // 区县映射（按省份分组）
+            if (area != null && areaShort != null && !areaShort.isEmpty() && provinceShort != null) {
+                PROVINCE_AREA_TO_SHORT.computeIfAbsent(provinceShort, k -> new HashMap<>()).put(area, areaShort);
             }
         }
 
         @Override
         public void doAfterAllAnalysed(AnalysisContext context) {
             System.out.println("省市区简称数据加载完成：省份 " + PROVINCE_TO_SHORT.size() +
-                             " 个，城市 " + CITY_TO_SHORT.size() +
-                             " 个，区县 " + AREA_TO_SHORT.size() + " 个");
+                             " 个，城市 " + PROVINCE_CITY_TO_SHORT.size() +
+                             " 个省份有数据，区县 " + PROVINCE_AREA_TO_SHORT.size() + " 个省份有数据");
         }
     }
 }

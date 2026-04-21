@@ -1,9 +1,9 @@
 <template>
-  <div class="md-fuzzy-upload-view" :style="themeStyle">
+  <div class="md-hospital-upload-view" :style="themeStyle">
     <!-- 文件上传区域 -->
     <div class="upload-container">
       <div class="upload-card">
-        <div class="upload-title">上传模糊匹配文件</div>
+        <div class="upload-title">上传医院模糊匹配文件</div>
 
         <el-upload
             class="custom-upload"
@@ -58,7 +58,7 @@
               .xlsx 或 .xls
             </el-descriptions-item>
             <el-descriptions-item label="处理说明">
-              文件上传后将自动进行模糊匹配处理，根据名称和省份匹配医院或商业公司数据（不区分类型）
+              文件上传后将自动进行医疗机构模糊匹配处理，根据名称和省份匹配医院数据
             </el-descriptions-item>
           </el-descriptions>
         </div>
@@ -139,7 +139,6 @@ function loadThemeColor() {
       light: adjustColor(hex, 20)
     }
   } else {
-    // 默认颜色：绿色（与主数据项目主题一致）
     themeColors.value = {
       primary: '#90be6d',
       dark: '#7da85a',
@@ -221,14 +220,14 @@ const submitFile = async () => {
     const formData = new FormData()
     formData.append('file', selectedFile.value)
 
-    const {data} = await axios.post('/api/maindata/fuzzymatch/upload/organization', formData, {
+    const {data} = await axios.post('/api/maindata/fuzzymatch/upload/hospital', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
 
     if (data.code === 200) {
       uploadResult.value = {
         success: true,
-        message: '批次文件上传成功',
+        message: '医院批次文件上传成功',
         details: '文件已提交到后台处理，您可以关闭页面或继续其他操作。请稍后在批次列表中查看处理状态。',
       }
       handleRemove()
@@ -239,7 +238,7 @@ const submitFile = async () => {
     console.error(error)
     uploadResult.value = {
       success: false,
-      message: '批次文件上传失败',
+      message: '医院批次文件上传失败',
       details: error.response?.data?.msg || error.msg || error.message || '请检查文件格式并重试',
     }
   } finally {
@@ -250,7 +249,7 @@ const submitFile = async () => {
 </script>
 
 <style scoped>
-.md-fuzzy-upload-view {
+.md-hospital-upload-view {
   padding: 12px;
   background: var(--bg-secondary, #ffffff);
   font-size: 13px;
@@ -261,14 +260,14 @@ const submitFile = async () => {
 /* ==================== 响应式布局适配 ==================== */
 /* 2K 屏幕优化 */
 @media (min-width: 2000px) and (max-width: 2600px) {
-  .md-fuzzy-upload-view {
+  .md-hospital-upload-view {
     max-width: min(1800px, 90vw);
   }
 }
 
 /* 超宽屏幕 */
 @media (min-width: 2600px) {
-  .md-fuzzy-upload-view {
+  .md-hospital-upload-view {
     max-width: min(2200px, 95vw);
   }
 }
