@@ -80,6 +80,7 @@
             WHERE h.business_license_name = t.business_license_name
         );
 
+
         SELECT COUNT(*) FROM @InsertedCount;
         ]]>
     </select>

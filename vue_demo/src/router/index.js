@@ -13,11 +13,20 @@ import CompanyDataView from '@/components/haosenproject/maindataview/CompanyData
 import AppealDataView from '@/components/haosenproject/appealdataview/AppealDataView.vue';
 import ImportAppealDataView from '@/components/haosenproject/appealdataview/ImportAppealDataView.vue';
 import ImportCleanDataView from '@/components/haosenproject/cleandataview/ImportCleanDataView.vue';
-import ImportUpdateDataView from '@/components/haosenproject/updatedataView/ImportUpdateDataView.vue';
+import ImportUpdateDataView from '@/components/haosenproject/updatedataview/ImportUpdateDataView.vue';
 import SelectCleanDataView from '@/components/haosenproject/cleandataview/SelectCleanDataView.vue';
 import GetRepeatDataView from '@/components/haosenproject/repeatdataview/GetRepeatDataView.vue';
 import GetExportHSDataView from "@/components/haosenproject/repeatdataview/GetExportHSDataView.vue";
 import ImportExportHSDataView from "@/components/haosenproject/repeatdataview/ImportExportHSDataView.vue";
+import NameAddrChangeView from '@/components/haosenproject/kehudataview/NameAddrChangeView.vue';
+import InternetHosView from '@/components/haosenproject/kehudataview/InternetHosView.vue';
+import BigClassifyView from '@/components/haosenproject/kehudataview/BigClassifyView.vue';
+import DrugBranchCodeView from '@/components/haosenproject/kehubrandview/DrugBranchCodeView.vue';
+import HosBranchCodeView from '@/components/haosenproject/kehubrandview/HosBranchCodeView.vue';
+import HsOfflineView from '@/components/haosenproject/kehudataview/HsOfflineView.vue';
+import HsMedicalAllianceView from '@/components/haosenproject/kehudataview/HsMedicalAllianceView.vue';
+import HsMedicalCommunityView from '@/components/haosenproject/kehudataview/HsMedicalCommunityView.vue';
+import HsBackCodeView from '@/components/haosenproject/kehudataview/HsBackCodeView.vue';
 
 // 主数据项目模糊匹配
 import MdFuzzyBatchView from '@/components/maindataproject/fuzzyview/MdFuzzyBatchView.vue';
@@ -181,6 +190,18 @@ const routes = [
                 component: SelectCleanDataView,
                 meta: { requiresAuth: true }
             },
+            {
+                path: 'backhscode',
+                name: 'backhscode',
+                component: HsBackCodeView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'hscode',
+                name: 'hscode',
+                component: HsOfflineView,
+                meta: { requiresAuth: true }
+            }
 
         ] // 需要登录才能访问
     },
@@ -222,6 +243,55 @@ const routes = [
                meta: { requiresAuth: true }
            }
        ]
+    },
+
+    {
+        path: '/haosen/customerdata',
+        name: 'CustomerData',
+        children: [
+            {
+                path: 'nameaddrchange',
+                name: 'nameaddrchange',
+                component: NameAddrChangeView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'internethos',
+                name: 'internethos',
+                component: InternetHosView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'bigclassify',
+                name: 'bigclassify',
+                component: BigClassifyView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'drugbranchcode',
+                name: 'drugbranchcode',
+                component: DrugBranchCodeView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'hosbranchcode',
+                name: 'hosbranchcode',
+                component: HosBranchCodeView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'hsmedicalalliance',
+                name: 'hsmedicalalliance',
+                component: HsMedicalAllianceView,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'hsmedicalcommunity',
+                name: 'hsmedicalcommunity',
+                component: HsMedicalCommunityView,
+                meta: { requiresAuth: true }
+            }
+        ]
     },
 
     {

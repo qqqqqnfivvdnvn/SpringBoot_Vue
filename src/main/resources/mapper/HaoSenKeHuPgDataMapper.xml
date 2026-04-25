@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.HaoSenKeHuPgDataMapper">
+
+    <!--
+    ============================================================================
+    一、豪森编码表 (main_branch_code1121)
+    ============================================================================
+    -->
+
+    <!-- [结果映射] 豪森编码 -->
+    <resultMap id="HsCodeResultMap" type="com.example.demo.entity.HaoSenKeHuData">
+        <result column="keyid" property="keyid"/>
+        <result column="name" property="name"/>
+        <result column="hs_code" property="hsCode"/>
+        <result column="remarks" property="remarks"/>
+        <result column="add_time" property="addTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- [查询] 分页查询豪森编码列表 -->
+    <select id="selectHsCodePageList" resultMap="HsCodeResultMap">
+        SELECT keyid, name, hs_code, remarks, add_time, update_time
+        FROM main_branch_code1121
+        <where>
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND keyid LIKE '%' || #{condition.keyid} || '%'
+            </if>
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE '%' || #{condition.name} || '%'
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND hs_code LIKE '%' || #{condition.hsCode} || '%'
+            </if>
+            <if test="condition.remarks != null and condition.remarks != ''">
+                AND remarks LIKE '%' || #{condition.remarks} || '%'
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND add_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND add_time &lt;= #{condition.endTime}
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND update_time &gt;= #{condition.updateStartTime}
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND update_time &lt;= #{condition.updateEndTime}
+            </if>
+        </where>
+        ORDER BY add_time DESC
+    </select>
+
+    <!-- [查询] 根据主键查询豪森编码单条数据 -->
+    <select id="selectHsCodeByKeyid" resultMap="HsCodeResultMap">
+        SELECT keyid, name, hs_code, remarks, add_time, update_time
+        FROM main_branch_code1121
+        WHERE keyid = #{keyid}
+    </select>
+
+    <!-- [插入] 新增豪森编码数据 -->
+    <insert id="insertHsCode" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        INSERT INTO main_branch_code1121 (
+            keyid, name, hs_code, remarks, add_time, update_time
+        ) VALUES (
+            #{keyid},
+            #{name},
+            #{hsCode},
+            #{remarks},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- [更新] 更新豪森编码数据 -->
+    <update id="updateHsCode" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        UPDATE main_branch_code1121
+        SET
+            name = #{name},
+            hs_code = #{hsCode},
+            remarks = #{remarks},
+            update_time = CURRENT_TIMESTAMP
+        WHERE keyid = #{keyid}
+    </update>
+
+    <!-- [删除] 删除豪森编码数据 -->
+    <delete id="deleteHsCodeByKeyid" parameterType="string">
+        DELETE FROM main_branch_code1121
+        WHERE keyid = #{keyid}
+    </delete>
+
+
+    <!--
+    ============================================================================
+    二、总分院编码表 (general_branch_code1024)
+    ============================================================================
+    -->
+
+    <!-- [结果映射] 总分院编码 -->
+    <resultMap id="HosBranchCodeResultMap" type="com.example.demo.entity.HaoSenKeHuData">
+        <result column="keyid" property="keyid"/>
+        <result column="name" property="name"/>
+        <result column="hs_code" property="hsCode"/>
+        <result column="remarks" property="remarks"/>
+        <result column="add_time" property="addTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- [查询] 分页查询总分院编码列表 -->
+    <select id="selectHosBranchCodePageList" resultMap="HosBranchCodeResultMap">
+        SELECT keyid, name, hs_code, remarks, add_time, update_time
+        FROM general_branch_code1024
+        <where>
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND keyid LIKE '%' || #{condition.keyid} || '%'
+            </if>
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE '%' || #{condition.name} || '%'
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND hs_code LIKE '%' || #{condition.hsCode} || '%'
+            </if>
+            <if test="condition.remarks != null and condition.remarks != ''">
+                AND remarks LIKE '%' || #{condition.remarks} || '%'
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND add_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND add_time &lt;= #{condition.endTime}
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND update_time &gt;= #{condition.updateStartTime}
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND update_time &lt;= #{condition.updateEndTime}
+            </if>
+        </where>
+        ORDER BY add_time DESC
+    </select>
+
+    <!-- [查询] 根据主键查询总分院编码单条数据 -->
+    <select id="selectHosBranchCodeByKeyid" resultMap="HosBranchCodeResultMap">
+        SELECT keyid, name, hs_code, remarks, add_time, update_time
+        FROM general_branch_code1024
+        WHERE keyid = #{keyid}
+    </select>
+
+    <!-- [插入] 新增总分院编码数据 -->
+    <insert id="insertHosBranchCode" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        INSERT INTO general_branch_code1024 (
+            keyid, name, hs_code, remarks, add_time, update_time
+        ) VALUES (
+            #{keyid},
+            #{name},
+            #{hsCode},
+            #{remarks},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- [更新] 更新总分院编码数据 -->
+    <update id="updateHosBranchCode" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        UPDATE general_branch_code1024
+        SET
+            name = #{name},
+            hs_code = #{hsCode},
+            remarks = #{remarks},
+            update_time = CURRENT_TIMESTAMP
+        WHERE keyid = #{keyid}
+    </update>
+
+    <!-- [删除] 删除总分院编码数据 -->
+    <delete id="deleteHosBranchCodeByKeyid" parameterType="string">
+        DELETE FROM general_branch_code1024
+        WHERE keyid = #{keyid}
+    </delete>
+
+
+    <!--
+    ============================================================================
+    三、豪森线下编码表 (result_hscode)
+    ============================================================================
+    -->
+
+    <!-- [结果映射] 豪森线下编码 -->
+    <resultMap id="HsOfflineResultMap" type="com.example.demo.entity.HaoSenKeHuData">
+        <result column="data_code" property="dataCode"/>
+        <result column="original_name" property="originalName"/>
+        <result column="name" property="name"/>
+        <result column="hs_code" property="hsCode"/>
+        <result column="remark" property="remark"/>
+        <result column="add_time" property="addTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- [查询] 分页查询豪森线下编码列表 -->
+    <select id="selectHsOfflinePageList" resultMap="HsOfflineResultMap">
+        SELECT data_code, original_name, name, hs_code, remark, add_time, update_time
+        FROM result_hscode
+        <where>
+            <if test="condition.dataCode != null and condition.dataCode != ''">
+                AND data_code LIKE '%' || #{condition.dataCode} || '%'
+            </if>
+            <if test="condition.originalName != null and condition.originalName != ''">
+                AND original_name LIKE '%' || #{condition.originalName} || '%'
+            </if>
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE '%' || #{condition.name} || '%'
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND hs_code LIKE '%' || #{condition.hsCode} || '%'
+            </if>
+            <if test="condition.remark != null and condition.remark != ''">
+                AND remark LIKE '%' || #{condition.remark} || '%'
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND add_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND add_time &lt;= #{condition.endTime}
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND update_time &gt;= #{condition.updateStartTime}
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND update_time &lt;= #{condition.updateEndTime}
+            </if>
+        </where>
+        ORDER BY add_time DESC
+    </select>
+
+    <!-- [查询] 根据原始编码查询豪森线下编码单条数据 -->
+    <select id="selectHsOfflineByDataCode" resultMap="HsOfflineResultMap">
+        SELECT data_code, original_name, name, hs_code, remark, add_time, update_time
+        FROM result_hscode
+        WHERE data_code = #{dataCode}
+    </select>
+
+    <!-- [插入] 新增豪森线下编码数据 -->
+    <insert id="insertHsOffline" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        INSERT INTO result_hscode (
+            data_code, original_name, name, hs_code, remark, add_time, update_time
+        ) VALUES (
+            #{dataCode},
+            #{originalName},
+            #{name},
+            #{hsCode},
+            #{remark},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- [更新] 更新豪森线下编码数据 -->
+    <update id="updateHsOffline" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        UPDATE result_hscode
+        SET
+            original_name = #{originalName},
+            name = #{name},
+            hs_code = #{hsCode},
+            remark = #{remark},
+            update_time = CURRENT_TIMESTAMP
+        WHERE data_code = #{dataCode}
+    </update>
+
+    <!-- [删除] 删除豪森线下编码数据 -->
+    <delete id="deleteHsOfflineByDataCode" parameterType="string">
+        DELETE FROM result_hscode
+        WHERE data_code = #{dataCode}
+    </delete>
+
+
+    <!--
+    ============================================================================
+    四、豪森医疗联盟表 (haosen_medical_alliance) - 医联体编码
+    ============================================================================
+    -->
+
+    <!-- [结果映射] 医联体编码 -->
+    <resultMap id="HsMedicalAllianceResultMap" type="com.example.demo.entity.HaoSenKeHuData">
+        <result column="member_unit" property="memberUnit"/>
+        <result column="member_unit_keyid" property="memberUnitKeyid"/>
+        <result column="leading_unit" property="leadingUnit"/>
+        <result column="leading_unit_keyid" property="leadingUnitKeyid"/>
+        <result column="cooperation_type" property="cooperationType"/>
+        <result column="province" property="province"/>
+        <result column="remark" property="remark"/>
+        <result column="hs_code" property="hsCode"/>
+        <result column="add_time" property="addTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- [查询] 分页查询医联体编码列表 -->
+    <select id="selectHsMedicalAlliancePageList" resultMap="HsMedicalAllianceResultMap">
+        SELECT member_unit, member_unit_keyid, leading_unit, leading_unit_keyid,
+               cooperation_type, province, remark, hs_code, add_time, update_time
+        FROM haosen_medical_alliance
+        <where>
+            <if test="condition.memberUnit != null and condition.memberUnit != ''">
+                AND member_unit LIKE '%' || #{condition.memberUnit} || '%'
+            </if>
+            <if test="condition.leadingUnit != null and condition.leadingUnit != ''">
+                AND leading_unit LIKE '%' || #{condition.leadingUnit} || '%'
+            </if>
+            <if test="condition.cooperationType != null and condition.cooperationType != ''">
+                AND cooperation_type LIKE '%' || #{condition.cooperationType} || '%'
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND province LIKE '%' || #{condition.province} || '%'
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND hs_code LIKE '%' || #{condition.hsCode} || '%'
+            </if>
+            <if test="condition.remark != null and condition.remark != ''">
+                AND remark LIKE '%' || #{condition.remark} || '%'
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND add_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND add_time &lt;= #{condition.endTime}
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND update_time &gt;= #{condition.updateStartTime}
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND update_time &lt;= #{condition.updateEndTime}
+            </if>
+        </where>
+        ORDER BY add_time DESC
+    </select>
+
+    <!-- [查询] 根据成员单位 keyid 查询医联体编码单条数据 -->
+    <select id="selectHsMedicalAllianceByMemberUnitKeyid" resultMap="HsMedicalAllianceResultMap">
+        SELECT member_unit, member_unit_keyid, leading_unit, leading_unit_keyid,
+               cooperation_type, province, remark, hs_code, add_time, update_time
+        FROM haosen_medical_alliance
+        WHERE member_unit_keyid = #{memberUnitKeyid}
+    </select>
+
+    <!-- [插入] 新增医联体编码数据 -->
+    <insert id="insertHsMedicalAlliance" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        INSERT INTO haosen_medical_alliance (
+            member_unit, member_unit_keyid, leading_unit, leading_unit_keyid,
+            cooperation_type, province, remark, hs_code, add_time, update_time
+        ) VALUES (
+            #{memberUnit},
+            #{memberUnitKeyid},
+            #{leadingUnit},
+            #{leadingUnitKeyid},
+            #{cooperationType},
+            #{province},
+            #{remark},
+            #{hsCode},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- [更新] 更新医联体编码数据 -->
+    <update id="updateHsMedicalAlliance" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        UPDATE haosen_medical_alliance
+        SET
+            member_unit = #{memberUnit},
+            member_unit_keyid = #{memberUnitKeyid},
+            leading_unit = #{leadingUnit},
+            leading_unit_keyid = #{leadingUnitKeyid},
+            cooperation_type = #{cooperationType},
+            province = #{province},
+            remark = #{remark},
+            hs_code = #{hsCode},
+            update_time = CURRENT_TIMESTAMP
+        WHERE member_unit_keyid = #{memberUnitKeyid}
+    </update>
+
+    <!-- [删除] 删除医联体编码数据 -->
+    <delete id="deleteHsMedicalAllianceByMemberUnitKeyid" parameterType="string">
+        DELETE FROM haosen_medical_alliance
+        WHERE member_unit_keyid = #{memberUnitKeyid}
+    </delete>
+
+
+    <!--
+    ============================================================================
+    五、豪森医疗社区表 (haosen_medical_community) - 医共体编码
+    ============================================================================
+    -->
+
+    <!-- [结果映射] 医共体编码 -->
+    <resultMap id="HsMedicalCommunityResultMap" type="com.example.demo.entity.HaoSenKeHuData">
+        <result column="member_unit" property="memberUnit"/>
+        <result column="member_unit_keyid" property="memberUnitKeyid"/>
+        <result column="leading_unit" property="leadingUnit"/>
+        <result column="leading_unit_keyid" property="leadingUnitKeyid"/>
+        <result column="cooperation_type" property="cooperationType"/>
+        <result column="province" property="province"/>
+        <result column="remark" property="remark"/>
+        <result column="hs_code" property="hsCode"/>
+        <result column="add_time" property="addTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- [查询] 分页查询医共体编码列表 -->
+    <select id="selectHsMedicalCommunityPageList" resultMap="HsMedicalCommunityResultMap">
+        SELECT member_unit, member_unit_keyid, leading_unit, leading_unit_keyid,
+               cooperation_type, province, remark, hs_code, add_time, update_time
+        FROM haosen_medical_community
+        <where>
+            <if test="condition.memberUnit != null and condition.memberUnit != ''">
+                AND member_unit LIKE '%' || #{condition.memberUnit} || '%'
+            </if>
+            <if test="condition.leadingUnit != null and condition.leadingUnit != ''">
+                AND leading_unit LIKE '%' || #{condition.leadingUnit} || '%'
+            </if>
+            <if test="condition.cooperationType != null and condition.cooperationType != ''">
+                AND cooperation_type LIKE '%' || #{condition.cooperationType} || '%'
+            </if>
+            <if test="condition.province != null and condition.province != ''">
+                AND province LIKE '%' || #{condition.province} || '%'
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND hs_code LIKE '%' || #{condition.hsCode} || '%'
+            </if>
+            <if test="condition.remark != null and condition.remark != ''">
+                AND remark LIKE '%' || #{condition.remark} || '%'
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND add_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND add_time &lt;= #{condition.endTime}
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND update_time &gt;= #{condition.updateStartTime}
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND update_time &lt;= #{condition.updateEndTime}
+            </if>
+        </where>
+        ORDER BY add_time DESC
+    </select>
+
+    <!-- [查询] 根据成员单位 keyid 查询医共体编码单条数据 -->
+    <select id="selectHsMedicalCommunityByMemberUnitKeyid" resultMap="HsMedicalCommunityResultMap">
+        SELECT member_unit, member_unit_keyid, leading_unit, leading_unit_keyid,
+               cooperation_type, province, remark, hs_code, add_time, update_time
+        FROM haosen_medical_community
+        WHERE member_unit_keyid = #{memberUnitKeyid}
+    </select>
+
+    <!-- [插入] 新增医共体编码数据 -->
+    <insert id="insertHsMedicalCommunity" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        INSERT INTO haosen_medical_community (
+            member_unit, member_unit_keyid, leading_unit, leading_unit_keyid,
+            cooperation_type, province, remark, hs_code, add_time, update_time
+        ) VALUES (
+            #{memberUnit},
+            #{memberUnitKeyid},
+            #{leadingUnit},
+            #{leadingUnitKeyid},
+            #{cooperationType},
+            #{province},
+            #{remark},
+            #{hsCode},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- [更新] 更新医共体编码数据 -->
+    <update id="updateHsMedicalCommunity" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        UPDATE haosen_medical_community
+        SET
+            member_unit = #{memberUnit},
+            member_unit_keyid = #{memberUnitKeyid},
+            leading_unit = #{leadingUnit},
+            leading_unit_keyid = #{leadingUnitKeyid},
+            cooperation_type = #{cooperationType},
+            province = #{province},
+            remark = #{remark},
+            hs_code = #{hsCode},
+            update_time = CURRENT_TIMESTAMP
+        WHERE member_unit_keyid = #{memberUnitKeyid}
+    </update>
+
+    <!-- [删除] 删除医共体编码数据 -->
+    <delete id="deleteHsMedicalCommunityByMemberUnitKeyid" parameterType="string">
+        DELETE FROM haosen_medical_community
+        WHERE member_unit_keyid = #{memberUnitKeyid}
+    </delete>
+
+
+    <!--
+    ============================================================================
+    六、豪森返回编码表 (data_result)
+    ============================================================================
+    -->
+
+    <!-- [结果映射] 豪森返回编码 -->
+    <resultMap id="HsBackCodeResultMap" type="com.example.demo.entity.HaoSenKeHuData">
+        <result column="feedback_type" property="feedbackType"/>
+        <result column="batch_code" property="batchCode"/>
+        <result column="data_code" property="dataCode"/>
+        <result column="hs_code" property="hsCode"/>
+        <result column="remarks" property="remarks"/>
+        <result column="add_time" property="addTime"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <!-- [查询] 分页查询豪森返回编码列表 -->
+    <select id="selectHsBackCodePageList" resultMap="HsBackCodeResultMap">
+        SELECT feedback_type, batch_code, data_code, hs_code, remarks, add_time, status
+        FROM data_result
+        <where>
+            <if test="condition.feedbackType != null and condition.feedbackType != ''">
+                AND feedback_type = #{condition.feedbackType}
+            </if>
+            <if test="condition.batchCode != null and condition.batchCode != ''">
+                AND batch_code LIKE '%' || #{condition.batchCode} || '%'
+            </if>
+            <if test="condition.dataCode != null and condition.dataCode != ''">
+                AND data_code LIKE '%' || #{condition.dataCode} || '%'
+            </if>
+            <if test="condition.hsCode != null and condition.hsCode != ''">
+                AND hs_code LIKE '%' || #{condition.hsCode} || '%'
+            </if>
+            <if test="condition.status != null and condition.status != ''">
+                AND status = #{condition.status}
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND add_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND add_time &lt;= #{condition.endTime}
+            </if>
+        </where>
+        ORDER BY add_time DESC
+    </select>
+
+    <!-- [查询] 根据原始编码查询豪森返回编码单条数据 -->
+    <select id="selectHsBackCodeByDataCode" resultMap="HsBackCodeResultMap">
+        SELECT feedback_type, batch_code, data_code, hs_code, remarks, add_time, status
+        FROM data_result
+        WHERE data_code = #{dataCode}
+    </select>
+
+</mapper>

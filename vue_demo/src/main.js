@@ -70,7 +70,12 @@ import {
     faUpload,
     faExchangeAlt,
     faMapMarkedAlt,
-    faBuilding
+    faBuilding,
+    faEdit,
+    faBarcode,
+    faSitemap,
+    faHospitalUser,
+    faReply
 }
     from '@fortawesome/free-solid-svg-icons'
 
@@ -84,7 +89,19 @@ library.add(faHospital,faStore,faUniversity,faSignOutAlt,faSignInAlt,faAngleDoub
     faAngleDoubleRight,faUser,faUserPlus,faUserShield,faCheckCircle,faExclamationCircle,faTimesCircle,faShieldAlt,faRocket,faDatabase,faTrash,faClock,faThList,faSynagogue,faStoreAlt,faHospitalAlt,faFileAlt,faBookReader,faCat,
     faProjectDiagram,faChartLine,faLaptopCode,faUsers,faBook,faSearch,faStar,faCalendarAlt,faPlusCircle,faEraser,faSnowman,faOilCan,
     faFlag,faFileUpload,faPaw,faFeather,faPaperPlane,faLeaf,faPlus,faHome,faChevronRight,faArrowLeft,faChevronDown,faTimes,faBriefcase,
-    faTable,faLayerGroup,faLink,faList,faUpload,faExchangeAlt,faMapMarkedAlt,faBuilding)
+    faTable,
+    faLayerGroup,
+    faLink,
+    faList,
+    faUpload,
+    faExchangeAlt,
+    faMapMarkedAlt,
+    faBuilding,
+    faEdit,
+    faBarcode,
+    faSitemap,
+    faHospitalUser,
+    faReply)
 
 import HomeDashboardView from '@/components/haosenproject/homechartview/HomeDashboardView.vue'
 import HospitalDataView from '@/components/haosenproject/maindataview/HospitalDataView.vue'
@@ -93,13 +110,22 @@ import CompanyDataView from '@/components/haosenproject/maindataview/CompanyData
 import AppealDataView from '@/components/haosenproject/appealdataview/AppealDataView.vue'
 import ImportAppealDataView from '@/components/haosenproject/appealdataview/ImportAppealDataView.vue'
 import ImportCleanDataView from '@/components/haosenproject/cleandataview/ImportCleanDataView.vue'
-import ImportUpdateDataView from '@/components/haosenproject/updatedataView/ImportUpdateDataView.vue'
+import ImportUpdateDataView from '@/components/haosenproject/updatedataview/ImportUpdateDataView.vue'
 import SelectCleanDataView from '@/components/haosenproject/cleandataview/SelectCleanDataView.vue'
 
 import GetRepeatDataView from "@/components/haosenproject/repeatdataview/GetRepeatDataView.vue";
 
 import GetExportHSDataView from "@/components/haosenproject/repeatdataview/GetExportHSDataView.vue";
 import ImportExportHSDataView from "@/components/haosenproject/repeatdataview/ImportExportHSDataView.vue";
+import NameAddrChangeView from '@/components/haosenproject/kehudataview/NameAddrChangeView.vue';
+import InternetHosView from '@/components/haosenproject/kehudataview/InternetHosView.vue';
+import BigClassifyView from '@/components/haosenproject/kehudataview/BigClassifyView.vue';
+import DrugBranchCodeView from '@/components/haosenproject/kehubrandview/DrugBranchCodeView.vue';
+import HosBranchCodeView from '@/components/haosenproject/kehubrandview/HosBranchCodeView.vue';
+import HsOfflineView from '@/components/haosenproject/kehudataview/HsOfflineView.vue';
+import HsMedicalAllianceView from '@/components/haosenproject/kehudataview/HsMedicalAllianceView.vue';
+import HsMedicalCommunityView from '@/components/haosenproject/kehudataview/HsMedicalCommunityView.vue';
+import HsBackCodeView from '@/components/haosenproject/kehudataview/HsBackCodeView.vue';
 
 import HrBatchDataView from "@/components/hengruiproject/batchdataview/HrBatchDataView.vue"
 import HrImportBatchDataView from "@/components/hengruiproject/batchdataview/HrImportBatchDataView.vue"
@@ -133,6 +159,15 @@ app.component('SelectCleanDataView', SelectCleanDataView)
 app.component('GetRepeatDataView', GetRepeatDataView)
 app.component('GetExportHSDataView', GetExportHSDataView)
 app.component('ImportExportHSDataView', ImportExportHSDataView)
+app.component('NameAddrChangeView', NameAddrChangeView)
+app.component('InternetHosView', InternetHosView)
+app.component('BigClassifyView', BigClassifyView)
+app.component('DrugBranchCodeView', DrugBranchCodeView)
+app.component('HosBranchCodeView', HosBranchCodeView)
+app.component('HsOfflineView', HsOfflineView)
+app.component('HsMedicalAllianceView', HsMedicalAllianceView)
+app.component('HsMedicalCommunityView', HsMedicalCommunityView)
+app.component('HsBackCodeView', HsBackCodeView)
 
 app.component('HrBatchDataView', HrBatchDataView)
 app.component('HrImportBatchDataView', HrImportBatchDataView)

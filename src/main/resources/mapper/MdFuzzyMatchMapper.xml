@@ -175,7 +175,7 @@
 
     <!-- 根据省份和名称模糊匹配商业公司（包含历史名称） -->
     <select id="matchCompanyByProvinceAndName" resultType="map">
-        SELECT TOP 2 key_id, name
+        SELECT TOP 2 key_id keyid, name
         FROM HospitalInfo..company
         WHERE status = 1
         <if test="province != null and province != ''">
@@ -186,7 +186,7 @@
 
     <!-- 根据省份和名称模糊匹配商业公司（精确匹配，拆分后的名称） -->
     <select id="matchCompanyByProvinceAndSplitName" resultType="map">
-        SELECT TOP 2 key_id, name
+        SELECT TOP 2 key_id keyid, name
         FROM HospitalInfo..company
         WHERE status = 1
         <if test="province != null and province != ''">

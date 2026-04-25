@@ -15,6 +15,9 @@
                 <el-option label="处理失败" :value="2" />
               </el-select>
             </el-form-item>
+            <el-form-item label="接口类型">
+              <el-input v-model="searchForm.dataType" placeholder="请输入接口类型" clearable @clear="handleSearch" @keyup.enter="handleSearch" />
+            </el-form-item>
             <el-form-item label="开始时间">
               <el-date-picker
                   v-model="searchForm.startTime"
@@ -71,6 +74,7 @@
             <el-table-column prop="originalFilename" label="文件名称" min-width="200" show-overflow-tooltip />
             <el-table-column prop="createTime" label="创建时间" min-width="160" :formatter="formatDate" />
             <el-table-column prop="updateTime" label="更新时间" min-width="160" :formatter="formatDate" />
+            <el-table-column prop="dataType" label="接口类型" min-width="120" show-overflow-tooltip />
             <el-table-column prop="statusDesc" label="状态" min-width="100">
               <template #default="{ row }">
                 <el-tag :type="row.status === 1 ? 'success' : row.status === 2 ? 'danger' : 'warning'" effect="dark" size="small">
@@ -115,6 +119,7 @@
                     <div class="card-item"><span class="label">文件名称：</span>{{ item.originalFilename }}</div>
                     <div class="card-item"><span class="label">创建时间：</span>{{ formatDateValue(item.createTime) }}</div>
                     <div class="card-item"><span class="label">更新时间：</span>{{ formatDateValue(item.updateTime) }}</div>
+                    <div class="card-item"><span class="label">接口类型：</span>{{ item.dataType }}</div>
                     <div class="card-item"><span class="label">状态：</span>{{ item.statusDesc }}</div>
                     <div class="card-item"><span class="label">处理信息：</span>{{ item.message }}</div>
                   </div>
@@ -177,6 +182,7 @@ const isExporting = (batchId) => exportingRows.value.has(batchId)
 const searchForm = reactive({
   batchId: '',
   status: null,
+  dataType: '',
   startTime: '',
   endTime: ''
 })
@@ -264,6 +270,7 @@ const handleJumpPage = () => {
 const resetSearch = () => {
   searchForm.batchId = ''
   searchForm.status = null
+  searchForm.dataType = ''
   searchForm.startTime = ''
   searchForm.endTime = ''
   pageNumber.value = 1

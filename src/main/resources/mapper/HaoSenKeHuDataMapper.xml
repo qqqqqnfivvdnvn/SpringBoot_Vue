@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.HaoSenKeHuDataMapper">
+
+    <!-- ==================== 名称地址表 ==================== -->
+
+    <!-- 名称地址结果映射 -->
+    <resultMap id="NameAddrResultMap" type="com.example.demo.entity.HaoSenKeHuData">
+        <result column="keyid" property="keyid"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="field" property="field"/>
+        <result column="remark" property="remark"/>
+        <result column="add_time" property="addTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 分页查询名称地址列表 -->
+    <select id="selectNameAddrPageList" resultMap="NameAddrResultMap">
+        SELECT keyid, name, address, field, remark, add_time, update_time
+        FROM test..haosen_name_addr WITH(NOLOCK)
+        <where>
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND keyid LIKE '%' + #{condition.keyid} + '%'
+            </if>
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE '%' + #{condition.name} + '%'
+            </if>
+            <if test="condition.address != null and condition.address != ''">
+                AND address LIKE '%' + #{condition.address} + '%'
+            </if>
+            <if test="condition.remark != null and condition.remark != ''">
+                AND remark LIKE '%' + #{condition.remark} + '%'
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND add_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND add_time &lt;= #{condition.endTime}
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND update_time &gt;= #{condition.updateStartTime}
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND update_time &lt;= #{condition.updateEndTime}
+            </if>
+        </where>
+        ORDER BY add_time DESC
+    </select>
+
+    <!-- 根据 keyid 查询名称地址单条数据 -->
+    <select id="selectNameAddrByKeyid" resultMap="NameAddrResultMap">
+        SELECT keyid, name, address, field, remark, add_time, update_time
+        FROM test..haosen_name_addr WITH(NOLOCK)
+        WHERE keyid = #{keyid}
+    </select>
+
+    <!-- 插入名称地址数据 -->
+    <insert id="insertNameAddr" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        INSERT INTO test..haosen_name_addr (
+            keyid, name, address, field, remark, add_time, update_time
+        ) VALUES (
+            #{keyid},
+            #{name},
+            #{address},
+            #{field},
+            #{remark},
+            GETDATE(),
+            GETDATE()
+        )
+    </insert>
+
+    <!-- 更新名称地址数据 -->
+    <update id="updateNameAddr" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        UPDATE test..haosen_name_addr
+        SET
+            name = #{name},
+            address = #{address},
+            field = #{field},
+            remark = #{remark},
+            update_time = GETDATE()
+        WHERE keyid = #{keyid}
+    </update>
+
+    <!-- 删除名称地址数据 -->
+    <delete id="deleteNameAddrByKeyid" parameterType="string">
+        DELETE FROM test..haosen_name_addr
+        WHERE keyid = #{keyid}
+    </delete>
+
+
+    <!-- ==================== 互联网医院表 ==================== -->
+
+    <!-- 互联网医院结果映射 -->
+    <resultMap id="InternetHosResultMap" type="com.example.demo.entity.HaoSenKeHuData">
+        <result column="keyid" property="keyid"/>
+        <result column="name" property="name"/>
+        <result column="internet_hos" property="internetHos"/>
+        <result column="internet_hosclassify" property="internetHosClassify"/>
+        <result column="remark" property="remark"/>
+        <result column="add_time" property="addTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 分页查询互联网医院列表 -->
+    <select id="selectInternetHosPageList" resultMap="InternetHosResultMap">
+        SELECT keyid, name, internet_hos, internet_hosclassify, remark, add_time, update_time
+        FROM test..haosen_qcc_internet_hos WITH(NOLOCK)
+        <where>
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND keyid LIKE '%' + #{condition.keyid} + '%'
+            </if>
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE '%' + #{condition.name} + '%'
+            </if>
+            <if test="condition.internetHos != null and condition.internetHos != ''">
+                AND internet_hos = #{condition.internetHos}
+            </if>
+            <if test="condition.internetHosClassify != null and condition.internetHosClassify != ''">
+                AND internet_hosclassify LIKE '%' + #{condition.internetHosClassify} + '%'
+            </if>
+            <if test="condition.remark != null and condition.remark != ''">
+                AND remark LIKE '%' + #{condition.remark} + '%'
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND add_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND add_time &lt;= #{condition.endTime}
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND update_time &gt;= #{condition.updateStartTime}
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND update_time &lt;= #{condition.updateEndTime}
+            </if>
+        </where>
+        ORDER BY add_time DESC
+    </select>
+
+    <!-- 根据 keyid 查询互联网医院单条数据 -->
+    <select id="selectInternetHosByKeyid" resultMap="InternetHosResultMap">
+        SELECT keyid, name, internet_hos, internet_hosclassify, remark, add_time, update_time
+        FROM test..haosen_qcc_internet_hos WITH(NOLOCK)
+        WHERE keyid = #{keyid}
+    </select>
+
+    <!-- 插入互联网医院数据 -->
+    <insert id="insertInternetHos" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        INSERT INTO test..haosen_qcc_internet_hos (
+            keyid, name, internet_hos, internet_hosclassify, remark, add_time, update_time
+        ) VALUES (
+            #{keyid},
+            #{name},
+            #{internetHos},
+            #{internetHosClassify},
+            #{remark},
+            GETDATE(),
+            GETDATE()
+        )
+    </insert>
+
+    <!-- 更新互联网医院数据 -->
+    <update id="updateInternetHos" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        UPDATE test..haosen_qcc_internet_hos
+        SET
+            name = #{name},
+            internet_hos = #{internetHos},
+            internet_hosclassify = #{internetHosClassify},
+            remark = #{remark},
+            update_time = GETDATE()
+        WHERE keyid = #{keyid}
+    </update>
+
+    <!-- 删除互联网医院数据 -->
+    <delete id="deleteInternetHosByKeyid" parameterType="string">
+        DELETE FROM test..haosen_qcc_internet_hos
+        WHERE keyid = #{keyid}
+    </delete>
+
+
+    <!-- ==================== 医院大类表 ==================== -->
+
+    <!-- 医院大类结果映射 -->
+    <resultMap id="BigClassifyResultMap" type="com.example.demo.entity.HaoSenKeHuData">
+        <result column="keyid" property="keyid"/>
+        <result column="name" property="name"/>
+        <result column="big_classify" property="bigClassify"/>
+        <result column="add_time" property="addTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 分页查询医院大类列表 -->
+    <select id="selectBigClassifyPageList" resultMap="BigClassifyResultMap">
+        SELECT keyid, name, big_classify, add_time, update_time
+        FROM test..haosen_bigclassify WITH(NOLOCK)
+        <where>
+            <if test="condition.keyid != null and condition.keyid != ''">
+                AND keyid LIKE '%' + #{condition.keyid} + '%'
+            </if>
+            <if test="condition.name != null and condition.name != ''">
+                AND name LIKE '%' + #{condition.name} + '%'
+            </if>
+            <if test="condition.bigClassify != null and condition.bigClassify != ''">
+                AND big_classify LIKE '%' + #{condition.bigClassify} + '%'
+            </if>
+            <if test="condition.startTime != null and condition.startTime != ''">
+                AND add_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != ''">
+                AND add_time &lt;= #{condition.endTime}
+            </if>
+            <if test="condition.updateStartTime != null and condition.updateStartTime != ''">
+                AND update_time &gt;= #{condition.updateStartTime}
+            </if>
+            <if test="condition.updateEndTime != null and condition.updateEndTime != ''">
+                AND update_time &lt;= #{condition.updateEndTime}
+            </if>
+        </where>
+        ORDER BY add_time DESC
+    </select>
+
+    <!-- 根据 keyid 查询医院大类单条数据 -->
+    <select id="selectBigClassifyByKeyid" resultMap="BigClassifyResultMap">
+        SELECT keyid, name, big_classify, add_time, update_time
+        FROM test..haosen_bigclassify WITH(NOLOCK)
+        WHERE keyid = #{keyid}
+    </select>
+
+    <!-- 插入医院大类数据 -->
+    <insert id="insertBigClassify" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        INSERT INTO test..haosen_bigclassify (
+            keyid, name, big_classify, add_time, update_time
+        ) VALUES (
+            #{keyid},
+            #{name},
+            #{bigClassify},
+            GETDATE(),
+            GETDATE()
+        )
+    </insert>
+
+    <!-- 更新医院大类数据 -->
+    <update id="updateBigClassify" parameterType="com.example.demo.entity.HaoSenKeHuData">
+        UPDATE test..haosen_bigclassify
+        SET
+            name = #{name},
+            big_classify = #{bigClassify},
+            update_time = GETDATE()
+        WHERE keyid = #{keyid}
+    </update>
+
+    <!-- 删除医院大类数据 -->
+    <delete id="deleteBigClassifyByKeyid" parameterType="string">
+        DELETE FROM test..haosen_bigclassify
+        WHERE keyid = #{keyid}
+    </delete>
+
+</mapper>

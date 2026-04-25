@@ -135,7 +135,7 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
 
         String originalFilename = file.getOriginalFilename();
         String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
-        String newFilename = batchId + ext;
+        String newFilename = batchId + "_" + originalFilename;
 
         Path path = Paths.get(uploadDir, newFilename);
         Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);

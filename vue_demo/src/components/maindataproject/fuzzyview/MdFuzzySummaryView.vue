@@ -54,7 +54,7 @@
               fit
               resizable
           >
-            <el-table-column prop="originalId" label="id" min-width="200">
+            <el-table-column prop="originalId" label="id" min-width="200" show-overflow-tooltip>
               <template #default="{ row }">
                 <el-link type="primary" :underline="false" @click="copyText(row.originalId)" :disabled="!row.originalId">
                   {{ row.originalId }}
@@ -85,8 +85,8 @@
             <el-table-column prop="address" label="地址" min-width="200" show-overflow-tooltip />
             <el-table-column prop="principal" label="负责人" min-width="80" />
             <el-table-column prop="legalperson" label="法人" min-width="80" />
-            <el-table-column prop="sign_status" label="登记状态" min-width="80" />
-            <el-table-column prop="status" label="大库状态" min-width="80" />
+            <el-table-column prop="sign_status" label="登记状态" min-width="85" />
+            <el-table-column prop="status" label="大库状态" min-width="85" />
           </el-table>
 
           <div v-else class="no-data-container">
@@ -107,7 +107,7 @@
                     </div>
                   </template>
                   <div class="card-body">
-                    <div class="card-item"><span class="label">原始 ID：</span>{{ item.originalId }}</div>
+                    <div class="card-item"><span class="label">原始 ID：</span><el-link type="primary" :underline="false" @click="copyText(item.originalId)">{{ item.originalId }}</el-link></div>
                     <div class="card-item"><span class="label">批次 ID：</span><el-link type="primary" :underline="false" @click="copyText(item.batchId)">{{ item.batchId }}</el-link></div>
                     <div class="card-item"><span class="label">省份：</span>{{ item.originalProvince }}</div>
                     <div class="card-item"><span class="label">keyid：</span><el-link type="primary" :underline="false" @click="copyText(item.keyid)">{{ item.keyid }}</el-link></div>

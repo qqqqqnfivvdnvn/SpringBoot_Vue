@@ -43,7 +43,9 @@ const layoutConfig = computed(() => ({
       icon: ['fas', 'oil-can'],
       items: [
         { title: '清洗查看', action: 'selectCleanData', icon: ['fas', 'paw'] },
-        { title: '清洗提交', action: 'importCleanData', icon: ['fas', 'eraser'] }
+        { title: '清洗提交', action: 'importCleanData', icon: ['fas', 'eraser'] },
+        { title: '豪森线下编码', action: 'hsOfflineView', icon: ['fas', 'barcode'] },
+        { title: '豪森返回编码', action: 'hsBackCodeView', icon: ['fas', 'reply'] }
       ]
     },
     {
@@ -72,6 +74,27 @@ const layoutConfig = computed(() => ({
         { title: '客户确认数据', action: 'showExportHSData', icon: ['fas', 'leaf'] },
         { title: '确认数据上传', action: 'importExportHSData', icon: ['fas', 'upload'] }
       ]
+    },
+    {
+      key: 'customerDataManagement',
+      title: '客户数据',
+      icon: ['fas', 'users'],
+      items: [
+        { title: '名称地址变更', action: 'nameAddrChangeView', icon: ['fas', 'edit'] },
+        { title: '互联网医院', action: 'internetHosView', icon: ['fas', 'hospital'] },
+        { title: '医疗机构大类', action: 'bigClassifyView', icon: ['fas', 'layer-group'] },
+        { title: '医联体编码', action: 'hsMedicalAllianceView', icon: ['fas', 'hospital-user'] },
+        { title: '医共体编码', action: 'hsMedicalCommunityView', icon: ['fas', 'hospital-user'] }
+      ]
+    },
+    {
+      key: 'branchCodeManagement',
+      title: '总分院店',
+      icon: ['fas', 'sitemap'],
+      items: [
+        { title: '总分店编码', action: 'drugBranchCodeView', icon: ['fas', 'store-alt'] },
+        { title: '总分院编码', action: 'hosBranchCodeView', icon: ['fas', 'hospital-alt'] }
+      ]
     }
   ],
   defaultView: 'HomeDashboardView',
@@ -86,6 +109,33 @@ const layoutConfig = computed(() => ({
     },
     companyDataView: () => {
       layoutRef.value?.addTab('商业主数据', 'CompanyDataView', '/haosen/database/company')
+    },
+    nameAddrChangeView: () => {
+      layoutRef.value?.addTab('名称地址变更', 'NameAddrChangeView', '/haosen/customerdata/nameaddrchange')
+    },
+    internetHosView: () => {
+      layoutRef.value?.addTab('互联网医院', 'InternetHosView', '/haosen/customerdata/internethos')
+    },
+    bigClassifyView: () => {
+      layoutRef.value?.addTab('医疗机构大类', 'BigClassifyView', '/haosen/customerdata/bigclassify')
+    },
+    drugBranchCodeView: () => {
+      layoutRef.value?.addTab('总分店编码', 'DrugBranchCodeView', '/haosen/customerdata/drugbranchcode')
+    },
+    hosBranchCodeView: () => {
+      layoutRef.value?.addTab('豪森总分院编码', 'HosBranchCodeView', '/haosen/customerdata/hosbranchcode')
+    },
+    hsOfflineView: () => {
+      layoutRef.value?.addTab('豪森线下编码', 'HsOfflineView', '/haosen/cleandata/hscode')
+    },
+    hsMedicalAllianceView: () => {
+      layoutRef.value?.addTab('医联体编码', 'HsMedicalAllianceView', '/haosen/customerdata/hsmedicalalliance')
+    },
+    hsMedicalCommunityView: () => {
+      layoutRef.value?.addTab('医共体编码', 'HsMedicalCommunityView', '/haosen/customerdata/hsmedicalcommunity')
+    },
+    hsBackCodeView: () => {
+      layoutRef.value?.addTab('豪森返回编码', 'HsBackCodeView', '/haosen/cleandata/backhscode')
     },
     showAppealData: () => {
       layoutRef.value?.addTab('申诉数据', 'AppealDataView', '/haosen/appealdata/list')
