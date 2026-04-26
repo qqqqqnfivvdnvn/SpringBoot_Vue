@@ -308,7 +308,8 @@ html.dark .upload-card {
   height: auto;
 }
 
-.custom-upload :deep(.el-upload-dragger:hover) {
+.custom-upload :deep(.el-upload-dragger:hover),
+.custom-upload :deep(.el-upload:focus .el-upload-dragger) {
   border-color: var(--theme-dark, #7da85a);
 }
 
@@ -322,7 +323,8 @@ html.dark .custom-upload :deep(.el-upload-dragger) {
   border-color: #333333 !important;
 }
 
-html.dark .custom-upload :deep(.el-upload-dragger:hover) {
+html.dark .custom-upload :deep(.el-upload-dragger:hover),
+html.dark .custom-upload :deep(.el-upload:focus .el-upload-dragger) {
   border-color: var(--theme-dark, #7da85a);
 }
 

@@ -254,6 +254,23 @@ const submitFile = async () => {
   padding: 12px;
   background: var(--bg-secondary, #ffffff);
   font-size: 13px;
+  max-width: min(1200px, 95vw);
+  margin: 0 auto;
+}
+
+/* ==================== 响应式布局适配 ==================== */
+/* 2K 屏幕优化 */
+@media (min-width: 2000px) and (max-width: 2600px) {
+  .appeal-management-view {
+    max-width: min(1800px, 90vw);
+  }
+}
+
+/* 超宽屏幕 */
+@media (min-width: 2600px) {
+  .appeal-management-view {
+    max-width: min(2200px, 95vw);
+  }
 }
 
 .upload-container {
@@ -297,7 +314,8 @@ html.dark .custom-upload :deep(.el-upload-dragger) {
   border-color: #3a3a3a !important;
 }
 
-.custom-upload :deep(.el-upload-dragger:hover) {
+.custom-upload :deep(.el-upload-dragger:hover),
+.custom-upload :deep(.el-upload:focus .el-upload-dragger) {
   border-color: var(--theme-dark);
 }
 
@@ -306,7 +324,8 @@ html.dark .custom-upload :deep(.el-upload-dragger) {
   background-color: rgba(148, 120, 204, 0.05);
 }
 
-html.dark .custom-upload :deep(.el-upload-dragger:hover) {
+html.dark .custom-upload :deep(.el-upload-dragger:hover),
+html.dark .custom-upload :deep(.el-upload:focus .el-upload-dragger) {
   border-color: #4a4a4a;
 }
 

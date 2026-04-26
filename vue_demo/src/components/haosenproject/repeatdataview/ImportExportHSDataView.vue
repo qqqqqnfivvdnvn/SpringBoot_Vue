@@ -251,6 +251,23 @@ const submitFile = async () => {
   padding: 12px;
   background: var(--bg-secondary, #ffffff);
   font-size: 13px;
+  max-width: min(1200px, 95vw);
+  margin: 0 auto;
+}
+
+/* ==================== 响应式布局适配 ==================== */
+/* 2K 屏幕优化 */
+@media (min-width: 2000px) and (max-width: 2600px) {
+  .appeal-management-view {
+    max-width: min(1800px, 90vw);
+  }
+}
+
+/* 超宽屏幕 */
+@media (min-width: 2600px) {
+  .appeal-management-view {
+    max-width: min(2200px, 95vw);
+  }
 }
 
 .upload-container {
@@ -278,13 +295,13 @@ html.dark .upload-card {
 }
 
 .custom-upload :deep(.el-upload-dragger) {
-  border: 1px dashed #dcdfe6;
+  border: 1px dashed var(--theme-primary);
   border-radius: 3px;
   padding: 20px 12px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s;
-  background: white;
+  background: var(--bg-secondary, #ffffff);
   width: 100%;
   height: auto;
 }
@@ -294,17 +311,24 @@ html.dark .custom-upload :deep(.el-upload-dragger) {
   border-color: #333333 !important;
 }
 
-.custom-upload :deep(.el-upload-dragger:hover) {
-  border-color: #555555;
+html.dark .custom-upload :deep(.el-upload-dragger:hover),
+html.dark .custom-upload :deep(.el-upload:focus .el-upload-dragger) {
+  border-color: var(--theme-dark);
+}
+
+.custom-upload :deep(.el-upload-dragger:hover),
+.custom-upload :deep(.el-upload:focus .el-upload-dragger) {
+  border-color: var(--theme-dark);
 }
 
 .custom-upload :deep(.el-upload-dragger.is-dragover) {
-  border-color: #555555;
-  background-color: rgba(100, 100, 100, 0.05);
+  border-color: var(--theme-dark);
+  background-color: rgba(148, 120, 204, 0.05);
 }
 
 html.dark .custom-upload :deep(.el-upload-dragger.is-dragover) {
-  background-color: rgba(100, 100, 100, 0.1);
+  border-color: var(--theme-dark);
+  background-color: rgba(148, 120, 204, 0.1);
 }
 
 .upload-icon {
