@@ -1,7 +1,6 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.FuzzyMatchDataDTO;
-import com.example.demo.entity.MdFuzzyMatchBatch;
 import com.example.demo.entity.MdFuzzyMatchSummary;
 import com.example.demo.mapper.MdFuzzyMatchMapper;
 import com.example.demo.utils.MdFuzzyMatcher;
@@ -71,48 +70,37 @@ public class MdFuzzyMatchProcessServiceImpl {
         AtomicInteger failCount = new AtomicInteger(0);
         List<String> errorMessages = new CopyOnWriteArrayList<>();
 
-        // 使用 CountDownLatch 等待所有线程完成
-        CountDownLatch latch = new CountDownLatch(dataList.size());
+        // 分批提交，每批50条，避免逐条提交导致线程池创建大量线程
+        int batchSize = 50;
+        List<List<FuzzyMatchDataDTO>> batches = new ArrayList<>();
+        for (int i = 0; i < dataList.size(); i += batchSize) {
+            batches.add(new ArrayList<>(dataList.subList(i, Math.min(i + batchSize, dataList.size()))));
+        }
 
-        // 使用 ThreadPoolTaskExecutor 提交任务
+        CountDownLatch latch = new CountDownLatch(batches.size());
+
         if (matchExecutorService instanceof ThreadPoolTaskExecutor) {
             ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) matchExecutorService;
-            // 处理每条数据（多线程）
-            for (FuzzyMatchDataDTO data : dataList) {
+            for (List<FuzzyMatchDataDTO> batch : batches) {
                 taskExecutor.execute(() -> {
                     try {
-                        MdFuzzyMatchSummary summary = fuzzyMatch(batchId, dataType, data);
-                        mdFuzzyMatchMapper.insertSummary(summary);
-                        // 根据 keyid 判断是否匹配成功
-                        if (summary.getKeyid() != null) {
-                            successCount.incrementAndGet();
-                        } else {
-                            failCount.incrementAndGet();
-                        }
+                        processBatch(batch, batchId, dataType, successCount, failCount, errorMessages);
                     } catch (Exception e) {
-                        failCount.incrementAndGet();
-                        errorMessages.add("ID: " + data.getId() + " 处理失败：" + e.getMessage());
+                        failCount.addAndGet(batch.size());
+                        errorMessages.add("批次处理失败：" + e.getMessage());
                     } finally {
                         latch.countDown();
                     }
                 });
             }
         } else {
-            // 兼容处理：直接使用 Executor
-            for (FuzzyMatchDataDTO data : dataList) {
+            for (List<FuzzyMatchDataDTO> batch : batches) {
                 matchExecutorService.execute(() -> {
                     try {
-                        MdFuzzyMatchSummary summary = fuzzyMatch(batchId, dataType, data);
-                        mdFuzzyMatchMapper.insertSummary(summary);
-                        // 根据 keyid 判断是否匹配成功
-                        if (summary.getKeyid() != null) {
-                            successCount.incrementAndGet();
-                        } else {
-                            failCount.incrementAndGet();
-                        }
+                        processBatch(batch, batchId, dataType, successCount, failCount, errorMessages);
                     } catch (Exception e) {
-                        failCount.incrementAndGet();
-                        errorMessages.add("ID: " + data.getId() + " 处理失败：" + e.getMessage());
+                        failCount.addAndGet(batch.size());
+                        errorMessages.add("批次处理失败：" + e.getMessage());
                     } finally {
                         latch.countDown();
                     }
@@ -133,6 +121,27 @@ public class MdFuzzyMatchProcessServiceImpl {
         }
 
         mdFuzzyMatchMapper.updateBatchStatus(batchId, 1, message);
+    }
+
+    /**
+     * 处理一批数据
+     */
+    private void processBatch(List<FuzzyMatchDataDTO> batch, String batchId, String dataType,
+                              AtomicInteger successCount, AtomicInteger failCount, List<String> errorMessages) {
+        for (FuzzyMatchDataDTO data : batch) {
+            try {
+                MdFuzzyMatchSummary summary = fuzzyMatch(batchId, dataType, data);
+                mdFuzzyMatchMapper.insertSummary(summary);
+                if (summary.getKeyid() != null) {
+                    successCount.incrementAndGet();
+                } else {
+                    failCount.incrementAndGet();
+                }
+            } catch (Exception e) {
+                failCount.incrementAndGet();
+                errorMessages.add("ID: " + data.getId() + " 处理失败：" + e.getMessage());
+            }
+        }
     }
 
     /**

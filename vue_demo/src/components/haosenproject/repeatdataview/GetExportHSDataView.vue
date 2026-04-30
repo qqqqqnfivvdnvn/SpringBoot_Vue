@@ -40,6 +40,9 @@
             <div class="form-actions">
               <el-button size="small" type="primary" @click="handleSearch" :loading="loading">查询</el-button>
               <el-button size="small" @click="resetSearch">重置</el-button>
+              <el-button size="small" type="success" @click="toExcel" :loading="exporting">
+                {{ exporting ? '导出中...' : '导出' }}
+              </el-button>
 
               <el-button-group size="small" class="view-toggle">
                 <el-button :type="viewMode === 'table' ? 'primary' : 'default'" @click="viewMode = 'table'" title="表格视图">
@@ -316,6 +319,7 @@ const duplicateData = reactive({
 // ==================== 加载状态管理 ====================
 const loading = ref(false)
 const isSaving = ref(false)
+const exporting = ref(false)
 
 // ==================== 视图模式 ====================
 const viewMode = ref('table')
@@ -442,6 +446,39 @@ const copyText = async (text) => {
 }
 
 // ==================== 数据加载相关函数 ====================
+// 导出重复数据Excel
+const toExcel = async () => {
+  if (exporting.value) return
+  exporting.value = true
+  try {
+    const params = {
+      ...Object.fromEntries(
+        Object.entries(searchForm).filter(([, value]) => value !== '' && value !== null && value !== undefined)
+      )
+    }
+    const { data: jsonBlob } = await axios.get('/api/haosen/duplicatedata/exportduplicatedata', {
+      params,
+      responseType: 'blob'
+    })
+    const jsonText = await jsonBlob.text()
+    const { data: base64 } = JSON.parse(jsonText)
+    const byteChars = atob(base64)
+    const byteNums = new Uint8Array(byteChars.length)
+    for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i)
+    const excelBlob = new Blob([byteNums], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const url = URL.createObjectURL(excelBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `重复数据导出_${new Date().toLocaleDateString()}.xlsx`
+    link.click()
+    URL.revokeObjectURL(url)
+    ElMessage.success('导出成功')
+  } catch {
+    ElMessage.error('导出失败')
+  } finally {
+    exporting.value = false
+  }
+}
 // 获取重复数据列表
 const fetchDuplicateData = async () => {
   loading.value = true

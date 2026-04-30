@@ -697,7 +697,7 @@ const detailFields = {
   militaryHos: { label: '是否军队医院', value: h => (h.militaryHos === '1' ? '是' : h.militaryHos === '0' ? '否' : '未知') },
   internetHos: { label: '是否互联网医院', value: h => h.internetHos },
   medUnionCommunity: { label: '医联体/医共体', value: h => h.medUnionCommunity },
-  field3: { label: '医联体/医共体牵头单位编码', value: h => h.field3 },
+  field5: { label: '医联体/医共体牵头单位编码', value: h => h.field5 },
   medUnionCommunityKeyid: { label: '医联体/医共体keyid', value: h => h.medUnionCommunityKeyid },
   medUnionCommunityName: { label: '医联体/医共体名称', value: h => h.medUnionCommunityName },
   ybcode: { label: '医保编码', value: h => h.ybcode },
@@ -715,12 +715,12 @@ const detailFields = {
   generalBranchName: { label: '上级单位名称', value: h => h.generalBranchName },
   internetHosclassify: { label: '互联网医院类别', value: h => h.internetHosclassify },
   field1: { label: '经纬度', value: h => h.field1 },
-  field4: {
+  field3: {
     label: '电子处方',
     value: h =>
-        h.field4 === '1' ? '业务正常' :
-            h.field4 === '2' ? '业务开通，但近7天未产生业务数据' :
-                h.field4 === '3' ? '业务未开通' : ''
+        h.field3 === '1' ? '业务正常' :
+            h.field3 === '2' ? '业务开通，但近7天未产生业务数据' :
+                h.field3 === '3' ? '业务未开通' : ''
   },
   remarks: { label: '备注', value: h => h.remarks },
   addtime: { label: '添加日期', value: h => formatDateTime(h.addtime) },

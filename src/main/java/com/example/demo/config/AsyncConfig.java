@@ -53,12 +53,14 @@ public class AsyncConfig {
         executor.setCorePoolSize(10);
         // 最大线程数
         executor.setMaxPoolSize(20);
-        // 队列容量
-        executor.setQueueCapacity(50);
+        // 队列容量（增大以避免大批量数据导致线程池扩展）
+        executor.setQueueCapacity(500);
         // 线程名称前缀
         executor.setThreadNamePrefix("match-async-");
         // 线程空闲时间（秒）
         executor.setKeepAliveSeconds(60);
+        // 允许核心线程超时，避免空闲线程常驻内存
+        executor.setAllowCoreThreadTimeOut(true);
         // 等待任务执行完再关闭线程池
         executor.setWaitForTasksToCompleteOnShutdown(true);
         // 关闭时等待时间（秒）

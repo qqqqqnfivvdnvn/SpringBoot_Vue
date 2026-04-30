@@ -7,6 +7,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 
 import java.util.HashMap;
@@ -42,6 +43,19 @@ public class GaoDeMapUtil {
     // JSON 解析器
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
+    // 全局复用 HttpClient（避免每次请求创建连接池）
+    private static final CloseableHttpClient httpClient = createSharedClient();
+
+    private static CloseableHttpClient createSharedClient() {
+        PoolingHttpClientConnectionManager connMgr = new PoolingHttpClientConnectionManager();
+        connMgr.setMaxTotal(20);
+        connMgr.setDefaultMaxPerRoute(10);
+        return HttpClients.custom()
+                .setDefaultRequestConfig(requestConfig)
+                .setConnectionManager(connMgr)
+                .build();
+    }
+
     /**
      * 根据地址获取经纬度坐标
      *
@@ -52,58 +66,51 @@ public class GaoDeMapUtil {
     public static Map<String, Object> getAreaLatLng(String province, String address) {
         Map<String, Object> result = createEmptyResult(province, address);
 
-        int originalKeyIndex = currentKeyIndex;
         int maxRetries = API_KEYS.length;
 
         for (int i = 0; i < maxRetries; i++) {
             String currentKey = getCurrentKey();
 
-            try (CloseableHttpClient httpClient = HttpClients.custom()
-                    .setDefaultRequestConfig(requestConfig)
-                    .build()) {
+            HttpGet httpGet = new HttpGet(AMAP_GEOCODE_URL + "?city=" + encodeUrl(province)
+                    + "&address=" + encodeUrl(address)
+                    + "&key=" + currentKey
+                    + "&output=json");
 
-                String url = AMAP_GEOCODE_URL + "?city=" + encodeUrl(province)
-                        + "&address=" + encodeUrl(address)
-                        + "&key=" + currentKey
-                        + "&output=json";
+            try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    String jsonStr = EntityUtils.toString(response.getEntity(), "UTF-8");
+                    JsonNode jsonNode = objectMapper.readTree(jsonStr);
 
-                HttpGet httpGet = new HttpGet(url);
-                try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-                    if (response.getStatusLine().getStatusCode() == 200) {
-                        String jsonStr = EntityUtils.toString(response.getEntity(), "UTF-8");
-                        JsonNode jsonNode = objectMapper.readTree(jsonStr);
+                    String infocode = jsonNode.has("infocode") ? jsonNode.get("infocode").asText() : "";
 
-                        String infocode = jsonNode.has("infocode") ? jsonNode.get("infocode").asText() : "";
+                    if ("10000".equals(infocode)) {
+                        // 成功
+                        result.put("infocode", infocode);
+                        result.put("info", jsonNode.has("info") ? jsonNode.get("info").asText() : "OK");
 
-                        if ("10000".equals(infocode)) {
-                            // 成功
-                            result.put("infocode", infocode);
-                            result.put("info", jsonNode.has("info") ? jsonNode.get("info").asText() : "OK");
-
-                            JsonNode geocodes = jsonNode.get("geocodes");
-                            if (geocodes != null && geocodes.isArray() && geocodes.size() > 0) {
-                                JsonNode geo = geocodes.get(0);
-                                result.put("area", geo.has("district") && !geo.get("district").asText().isEmpty()
-                                        ? geo.get("district").asText() : geo.has("city") ? geo.get("city").asText() : null);
-                                result.put("city", geo.has("city") ? geo.get("city").asText() : null);
-                                result.put("province", geo.has("province") ? geo.get("province").asText() : null);
-                                result.put("areaid", geo.has("adcode") ? geo.get("adcode").asText() : null);
-                                result.put("location", geo.has("location") ? geo.get("location").asText() : null);
-                            }
-                            return result;
-                        } else {
-                            // 其他错误，切换 key 重试
-                            result.put("infocode", infocode);
-                            result.put("info", jsonNode.has("info") ? jsonNode.get("info").asText() : "");
-                            switchToNextKey();
-                            continue;
+                        JsonNode geocodes = jsonNode.get("geocodes");
+                        if (geocodes != null && geocodes.isArray() && geocodes.size() > 0) {
+                            JsonNode geo = geocodes.get(0);
+                            result.put("area", geo.has("district") && !geo.get("district").asText().isEmpty()
+                                    ? geo.get("district").asText() : geo.has("city") ? geo.get("city").asText() : null);
+                            result.put("city", geo.has("city") ? geo.get("city").asText() : null);
+                            result.put("province", geo.has("province") ? geo.get("province").asText() : null);
+                            result.put("areaid", geo.has("adcode") ? geo.get("adcode").asText() : null);
+                            result.put("location", geo.has("location") ? geo.get("location").asText() : null);
                         }
-                    } else {
-                        // HTTP 错误
-                        result.put("infocode", "3");
-                        result.put("info", "请求失败");
                         return result;
+                    } else {
+                        // 其他错误，切换 key 重试
+                        result.put("infocode", infocode);
+                        result.put("info", jsonNode.has("info") ? jsonNode.get("info").asText() : "");
+                        switchToNextKey();
+                        continue;
                     }
+                } else {
+                    // HTTP 错误
+                    result.put("infocode", "3");
+                    result.put("info", "请求失败");
+                    return result;
                 }
             } catch (Exception e) {
                 // 网络异常

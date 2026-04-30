@@ -44,8 +44,8 @@ const layoutConfig = computed(() => ({
       items: [
         { title: '清洗查看', action: 'selectCleanData', icon: ['fas', 'paw'] },
         { title: '清洗提交', action: 'importCleanData', icon: ['fas', 'eraser'] },
-        { title: '豪森线下编码', action: 'hsOfflineView', icon: ['fas', 'barcode'] },
-        { title: '豪森返回编码', action: 'hsBackCodeView', icon: ['fas', 'reply'] }
+        { title: '线下编码', action: 'hsOfflineView', icon: ['fas', 'barcode'] },
+        { title: '返回编码', action: 'hsBackCodeView', icon: ['fas', 'reply'] }
       ]
     },
     {
@@ -126,7 +126,7 @@ const layoutConfig = computed(() => ({
       layoutRef.value?.addTab('豪森总分院编码', 'HosBranchCodeView', '/haosen/customerdata/hosbranchcode')
     },
     hsOfflineView: () => {
-      layoutRef.value?.addTab('豪森线下编码', 'HsOfflineView', '/haosen/cleandata/hscode')
+      layoutRef.value?.addTab('线下编码', 'HsOfflineView', '/haosen/cleandata/hscode')
     },
     hsMedicalAllianceView: () => {
       layoutRef.value?.addTab('医联体编码', 'HsMedicalAllianceView', '/haosen/customerdata/hsmedicalalliance')
@@ -135,7 +135,7 @@ const layoutConfig = computed(() => ({
       layoutRef.value?.addTab('医共体编码', 'HsMedicalCommunityView', '/haosen/customerdata/hsmedicalcommunity')
     },
     hsBackCodeView: () => {
-      layoutRef.value?.addTab('豪森返回编码', 'HsBackCodeView', '/haosen/cleandata/backhscode')
+      layoutRef.value?.addTab('返回编码', 'HsBackCodeView', '/haosen/cleandata/backhscode')
     },
     showAppealData: () => {
       layoutRef.value?.addTab('申诉数据', 'AppealDataView', '/haosen/appealdata/list')
