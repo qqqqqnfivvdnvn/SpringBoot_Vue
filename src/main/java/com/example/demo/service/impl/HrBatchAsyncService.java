@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 批次异步处理服务
@@ -49,68 +50,64 @@ public class HrBatchAsyncService {
                 throw new RuntimeException(errorMsg);
             }
 
-            // 2. 解析 Excel
-            ReaderExcel reader = new ReaderExcel();
-            List<HrMonitoringDataVO> dataList = reader.readExcel(filePath.toString(), HrMonitoringDataVO.class);
+            // 2. 清空临时表
+            monitoringDataMapper.deleteAllTemp();
 
-            if (dataList == null || dataList.isEmpty()) {
+            // 3. 流式读取 Excel，边读边转换边插入（避免全量数据驻留内存）
+            ReaderExcel reader = new ReaderExcel();
+            AtomicInteger totalCount = new AtomicInteger(0);
+
+            reader.readExcelStreaming(filePath.toString(), HrMonitoringDataVO.class, batch -> {
+                List<HrMonitoringData> entities = new ArrayList<>();
+                for (HrMonitoringDataVO vo : batch) {
+                    HrMonitoringData entity = new HrMonitoringData();
+                    entity.setBatchId(batchId);
+                    entity.setSerialNo(vo.getSerialNo());
+                    entity.setMonitoringYear(vo.getMonitoringYear());
+                    entity.setId(vo.getId());
+                    entity.setProductId(vo.getProductId());
+                    entity.setProductName(vo.getProductName());
+                    entity.setPlatform(vo.getPlatform());
+                    entity.setGenericName(vo.getGenericName());
+                    entity.setUrl(vo.getUrl());
+                    entity.setSpecification(vo.getSpecification());
+                    entity.setOnlineStorePrice(vo.getOnlineStorePrice());
+                    entity.setBoxQuantity(vo.getBoxQuantity());
+                    entity.setUnitPricePerBox(vo.getUnitPricePerBox());
+                    entity.setStoreName(vo.getStoreName());
+                    entity.setBusinessLicenseName(vo.getBusinessLicenseName());
+                    entity.setProvince(vo.getProvince());
+                    entity.setCity(vo.getCity());
+                    entity.setSalesVolume(vo.getSalesVolume());
+                    entity.setCategory(vo.getCategory());
+                    entity.setCreatedTime(vo.getCreatedTime());
+                    entity.setCrawledTime(vo.getCrawledTime());
+                    entity.setRepeatedCount(vo.getRepeatedCount());
+                    entity.setShippingOrigin(vo.getShippingOrigin());
+                    entity.setKeyId(vo.getKeyId());
+                    entity.setName(vo.getName());
+                    entity.setAddress(vo.getAddress());
+                    entity.setStandardizedProvince(vo.getStandardizedProvince());
+                    entity.setShortName(vo.getShortName());
+                    entity.setRemarks(vo.getRemarks());
+                    entities.add(entity);
+                }
+                // 直接批量插入临时表
+                monitoringDataMapper.batchInsert(entities);
+                totalCount.addAndGet(batch.size());
+            }, ReaderExcel.BATCH_SIZE_28_FIELDS);
+
+            // 检查是否有数据
+            if (totalCount.get() == 0) {
                 batchStatusService.updateBatchStatus(batchId, 2, "文件内容为空");
                 throw new RuntimeException("文件内容为空");
             }
 
-            // 3. 清空临时表
-            monitoringDataMapper.deleteAllTemp();
-
-            // 4. 转换数据并插入临时表
-            List<HrMonitoringData> insertList = new ArrayList<>();
-            for (HrMonitoringDataVO vo : dataList) {
-                HrMonitoringData entity = new HrMonitoringData();
-                entity.setBatchId(batchId);
-                entity.setSerialNo(vo.getSerialNo());
-                entity.setMonitoringYear(vo.getMonitoringYear());
-                entity.setId(vo.getId());
-                entity.setProductId(vo.getProductId());
-                entity.setProductName(vo.getProductName());
-                entity.setPlatform(vo.getPlatform());
-                entity.setGenericName(vo.getGenericName());
-                entity.setUrl(vo.getUrl());
-                entity.setSpecification(vo.getSpecification());
-                entity.setOnlineStorePrice(vo.getOnlineStorePrice());
-                entity.setBoxQuantity(vo.getBoxQuantity());
-                entity.setUnitPricePerBox(vo.getUnitPricePerBox());
-                entity.setStoreName(vo.getStoreName());
-                entity.setBusinessLicenseName(vo.getBusinessLicenseName());
-                entity.setProvince(vo.getProvince());
-                entity.setCity(vo.getCity());
-                entity.setSalesVolume(vo.getSalesVolume());
-                entity.setCategory(vo.getCategory());
-                entity.setCreatedTime(vo.getCreatedTime());
-                entity.setCrawledTime(vo.getCrawledTime());
-                entity.setRepeatedCount(vo.getRepeatedCount());
-                entity.setShippingOrigin(vo.getShippingOrigin());
-                entity.setKeyId(vo.getKeyId());
-                entity.setName(vo.getName());
-                entity.setAddress(vo.getAddress());
-                entity.setStandardizedProvince(vo.getStandardizedProvince());
-                entity.setShortName(vo.getShortName());
-                entity.setRemarks(vo.getRemarks());
-                insertList.add(entity);
-            }
-
-            // 分批插入，每批 50 条（SQL Server 最多 2100 个参数，每条记录 28 个字段，50*28=1400）
-            int batchSize = 50;
-            for (int i = 0; i < insertList.size(); i += batchSize) {
-                int end = Math.min(i + batchSize, insertList.size());
-                List<HrMonitoringData> subList = insertList.subList(i, end);
-                monitoringDataMapper.batchInsert(subList);
-            }
-
-            // 5. 执行数据转移（包含复杂的 SQL 逻辑）
+            // 4. 执行数据转移（包含复杂的 SQL 逻辑）
             monitoringDataMapper.transferFromTemp(batchId);
 
-            // 6. 更新文件条数（在所有数据处理完成后执行）
-            int fileCount = dataList.size();
-            batchMapper.updateFileCount(batchId, fileCount);
+            // 5. 更新文件条数（在所有数据处理完成后执行）
+            batchMapper.updateFileCount(batchId, totalCount.get());
 
         } catch (Exception e) {
             System.out.println("处理失败：" + e.getMessage());

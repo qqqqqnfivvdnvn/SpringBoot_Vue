@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 恒瑞数据比对关系 Service 实现
@@ -191,56 +192,50 @@ public class HrOrgRelationServiceImpl implements HrOrgRelationService {
                 throw new RuntimeException(errorMsg);
             }
 
-            // 2. 解析 Excel
+            // 2. 流式读取 Excel，边读边转换边插入（避免全量数据驻留内存）
             ReaderExcel reader = new ReaderExcel();
-            List<HrOrgRelationImportVO> dataList = reader.readExcel(filePath.toString(), HrOrgRelationImportVO.class);
-
-            if (dataList == null || dataList.isEmpty()) {
-                return ApiResponseDTO.error("文件内容为空");
-            }
-
-            // 3. 转换数据为 HrMonitoringData 实体（用于插入到 hr_monitoring_data_tmp 表）
-            List<HrMonitoringData> insertList = new ArrayList<>();
             String batchId = UUID.randomUUID().toString();
+            AtomicInteger totalCount = new AtomicInteger(0);
 
-            for (HrOrgRelationImportVO vo : dataList) {
-                // 校验必填字段：营业执照名称和 keyid 不能为空
-                if (vo.getBusinessLicenseName() == null || vo.getBusinessLicenseName().trim().isEmpty()) {
-                    continue;
+            reader.readExcelStreaming(filePath.toString(), HrOrgRelationImportVO.class, batch -> {
+                List<HrMonitoringData> entities = new ArrayList<>();
+                for (HrOrgRelationImportVO vo : batch) {
+                    // 校验必填字段：营业执照名称和 keyid 不能为空
+                    if (vo.getBusinessLicenseName() == null || vo.getBusinessLicenseName().trim().isEmpty()) {
+                        continue;
+                    }
+                    if (vo.getKeyId() == null || vo.getKeyId().trim().isEmpty()) {
+                        continue;
+                    }
+
+                    HrMonitoringData data = new HrMonitoringData();
+                    data.setBatchId(batchId);
+                    data.setBusinessLicenseName(vo.getBusinessLicenseName().trim());
+                    data.setStandardizedProvince(vo.getProvince() != null ? vo.getProvince().trim() : "");
+                    data.setKeyId(vo.getKeyId().trim());
+                    data.setName(vo.getName() != null ? vo.getName().trim() : "");
+                    data.setAddress(vo.getAddress() != null ? vo.getAddress().trim() : "");
+                    data.setCreateTime(LocalDateTime.now());
+                    data.setUpdateTime(LocalDateTime.now());
+
+                    entities.add(data);
                 }
-                if (vo.getKeyId() == null || vo.getKeyId().trim().isEmpty()) {
-                    continue;
+                // 批量插入临时表
+                if (!entities.isEmpty()) {
+                    monitoringDataMapper.batchInsert(entities);
+                    totalCount.addAndGet(entities.size());
                 }
+            }, ReaderExcel.BATCH_SIZE_5_FIELDS);  // 5 字段，每批 200 条
 
-                HrMonitoringData data = new HrMonitoringData();
-                data.setBatchId(batchId);
-                data.setBusinessLicenseName(vo.getBusinessLicenseName().trim());
-                data.setStandardizedProvince(vo.getProvince() != null ? vo.getProvince().trim() : "");
-                data.setKeyId(vo.getKeyId().trim());
-                data.setName(vo.getName() != null ? vo.getName().trim() : "");
-                data.setAddress(vo.getAddress() != null ? vo.getAddress().trim() : "");
-                data.setCreateTime(LocalDateTime.now());
-                data.setUpdateTime(LocalDateTime.now());
-
-                insertList.add(data);
-            }
-
-            if (insertList.isEmpty()) {
+            // 检查是否有数据
+            if (totalCount.get() == 0) {
                 return ApiResponseDTO.error("没有有效数据可导入（营业执照名称和 keyid 不能为空）");
             }
 
-            // 4. 分批批量插入到 hr_monitoring_data_tmp 表（每批 50 条，避免 SQL Server 2100 参数限制）
-            int batchSize = 50;
-            for (int i = 0; i < insertList.size(); i += batchSize) {
-                int end = Math.min(i + batchSize, insertList.size());
-                List<HrMonitoringData> subList = insertList.subList(i, end);
-                monitoringDataMapper.batchInsert(subList);
-            }
-
-            // 5. 同步到 hr_org_relation 表
+            // 3. 同步到 hr_org_relation 表
             int insertedCount = orgRelationMapper.syncFromTemp(batchId);
 
-            // 6. 清理临时表数据
+            // 4. 清理临时表数据
             monitoringDataMapper.deleteByBatchId(batchId);
 
             return ApiResponseDTO.success("导入完成：成功插入 " + insertedCount + " 条记录");

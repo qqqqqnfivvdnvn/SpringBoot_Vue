@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 地理位置批次异步处理服务
@@ -53,71 +54,71 @@ public class MdLocationBatchAsyncService {
                 throw new RuntimeException(errorMsg);
             }
 
-            // 2. 解析 Excel
-            ReaderExcel reader = new ReaderExcel();
-            List<MdLocationVO> dataList = reader.readExcel(filePath.toString(), MdLocationVO.class);
-
-            if (dataList == null || dataList.isEmpty()) {
-                batchStatusService.updateBatchStatus(batchId, 2, "文件内容为空");
-                throw new RuntimeException("文件内容为空");
-            }
-
-            // 3. 清空临时数据（删除该批次的旧数据）
+            // 2. 清空临时数据（删除该批次的旧数据）
             locationMapper.deleteByBatchId(batchId);
 
-            // 4. 转换数据并调用高德地图 API 获取地理位置信息
+            // 3. 流式读取 Excel，边读边调用高德 API 边插入（避免全量数据驻留内存）
+            ReaderExcel reader = new ReaderExcel();
             List<MdLocation> insertList = new ArrayList<>();
-            int successCount = 0;
-            int failCount = 0;
+            AtomicInteger successCount = new AtomicInteger(0);
+            AtomicInteger failCount = new AtomicInteger(0);
 
-            for (MdLocationVO vo : dataList) {
-                MdLocation entity = new MdLocation();
-                entity.setBatchId(batchId);
-                // 设置 Excel 中的 id
-                if (vo.getOriginalId() != null && !vo.getOriginalId().trim().isEmpty()) {
-                    entity.setId(vo.getOriginalId().trim());
-                }
-                entity.setOriginalName(vo.getOriginalName());
-                entity.setOriginalProvince(vo.getOriginalProvince());
-                entity.setOriginalAddress(vo.getOriginalAddress());
-
-                // 调用高德地图 API 获取地理位置信息
-                try {
-                    Map<String, Object> geoResult = GaoDeMapUtil.getAreaLatLng(
-                            vo.getOriginalProvince(),
-                            vo.getOriginalAddress()
-                    );
-
-                    if ("10000".equals(geoResult.get("infocode"))) {
-                        // 成功
-                        entity.setAreaName((String) geoResult.get("area"));
-                        entity.setAreaId((String) geoResult.get("areaid"));
-                        entity.setLngLat((String) geoResult.get("location"));
-                        entity.setProvince((String) geoResult.get("province"));
-                        entity.setCity((String) geoResult.get("city"));
-                        successCount++;
-                    } else {
-                        // API 调用失败，保留原始数据
-                        entity.setAreaName(null);
-                        entity.setAreaId(null);
-                        entity.setLngLat(null);
-                        entity.setProvince(vo.getOriginalProvince());
-                        entity.setCity(null);
-                        failCount++;
+            reader.readExcelStreaming(filePath.toString(), MdLocationVO.class, batch -> {
+                for (MdLocationVO vo : batch) {
+                    MdLocation entity = new MdLocation();
+                    entity.setBatchId(batchId);
+                    // 设置 Excel 中的 id
+                    if (vo.getOriginalId() != null && !vo.getOriginalId().trim().isEmpty()) {
+                        entity.setId(vo.getOriginalId().trim());
                     }
-                } catch (Exception e) {
-                    // 异常时保留原始数据
-                    entity.setProvince(vo.getOriginalProvince());
-                    failCount++;
-                }
+                    entity.setOriginalName(vo.getOriginalName());
+                    entity.setOriginalProvince(vo.getOriginalProvince());
+                    entity.setOriginalAddress(vo.getOriginalAddress());
 
-                insertList.add(entity);
+                    // 调用高德地图 API 获取地理位置信息
+                    try {
+                        Map<String, Object> geoResult = GaoDeMapUtil.getAreaLatLng(
+                                vo.getOriginalProvince(),
+                                vo.getOriginalAddress()
+                        );
 
-                // 每 50 条批量插入一次
-                if (insertList.size() >= 50) {
-                    locationMapper.batchInsert(insertList);
-                    insertList.clear();
+                        if ("10000".equals(geoResult.get("infocode"))) {
+                            // 成功
+                            entity.setAreaName((String) geoResult.get("area"));
+                            entity.setAreaId((String) geoResult.get("areaid"));
+                            entity.setLngLat((String) geoResult.get("location"));
+                            entity.setProvince((String) geoResult.get("province"));
+                            entity.setCity((String) geoResult.get("city"));
+                            successCount.incrementAndGet();
+                        } else {
+                            // API 调用失败，保留原始数据
+                            entity.setAreaName(null);
+                            entity.setAreaId(null);
+                            entity.setLngLat(null);
+                            entity.setProvince(vo.getOriginalProvince());
+                            entity.setCity(null);
+                            failCount.incrementAndGet();
+                        }
+                    } catch (Exception e) {
+                        // 异常时保留原始数据
+                        entity.setProvince(vo.getOriginalProvince());
+                        failCount.incrementAndGet();
+                    }
+
+                    insertList.add(entity);
+
+                    // 每 50 条批量插入一次
+                    if (insertList.size() >= 50) {
+                        locationMapper.batchInsert(new ArrayList<>(insertList));
+                        insertList.clear();
+                    }
                 }
+            }, ReaderExcel.BATCH_SIZE_4_FIELDS);
+
+            // 检查是否有数据
+            if (successCount.get() == 0 && failCount.get() == 0) {
+                batchStatusService.updateBatchStatus(batchId, 2, "文件内容为空");
+                throw new RuntimeException("文件内容为空");
             }
 
             // 插入剩余数据
@@ -125,8 +126,8 @@ public class MdLocationBatchAsyncService {
                 locationMapper.batchInsert(insertList);
             }
 
-            // 5. 更新批次状态为已处理
-            String message = "处理完成，成功：" + successCount + "条，失败：" + failCount + "条";
+            // 4. 更新批次状态为已处理
+            String message = "处理完成，成功：" + successCount.get() + "条，失败：" + failCount.get() + "条";
             batchStatusService.updateBatchStatus(batchId, 1, message);
 
         } catch (Exception e) {

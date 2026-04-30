@@ -40,6 +40,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class HaoSenInputCleanDataServiceImpl implements HaoSenInputCleanDataService {
@@ -89,42 +90,56 @@ public class HaoSenInputCleanDataServiceImpl implements HaoSenInputCleanDataServ
             }
 
 
-            // 2. 解析Excel
+            // 4. 流式读取 Excel，分批处理（避免全量数据驻留内存）
             ReaderExcel reader = new ReaderExcel();
-            List<HaoSenInputAppealDataVO> cleanData = reader.readExcel(filePath.toString(), HaoSenInputAppealDataVO.class);
+            List<HaoSenDataIu> haoSenDataIuList = new ArrayList<>();
+            HaoSenToLxEntity haoSenToLxEntity = new HaoSenToLxEntity();
+            AtomicInteger totalCount = new AtomicInteger(0);
 
-            if (cleanData.isEmpty()) {
+            // 清空临时表
+            sqlMapper.deleteAllHaoSenData();
+
+            // 流式读取 + 分批处理
+            reader.readExcelStreaming(filePath.toString(), HaoSenInputAppealDataVO.class, batch -> {
+                // 转换为 HaoSenOrganizationVO 列表
+                List<HaoSenOrganizationVO> orgList = new ArrayList<>();
+                for (HaoSenInputAppealDataVO appeal : batch) {
+                    HaoSenOrganizationVO haoSenOrganization = new HaoSenOrganizationVO();
+                    BeanUtils.copyProperties(appeal, haoSenOrganization);
+                    orgList.add(haoSenOrganization);
+                    // 累积流向变更数据
+                    haoSenDataIuList.add(haoSenToLxEntity.ToLxColumn(haoSenOrganization));
+                }
+                // 批量插入临时表
+                sqlMapper.batchInputHaoSenUpdateData(orgList);
+                totalCount.addAndGet(batch.size());
+
+                // 流向变更数据分批提交（每 400 条）
+                if (haoSenDataIuList.size() >= 400) {
+                    haoSenLxDataService.lxUpdateData(new ArrayList<>(haoSenDataIuList));
+                    haoSenDataIuList.clear();
+                }
+            }, ReaderExcel.BATCH_SIZE_47_FIELDS);
+
+            // 检查是否有数据
+            if (totalCount.get() == 0) {
 
                 return ApiResponseDTO.error("清洗数据导入失败");
 
             }
 
-            // 3. 数据库操作（事务内）
-            sqlMapper.deleteAllHaoSenData();
-            // 3. 清空并导入数据（事务操作）
-            List<HaoSenDataIu> haoSenDataIuList = new ArrayList<>();
-            HaoSenToLxEntity haoSenToLxEntity = new HaoSenToLxEntity();
-
-
-            for (HaoSenInputAppealDataVO appeal : cleanData) {
-
-                HaoSenOrganizationVO haoSenOrganization = new HaoSenOrganizationVO();
-                BeanUtils.copyProperties(appeal, haoSenOrganization);
-                sqlMapper.inputHaoSenUpdateData(haoSenOrganization);
-
-                haoSenDataIuList.add(haoSenToLxEntity.ToLxColumn(haoSenOrganization));
-
+            // 处理剩余流向变更数据
+            if (!haoSenDataIuList.isEmpty()) {
+                haoSenLxDataService.lxUpdateData(haoSenDataIuList);
             }
 
-            haoSenLxDataService.lxUpdateData(haoSenDataIuList);
-
-            // 4. 关键API调用
+            // 5. 关键API调用
             String CleanMessage = new ApiHaosen().callExternalCleanDataApi();
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(CleanMessage);
             if (rootNode.get("code").asInt() == 200){
                 // 5. 全部成功后的响应
-                fileMessage.setResult(cleanData.size()); // Changed from setProcessedCount to setProcessedCount
+                fileMessage.setResult(totalCount.get());
                 fileMessage.setMessage("清洗数据推送成功");
                  return ApiResponseDTO.success(fileMessage);
             } else {

@@ -27,6 +27,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @DS("slave_pg")
@@ -95,7 +96,6 @@ public class HaoSenDuplicateDataServiceImpl implements HaoSenDuplicateDataServic
     public ApiResponseDTO<HaoSenFileMessageDTO> uploadDuplicateData(MultipartFile file) {
         try {
             HaoSenFileMessageDTO fileMessage = new HaoSenFileMessageDTO();
-            int updatedCount = 0;
 
             // 1. 保存文件到服务器（非事务操作）
             Path uploadPath = Paths.get(uploadDir);
@@ -118,34 +118,37 @@ public class HaoSenDuplicateDataServiceImpl implements HaoSenDuplicateDataServic
                 return ApiResponseDTO.error("表头验证失败：" + headerResult.getMessage());
             }
 
-            // 4. 使用 ReaderExcel 读取文件内容
+            // 4. 流式读取 Excel，边读边处理（避免全量数据驻留内存）
             ReaderExcel readerExcel = new ReaderExcel();
-            List<HaoSenDuplicateDataVO> dataList = readerExcel.readExcel(filePath.toString(), HaoSenDuplicateDataVO.class);
+            AtomicInteger totalCount = new AtomicInteger(0);
+            AtomicInteger updatedCount = new AtomicInteger(0);
 
-            // 5. 遍历数据，处理"是否需易联禁用这条对应关系"列为"是"的数据
-            for (HaoSenDuplicateDataVO data : dataList) {
-                if ("是".equals(data.getYlRemark())) {
-                    HaoSenUpdateStatusDTO updateStatus = new HaoSenUpdateStatusDTO();
-                    updateStatus.setDataId(data.getDataId());
-                    updateStatus.setStatus(4); // 4 表示豪森禁用客户
-                    updateStatus.setRemark("豪森客户标记为禁用");
+            readerExcel.readExcelStreaming(filePath.toString(), HaoSenDuplicateDataVO.class, batch -> {
+                for (HaoSenDuplicateDataVO data : batch) {
+                    totalCount.addAndGet(1);
+                    if ("是".equals(data.getYlRemark())) {
+                        HaoSenUpdateStatusDTO updateStatus = new HaoSenUpdateStatusDTO();
+                        updateStatus.setDataId(data.getDataId());
+                        updateStatus.setStatus(4); // 4 表示豪森禁用客户
+                        updateStatus.setRemark("豪森客户标记为禁用");
 
-                    // 根据机构类型调用对应的更新方法
-                    String orgType = data.getOrgType();
-                    if ("医院".equals(orgType)) {
-                        haoSenUpdateDataMapper.updateHospitalStatus(updateStatus);
-                    } else if ("药店".equals(orgType)) {
-                        haoSenUpdateDataMapper.updateDrugStoreStatus(updateStatus);
-                    } else if ("商业".equals(orgType)) {
-                        haoSenUpdateDataMapper.updateCompanyStatus(updateStatus);
+                        // 根据机构类型调用对应的更新方法
+                        String orgType = data.getOrgType();
+                        if ("医院".equals(orgType)) {
+                            haoSenUpdateDataMapper.updateHospitalStatus(updateStatus);
+                        } else if ("药店".equals(orgType)) {
+                            haoSenUpdateDataMapper.updateDrugStoreStatus(updateStatus);
+                        } else if ("商业".equals(orgType)) {
+                            haoSenUpdateDataMapper.updateCompanyStatus(updateStatus);
+                        }
+
+                        updatedCount.addAndGet(1);
                     }
-
-                    updatedCount++;
                 }
-            }
+            }, ReaderExcel.BATCH_SIZE_14_FIELDS);
 
-            fileMessage.setResult(updatedCount);
-            fileMessage.setMessage("上传成功，共处理 " + dataList.size() + " 条数据，更新 " + updatedCount + " 条数据状态为禁用");
+            fileMessage.setResult(updatedCount.get());
+            fileMessage.setMessage("上传成功，共处理 " + totalCount.get() + " 条数据，更新 " + updatedCount.get() + " 条数据状态为禁用");
 
             return ApiResponseDTO.success(fileMessage);
 

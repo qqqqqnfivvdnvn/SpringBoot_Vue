@@ -35,6 +35,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Service
@@ -136,33 +137,48 @@ public class HaoSenAppealDataServiceImpl implements HaoSenAppealDataService {
                 return ApiResponseDTO.error("表头验证失败：" + headerResult.getMessage());
             }
 
-            // 2. 解析Excel
+            // 4. 流式读取 Excel，分批处理（避免全量数据驻留内存）
             ReaderExcel reader = new ReaderExcel();
-            List<HaoSenInputAppealDataVO> appeals = reader.readExcel(filePath.toString(), HaoSenInputAppealDataVO.class);
+            List<HaoSenDataIu> haoSenDataIuList = new ArrayList<>();
+            HaoSenToLxEntity haoSenToLxEntity = new HaoSenToLxEntity();
+            AtomicInteger totalCount = new AtomicInteger(0);  // 累积计数
 
-            if (appeals.isEmpty()) {
+            // 清空临时表
+            sqlMapper.deleteAllHaoSenData();
+
+            // 流式读取 + 分批处理
+            reader.readExcelStreaming(filePath.toString(), HaoSenInputAppealDataVO.class, batch -> {
+                // 转换为 HaoSenOrganizationVO 列表
+                List<HaoSenOrganizationVO> orgList = new ArrayList<>();
+                for (HaoSenInputAppealDataVO appeal : batch) {
+                    HaoSenOrganizationVO haoSenOrganization = new HaoSenOrganizationVO();
+                    BeanUtils.copyProperties(appeal, haoSenOrganization);
+                    orgList.add(haoSenOrganization);
+                    // 累积流向变更数据
+                    haoSenDataIuList.add(haoSenToLxEntity.ToLxColumn(haoSenOrganization));
+                }
+                // 批量插入临时表
+                sqlMapper.batchInputHaoSenUpdateData(orgList);
+                totalCount.addAndGet(batch.size());
+
+                // 流向变更数据分批提交（每 400 条）
+                if (haoSenDataIuList.size() >= 400) {
+                    haoSenLxDataService.lxUpdateData(new ArrayList<>(haoSenDataIuList));
+                    haoSenDataIuList.clear();
+                }
+            }, ReaderExcel.BATCH_SIZE_47_FIELDS);
+
+            // 检查是否有数据
+            if (totalCount.get() == 0) {
                 return ApiResponseDTO.error("文件内容为空");
             }
 
-
-            List<HaoSenDataIu> haoSenDataIuList = new ArrayList<>();
-            HaoSenToLxEntity haoSenToLxEntity = new HaoSenToLxEntity();
-
-            //1、清空临时表
-            sqlMapper.deleteAllHaoSenData();
-            //2、写数据
-            for (HaoSenInputAppealDataVO appeal : appeals) {
-                HaoSenOrganizationVO haoSenOrganization = new HaoSenOrganizationVO();
-                BeanUtils.copyProperties(appeal, haoSenOrganization);
-                sqlMapper.inputHaoSenUpdateData(haoSenOrganization);
-                haoSenDataIuList.add(haoSenToLxEntity.ToLxColumn(haoSenOrganization));
+            // 处理剩余流向变更数据
+            if (!haoSenDataIuList.isEmpty()) {
+                haoSenLxDataService.lxUpdateData(haoSenDataIuList);
             }
 
-            //3 、更新业务库数据
-            haoSenLxDataService.lxUpdateData(haoSenDataIuList);
-
-
-            // 4. 关键API调用
+            // 5. 关键API调用
             String AppealMessage = new ApiHaosen().callExternalAppealApi();
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -170,7 +186,7 @@ public class HaoSenAppealDataServiceImpl implements HaoSenAppealDataService {
 
             if (rootNode.get("code").asInt() == 200) {
                 // 5. 全部成功后的响应
-                fileMessage.setResult(appeals.size());
+                fileMessage.setResult(totalCount.get());
                 fileMessage.setMessage("申诉数据推送成功");
                 return ApiResponseDTO.success(fileMessage);
             } else {

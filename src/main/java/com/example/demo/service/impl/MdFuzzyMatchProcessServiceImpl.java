@@ -8,14 +8,13 @@ import com.example.demo.utils.ExcelHeaderValidator;
 import com.example.demo.utils.ReaderExcel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 主数据模糊匹配处理 Service - 专门处理多线程模糊匹配逻辑
@@ -62,54 +61,23 @@ public class MdFuzzyMatchProcessServiceImpl {
             return;
         }
 
-        // 2. 使用 ReaderExcel 读取 Excel 文件
+        // 2. 流式读取 Excel，边读边提交到线程池处理（避免全量数据驻留内存）
         ReaderExcel readerExcel = new ReaderExcel();
-        List<FuzzyMatchDataDTO> dataList = readerExcel.readExcel(filePath, FuzzyMatchDataDTO.class);
-
         AtomicInteger successCount = new AtomicInteger(0);
         AtomicInteger failCount = new AtomicInteger(0);
         List<String> errorMessages = new CopyOnWriteArrayList<>();
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-        // 分批提交，每批50条，避免逐条提交导致线程池创建大量线程
-        int batchSize = 50;
-        List<List<FuzzyMatchDataDTO>> batches = new ArrayList<>();
-        for (int i = 0; i < dataList.size(); i += batchSize) {
-            batches.add(new ArrayList<>(dataList.subList(i, Math.min(i + batchSize, dataList.size()))));
-        }
+        readerExcel.readExcelStreaming(filePath, FuzzyMatchDataDTO.class, batch -> {
+            // 每批数据提交到线程池异步处理
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                processBatch(batch, batchId, dataType, successCount, failCount, errorMessages);
+            }, matchExecutorService);
+            futures.add(future);
+        }, ReaderExcel.BATCH_SIZE_3_FIELDS);
 
-        CountDownLatch latch = new CountDownLatch(batches.size());
-
-        if (matchExecutorService instanceof ThreadPoolTaskExecutor) {
-            ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) matchExecutorService;
-            for (List<FuzzyMatchDataDTO> batch : batches) {
-                taskExecutor.execute(() -> {
-                    try {
-                        processBatch(batch, batchId, dataType, successCount, failCount, errorMessages);
-                    } catch (Exception e) {
-                        failCount.addAndGet(batch.size());
-                        errorMessages.add("批次处理失败：" + e.getMessage());
-                    } finally {
-                        latch.countDown();
-                    }
-                });
-            }
-        } else {
-            for (List<FuzzyMatchDataDTO> batch : batches) {
-                matchExecutorService.execute(() -> {
-                    try {
-                        processBatch(batch, batchId, dataType, successCount, failCount, errorMessages);
-                    } catch (Exception e) {
-                        failCount.addAndGet(batch.size());
-                        errorMessages.add("批次处理失败：" + e.getMessage());
-                    } finally {
-                        latch.countDown();
-                    }
-                });
-            }
-        }
-
-        // 等待所有匹配完成
-        latch.await();
+        // 等待所有批次处理完成
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
         // 汇总结果
         String message = String.format("处理完成：已匹配上 %d 条，未匹配上 %d 条", successCount.get(), failCount.get());
