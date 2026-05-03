@@ -93,7 +93,8 @@ const layoutConfig = computed(() => ({
       icon: ['fas', 'sitemap'],
       items: [
         { title: '总分店编码', action: 'drugBranchCodeView', icon: ['fas', 'store-alt'] },
-        { title: '总分院编码', action: 'hosBranchCodeView', icon: ['fas', 'hospital-alt'] }
+        { title: '总分院编码', action: 'hosBranchCodeView', icon: ['fas', 'hospital-alt'] },
+        { title: '编码导入', action: 'importBranchCodeView', icon: ['fas', 'upload'] }
       ]
     }
   ],
@@ -160,6 +161,9 @@ const layoutConfig = computed(() => ({
     },
     importExportHSData: () => {
       layoutRef.value?.addTab('确认数据上传', 'ImportExportHSDataView', '/haosen/repeatdata/importexporthsdata')
+    },
+    importBranchCodeView: () => {
+      layoutRef.value?.addTab('编码导入', 'ImportBranchCodeView', '/haosen/customerdata/importbranchcode')
     }
   }
 }))

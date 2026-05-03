@@ -242,4 +242,18 @@ public interface HaoSenKeHuDataService {
      */
     public ApiResponseDTO<HaoSenKeHuData> selectHsBackCodeByDataCode(String dataCode);
 
+    // ==================== 总分院店编码导入 ====================
+
+    /**
+     * 导入总分院店编码 Excel 文件
+     * 包含文件校验、保存、解析、入库全流程
+     * 根据机构类型分别插入：
+     * - 医院 → general_branch_code1024
+     * - 药店 → main_branch_code1121
+     *
+     * @param file 上传的 Excel 文件
+     * @return 导入结果
+     */
+    public ApiResponseDTO<Map<String, Integer>> importBranchCodeExcel(org.springframework.web.multipart.MultipartFile file);
+
 }

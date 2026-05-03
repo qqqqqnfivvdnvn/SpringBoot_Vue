@@ -95,6 +95,7 @@
                   :class="{ active: tab.active }"
                   class="tab"
                   @click="switchTab(tab.id)"
+                  @contextmenu.prevent="showContextMenu($event, tab)"
               >
                 <span class="tab-title">{{ tab.title }}</span>
                 <span
@@ -127,6 +128,33 @@
         {{ toastMessage }}
       </div>
     </transition>
+
+    <!-- 标签页右键菜单 -->
+    <transition name="context-menu-fade">
+      <div
+          v-if="contextMenuVisible"
+          class="context-menu"
+          :style="{ left: contextMenuPosition.x + 'px', top: contextMenuPosition.y + 'px' }"
+          @click.stop
+      >
+        <div class="context-menu-item" @click="closeCurrentTab">
+          <font-awesome-icon :icon="['fas', 'times']" />
+          <span>关闭当前</span>
+        </div>
+        <div class="context-menu-item" @click="closeOtherTabs">
+          <font-awesome-icon :icon="['fas', 'times-circle']" />
+          <span>关闭其他</span>
+        </div>
+        <div class="context-menu-item" @click="closeRightTabs">
+          <font-awesome-icon :icon="['fas', 'arrow-right']" />
+          <span>关闭右侧</span>
+        </div>
+        <div class="context-menu-item" @click="closeAllTabs">
+          <font-awesome-icon :icon="['fas', 'layer-group']" />
+          <span>关闭所有</span>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -157,6 +185,11 @@ const router = useRouter()
 const route = useRoute()
 
 const userName = ref('')
+
+// 右键菜单状态
+const contextMenuVisible = ref(false)
+const contextMenuPosition = ref({ x: 0, y: 0 })
+const contextMenuTargetTab = ref(null)
 
 // 获取用户信息
 function loadUserInfo() {
@@ -358,6 +391,60 @@ function closeTab(tabId) {
   tabs.value.splice(index, 1)
 }
 
+// ============ 右键菜单操作 ============
+function showContextMenu(event, tab) {
+  contextMenuTargetTab.value = tab
+  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
+  contextMenuVisible.value = true
+}
+
+function hideContextMenu() {
+  contextMenuVisible.value = false
+  contextMenuTargetTab.value = null
+}
+
+// 关闭当前标签
+function closeCurrentTab() {
+  if (contextMenuTargetTab.value) {
+    closeTab(contextMenuTargetTab.value.id)
+  }
+  hideContextMenu()
+}
+
+// 关闭其他标签
+function closeOtherTabs() {
+  if (contextMenuTargetTab.value) {
+    const targetId = contextMenuTargetTab.value.id
+    tabs.value = tabs.value.filter((tab) => tab.id === targetId)
+    tabs.value[0].active = true
+    currentView.value = tabs.value[0].component
+  }
+  hideContextMenu()
+}
+
+// 关闭右侧标签
+function closeRightTabs() {
+  if (contextMenuTargetTab.value) {
+    const targetIndex = tabs.value.findIndex((tab) => tab.id === contextMenuTargetTab.value.id)
+    if (targetIndex !== -1) {
+      // 保留目标标签及其左侧的所有标签
+      tabs.value = tabs.value.slice(0, targetIndex + 1)
+      // 如果目标标签不是活动的，激活它
+      if (!contextMenuTargetTab.value.active) {
+        tabs.value[targetIndex].active = true
+        currentView.value = tabs.value[targetIndex].component
+      }
+    }
+  }
+  hideContextMenu()
+}
+
+// 关闭所有标签
+function closeAllTabs() {
+  resetToDashboard()
+  hideContextMenu()
+}
+
 function resetToDashboard() {
   tabs.value = []
   currentView.value = props.config.defaultView
@@ -412,6 +499,8 @@ onMounted(() => {
   loadThemeColor()
   loadUserInfo()
   window.addEventListener('themeChanged', updateThemeForDarkMode)
+  // 点击外部关闭右键菜单
+  document.addEventListener('click', hideContextMenu)
 })
 </script>
 
@@ -1086,5 +1175,96 @@ html.dark .toast {
 .toast-slide-leave-to {
   opacity: 0;
   transform: translateX(-50%) translateY(-16px) scale(0.9);
+}
+
+/* ============ 右键菜单 ============ */
+.context-menu {
+  position: fixed;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  padding: 6px 0;
+  z-index: 10000;
+  min-width: 120px;
+}
+
+html.dark .context-menu {
+  background: #2a2a40;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* 豪森项目 - 紫色系右键菜单 */
+html.dark .haosen-project .context-menu {
+  background: #262640;
+  border: 1px solid #3a3a60;
+  box-shadow: 0 4px 20px rgba(148, 120, 204, 0.2);
+}
+
+/* 恒瑞项目 - 蓝色系右键菜单 */
+html.dark .hengrui-project .context-menu {
+  background: #1a2230;
+  border: 1px solid #2a3550;
+  box-shadow: 0 4px 20px rgba(106, 183, 255, 0.2);
+}
+
+/* 主数据项目 - 绿色系右键菜单 */
+html.dark .maindata-project .context-menu {
+  background: #1a2a18;
+  border: 1px solid #2a4030;
+  box-shadow: 0 4px 20px rgba(144, 190, 109, 0.2);
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #555;
+  transition: all 0.2s ease;
+}
+
+html.dark .context-menu-item {
+  color: #ccc;
+}
+
+.context-menu-item:hover {
+  background: var(--theme-hover);
+  color: var(--theme-primary);
+}
+
+html.dark .context-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--theme-text-dark);
+}
+
+/* 豪森项目 - 紫色系 hover */
+html.dark .haosen-project .context-menu-item:hover {
+  background: rgba(148, 120, 204, 0.15);
+  color: #c4b0e8;
+}
+
+/* 恒瑞项目 - 蓝色系 hover */
+html.dark .hengrui-project .context-menu-item:hover {
+  background: rgba(106, 183, 255, 0.15);
+  color: #8cd0ff;
+}
+
+/* 主数据项目 - 绿色系 hover */
+html.dark .maindata-project .context-menu-item:hover {
+  background: rgba(144, 190, 109, 0.15);
+  color: #b8d88a;
+}
+
+.context-menu-fade-enter-active,
+.context-menu-fade-leave-active {
+  transition: all 0.2s ease;
+}
+
+.context-menu-fade-enter-from,
+.context-menu-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
 }
 </style>

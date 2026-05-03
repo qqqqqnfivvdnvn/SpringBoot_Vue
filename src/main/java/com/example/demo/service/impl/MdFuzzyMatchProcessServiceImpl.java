@@ -8,10 +8,10 @@ import com.example.demo.utils.ExcelHeaderValidator;
 import com.example.demo.utils.ReaderExcel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.CompletableFuture;
@@ -32,63 +32,76 @@ public class MdFuzzyMatchProcessServiceImpl {
     @Qualifier("matchExecutor")
     private Executor matchExecutorService;
 
-    /**
-     * 异步处理文件
-     */
-    public void processFileAsync(String batchId, String filePath, String dataType, Executor batchExecutorService) {
-        java.util.concurrent.CompletableFuture.runAsync(() -> {
-            try {
-                processFile(batchId, filePath, dataType);
-            } catch (Exception e) {
-                e.printStackTrace();
-                mdFuzzyMatchMapper.updateBatchStatus(batchId, 2, "处理失败：" + e.getMessage());
-            }
-        }, batchExecutorService);
-    }
+    /** 滑动窗口最大并发任务数，避免 futures 无限累积 */
+    private static final int MAX_CONCURRENT_TASKS = 10;
 
     /**
-     * 处理文件进行模糊匹配
+     * 异步处理文件（直接使用 @Async 注解，避免嵌套异步）
      */
-    public void processFile(String batchId, String filePath, String dataType) throws Exception {
-        // 1. 验证 Excel 表头
-        List<String> expectedHeaders = Arrays.asList("id", "省份", "名称");
-        ExcelHeaderValidator.HeaderValidationResult validationResult =
-                ExcelHeaderValidator.validate(filePath, expectedHeaders);
+    @Async("batchExecutor")
+    public void processFile(String batchId, String filePath, String dataType) {
+        try {
+            // 1. 验证 Excel 表头
+            List<String> expectedHeaders = Arrays.asList("id", "省份", "名称");
+            ExcelHeaderValidator.HeaderValidationResult validationResult =
+                    ExcelHeaderValidator.validate(filePath, expectedHeaders);
 
-        // 如果表头验证失败，更新 message 并返回
-        if (!validationResult.isValid()) {
-            mdFuzzyMatchMapper.updateBatchStatus(batchId, 2, "表头验证失败：" + validationResult.getMessage());
-            return;
-        }
-
-        // 2. 流式读取 Excel，边读边提交到线程池处理（避免全量数据驻留内存）
-        ReaderExcel readerExcel = new ReaderExcel();
-        AtomicInteger successCount = new AtomicInteger(0);
-        AtomicInteger failCount = new AtomicInteger(0);
-        List<String> errorMessages = new CopyOnWriteArrayList<>();
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
-
-        readerExcel.readExcelStreaming(filePath, FuzzyMatchDataDTO.class, batch -> {
-            // 每批数据提交到线程池异步处理
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                processBatch(batch, batchId, dataType, successCount, failCount, errorMessages);
-            }, matchExecutorService);
-            futures.add(future);
-        }, ReaderExcel.BATCH_SIZE_3_FIELDS);
-
-        // 等待所有批次处理完成
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-
-        // 汇总结果
-        String message = String.format("处理完成：已匹配上 %d 条，未匹配上 %d 条", successCount.get(), failCount.get());
-        if (!errorMessages.isEmpty()) {
-            String errorMsg = String.join("; ", errorMessages);
-            if (errorMsg.length() <= 500) {
-                message += "; 详情：" + errorMsg;
+            // 如果表头验证失败，更新 message 并返回
+            if (!validationResult.isValid()) {
+                mdFuzzyMatchMapper.updateBatchStatus(batchId, 2, "表头验证失败：" + validationResult.getMessage());
+                return;
             }
-        }
 
-        mdFuzzyMatchMapper.updateBatchStatus(batchId, 1, message);
+            // 2. 流式读取 Excel，使用滑动窗口控制并发任务（避免 futures 无限累积）
+            ReaderExcel readerExcel = new ReaderExcel();
+            AtomicInteger successCount = new AtomicInteger(0);
+            AtomicInteger failCount = new AtomicInteger(0);
+            // 使用普通 ArrayList + synchronized 保护，避免 CopyOnWriteArrayList 内存浪费
+            List<String> errorMessages = Collections.synchronizedList(new ArrayList<>());
+            // 滑动窗口：维护固定数量的 futures，避免无限累积
+            List<CompletableFuture<Void>> activeFutures = new ArrayList<>(MAX_CONCURRENT_TASKS);
+
+            readerExcel.readExcelStreaming(filePath, FuzzyMatchDataDTO.class, batch -> {
+                // 提交任务到线程池
+                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                    processBatch(batch, batchId, dataType, successCount, failCount, errorMessages);
+                }, matchExecutorService);
+
+                // 添加到滑动窗口
+                activeFutures.add(future);
+
+                // 当窗口满时，等待部分任务完成后再继续（避免无限累积）
+                if (activeFutures.size() >= MAX_CONCURRENT_TASKS) {
+                    // 等待任意一个任务完成，然后移除已完成的
+                    CompletableFuture.anyOf(activeFutures.toArray(new CompletableFuture[0])).join();
+                    activeFutures.removeIf(CompletableFuture::isDone);
+                }
+            }, ReaderExcel.BATCH_SIZE_3_FIELDS);
+
+            // 等待剩余任务全部完成
+            if (!activeFutures.isEmpty()) {
+                CompletableFuture.allOf(activeFutures.toArray(new CompletableFuture[0])).join();
+            }
+
+            // 汇总结果
+            String message = String.format("处理完成：已匹配上 %d 条，未匹配上 %d 条", successCount.get(), failCount.get());
+            if (!errorMessages.isEmpty()) {
+                String errorMsg = String.join("; ", errorMessages);
+                if (errorMsg.length() <= 500) {
+                    message += "; 详情：" + errorMsg;
+                }
+            }
+
+            mdFuzzyMatchMapper.updateBatchStatus(batchId, 1, message);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMsg = e.getMessage();
+            if (errorMsg != null && errorMsg.length() > 100) {
+                errorMsg = errorMsg.substring(0, 100) + "...";
+            }
+            mdFuzzyMatchMapper.updateBatchStatus(batchId, 2, "处理失败：" + errorMsg);
+        }
     }
 
     /**
