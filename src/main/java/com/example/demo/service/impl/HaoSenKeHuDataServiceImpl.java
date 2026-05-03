@@ -6,12 +6,26 @@ import com.example.demo.entity.HaoSenKeHuData;
 import com.example.demo.mapper.HaoSenKeHuDataMapper;
 import com.example.demo.mapper.HaoSenKeHuPgDataMapper;
 import com.example.demo.service.HaoSenKeHuDataService;
+import com.example.demo.utils.ExcelHeaderValidator;
+import com.example.demo.utils.ReaderExcel;
+import com.example.demo.vo.BranchCodeImportVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 豪森客户数据服务实现类
@@ -23,6 +37,8 @@ public class HaoSenKeHuDataServiceImpl implements HaoSenKeHuDataService {
     private HaoSenKeHuDataMapper haoSenKeHuDataMapper;
 
     @Autowired
+
+
     private HaoSenKeHuPgDataMapper haoSenKeHuPgDataMapper;
 
     // ==================== 名称地址表 ====================
@@ -700,6 +716,109 @@ public class HaoSenKeHuDataServiceImpl implements HaoSenKeHuDataService {
         } catch (Exception e) {
             e.printStackTrace();
             return ApiResponseDTO.error("查询失败：" + e.getMessage());
+        }
+    }
+
+    // ==================== 总分院店编码导入 ====================
+    // 总分院店编码导入文件路径（从 application.properties 读取基础路径）
+    @Value("${file.upload-dir}" + "/branch_code_file")
+    private String uploadDir;
+    @Override
+    public ApiResponseDTO<Map<String, Integer>> importBranchCodeExcel(org.springframework.web.multipart.MultipartFile file) {
+        try {
+            // 1. 校验文件
+            if (file == null || file.isEmpty()) {
+                return ApiResponseDTO.error("文件不能为空");
+            }
+
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null || (!originalFilename.endsWith(".xlsx") && !originalFilename.endsWith(".xls"))) {
+                return ApiResponseDTO.error("文件格式不支持，请上传 Excel 文件（.xlsx 或 .xls）");
+            }
+
+            // 2. 保存文件到服务器（使用 Files.copy 避免相对路径问题）
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            String newFilename = System.currentTimeMillis() + "_" + originalFilename;
+            Path filePath = uploadPath.resolve(newFilename);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // 3. 验证表头
+            ExcelHeaderValidator.HeaderValidationResult headerResult =
+                    ExcelHeaderValidator.validate(filePath.toString(), BranchCodeImportVO.EXPECTED_HEADERS);
+
+            if (!headerResult.isValid()) {
+                String errorMsg = headerResult.getMessage() != null
+                        ? headerResult.getMessage() : "表头验证失败，请检查 Excel 表头格式";
+                return ApiResponseDTO.error(errorMsg);
+            }
+
+            // 4. 流式读取 Excel，按机构类型分组
+            ReaderExcel readerExcel = new ReaderExcel();
+            List<HaoSenKeHuData> hosList = new ArrayList<>();  // 医院列表
+            List<HaoSenKeHuData> drugList = new ArrayList<>(); // 药店列表
+            AtomicInteger skipCount = new AtomicInteger(0);    // 跳过（无效机构类型）
+
+            readerExcel.readExcelStreaming(filePath.toString(), BranchCodeImportVO.class, batch -> {
+                for (BranchCodeImportVO vo : batch) {
+                    // 校验必填字段
+                    if (vo.getKeyid() == null || vo.getKeyid().trim().isEmpty()
+                            || vo.getName() == null || vo.getName().trim().isEmpty()) {
+                        skipCount.incrementAndGet();
+                        continue;
+                    }
+
+                    HaoSenKeHuData entity = new HaoSenKeHuData();
+                    entity.setKeyid(vo.getKeyid().trim());
+                    entity.setName(vo.getName().trim());
+                    entity.setHsCode(vo.getHsCode() != null ? vo.getHsCode().trim() : null);
+
+                    // 根据机构类型分类
+                    String orgType = vo.getOrgType() != null ? vo.getOrgType().trim() : "";
+                    if ("医院".equals(orgType)) {
+                        hosList.add(entity);
+                    } else if ("药店".equals(orgType)) {
+                        drugList.add(entity);
+                    } else {
+                        skipCount.incrementAndGet();
+                    }
+                }
+            }, ReaderExcel.BATCH_SIZE_5_FIELDS);
+
+            // 5. 批量插入数据库（使用 ON CONFLICT DO UPDATE）
+            int hosCount = 0;
+            int drugCount = 0;
+
+            // 每批 200 条分批插入
+            if (!hosList.isEmpty()) {
+                for (int i = 0; i < hosList.size(); i += 200) {
+                    List<HaoSenKeHuData> subList = hosList.subList(i, Math.min(i + 200, hosList.size()));
+                    hosCount += haoSenKeHuPgDataMapper.batchInsertHosBranchCode(subList);
+                }
+            }
+
+            if (!drugList.isEmpty()) {
+                for (int i = 0; i < drugList.size(); i += 200) {
+                    List<HaoSenKeHuData> subList = drugList.subList(i, Math.min(i + 200, drugList.size()));
+                    drugCount += haoSenKeHuPgDataMapper.batchInsertDrugBranchCode(subList);
+                }
+            }
+
+            // 6. 返回结果
+            Map<String, Integer> result = new HashMap<>();
+            result.put("hosCount", hosList.size());
+            result.put("drugCount", drugList.size());
+            result.put("skipCount", skipCount.get());
+            result.put("total", hosList.size() + drugList.size());
+
+            return ApiResponseDTO.success(result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseDTO.error("导入失败：" + e.getMessage());
         }
     }
 }

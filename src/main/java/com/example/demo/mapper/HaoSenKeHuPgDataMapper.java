@@ -256,4 +256,25 @@ public interface HaoSenKeHuPgDataMapper {
      */
     HaoSenKeHuData selectHsBackCodeByDataCode(@Param("dataCode") String dataCode);
 
+
+    // ==================== 七、总分院店编码批量导入 ====================
+
+    /**
+     * [批量插入] 总分院编码（医院）- general_branch_code1024
+     * ON CONFLICT DO UPDATE（keyid 为主键，存在则更新）
+     *
+     * @param list 编码列表（keyid/name/hsCode）
+     * @return 影响行数
+     */
+    int batchInsertHosBranchCode(@Param("list") List<HaoSenKeHuData> list);
+
+    /**
+     * [批量插入] 总分店编码（药店）- main_branch_code1121
+     * ON CONFLICT DO UPDATE（keyid 为主键，存在则更新）
+     *
+     * @param list 编码列表（keyid/name/hsCode）
+     * @return 影响行数
+     */
+    int batchInsertDrugBranchCode(@Param("list") List<HaoSenKeHuData> list);
+
 }

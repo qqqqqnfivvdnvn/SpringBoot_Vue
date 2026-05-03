@@ -403,4 +403,15 @@ public class HaoSenKeHuDataController {
     public ResponseEntity<ApiResponseDTO<HaoSenKeHuData>> getHsBackCodeDetail(@RequestParam("dataCode") String dataCode) {
         return ResponseEntity.ok(haoSenKeHuDataService.selectHsBackCodeByDataCode(dataCode));
     }
+
+    // ==================== 总分院店编码导入 ====================
+
+    /**
+     * 导入总分院店编码 Excel 文件
+     */
+    @PostMapping("/branchcode/import")
+    public ResponseEntity<ApiResponseDTO<Map<String, Integer>>> importBranchCode(
+            @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        return ResponseEntity.ok(haoSenKeHuDataService.importBranchCodeExcel(file));
+    }
 }

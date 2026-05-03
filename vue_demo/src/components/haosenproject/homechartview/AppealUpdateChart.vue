@@ -152,7 +152,7 @@ const initChart = async () => {
       },
     },
     legend: {
-      data: ['更新', '申诉', '豪森编码'],
+      data: ['豪森更新', '豪森申诉', '豪森编码'],
       bottom: 10,
       textStyle: {
         color: themeColors.legendText,
@@ -207,7 +207,7 @@ const initChart = async () => {
     },
     series: [
       {
-        name: '更新',
+        name: '豪森更新',
         type: 'line',
         smooth: true,
         lineStyle: {
@@ -234,7 +234,7 @@ const initChart = async () => {
         }
       },
       {
-        name: '申诉',
+        name: '豪森申诉',
         type: 'line',
         smooth: true,
         lineStyle: {

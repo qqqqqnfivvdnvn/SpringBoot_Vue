@@ -63,10 +63,10 @@
         INSERT INTO main_branch_code1121 (
             keyid, name, hs_code, remarks, add_time, update_time
         ) VALUES (
-            #{keyid},
-            #{name},
-            #{hsCode},
-            #{remarks},
+            #{data.keyid},
+            #{data.name},
+            #{data.hsCode},
+            #{data.remarks},
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP
         )
@@ -76,11 +76,11 @@
     <update id="updateHsCode" parameterType="com.example.demo.entity.HaoSenKeHuData">
         UPDATE main_branch_code1121
         SET
-            name = #{name},
-            hs_code = #{hsCode},
-            remarks = #{remarks},
+            name = #{data.name},
+            hs_code = #{data.hsCode},
+            remarks = #{data.remarks},
             update_time = CURRENT_TIMESTAMP
-        WHERE keyid = #{keyid}
+        WHERE keyid = #{data.keyid}
     </update>
 
     <!-- [删除] 删除豪森编码数据 -->
@@ -151,10 +151,10 @@
         INSERT INTO general_branch_code1024 (
             keyid, name, hs_code, remarks, add_time, update_time
         ) VALUES (
-            #{keyid},
-            #{name},
-            #{hsCode},
-            #{remarks},
+            #{data.keyid},
+            #{data.name},
+            #{data.hsCode},
+            #{data.remarks},
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP
         )
@@ -164,11 +164,11 @@
     <update id="updateHosBranchCode" parameterType="com.example.demo.entity.HaoSenKeHuData">
         UPDATE general_branch_code1024
         SET
-            name = #{name},
-            hs_code = #{hsCode},
-            remarks = #{remarks},
+            name = #{data.name},
+            hs_code = #{data.hsCode},
+            remarks = #{data.remarks},
             update_time = CURRENT_TIMESTAMP
-        WHERE keyid = #{keyid}
+        WHERE keyid = #{data.keyid}
     </update>
 
     <!-- [删除] 删除总分院编码数据 -->
@@ -243,11 +243,11 @@
         INSERT INTO result_hscode (
             data_code, original_name, name, hs_code, remark, add_time, update_time
         ) VALUES (
-            #{dataCode},
-            #{originalName},
-            #{name},
-            #{hsCode},
-            #{remark},
+            #{data.dataCode},
+            #{data.originalName},
+            #{data.name},
+            #{data.hsCode},
+            #{data.remark},
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP
         )
@@ -257,12 +257,12 @@
     <update id="updateHsOffline" parameterType="com.example.demo.entity.HaoSenKeHuData">
         UPDATE result_hscode
         SET
-            original_name = #{originalName},
-            name = #{name},
-            hs_code = #{hsCode},
-            remark = #{remark},
+            original_name = #{data.originalName},
+            name = #{data.name},
+            hs_code = #{data.hsCode},
+            remark = #{data.remark},
             update_time = CURRENT_TIMESTAMP
-        WHERE data_code = #{dataCode}
+        WHERE data_code = #{data.dataCode}
     </update>
 
     <!-- [删除] 删除豪森线下编码数据 -->
@@ -346,14 +346,14 @@
             member_unit, member_unit_keyid, leading_unit, leading_unit_keyid,
             cooperation_type, province, remark, hs_code, add_time, update_time
         ) VALUES (
-            #{memberUnit},
-            #{memberUnitKeyid},
-            #{leadingUnit},
-            #{leadingUnitKeyid},
-            #{cooperationType},
-            #{province},
-            #{remark},
-            #{hsCode},
+            #{data.memberUnit},
+            #{data.memberUnitKeyid},
+            #{data.leadingUnit},
+            #{data.leadingUnitKeyid},
+            #{data.cooperationType},
+            #{data.province},
+            #{data.remark},
+            #{data.hsCode},
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP
         )
@@ -363,16 +363,16 @@
     <update id="updateHsMedicalAlliance" parameterType="com.example.demo.entity.HaoSenKeHuData">
         UPDATE haosen_medical_alliance
         SET
-            member_unit = #{memberUnit},
-            member_unit_keyid = #{memberUnitKeyid},
-            leading_unit = #{leadingUnit},
-            leading_unit_keyid = #{leadingUnitKeyid},
-            cooperation_type = #{cooperationType},
-            province = #{province},
-            remark = #{remark},
-            hs_code = #{hsCode},
+            member_unit = #{data.memberUnit},
+            member_unit_keyid = #{data.memberUnitKeyid},
+            leading_unit = #{data.leadingUnit},
+            leading_unit_keyid = #{data.leadingUnitKeyid},
+            cooperation_type = #{data.cooperationType},
+            province = #{data.province},
+            remark = #{data.remark},
+            hs_code = #{data.hsCode},
             update_time = CURRENT_TIMESTAMP
-        WHERE member_unit_keyid = #{memberUnitKeyid}
+        WHERE member_unit_keyid = #{data.memberUnitKeyid}
     </update>
 
     <!-- [删除] 删除医联体编码数据 -->
@@ -456,14 +456,14 @@
             member_unit, member_unit_keyid, leading_unit, leading_unit_keyid,
             cooperation_type, province, remark, hs_code, add_time, update_time
         ) VALUES (
-            #{memberUnit},
-            #{memberUnitKeyid},
-            #{leadingUnit},
-            #{leadingUnitKeyid},
-            #{cooperationType},
-            #{province},
-            #{remark},
-            #{hsCode},
+            #{data.memberUnit},
+            #{data.memberUnitKeyid},
+            #{data.leadingUnit},
+            #{data.leadingUnitKeyid},
+            #{data.cooperationType},
+            #{data.province},
+            #{data.remark},
+            #{data.hsCode},
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP
         )
@@ -473,16 +473,16 @@
     <update id="updateHsMedicalCommunity" parameterType="com.example.demo.entity.HaoSenKeHuData">
         UPDATE haosen_medical_community
         SET
-            member_unit = #{memberUnit},
-            member_unit_keyid = #{memberUnitKeyid},
-            leading_unit = #{leadingUnit},
-            leading_unit_keyid = #{leadingUnitKeyid},
-            cooperation_type = #{cooperationType},
-            province = #{province},
-            remark = #{remark},
-            hs_code = #{hsCode},
+            member_unit = #{data.memberUnit},
+            member_unit_keyid = #{data.memberUnitKeyid},
+            leading_unit = #{data.leadingUnit},
+            leading_unit_keyid = #{data.leadingUnitKeyid},
+            cooperation_type = #{data.cooperationType},
+            province = #{data.province},
+            remark = #{data.remark},
+            hs_code = #{data.hsCode},
             update_time = CURRENT_TIMESTAMP
-        WHERE member_unit_keyid = #{memberUnitKeyid}
+        WHERE member_unit_keyid = #{data.memberUnitKeyid}
     </update>
 
     <!-- [删除] 删除医共体编码数据 -->
@@ -545,5 +545,38 @@
         FROM data_result
         WHERE data_code = #{dataCode}
     </select>
+
+
+    <!--
+    ============================================================================
+    七、总分院店编码批量导入
+    ============================================================================
+    -->
+
+    <!-- [批量插入] 总分院编码（医院）- general_branch_code1024 -->
+    <insert id="batchInsertHosBranchCode" parameterType="java.util.List">
+        INSERT INTO general_branch_code1024 (keyid, name, hs_code, add_time, update_time)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.keyid}, #{item.name}, #{item.hsCode}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        </foreach>
+        ON CONFLICT (keyid) DO UPDATE SET
+            name = EXCLUDED.name,
+            hs_code = EXCLUDED.hs_code,
+            update_time = CURRENT_TIMESTAMP
+    </insert>
+
+    <!-- [批量插入] 总分店编码（药店）- main_branch_code1121 -->
+    <insert id="batchInsertDrugBranchCode" parameterType="java.util.List">
+        INSERT INTO main_branch_code1121 (keyid, name, hs_code, add_time, update_time)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.keyid}, #{item.name}, #{item.hsCode}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        </foreach>
+        ON CONFLICT (keyid) DO UPDATE SET
+            name = EXCLUDED.name,
+            hs_code = EXCLUDED.hs_code,
+            update_time = CURRENT_TIMESTAMP
+    </insert>
 
 </mapper>

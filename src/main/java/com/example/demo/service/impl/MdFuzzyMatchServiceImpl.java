@@ -12,7 +12,6 @@ import com.example.demo.utils.MdFuzzyMatchToExcel;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +24,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.Executor;
 
 /**
  * 主数据模糊匹配 Service 实现
@@ -38,11 +36,6 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
 
     @Value("${file.upload-dir:/tmp}/fuzzy_file")
     private String uploadDir;
-
-    // 注入 Spring 管理的线程池
-    @Autowired
-    @Qualifier("batchExecutor")
-    private Executor batchExecutorService;
 
     @Autowired
     private MdFuzzyMatchProcessServiceImpl processService;
@@ -98,8 +91,8 @@ public class MdFuzzyMatchServiceImpl implements MdFuzzyMatchService {
             fileMessage.setBatchId(batchId);
             fileMessage.setMessage("文件上传成功，批次 ID: " + batchId);
 
-            // 3. 异步处理文件
-            processService.processFileAsync(batchId, filePath, dataType, batchExecutorService);
+            // 3. 异步处理文件（直接调用 @Async 方法，无需手动创建 CompletableFuture）
+            processService.processFile(batchId, filePath, dataType);
 
             return ApiResponseDTO.success(fileMessage);
 

@@ -60,6 +60,7 @@ import {
     faHome,
     faChevronRight,
     faArrowLeft,
+    faArrowRight,
     faChevronDown,
     faTimes,
     faBriefcase,
@@ -88,7 +89,7 @@ const app = createApp(App); // 创建应用实例 file-upload
 library.add(faHospital,faStore,faUniversity,faSignOutAlt,faSignInAlt,faAngleDoubleLeft,
     faAngleDoubleRight,faUser,faUserPlus,faUserShield,faCheckCircle,faExclamationCircle,faTimesCircle,faShieldAlt,faRocket,faDatabase,faTrash,faClock,faThList,faSynagogue,faStoreAlt,faHospitalAlt,faFileAlt,faBookReader,faCat,
     faProjectDiagram,faChartLine,faLaptopCode,faUsers,faBook,faSearch,faStar,faCalendarAlt,faPlusCircle,faEraser,faSnowman,faOilCan,
-    faFlag,faFileUpload,faPaw,faFeather,faPaperPlane,faLeaf,faPlus,faHome,faChevronRight,faArrowLeft,faChevronDown,faTimes,faBriefcase,
+    faFlag,faFileUpload,faPaw,faFeather,faPaperPlane,faLeaf,faPlus,faHome,faChevronRight,faArrowLeft,faArrowRight,faChevronDown,faTimes,faBriefcase,
     faTable,
     faLayerGroup,
     faLink,
@@ -126,6 +127,7 @@ import HsOfflineView from '@/components/haosenproject/kehudataview/HsOfflineView
 import HsMedicalAllianceView from '@/components/haosenproject/kehudataview/HsMedicalAllianceView.vue';
 import HsMedicalCommunityView from '@/components/haosenproject/kehudataview/HsMedicalCommunityView.vue';
 import HsBackCodeView from '@/components/haosenproject/kehudataview/HsBackCodeView.vue';
+import ImportBranchCodeView from '@/components/haosenproject/kehudataview/ImportBranchCodeView.vue';
 
 import HrBatchDataView from "@/components/hengruiproject/batchdataview/HrBatchDataView.vue"
 import HrImportBatchDataView from "@/components/hengruiproject/batchdataview/HrImportBatchDataView.vue"
@@ -168,6 +170,7 @@ app.component('HsOfflineView', HsOfflineView)
 app.component('HsMedicalAllianceView', HsMedicalAllianceView)
 app.component('HsMedicalCommunityView', HsMedicalCommunityView)
 app.component('HsBackCodeView', HsBackCodeView)
+app.component('ImportBranchCodeView', ImportBranchCodeView)
 
 app.component('HrBatchDataView', HrBatchDataView)
 app.component('HrImportBatchDataView', HrImportBatchDataView)
